@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/src/components/ui/button";
 import type { Metadata } from "next";
 import { NextSeo } from "next-seo";
 
@@ -14,7 +15,11 @@ const HomePage = () => {
 		{ id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
 		{ id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
 	];
-	return <div> yyooyoy</div>;
+	return (
+		<main className="grid place-items-center h-screen">
+			<Button variant={"destructive"}>Click me</Button>
+		</main>
+	);
 };
 
 export default HomePage;
