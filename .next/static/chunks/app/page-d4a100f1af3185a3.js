@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[931],{6460:function(e,n,s){Promise.resolve().then(s.bind(s,6911))},6911:function(e,n,s){"use strict";s.r(n);var c=s(7437);n.default=()=>(0,c.jsx)("main",{className:"grid place-items-center h-screen"})}},function(e){e.O(0,[971,69,744],function(){return e(e.s=6460)}),_N_E=e.O()}]);
