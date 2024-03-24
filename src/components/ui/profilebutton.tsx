@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
+import Link from 'next/link'
 
 const ProfileButton = () => {
   return (
@@ -23,7 +24,9 @@ const ProfileButton = () => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
+          <Link href={'/settings'}>Settings</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer">Log Out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,11 +1,11 @@
-import { FC } from "react";
+import type { FC } from 'react'
 
 interface ContainerProps {
-	children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const Container: FC<ContainerProps> = ({ children }) => {
-	return <div className="mx-auto w-full max-w-7xl">{children}</div>;
-};
+  return <div className="mx-auto w-full max-w-7xl">{children}</div>
+}
 
-export default Container;
+export default Container

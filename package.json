@@ -28,7 +28,8 @@
     "shadcn-ui": "^0.8.0",
     "sharp": "^0.33.3",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vercel": "^33.6.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.0",

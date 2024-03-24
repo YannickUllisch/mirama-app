@@ -22,14 +22,14 @@ const Header = () => {
       id: 1,
     },
     {
-      href: '/',
+      href: '/gantt',
       label: 'Gantt',
       id: 2,
     },
   ]
 
   return (
-    <header className="sm: flex sm: justify-between py-1 px-4 border-b dark:border-neutral-500">
+    <header className="sm: flex sm: justify-between py-1 px-4 border-b dark:border-neutral-800">
       <Container>
         <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">
