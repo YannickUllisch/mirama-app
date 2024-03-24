@@ -15,7 +15,11 @@ const HomePage = () => {
   //     { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
   //     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
   //   ]
-  return <main className="grid place-items-center h-screen"></main>
+  return (
+    <main className="grid place-items-center h-screen">
+      <div> yo</div>
+    </main>
+  )
 }
 
 export default HomePage
