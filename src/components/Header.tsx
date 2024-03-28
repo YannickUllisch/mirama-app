@@ -1,20 +1,29 @@
 'use client'
 
 import { useTheme } from 'next-themes'
-import React from 'react'
-import Container from './ui/container'
+import React, { useEffect, useState } from 'react'
+import Container from '@src/components/ui/container'
 import Link from 'next/link'
 import mirageLogoBlack from '@public/logo/mirage-logo-black.png'
 import mirageLogoWhite from '@public/logo/mirage-logo-white.png'
 import Image from 'next/image'
-import { Button } from './ui/button'
-import { Menu, Moon, Settings, Sun } from 'lucide-react'
-import ProfileButton from './ui/profilebutton'
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
+import { Button } from '@src/components/ui/button'
+import { Menu, Moon, Sun } from 'lucide-react'
+import ProfileButton from '@src/components/ui/profilebutton'
+import { Sheet, SheetContent, SheetTrigger } from '@src/components/ui/sheet'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
 const Header = () => {
+  const [logo, setLogo] = useState(mirageLogoWhite)
   const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    if (theme === 'light') {
+      setLogo(mirageLogoBlack)
+    } else {
+      setLogo(mirageLogoWhite)
+    }
+  }, [theme])
 
   const routes = [
     {
@@ -53,11 +62,7 @@ const Header = () => {
               </SheetContent>
             </Sheet>
             <Link href={DEFAULT_LOGIN_REDIRECT} className="ml-4 lg:ml-0">
-              <Image
-                height={30}
-                src={theme === 'light' ? mirageLogoBlack : mirageLogoWhite}
-                alt={'Logo'}
-              />
+              <Image height={30} src={logo} alt={'Logo'} />
             </Link>
           </div>
           <nav className="mx-6 items-center space-x-4 lg:space-x-6 hidden md:block">
