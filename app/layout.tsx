@@ -7,7 +7,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html suppressHydrationWarning lang="en">
       <body className="bg-white dark:bg-black">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
           <main> {children}</main>
         </ThemeProvider>
       </body>

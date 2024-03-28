@@ -11,13 +11,14 @@ import { Button } from './ui/button'
 import { Menu, Moon, Settings, Sun } from 'lucide-react'
 import ProfileButton from './ui/profilebutton'
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
 const Header = () => {
   const { theme, setTheme } = useTheme()
 
   const routes = [
     {
-      href: '/',
+      href: DEFAULT_LOGIN_REDIRECT,
       label: 'Overview',
       id: 1,
     },
@@ -35,7 +36,7 @@ const Header = () => {
           <div className="flex items-center">
             <Sheet>
               <SheetTrigger>
-                <Menu className="h-6 w-6 md:hidden"> </Menu>
+                <Menu className="h-6 w-6 md:hidden dark:text-white"> </Menu>
               </SheetTrigger>
               <SheetContent side={'left'} className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4">
@@ -51,7 +52,7 @@ const Header = () => {
                 </nav>
               </SheetContent>
             </Sheet>
-            <Link href={'/'} className="ml-4 lg:ml-0">
+            <Link href={DEFAULT_LOGIN_REDIRECT} className="ml-4 lg:ml-0">
               <Image
                 height={30}
                 src={theme === 'light' ? mirageLogoBlack : mirageLogoWhite}

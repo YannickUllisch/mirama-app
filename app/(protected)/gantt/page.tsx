@@ -4,7 +4,10 @@ import React from 'react'
 const GanttPage = () => {
   return (
     <main>
-      <div className="grid place-items-center h-screen"> gantt</div>
+      <div className="grid place-items-center h-screen dark:text-white">
+        {' '}
+        gantt
+      </div>
     </main>
   )
 }
