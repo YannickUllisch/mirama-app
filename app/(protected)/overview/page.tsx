@@ -1,21 +1,12 @@
 'use client'
-import { Button } from '@/src/components/ui/button'
 import { NextSeo } from 'next-seo'
-import useSWR from 'swr'
-import { useRouter } from 'next/navigation'
 
 const ProjectsPage = () => {
-  const router = useRouter()
-
-  const onClick = () => {
-    router.push('/auth/login')
-  }
-
   return (
-    <main className="grid place-items-center h-screen">
-      <Button variant={'destructive'} onClick={onClick}>
-        Test
-      </Button>
+    <main className="flex items-center flex-col h-screen">
+      <h1 style={{ fontSize: 50, marginTop: 50 }} className="dark:text-white">
+        Overview Page
+      </h1>
     </main>
   )
 }

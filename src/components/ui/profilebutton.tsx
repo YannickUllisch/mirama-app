@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
+import { Button } from './button'
 
 const ProfileButton = () => {
   return (
@@ -25,7 +26,7 @@ const ProfileButton = () => {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer">
-          <Link href={'/settings'}>Settings</Link>
+          <Link href={'/settings'}> Settings </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer">Log Out</DropdownMenuItem>
       </DropdownMenuContent>

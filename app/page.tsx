@@ -1,25 +1,17 @@
 'use client'
-import { Button } from '@/src/components/ui/button'
 import { NextSeo } from 'next-seo'
-import useSWR from 'swr'
-import { useRouter } from 'next/navigation'
+import PublicHeader from '@/src/components/header/PublicHeader'
 
 const HomePage = () => {
-  const router = useRouter()
-
-  const onClick = () => {
-    router.push('/auth/login')
-  }
-
   return (
-    <main className="flex justify-center items-center flex-col h-screen">
-      <h1 className="dark:text-white" style={{ fontSize: 25 }}>
-        Landing Page!
-      </h1>
-      <Button variant={'destructive'} onClick={onClick}>
-        Login
-      </Button>
-    </main>
+    <>
+      <PublicHeader />
+      <main className="flex items-center flex-col h-screen">
+        <h1 className="dark:text-white" style={{ fontSize: 50, marginTop: 50 }}>
+          Mirage Management
+        </h1>
+      </main>
+    </>
   )
 }
 
