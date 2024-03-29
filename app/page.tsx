@@ -1,6 +1,6 @@
 'use client'
 import { NextSeo } from 'next-seo'
-import PublicHeader from '@/src/components/header/PublicHeader'
+import PublicHeader from '@/src/components/Header/PublicHeader'
 
 const HomePage = () => {
   return (

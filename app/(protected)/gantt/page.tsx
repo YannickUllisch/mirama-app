@@ -1,6 +1,3 @@
-import Container from '@/src/components/ui/container'
-import React from 'react'
-
 const GanttPage = () => {
   return (
     <main>
