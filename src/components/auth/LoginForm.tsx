@@ -16,6 +16,7 @@ import { FormError } from '@src/components/auth/popups/FormError'
 import { login } from '@src/lib/login'
 import { useState, useTransition } from 'react'
 import { LoginSchema } from '@/src/lib/schemas'
+import axios from 'axios'
 
 const LoginForm = () => {
   const [error, setError] = useState<string | undefined>('')

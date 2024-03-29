@@ -43,12 +43,15 @@ const PublicHeader = () => {
               <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
+            <Link href={'/auth/login'} className="mr-4">
+              <Button variant={'ghost'}>Sign In</Button>
+            </Link>
             <Link href={'/auth/login'}>
               <Button
                 variant={'destructive'}
-                className="bg-emerald-500 hover:bg-emerald-400"
+                className="bg-emerald-600 hover:bg-emerald-400"
               >
-                Sign In
+                Get Started
               </Button>
             </Link>
           </div>

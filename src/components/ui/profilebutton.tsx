@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
-import { Button } from './button'
+import { logout } from '@/src/lib/logout'
 
 const ProfileButton = () => {
   return (
@@ -28,7 +28,9 @@ const ProfileButton = () => {
         <DropdownMenuItem className="cursor-pointer">
           <Link href={'/settings'}> Settings </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">Log Out</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={logout}>
+          Log Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
