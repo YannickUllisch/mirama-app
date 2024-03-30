@@ -1,5 +1,5 @@
 'use client'
-import PublicHeader from '@/src/components/test/PublicHeader'
+import PublicHeader from '@/src/components/Header/PublicHeader'
 import { NextSeo } from 'next-seo'
 
 const HomePage = () => {
