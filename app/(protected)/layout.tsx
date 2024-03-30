@@ -1,4 +1,4 @@
-import Header from '@src/components/Header/Header'
+import Header from '@/src/components/test/Header'
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   return (
