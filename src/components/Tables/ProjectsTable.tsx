@@ -2,6 +2,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -13,31 +14,66 @@ import {
   CollapsibleTrigger,
 } from '@src/components/ui/collapsible'
 
-import TableDropDown from '@/src/components/Tables/TableDropDown'
+import { DateTime } from 'luxon'
 import useSWR from 'swr'
-import type { Project, User } from '@prisma/client'
+import type { Project, Task, User } from '@prisma/client'
 import { fetcher } from '@src/lib/utils'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+import CollapsibleTasks from '@/src/components/Tables/CollapsibleTasks'
+interface CollapsedRows {
+  [projectId: string]: boolean
+}
 
 const ProjectsTable = () => {
-  const { data: projects } = useSWR<Project[]>('/api/projekt', fetcher)
-  console.log(projects)
+  // States
+  const [collapsedRows, setCollapsedRows] = useState<CollapsedRows>({})
+
+  const toggleCollapse = (projectId: string) => {
+    setCollapsedRows((prevState) => ({
+      ...prevState,
+      [projectId]: !prevState[projectId],
+    }))
+  }
+
+  const { data: projects } = useSWR<
+    (Project & {
+      managedBy: User
+      workItems: Task[]
+    })[]
+  >('/api/db/projekt', fetcher)
 
   return (
-    <div className="w-[1000px]">
-      <h2 className="p-4">All Projects</h2>
-      <div className="rounded-md sm:border">
-        <Table>
+    <div className="w-full md:w-full lg:w-[1000px] ">
+      <h2 className="p-4 dark:text-white">All Projects</h2>
+      <div className="rounded-md sm:border overflow-x-auto">
+        <Table className="min-w-max">
           <TableHeader>
             <TableRow>
-              <TableHead className="font-medium">Name</TableHead>
-              <TableHead className="font-medium">Managed By</TableHead>
-              <TableHead className="font-medium">Start Date</TableHead>
-              <TableHead className="font-medium">End Date</TableHead>
-              <TableHead className="font-medium">Priority</TableHead>
-              <TableHead className="font-medium">Status</TableHead>
-              <TableHead className="font-medium">Budget</TableHead>
-              <TableHead className="font-medium">Tasks</TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Tasks
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Name
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Managed By
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Start Date
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                End Date
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Priority
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Status
+              </TableHead>
+              <TableHead className="font-medium dark:text-white">
+                Budget
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -46,30 +82,68 @@ const ProjectsTable = () => {
                   <Collapsible key={project.id} asChild>
                     <>
                       <TableRow>
-                        <TableCell>{project.name}</TableCell>
-                        <TableCell>{'Michael'}</TableCell>
-                        <TableCell>{'placeholder'}</TableCell>
-                        <TableCell>{'placeholder'}</TableCell>
-                        <TableCell>{project.priority}</TableCell>
-                        <TableCell>{project.status}</TableCell>
-                        <TableCell>{project.budget}</TableCell>
                         <TableCell>
                           <CollapsibleTrigger
-                            className="dark:text-white"
+                            className="dark:text-white h-3.5 w-3.5"
                             asChild
+                            onClick={() => toggleCollapse(project.id)}
                           >
-                            <ChevronDown />
+                            {collapsedRows[project.id] ? (
+                              <ChevronUp />
+                            ) : (
+                              <ChevronDown />
+                            )}
                           </CollapsibleTrigger>
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {project.name}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {project?.managedBy?.name ?? ''}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {DateTime.fromISO(
+                            project.startDate.toString(),
+                          ).toFormat('dd.MM.yyyy')}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {DateTime.fromISO(
+                            project.endDate.toString(),
+                          ).toFormat('dd.MM.yyyy')}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {project.priority}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          {project.status}
+                        </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          €{project.budget}
                         </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
-                        <TableDropDown />
+                        <CollapsibleTasks projectId={project.id} />
                       </CollapsibleContent>
                     </>
                   </Collapsible>
                 ))
               : null}
           </TableBody>
+          <TableFooter>
+            <TableRow className="dark:bg-neutral-900">
+              <TableCell className="dark:text-white" colSpan={7}>
+                Total
+              </TableCell>
+              <TableCell className="dark:text-white">
+                €
+                {projects?.reduce((acc, project) => {
+                  const budgetToAdd =
+                    project.budget !== null ? project.budget : 0
+                  return acc + budgetToAdd
+                }, 0)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
     </div>

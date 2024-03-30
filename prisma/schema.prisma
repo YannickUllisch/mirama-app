@@ -36,6 +36,7 @@ model User {
   image         String?
   accounts      Account[]
   projects      Project[]
+  tasks         Task[]
 }
 
 enum PriorityType {
@@ -53,19 +54,28 @@ enum StatusType {
 model Project {
     id          String          @default(cuid()) @id
     name        String
+
     managedBy   User?           @relation(fields: [managedById], references: [id])
     managedById String?
+
     startDate   DateTime        @default(now())
-    endDate     DateTime
+    endDate     DateTime        @default(now())
+
     priority    PriorityType    @default(LOW)
     status      StatusType
     budget      Int?
-    workItems   ProjectTask[]
+    
+    tasks   Task[]
 }
 
-model ProjectTask {
+model Task {
   id          String      @default(cuid()) @id
+
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+  assignedToId String?
+
   description String? 
+
   project     Project?    @relation(fields: [projectId], references: [id])
   projectId   String? 
 }
