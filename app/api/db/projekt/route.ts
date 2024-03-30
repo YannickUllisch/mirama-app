@@ -19,7 +19,6 @@ export const GET = async (req: NextRequest) => {
   const response = await db.project.findMany({
     include: {
       managedBy: true,
-      tasks: true,
     },
   })
 

@@ -39,7 +39,6 @@ const ProjectsTable = () => {
   const { data: projects } = useSWR<
     (Project & {
       managedBy: User
-      workItems: Task[]
     })[]
   >('/api/db/projekt', fetcher)
 
@@ -118,7 +117,7 @@ const ProjectsTable = () => {
                           {project.status}
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          €{project.budget}
+                          {`€${project.budget}`}
                         </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
@@ -135,12 +134,11 @@ const ProjectsTable = () => {
                 Total
               </TableCell>
               <TableCell className="dark:text-white">
-                €
-                {projects?.reduce((acc, project) => {
+                {`€${projects?.reduce((acc, project) => {
                   const budgetToAdd =
                     project.budget !== null ? project.budget : 0
                   return acc + budgetToAdd
-                }, 0)}
+                }, 0)}`}
               </TableCell>
             </TableRow>
           </TableFooter>
