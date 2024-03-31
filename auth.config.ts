@@ -1,9 +1,6 @@
 import Credentials from 'next-auth/providers/credentials'
 import type { NextAuthConfig } from 'next-auth'
 import { LoginSchema } from '@src/lib/schemas'
-import type { User } from '@prisma/client'
-import useSWR from 'swr'
-import { fetcher } from './src/lib/utils'
 import { getUserByEmail } from './src/lib/user'
 
 export default {

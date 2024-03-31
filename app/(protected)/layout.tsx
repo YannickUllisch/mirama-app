@@ -1,10 +1,13 @@
 import Header from '@/src/components/Header/Header'
+import { SessionProvider } from 'next-auth/react'
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <Header />
-      {children}
+      <SessionProvider>
+        <Header />
+        {children}
+      </SessionProvider>
     </>
   )
 }

@@ -89,7 +89,6 @@ const LoginForm = () => {
             </Link>
           </Button>
         </div>
-
         <FormError message={error} />
         <Button type="submit" className="w-full" disabled={isPending}>
           Login

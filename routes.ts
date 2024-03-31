@@ -10,7 +10,7 @@ export const publicRoutes = ['/']
  * These routes will redirect logged in users to /overview
  * @type {string[]}
  */
-export const authRoutes = ['/auth/login', '/auth/register']
+export const authRoutes = ['/auth/login', '/auth/register', '/auth/logout']
 
 /**
  * Prefix for API authentication routes

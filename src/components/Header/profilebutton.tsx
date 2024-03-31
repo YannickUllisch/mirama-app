@@ -4,23 +4,29 @@ import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
 } from '@src/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@src/components/ui/avatar'
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
-import { logout } from '@/src/lib/logout'
-import { signOut } from '@/auth'
+import { useSession } from 'next-auth/react'
+import { getColorByName } from '@/src/lib/utils'
 
 const ProfileButton = () => {
+  const { data: session } = useSession()
+  const userColor = session?.user?.name
+    ? getColorByName(session?.user?.name)
+    : 'bg-neutral-400/20'
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src="" />
-          <AvatarFallback className="dark:bg-neutral-800">MI</AvatarFallback>
+          <AvatarFallback className={userColor}>
+            {session?.user?.name?.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -29,10 +35,7 @@ const ProfileButton = () => {
         <DropdownMenuItem className="cursor-pointer">
           <Link href={'/settings'}> Settings </Link>
         </DropdownMenuItem>
-
-        <DropdownMenuItem className="cursor-pointer">
-          <form action={logout}> Log Out </form>
-        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">Log Out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

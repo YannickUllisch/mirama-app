@@ -13,13 +13,14 @@ import {
 } from '@src/components/ui/form'
 import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
-import { login } from '@src/lib/login'
+import { register } from '@src/lib/register'
 import { useState, useTransition } from 'react'
 import { RegisterSchema } from '@/src/lib/schemas'
-import axios from 'axios'
+import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('')
+  const [success, setSuccess] = useState<string | undefined>('')
   const [isPending, startTransition] = useTransition()
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -33,10 +34,12 @@ const RegisterForm = () => {
 
   const onSubmit = (vals: z.infer<typeof RegisterSchema>) => {
     setError('')
+    setSuccess('')
 
     startTransition(() => {
-      login(vals).then((data) => {
+      register(vals).then((data) => {
         if (data) {
+          setSuccess(data.success)
           setError(data.error)
         }
       })
@@ -103,6 +106,7 @@ const RegisterForm = () => {
           />
         </div>
         <FormError message={error} />
+        <FormSuccess message={success} />
         <Button type="submit" className="w-full" disabled={isPending}>
           Create Account
         </Button>

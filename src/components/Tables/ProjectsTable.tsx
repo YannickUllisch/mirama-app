@@ -40,9 +40,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-} from '@src/components/Tables/tableSelect'
-import { Input } from '@/src/components/Tables/tableInput'
+} from '@src/components/Tables/TableSelect'
+import { Input } from '@src/components/Tables/TableInput'
 import CalendarSelect from './CalendarSelect'
+import UserAvatar from '../UserAvatar'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -77,30 +78,20 @@ const ProjectsTable = () => {
         <Table className="min-w-max">
           <TableHeader>
             <TableRow>
-              <TableHead className="font-medium dark:text-white">
-                Tasks
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Name
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Managed By
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Start Date
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                End Date
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Priority
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Status
-              </TableHead>
-              <TableHead className="font-medium dark:text-white">
-                Budget
-              </TableHead>
+              {[
+                'Tasks',
+                'Name',
+                'Managed By',
+                'Start Date',
+                'End Date',
+                'Priority',
+                'Status',
+                'Budget',
+              ].map((title) => (
+                <TableHead key={title} className="font-medium dark:text-white">
+                  {title}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody style={{ height: '50px' }}>
@@ -134,7 +125,15 @@ const ProjectsTable = () => {
                           <Select>
                             <SelectTrigger>
                               <SelectValue
-                                placeholder={project?.managedBy?.name ?? ''}
+                                placeholder={
+                                  project.managedBy ? (
+                                    <UserAvatar
+                                      username={project?.managedBy?.name}
+                                    />
+                                  ) : (
+                                    ''
+                                  )
+                                }
                               />
                             </SelectTrigger>
                             <SelectContent>

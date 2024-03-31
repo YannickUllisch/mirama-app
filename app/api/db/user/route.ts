@@ -26,29 +26,7 @@ export const POST = async (req: NextRequest) => {
  * @param req The Request sent to this URL
  * @returns
  */
-export const GET = async (req: NextRequest) => {
-  const id = req.nextUrl.searchParams.get('id') as string
-  const email = req.nextUrl.searchParams.get('email') as string
-
-  // If Email is given in query, find user with specific email
-  if (email) {
-    const response = db.user.findFirst({
-      where: {
-        email,
-      },
-    })
-    return new Response(JSON.stringify(response))
-  }
-  // If ID is given in query, find user with specific ID
-  if (id) {
-    const response = db.user.findFirst({
-      where: {
-        id,
-      },
-    })
-    return new Response(JSON.stringify(response))
-  }
-
+export const GET = async (_req: NextRequest) => {
   // If none of the above flags are provided, return all users.
   const response = await db.user.findMany()
 

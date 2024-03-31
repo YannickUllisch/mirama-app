@@ -9,7 +9,7 @@ import mirageLogoWhite from '@public/logo/mirage-logo-white.png'
 import Image from 'next/image'
 import { Button } from '@src/components/ui/button'
 import { Menu, Moon, Sun } from 'lucide-react'
-import ProfileButton from '@src/components/ui/profilebutton'
+import ProfileButton from '@/src/components/Header/profilebutton'
 import { Sheet, SheetContent, SheetTrigger } from '@src/components/ui/sheet'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
