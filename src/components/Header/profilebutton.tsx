@@ -12,6 +12,7 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { getColorByName } from '@/src/lib/utils'
 
 const ProfileButton = () => {
@@ -35,7 +36,12 @@ const ProfileButton = () => {
         <DropdownMenuItem className="cursor-pointer">
           <Link href={'/settings'}> Settings </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">Log Out</DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => signOut({ callbackUrl: '/', redirect: true })}
+        >
+          Log Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

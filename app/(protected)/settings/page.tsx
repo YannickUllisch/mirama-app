@@ -3,6 +3,7 @@ import { Button } from '@/src/components/ui/button'
 
 const SettingsPage = async () => {
   const session = await auth()
+
   return (
     <div className=" dark:text-white">
       {JSON.stringify(session)}

@@ -21,6 +21,9 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   })
 
   if (existingUser) {
+    // Implement logic to update user for which email already is in database. This way
+    // We can restrict access to the site.
+
     return { error: 'Email already used.' }
   }
 

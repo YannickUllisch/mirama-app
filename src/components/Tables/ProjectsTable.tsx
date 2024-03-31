@@ -23,7 +23,7 @@ import {
   type User,
   PriorityType,
 } from '@prisma/client'
-import { fetcher } from '@src/lib/utils'
+import { api, fetcher } from '@src/lib/utils'
 import {
   ChevronDown,
   ChevronUp,
@@ -102,12 +102,12 @@ const ProjectsTable = () => {
                       <TableRow>
                         <TableCell>
                           <CollapsibleTrigger
-                            className="dark:text-white h-3.5 w-3.5 cursor-pointer"
+                            className="dark:text-white h-3.5 w-3.5 cursor-pointer transition-transform transform-gpu"
                             asChild
                             onClick={() => toggleCollapse(project.id)}
                           >
                             {collapsedRows[project.id] ? (
-                              <ChevronUp />
+                              <ChevronUp className="rotate-180" />
                             ) : (
                               <ChevronDown />
                             )}

@@ -1,8 +1,5 @@
 'use client'
-import type { Project } from '@prisma/client'
 import { NextSeo } from 'next-seo'
-import useSWR from 'swr'
-import { api, fetcher } from '@/src/lib/utils'
 import ProjectsTable from '@/src/components/Tables/ProjectsTable'
 
 const ProjectsPage = () => {

@@ -1,24 +1,58 @@
 import { db } from '@src/lib/db'
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
+import { auth } from '@/auth'
+import type { Project } from '@prisma/client'
 
-export const GET = async (_req: NextRequest) => {
-  // Else we return all projects
-  const response = await db.project.findMany({
-    include: {
-      managedBy: true,
-    },
-  })
+export const GET = auth(async (req) => {
+  try {
+    const session = req.auth
+    const response = await db.project.findMany({
+      where: {
+        teamId: session?.user.teamId,
+      },
+      include: {
+        managedBy: true,
+      },
+    })
 
-  return new Response(JSON.stringify(response))
-}
+    return new Response(JSON.stringify(response))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
 
-export const DELETE = async (req: NextRequest) => {
-  const id = req.nextUrl.searchParams.get('id') as string
-  const response = db.project.delete({
-    where: {
-      id,
-    },
-  })
+export const POST = auth(async (req) => {
+  try {
+    const session = req.auth
+    const project = (await req.json()) as Omit<Project, 'id' | 'teamId'>
 
-  return new Response(JSON.stringify(response))
-}
+    const response = await db.project.create({
+      data: {
+        ...project,
+        teamId: session?.user.teamId ?? 'undefined',
+      },
+    })
+
+    return new Response(JSON.stringify(response))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
+
+export const DELETE = auth(async (req) => {
+  try {
+    const session = req.auth
+    const id = req.nextUrl.searchParams.get('id') as string
+
+    const response = await db.project.delete({
+      where: {
+        id,
+        teamId: session?.user.teamId ?? 'undefined',
+      },
+    })
+
+    return new Response(JSON.stringify(response))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
