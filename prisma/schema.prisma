@@ -63,7 +63,7 @@ model Project {
 
     priority    PriorityType    @default(LOW)
     status      StatusType
-    budget      Int?
+    budget      Int?            @default(0)
     
     tasks   Task[]
 }

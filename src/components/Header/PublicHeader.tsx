@@ -46,10 +46,10 @@ const PublicHeader = () => {
             <Link href={'/auth/login'} className="mr-4">
               <Button variant={'ghost'}>Sign In</Button>
             </Link>
-            <Link href={'/auth/login'}>
+            <Link href={'/auth/register'}>
               <Button
                 variant={'destructive'}
-                className="bg-emerald-600 hover:bg-emerald-400"
+                className="bg-emerald-500 hover:bg-emerald-400 dark:bg-emerald-600 dark:hover:bg-emerald-500"
               >
                 Get Started
               </Button>

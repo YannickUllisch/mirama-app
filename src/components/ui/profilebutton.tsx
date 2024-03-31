@@ -12,14 +12,15 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
 import { logout } from '@/src/lib/logout'
+import { signOut } from '@/auth'
 
 const ProfileButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
+        <Avatar className="cursor-pointer">
           <AvatarImage src="" />
-          <AvatarFallback>MI</AvatarFallback>
+          <AvatarFallback className="dark:bg-neutral-800">MI</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -28,8 +29,9 @@ const ProfileButton = () => {
         <DropdownMenuItem className="cursor-pointer">
           <Link href={'/settings'}> Settings </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={logout}>
-          Log Out
+
+        <DropdownMenuItem className="cursor-pointer">
+          <form action={logout}> Log Out </form>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

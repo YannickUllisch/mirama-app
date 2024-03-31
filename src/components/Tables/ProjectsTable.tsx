@@ -1,3 +1,4 @@
+'use client'
 import {
   Table,
   TableBody,
@@ -16,11 +17,33 @@ import {
 
 import { DateTime } from 'luxon'
 import useSWR from 'swr'
-import type { Project, Task, User } from '@prisma/client'
+import {
+  StatusType,
+  type Project,
+  type User,
+  PriorityType,
+} from '@prisma/client'
 import { fetcher } from '@src/lib/utils'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  CalendarDays,
+  Euro,
+} from 'lucide-react'
 import { useState } from 'react'
 import CollapsibleTasks from '@/src/components/Tables/CollapsibleTasks'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from '@src/components/Tables/tableSelect'
+import { Input } from '@/src/components/Tables/tableInput'
+import CalendarSelect from './CalendarSelect'
+
 interface CollapsedRows {
   [projectId: string]: boolean
 }
@@ -36,15 +59,20 @@ const ProjectsTable = () => {
     }))
   }
 
-  const { data: projects } = useSWR<
+  const { data: projects, isLoading: isProjectsLoading } = useSWR<
     (Project & {
       managedBy: User
     })[]
   >('/api/db/projekt', fetcher)
 
+  const { data: users } = useSWR<User[]>('/api/db/user', fetcher)
+
   return (
     <div className="w-full md:w-full lg:w-[1000px] ">
-      <h2 className="p-4 dark:text-white">All Projects</h2>
+      <h2 className="p-3 dark:text-white flex items-center">
+        <span>All Projects</span>
+        {isProjectsLoading && <Loader2 className="h-4 w-4 animate-spin ml-2" />}
+      </h2>
       <div className="rounded-md sm:border overflow-x-auto">
         <Table className="min-w-max">
           <TableHeader>
@@ -75,7 +103,7 @@ const ProjectsTable = () => {
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody style={{ height: '50px' }}>
             {projects
               ? projects.map((project) => (
                   <Collapsible key={project.id} asChild>
@@ -83,7 +111,7 @@ const ProjectsTable = () => {
                       <TableRow>
                         <TableCell>
                           <CollapsibleTrigger
-                            className="dark:text-white h-3.5 w-3.5"
+                            className="dark:text-white h-3.5 w-3.5 cursor-pointer"
                             asChild
                             onClick={() => toggleCollapse(project.id)}
                           >
@@ -95,29 +123,96 @@ const ProjectsTable = () => {
                           </CollapsibleTrigger>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {project.name}
+                          <Input
+                            className="flex max-w-20"
+                            placeholder={project.name}
+                            defaultValue={project.name}
+                            type="text"
+                          />
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {project?.managedBy?.name ?? ''}
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={project?.managedBy?.name ?? ''}
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {users?.map((user) => (
+                                  <SelectItem value={user.name ?? ''}>
+                                    {user.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {DateTime.fromISO(
-                            project.startDate.toString(),
-                          ).toFormat('dd.MM.yyyy')}
+                          <div className="flex items-center cursor-default">
+                            {DateTime.fromISO(
+                              project.startDate.toString(),
+                            ).toFormat('dd.MM.yyyy')}
+                            <CalendarDays className="h-4 w-4 ml-1 cursor-pointer" />
+                          </div>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {DateTime.fromISO(
-                            project.endDate.toString(),
-                          ).toFormat('dd.MM.yyyy')}
+                          <div className="flex items-center cursor-default">
+                            {DateTime.fromISO(
+                              project.endDate.toString(),
+                            ).toFormat('dd.MM.yyyy')}
+                            <CalendarDays
+                              className="h-4 w-4 ml-1  cursor-pointer"
+                              onClick={() => console.log('yo')}
+                            />
+                          </div>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {project.priority}
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder={project.priority} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="finished">
+                                  {PriorityType.LOW}
+                                </SelectItem>
+                                <SelectItem value="starting">
+                                  {PriorityType.MEDIUM}
+                                </SelectItem>
+                                <SelectItem value="high">
+                                  {PriorityType.HIGH}
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {project.status}
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder={project.status} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value={StatusType.FINISHED}>
+                                  {StatusType.FINISHED}
+                                </SelectItem>
+                                <SelectItem value={StatusType.STARTING}>
+                                  {StatusType.STARTING}
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          {`€${project.budget}`}
+                          <div className="flex items-center">
+                            <Euro className="h-3 w-3" />
+                            <Input
+                              className="flex max-w-20"
+                              defaultValue={project.budget?.toString()}
+                              onlyNumbers
+                            />
+                          </div>
                         </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
@@ -130,15 +225,17 @@ const ProjectsTable = () => {
           </TableBody>
           <TableFooter>
             <TableRow className="dark:bg-neutral-900">
-              <TableCell className="dark:text-white" colSpan={7}>
+              <TableCell className="dark:text-white cursor-default" colSpan={7}>
                 Total
               </TableCell>
-              <TableCell className="dark:text-white">
-                {`€${projects?.reduce((acc, project) => {
-                  const budgetToAdd =
-                    project.budget !== null ? project.budget : 0
-                  return acc + budgetToAdd
-                }, 0)}`}
+              <TableCell className="dark:text-white cursor-default">
+                {projects
+                  ? `€${projects?.reduce((acc, project) => {
+                      const budgetToAdd =
+                        project.budget !== null ? project.budget : 0
+                      return acc + budgetToAdd
+                    }, 0)}`
+                  : ''}
               </TableCell>
             </TableRow>
           </TableFooter>

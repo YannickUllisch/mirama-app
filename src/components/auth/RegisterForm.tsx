@@ -15,23 +15,23 @@ import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { login } from '@src/lib/login'
 import { useState, useTransition } from 'react'
-import { LoginSchema } from '@/src/lib/schemas'
+import { RegisterSchema } from '@/src/lib/schemas'
 import axios from 'axios'
-import Link from 'next/link'
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('')
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (vals: z.infer<typeof RegisterSchema>) => {
     setError('')
 
     startTransition(() => {
@@ -47,6 +47,24 @@ const LoginForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Name"
+                    type="name"
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -74,8 +92,8 @@ const LoginForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="******"
                     type="password"
+                    placeholder="******"
                     disabled={isPending}
                   />
                 </FormControl>
@@ -83,20 +101,14 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <Button asChild variant="link">
-            <Link href={'/'} className="ml-40 ">
-              Forgot Password?
-            </Link>
-          </Button>
         </div>
-
         <FormError message={error} />
         <Button type="submit" className="w-full" disabled={isPending}>
-          Login
+          Create Account
         </Button>
       </form>
     </Form>
   )
 }
 
-export default LoginForm
+export default RegisterForm
