@@ -40,8 +40,8 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-} from '@src/components/Tables/TableSelect'
-import { Input } from '@src/components/Tables/TableInput'
+} from '@src/components/Tables/tableSelect'
+import { Input } from '@src/components/Tables/tableInput'
 import CalendarSelect from './CalendarSelect'
 import UserAvatar from '../UserAvatar'
 
