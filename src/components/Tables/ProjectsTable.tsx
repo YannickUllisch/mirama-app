@@ -8,14 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@src/components/ui/table'
-
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@src/components/ui/collapsible'
-
-import { DateTime } from 'luxon'
 import useSWR from 'swr'
 import {
   StatusType,
@@ -28,8 +25,9 @@ import {
   ChevronDown,
   ChevronUp,
   Loader2,
-  CalendarDays,
   Euro,
+  Trash2,
+  CirclePlus,
 } from 'lucide-react'
 import { useState } from 'react'
 import CollapsibleTasks from '@/src/components/Tables/CollapsibleTasks'
@@ -40,10 +38,14 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-} from '@src/components/Tables/tableSelect'
+} from '@/src/components/ui/tableSelect'
 import { Input } from '@src/components/Tables/tableInput'
-import CalendarSelect from './CalendarSelect'
+import CalendarSelect from '../Select/CalendarSelect'
 import UserAvatar from '../UserAvatar'
+import { GeneralTableSelect } from '@src/components/Select/GeneralTableSelect'
+import { ColumnDef } from '@tanstack/react-table'
+import { toast } from 'sonner'
+import { Button } from '../ui/button'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -60,13 +62,49 @@ const ProjectsTable = () => {
     }))
   }
 
-  const { data: projects, isLoading: isProjectsLoading } = useSWR<
+  const {
+    data: projects,
+    isLoading: isProjectsLoading,
+    mutate: updateProjects,
+  } = useSWR<
     (Project & {
       managedBy: User
     })[]
   >('/api/db/projekt', fetcher)
 
   const { data: users } = useSWR<User[]>('/api/db/user', fetcher)
+
+  const deleteRow = (id: string) => {
+    try {
+      toast.promise(api.delete(`projekt?id=${id}`), {
+        loading: 'Deleting Project..',
+        success: () => {
+          updateProjects((prev) => prev?.filter((project) => project.id !== id))
+
+          return 'Project Successfully Deleted!'
+        },
+        error: (err) => err.message ?? err,
+      })
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
+
+  const createRow = () => {
+    try {
+      toast.promise(api.post('projekt'), {
+        loading: 'Creating Project..',
+        error: (err) => err.message ?? err,
+        success: () => {
+          updateProjects()
+
+          return 'Project Successfully Created!'
+        },
+      })
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
 
   return (
     <div className="w-full md:w-full lg:w-[1000px] ">
@@ -87,6 +125,7 @@ const ProjectsTable = () => {
                 'Priority',
                 'Status',
                 'Budget',
+                'Actions',
               ].map((title) => (
                 <TableHead key={title} className="font-medium dark:text-white">
                   {title}
@@ -99,7 +138,7 @@ const ProjectsTable = () => {
               ? projects.map((project) => (
                   <Collapsible key={project.id} asChild>
                     <>
-                      <TableRow>
+                      <TableRow key={project.id}>
                         <TableCell>
                           <CollapsibleTrigger
                             className="dark:text-white h-3.5 w-3.5 cursor-pointer transition-transform transform-gpu"
@@ -107,7 +146,7 @@ const ProjectsTable = () => {
                             onClick={() => toggleCollapse(project.id)}
                           >
                             {collapsedRows[project.id] ? (
-                              <ChevronUp className="rotate-180" />
+                              <ChevronUp />
                             ) : (
                               <ChevronDown />
                             )}
@@ -115,76 +154,57 @@ const ProjectsTable = () => {
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
                           <Input
-                            className="flex max-w-20"
+                            className="flex w-24"
                             placeholder={project.name}
                             defaultValue={project.name}
                             type="text"
                           />
                         </TableCell>
-                        <TableCell className="dark:text-neutral-200">
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={
-                                  project.managedBy ? (
-                                    <UserAvatar
-                                      username={project?.managedBy?.name}
-                                    />
-                                  ) : (
-                                    ''
-                                  )
-                                }
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {users?.map((user) => (
-                                  <SelectItem value={user.name ?? ''}>
-                                    {user.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                        <TableCell className="dark:text-neutral-200 flex items-center w-20">
+                          <GeneralTableSelect
+                            placeholder={
+                              project.managedBy ? (
+                                <UserAvatar
+                                  username={project?.managedBy?.name}
+                                />
+                              ) : (
+                                ''
+                              )
+                            }
+                          >
+                            {users?.map((user) => (
+                              <SelectItem value={user.name ?? ''}>
+                                {user.name}
+                              </SelectItem>
+                            ))}
+                          </GeneralTableSelect>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          <div className="flex items-center cursor-default">
-                            {DateTime.fromISO(
-                              project.startDate.toString(),
-                            ).toFormat('dd.MM.yyyy')}
-                            <CalendarDays className="h-4 w-4 ml-1 cursor-pointer" />
-                          </div>
+                          <CalendarSelect
+                            startingDate={project.startDate}
+                            project={project}
+                            dateType="start"
+                          />
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          <div className="flex items-center cursor-default">
-                            {DateTime.fromISO(
-                              project.endDate.toString(),
-                            ).toFormat('dd.MM.yyyy')}
-                            <CalendarDays
-                              className="h-4 w-4 ml-1  cursor-pointer"
-                              onClick={() => console.log('yo')}
-                            />
-                          </div>
+                          <CalendarSelect
+                            startingDate={project.endDate}
+                            project={project}
+                            dateType="end"
+                          />
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder={project.priority} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectItem value="finished">
-                                  {PriorityType.LOW}
-                                </SelectItem>
-                                <SelectItem value="starting">
-                                  {PriorityType.MEDIUM}
-                                </SelectItem>
-                                <SelectItem value="high">
-                                  {PriorityType.HIGH}
-                                </SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                          <GeneralTableSelect placeholder={project.priority}>
+                            <SelectItem value="finished">
+                              {PriorityType.LOW}
+                            </SelectItem>
+                            <SelectItem value="starting">
+                              {PriorityType.MEDIUM}
+                            </SelectItem>
+                            <SelectItem value="high">
+                              {PriorityType.HIGH}
+                            </SelectItem>
+                          </GeneralTableSelect>
                         </TableCell>
                         <TableCell className="dark:text-neutral-200">
                           <Select>
@@ -213,6 +233,15 @@ const ProjectsTable = () => {
                             />
                           </div>
                         </TableCell>
+                        <TableCell className="dark:text-neutral-200">
+                          <Button
+                            variant={'ghost'}
+                            className="flex items-center"
+                            onClick={() => deleteRow(project.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                       <CollapsibleContent asChild>
                         <CollapsibleTasks projectId={project.id} />
@@ -227,7 +256,7 @@ const ProjectsTable = () => {
               <TableCell className="dark:text-white cursor-default" colSpan={7}>
                 Total
               </TableCell>
-              <TableCell className="dark:text-white cursor-default">
+              <TableCell className="dark:text-white cursor-default" colSpan={2}>
                 {projects
                   ? `€${projects?.reduce((acc, project) => {
                       const budgetToAdd =
@@ -240,6 +269,13 @@ const ProjectsTable = () => {
           </TableFooter>
         </Table>
       </div>
+      <Button
+        variant="ghost"
+        className="p-1 rounded-lg w-8 h-8"
+        onClick={createRow}
+      >
+        <CirclePlus className=" transition-all text-emerald-700" />
+      </Button>
     </div>
   )
 }

@@ -1,14 +1,11 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+
+import { useEffect, useState } from 'react'
 import {
-  ArrowLeft,
   ArrowLeftToLine,
-  ArrowRight,
   ArrowRightToLine,
   BriefcaseBusiness,
   Calendar,
-  ChevronFirst,
-  ChevronLast,
   GanttChartSquare,
   LayoutPanelTop,
   Users,
@@ -25,15 +22,28 @@ import {
   CommandList,
   CommandSeparator,
 } from '@src/components/ui/command'
-import { Button } from '../ui/button'
 import { useTheme } from 'next-themes'
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from '@src/components/ui/hover-card'
+import { Button } from '@src/components/ui/button'
+import { useRouter } from 'next/navigation'
+
+interface iMenuList {
+  id: number
+  href: string
+  label: string
+  icon: React.JSX.Element
+}
 
 const Sidebar = () => {
   const [expanded, setExpanded] = useState(true)
-  const [isHovered, setIsHovered] = useState(false)
-
   const [logo, setLogo] = useState(mirageLogoWhite)
+
   const { theme } = useTheme()
+  const router = useRouter()
 
   useEffect(() => {
     if (theme === 'light') {
@@ -43,28 +53,33 @@ const Sidebar = () => {
     }
   }, [theme])
 
-  const menuList = [
+  const menuList: iMenuList[] = [
     {
+      id: 1,
       href: '/overview',
       label: 'Overview',
       icon: <LayoutPanelTop className="w-7 h-7" />,
     },
     {
+      id: 2,
       href: '/overview',
       label: 'Projects',
       icon: <BriefcaseBusiness className="w-7 h-7" />,
     },
     {
+      id: 3,
       href: '/gantt',
       label: 'Gantt',
       icon: <GanttChartSquare className="w-7 h-7" />,
     },
     {
+      id: 4,
       href: '/overview',
       label: 'Calendar',
       icon: <Calendar className="w-7 h-7" />,
     },
     {
+      id: 5,
       href: '/team',
       label: 'Team',
       icon: <Users className="w-7 h-7" />,
@@ -81,10 +96,10 @@ const Sidebar = () => {
             </Link>
           ) : null}
         </div>
-        <div className={`justify-end flex ${expanded ? 'ml-10' : ''}`}>
+        <div className={` flex ${expanded ? 'ml-10 justify-end' : 'mr-4'}`}>
           <Button
             variant="ghost"
-            className="p-1.5 rounded-lg w-8 h-8"
+            className="p-1 rounded-lg w-8 h-8"
             onClick={() => setExpanded((curr) => !curr)}
           >
             {expanded ? (
@@ -99,20 +114,21 @@ const Sidebar = () => {
         <Command style={{ overflow: 'visible' }}>
           <CommandSeparator />
           <CommandList style={{ overflow: 'visible' }}>
-            <CommandGroup heading="" className="ml-0">
-              {menuList.map((menu: any) => (
-                <Link href={menu.href}>
+            <CommandGroup
+              heading={expanded ? 'General' : 'General'}
+              className="ml-0"
+            >
+              {menuList.map((menu) => (
+                // biome-ignore lint/a11y/useValidAnchor: <explanation>
+                <a key={menu.id} onClick={() => router.push(menu.href)}>
                   <CommandItem
                     style={{ fontSize: 13 }}
-                    key={menu}
-                    className="flex gap-3 cursor-pointer"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
+                    className="flex gap-3 cursor-pointer relastive"
                   >
                     {menu.icon}
                     {expanded ? menu.label : ''}
                   </CommandItem>
-                </Link>
+                </a>
               ))}
             </CommandGroup>
             <CommandSeparator />
