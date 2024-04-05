@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import axios from 'axios'
+import type { Session } from 'next-auth'
+import { Role } from '@prisma/client'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -49,3 +51,28 @@ const colorClasses = [
   'bg-gray-500/40',
   'bg-teal-500/40',
 ]
+
+export const validateRequest = async (session: Session | null) => {
+  if (!session) {
+    return Response.json(
+      {},
+      { status: 401, statusText: 'You need to be Logged In' },
+    )
+  }
+
+  if (!session.user.role) {
+    return Response.json(
+      {},
+      { status: 401, statusText: 'You Need to be in Team' },
+    )
+  }
+
+  if (
+    session.user.role.toString() !== Role.OWNER ||
+    session.user.role.toString() !== Role.OWNER
+  ) {
+    return Response.json({}, { status: 403, statusText: 'Invalid Permission' })
+  }
+
+  return null
+}

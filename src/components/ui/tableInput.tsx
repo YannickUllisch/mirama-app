@@ -10,14 +10,6 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, onlyNumbers, ...props }, ref) => {
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (onlyNumbers && !/[a-zA-Z0-9]+$/.test(event.key)) {
-        event.preventDefault()
-      }
-
-      if (!/[a-zA-Z0-9]+$/.test(event.key)) {
-        event.preventDefault()
-      }
-
       if (event.key === 'Enter') {
         ;(event.target as HTMLInputElement).blur()
       }

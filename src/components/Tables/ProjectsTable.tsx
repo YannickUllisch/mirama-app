@@ -39,7 +39,7 @@ import {
   SelectGroup,
   SelectItem,
 } from '@/src/components/ui/tableSelect'
-import { Input } from '@src/components/Tables/tableInput'
+import { Input } from '@/src/components/ui/tableInput'
 import CalendarSelect from '../Select/CalendarSelect'
 import UserAvatar from '../UserAvatar'
 import { GeneralTableSelect } from '@src/components/Select/GeneralTableSelect'

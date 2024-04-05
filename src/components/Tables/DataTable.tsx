@@ -47,6 +47,7 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
     },
+    initialState: { pagination: { pageSize: 5 } },
   })
 
   return (
@@ -74,7 +75,7 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <Collapsible key={row.id} asChild>
+                <Collapsible key={`collapsible${row.id}`} asChild>
                   <>
                     <TableRow
                       key={row.id}

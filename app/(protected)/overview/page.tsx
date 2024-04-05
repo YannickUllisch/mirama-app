@@ -18,7 +18,6 @@ import {
 import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
-import { Input } from '@/src/components/Tables/tableInput'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
 import { useState } from 'react'
 import { GeneralTableSelect } from '@/src/components/Select/GeneralTableSelect'
@@ -26,6 +25,9 @@ import UserAvatar from '@/src/components/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
+import { Skeleton } from '@/src/components/ui/skeleton'
+import DataInput from '@/src/components/Inputs/TextInput'
+import TextInput from '@/src/components/Inputs/TextInput'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -61,6 +63,7 @@ const ProjectsPage = () => {
       cell: (row) => {
         return (
           <CollapsibleTrigger
+            key={`tasks${row.cell.id}`}
             className="dark:text-white h-3.5 w-3.5 cursor-pointer transition-transform transform-gpu"
             asChild
             onClick={() => toggleCollapse(row.getValue() as string)}
@@ -79,12 +82,11 @@ const ProjectsPage = () => {
       header: 'Name',
       cell: (row) => {
         return (
-          <Input
-            className="flex w-24"
-            placeholder={row.getValue() as string}
+          <TextInput
             defaultValue={row.getValue() as string}
-            onChange={() => console.log(row.row.getValue('id'))}
-            type="text"
+            id={row.row.original.id}
+            mutate={updateProjects}
+            key={`name${row.cell.id}`}
           />
         )
       },
@@ -101,7 +103,9 @@ const ProjectsPage = () => {
             }
           >
             {users?.map((user) => (
-              <SelectItem value={user.name ?? ''}>{user.name}</SelectItem>
+              <SelectItem value={user.name ?? ''}>
+                <UserAvatar username={user.name} />
+              </SelectItem>
             ))}
           </GeneralTableSelect>
         )
@@ -157,8 +161,9 @@ const ProjectsPage = () => {
       accessorKey: 'priority',
       header: 'Priority',
       cell: (row) => {
+        const type = row.getValue() as PriorityType
         return (
-          <GeneralTableSelect placeholder={row.getValue() as PriorityType}>
+          <GeneralTableSelect placeholder={type}>
             <SelectItem value={PriorityType.LOW}>{PriorityType.LOW}</SelectItem>
             <SelectItem value={PriorityType.MEDIUM}>
               {PriorityType.MEDIUM}
@@ -191,10 +196,11 @@ const ProjectsPage = () => {
       header: 'Budget',
       cell: (row) => {
         return (
-          <Input
-            className="flex max-w-20"
-            defaultValue={row.getValue() as number}
-            onlyNumbers
+          <DataInput
+            defaultValue={row.getValue() as string}
+            id={row.row.original.id}
+            mutate={updateProjects}
+            key={`name${row.cell.id}`}
           />
         )
       },
@@ -204,6 +210,7 @@ const ProjectsPage = () => {
       cell: (row) => {
         return (
           <Button
+            key={`nameInput_${row.row.index}`}
             variant={'ghost'}
             className="flex items-center"
             onClick={() => deleteRow(row.row.getValue('id'))}
@@ -250,20 +257,32 @@ const ProjectsPage = () => {
   return (
     <main className="flex items-center flex-col h-screen">
       <div className="w-full md:w-full lg:w-[1000px] ">
-        <h2 className="p-3 dark:text-white flex items-center">
-          <span>All Projects</span>
-          {isProjectsLoading && (
-            <Loader2 className="h-4 w-4 animate-spin ml-2" />
-          )}
-        </h2>
-        {projects ? <DataTable columns={columns} data={projects} /> : null}
-        <Button
-          variant="ghost"
-          className="p-1 rounded-lg w-8 h-8"
-          onClick={createRow}
-        >
-          <CirclePlus className=" transition-all text-emerald-700" />
-        </Button>
+        <div className="flex p-1">
+          <Button
+            variant="ghost"
+            className="p-1 rounded-lg w-10 h-10"
+            onClick={createRow}
+          >
+            <CirclePlus className=" transition-all text-green-600" />
+          </Button>
+          <h2 className="p-2 dark:text-white flex">
+            <span>All Projects</span>
+            {isProjectsLoading && (
+              <Loader2 className="h-4 w-4 animate-spin ml-2" />
+            )}
+          </h2>
+        </div>
+        {projects ? (
+          <DataTable columns={columns} data={projects} />
+        ) : (
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[125px] w-[900px] rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[900px]" />
+              <Skeleton className="h-4 w-[850px]" />
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )

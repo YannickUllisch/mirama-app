@@ -1,8 +1,9 @@
 import { db } from '@src/lib/db'
 import { NextResponse, type NextRequest } from 'next/server'
 import { auth } from '@/auth'
-import type { Project } from '@prisma/client'
+import { Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
+import { validateRequest } from '@/src/lib/utils'
 
 export const GET = auth(async (req) => {
   try {
@@ -67,29 +68,49 @@ export const PUT = auth(async (req) => {
   try {
     const session = req.auth
 
+    if (!session) {
+      return Response.json(
+        {},
+        { status: 401, statusText: 'You need to be Logged In' },
+      )
+    }
+    if (!session.user.role) {
+      return Response.json(
+        {},
+        { status: 401, statusText: 'You Need to be in Team' },
+      )
+    }
+    // if (
+    //   session.user.role.toString() !== Role.OWNER ||
+    //   session.user.role.toString() !== Role.OWNER
+    // ) {
+    //   return Response.json(
+    //     {},
+    //     { status: 403, statusText: 'Invalid Permission' },
+    //   )
+    // }
+
     const id = req.nextUrl.searchParams.get('id') as string
-    const project = (await req.json()) as Omit<
-      Project,
-      'id' | 'teamId' | 'managedBy'
-    >
+    const project = (await req.json()) as {
+      startDate?: Date
+      endDate?: Date
+      name?: string
+    }
+
     const response = await db.project.update({
       where: {
         id,
         teamId: session?.user.teamId,
       },
       data: {
-        budget: project.budget,
-        endDate: project.endDate,
-        managedById: project.managedById,
         name: project.name,
-        status: project.status,
+        endDate: project.endDate,
         startDate: project.startDate,
-        priority: project.priority,
       },
     })
 
     return new Response(JSON.stringify(response))
-  } catch (err) {
-    return new Response(JSON.stringify(err))
+  } catch (err: any) {
+    return new Response(err, { status: 401, statusText: 'Error Occurred!' })
   }
 })
