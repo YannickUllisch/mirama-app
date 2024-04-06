@@ -1,10 +1,6 @@
 import { db } from '@src/lib/db'
-import { NextResponse, type NextRequest } from 'next/server'
 import { auth } from '@/auth'
-import { Role, type Project } from '@prisma/client'
-import { DateTime } from 'luxon'
-import { validateRequest } from '@/src/lib/utils'
-
+import { Role, type PriorityType, type StatusType, User } from '@prisma/client'
 export const GET = auth(async (req) => {
   try {
     const session = req.auth
@@ -95,7 +91,12 @@ export const PUT = auth(async (req) => {
       startDate?: Date
       endDate?: Date
       name?: string
+      budget?: number
+      priority?: PriorityType
+      status?: StatusType
+      managedById?: string
     }
+    console.log(project)
 
     const response = await db.project.update({
       where: {
@@ -106,6 +107,10 @@ export const PUT = auth(async (req) => {
         name: project.name,
         endDate: project.endDate,
         startDate: project.startDate,
+        budget: project.budget,
+        priority: project.priority,
+        status: project.status,
+        managedById: project.managedById,
       },
     })
 

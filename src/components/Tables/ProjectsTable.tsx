@@ -42,7 +42,7 @@ import {
 import { Input } from '@/src/components/ui/tableInput'
 import CalendarSelect from '../Select/CalendarSelect'
 import UserAvatar from '../UserAvatar'
-import { GeneralTableSelect } from '@src/components/Select/GeneralTableSelect'
+import { GeneralTableSelect } from '@/src/components/Select/TableSelect'
 import { ColumnDef } from '@tanstack/react-table'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'

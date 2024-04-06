@@ -31,13 +31,10 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
   const handleSelect = (date: Date) => {
     setPopupOpen(false)
     try {
-      if (dateType === 'start') {
-        project.startDate = date
-      } else if (dateType === 'end') {
-        project.endDate = date
-      }
+      const update =
+        dateType === 'start' ? { startDate: date } : { endDate: date }
 
-      toast.promise(api.put(`projekt?id=${project.id}`, project), {
+      toast.promise(api.put(`projekt?id=${project.id}`, update), {
         loading: 'Updating Date..',
         success: 'Date Successfully Updated!',
         error: (err) => err.message ?? err,

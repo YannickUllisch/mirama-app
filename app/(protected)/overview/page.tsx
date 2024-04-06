@@ -20,7 +20,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
 import { useState } from 'react'
-import { GeneralTableSelect } from '@/src/components/Select/GeneralTableSelect'
+import { GeneralTableSelect } from '@/src/components/Select/TableSelect'
 import UserAvatar from '@/src/components/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
@@ -28,6 +28,8 @@ import { toast } from 'sonner'
 import { Skeleton } from '@/src/components/ui/skeleton'
 import DataInput from '@/src/components/Inputs/TextInput'
 import TextInput from '@/src/components/Inputs/TextInput'
+import NumberInput from '@/src/components/Inputs/NumberInput'
+import { UserSelect } from '@/src/components/Select/UserSelect'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -80,6 +82,7 @@ const ProjectsPage = () => {
     {
       accessorKey: 'name',
       header: 'Name',
+      enableResizing: true,
       cell: (row) => {
         return (
           <TextInput
@@ -94,20 +97,23 @@ const ProjectsPage = () => {
     {
       accessorKey: 'managedBy',
       header: 'Managed By',
+
       cell: (row) => {
         const managedBy = row.cell.getValue() as User | undefined
         return (
-          <GeneralTableSelect
+          <UserSelect
+            id={row.row.original.id}
+            mutate={updateProjects}
             placeholder={
               managedBy ? <UserAvatar username={managedBy.name} /> : ''
             }
           >
             {users?.map((user) => (
-              <SelectItem value={user.name ?? ''}>
+              <SelectItem value={user.id}>
                 <UserAvatar username={user.name} />
               </SelectItem>
             ))}
-          </GeneralTableSelect>
+          </UserSelect>
         )
       },
     },
@@ -163,7 +169,12 @@ const ProjectsPage = () => {
       cell: (row) => {
         const type = row.getValue() as PriorityType
         return (
-          <GeneralTableSelect placeholder={type}>
+          <GeneralTableSelect
+            id={row.row.original.id}
+            mutate={updateProjects}
+            placeholder={type}
+            priority
+          >
             <SelectItem value={PriorityType.LOW}>{PriorityType.LOW}</SelectItem>
             <SelectItem value={PriorityType.MEDIUM}>
               {PriorityType.MEDIUM}
@@ -180,7 +191,11 @@ const ProjectsPage = () => {
       header: 'Status',
       cell: (row) => {
         return (
-          <GeneralTableSelect placeholder={row.getValue() as StatusType}>
+          <GeneralTableSelect
+            id={row.row.original.id}
+            mutate={updateProjects}
+            placeholder={row.getValue() as StatusType}
+          >
             <SelectItem value={StatusType.STARTING}>
               {StatusType.STARTING}
             </SelectItem>
@@ -196,8 +211,8 @@ const ProjectsPage = () => {
       header: 'Budget',
       cell: (row) => {
         return (
-          <DataInput
-            defaultValue={row.getValue() as string}
+          <NumberInput
+            defaultValue={row.getValue() as number}
             id={row.row.original.id}
             mutate={updateProjects}
             key={`name${row.cell.id}`}

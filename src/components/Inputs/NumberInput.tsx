@@ -1,5 +1,5 @@
 import { api } from '@/src/lib/utils'
-import React, { type FC } from 'react'
+import React, { useState, type FC } from 'react'
 import { toast } from 'sonner'
 import { Input } from '@/src/components/ui/tableInput'
 
@@ -9,12 +9,12 @@ interface NumberInputProps {
   mutate(): any
 }
 
-const TextInput: FC<NumberInputProps> = ({ id, defaultValue, mutate }) => {
+const NumberInput: FC<NumberInputProps> = ({ id, defaultValue, mutate }) => {
   // Cannot save Input into useState, hence we store it in a variable
-  let updatedInput = 0
+  const [budget, setBudget] = useState(defaultValue)
 
   const processInput = (id: string, newValue: number) => {
-    if (/^[0-9]+$/.test(newValue.toString())) {
+    if (!/^[0-9]+$/.test(newValue.toString())) {
       toast.error('Given input includes non-allowed characters.')
       return
     }
@@ -37,14 +37,11 @@ const TextInput: FC<NumberInputProps> = ({ id, defaultValue, mutate }) => {
     <Input
       className="flex w-24"
       defaultValue={defaultValue}
-      // biome-ignore lint/suspicious/noAssignInExpressions: <target value is not assignable to use state, input crashes.>
-
-      // Missing parse from string to Int
-      onChangeCapture={(e) => (updatedInput = e.currentTarget.value)}
-      type="number"
-      onBlur={() => processInput(id, updatedInput)}
+      onChangeCapture={(e) => setBudget(+e.currentTarget.value)}
+      type="text"
+      onBlur={() => processInput(id, budget)}
     />
   )
 }
 
-export default TextInput
+export default NumberInput
