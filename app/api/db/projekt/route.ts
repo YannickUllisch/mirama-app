@@ -1,6 +1,8 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
-import { Role, type PriorityType, type StatusType, User } from '@prisma/client'
+import { Role, PriorityType, StatusType, User } from '@prisma/client'
+import { DateTime } from 'luxon'
+
 export const GET = auth(async (req) => {
   try {
     const session = req.auth
@@ -29,14 +31,13 @@ export const POST = auth(async (req) => {
     await db.project.create({
       data: {
         name: 'New Project',
-        status: 'STARTING',
+        status: StatusType.STARTING,
         teamId: session?.user.teamId ?? 'undefined',
-        priority: 'LOW',
+        priority: PriorityType.LOW,
         tasks: undefined,
       },
     })
-
-    return new Response(JSON.stringify('Successfully Created Project!'))
+    return new Response('Project Created')
   } catch (err) {
     return new Response(JSON.stringify(err))
   }
@@ -96,7 +97,6 @@ export const PUT = auth(async (req) => {
       status?: StatusType
       managedById?: string
     }
-    console.log(project)
 
     const response = await db.project.update({
       where: {

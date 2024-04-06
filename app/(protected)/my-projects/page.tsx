@@ -1,10 +1,10 @@
-const OverviewPage = () => {
+const MyProjectsPage = () => {
   return (
     <main className="flex items-center flex-col h-screen mt-2">
       <div className="w-11/12 h-5/6 shadow-sm bg-white p-10 rounded-xl ">
         <div className="flex flex-col">
           <span style={{ fontSize: 20 }} className="font-bold">
-            Overview
+            My Projects
           </span>
         </div>
       </div>
@@ -12,4 +12,4 @@ const OverviewPage = () => {
   )
 }
 
-export default OverviewPage
+export default MyProjectsPage

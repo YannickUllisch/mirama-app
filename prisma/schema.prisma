@@ -56,7 +56,6 @@ model User {
 
   password      String?
   role          Role               @default(USER)
-  teamRole      Role?
 
   // These are needed for overview of personal projets and tasks a user is assigned to.
   projects      Project[]

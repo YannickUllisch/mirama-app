@@ -1,9 +1,12 @@
 const GanttPage = () => {
   return (
-    <main>
-      <div className="grid place-items-center h-screen dark:text-white">
-        {' '}
-        gantt
+    <main className="flex items-center flex-col h-screen mt-2">
+      <div className="w-11/12 h-5/6 shadow-sm bg-white p-10 rounded-xl ">
+        <div className="flex flex-col">
+          <span style={{ fontSize: 20 }} className="font-bold">
+            Gantt Chart
+          </span>
+        </div>
       </div>
     </main>
   )

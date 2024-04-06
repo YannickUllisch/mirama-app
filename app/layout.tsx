@@ -6,7 +6,7 @@ import { SWRConfig } from 'swr'
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className="bg-white dark:bg-black">
+      <body className="bg-neutral-100 dark:bg-neutral-950">
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main>{children}</main>
