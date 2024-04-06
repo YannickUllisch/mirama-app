@@ -82,7 +82,6 @@ const ProjectsPage = () => {
     {
       accessorKey: 'name',
       header: 'Name',
-      enableResizing: true,
       cell: (row) => {
         return (
           <TextInput
