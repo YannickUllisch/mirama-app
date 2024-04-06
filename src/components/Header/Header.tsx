@@ -20,10 +20,7 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
           className="p-1 rounded-lg w-8 h-8"
           onClick={toggleSidebar}
         >
-          <AlignLeft
-            strokeWidth={1.3}
-            className='rotate-0 scale-100 transition-all"'
-          />
+          <AlignLeft strokeWidth={1.3} className="transition-all" />
         </Button>
       </div>
 

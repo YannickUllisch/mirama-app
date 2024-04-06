@@ -45,11 +45,7 @@ const ProjectsPage = () => {
     }))
   }
 
-  const {
-    data: projects,
-    isLoading: isProjectsLoading,
-    mutate: updateProjects,
-  } = useSWR<
+  const { data: projects, mutate: updateProjects } = useSWR<
     (Project & {
       managedBy: User
     })[]
@@ -268,40 +264,33 @@ const ProjectsPage = () => {
   }
 
   return (
-    <main className="flex items-center flex-col h-screen mt-2">
-      <div className="w-11/12 h-5/6 shadow-sm bg-white p-10 rounded-xl ">
-        <div className="flex flex-col">
-          <span style={{ fontSize: 20 }} className="font-bold">
-            All Projects
-          </span>
-          <div className="flex p-1">
-            <Button
-              variant="ghost"
-              className="p-1 rounded-lg w-10 h-10"
-              onClick={createRow}
-            >
-              <CirclePlus className=" transition-all text-green-600" />
-            </Button>
-            <h2 className="p-2 dark:text-white flex">
-              {isProjectsLoading && (
-                <Loader2 className="h-4 w-4 animate-spin ml-2" />
-              )}
-            </h2>
+    <>
+      <div className="flex flex-col">
+        <span style={{ fontSize: 20 }} className="font-bold">
+          All Projects
+        </span>
+        <div className="flex p-1">
+          <Button
+            variant="ghost"
+            className="p-1 rounded-lg w-10 h-10"
+            onClick={createRow}
+          >
+            <CirclePlus className=" transition-all text-green-600" />
+          </Button>
+        </div>
+      </div>
+      {projects ? (
+        <DataTable columns={columns} data={projects} />
+      ) : (
+        <div className="flex flex-col space-y-3">
+          <Skeleton className="h-[125px] flex rounded-xl" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 flex" />
+            <Skeleton className="h-4 flex" />
           </div>
         </div>
-        {projects ? (
-          <DataTable columns={columns} data={projects} />
-        ) : (
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[125px] w-[900px] rounded-xl" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[900px]" />
-              <Skeleton className="h-4 w-[850px]" />
-            </div>
-          </div>
-        )}
-      </div>
-    </main>
+      )}
+    </>
   )
 }
 
