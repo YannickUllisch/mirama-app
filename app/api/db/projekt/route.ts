@@ -1,7 +1,6 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
-import { Role, PriorityType, StatusType, User } from '@prisma/client'
-import { DateTime } from 'luxon'
+import { Role, PriorityType, StatusType } from '@prisma/client'
 
 export const GET = auth(async (req) => {
   try {

@@ -8,7 +8,7 @@ import {
   Loader2,
   Trash2,
 } from 'lucide-react'
-import { api, fetcher } from '@/src/lib/utils'
+import { api, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
 import {
   PriorityType,
   StatusType,
@@ -20,7 +20,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
 import { useState } from 'react'
-import { GeneralTableSelect } from '@/src/components/Select/TableSelect'
+import { ProjectTableSelect } from '@/src/components/Select/ProjectsTableSelect'
 import UserAvatar from '@/src/components/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
@@ -29,6 +29,8 @@ import { Skeleton } from '@/src/components/ui/skeleton'
 import TextInput from '@/src/components/Inputs/TextInput'
 import NumberInput from '@/src/components/Inputs/NumberInput'
 import { UserSelect } from '@/src/components/Select/UserSelect'
+import { TableCell, TableFooter, TableRow } from '@/src/components/ui/table'
+import { useSession } from 'next-auth/react'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -37,6 +39,8 @@ interface CollapsedRows {
 const ProjectsPage = () => {
   // States
   const [collapsedRows, setCollapsedRows] = useState<CollapsedRows>({})
+
+  const { data: session } = useSession()
 
   const toggleCollapse = (projectId: string) => {
     setCollapsedRows((prevState) => ({
@@ -161,23 +165,28 @@ const ProjectsPage = () => {
       accessorKey: 'priority',
       header: 'Priority',
       cell: (row) => {
-        const type = row.getValue() as PriorityType
-        return (
-          <GeneralTableSelect
-            id={row.row.original.id}
-            mutate={updateProjects}
-            placeholder={type}
-            priority
-          >
-            <SelectItem value={PriorityType.LOW}>{PriorityType.LOW}</SelectItem>
-            <SelectItem value={PriorityType.MEDIUM}>
-              {PriorityType.MEDIUM}
-            </SelectItem>
-            <SelectItem value={PriorityType.HIGH}>
-              {PriorityType.HIGH}
-            </SelectItem>
-          </GeneralTableSelect>
-        )
+        if (isTeamAdminOrOwner(session)) {
+          const type = row.getValue() as PriorityType
+          return (
+            <ProjectTableSelect
+              id={row.row.original.id}
+              mutate={updateProjects}
+              placeholder={type}
+              priority
+            >
+              <SelectItem value={PriorityType.LOW}>
+                {PriorityType.LOW}
+              </SelectItem>
+              <SelectItem value={PriorityType.MEDIUM}>
+                {PriorityType.MEDIUM}
+              </SelectItem>
+              <SelectItem value={PriorityType.HIGH}>
+                {PriorityType.HIGH}
+              </SelectItem>
+            </ProjectTableSelect>
+          )
+        }
+        return row.getValue()
       },
     },
     {
@@ -185,7 +194,7 @@ const ProjectsPage = () => {
       header: 'Status',
       cell: (row) => {
         return (
-          <GeneralTableSelect
+          <ProjectTableSelect
             id={row.row.original.id}
             mutate={updateProjects}
             placeholder={row.getValue() as StatusType}
@@ -196,7 +205,7 @@ const ProjectsPage = () => {
             <SelectItem value={StatusType.FINISHED}>
               {StatusType.FINISHED}
             </SelectItem>
-          </GeneralTableSelect>
+          </ProjectTableSelect>
         )
       },
     },
@@ -280,7 +289,30 @@ const ProjectsPage = () => {
         </div>
       </div>
       {projects ? (
-        <DataTable columns={columns} data={projects} />
+        <DataTable
+          columns={columns}
+          data={projects}
+          pagination
+          footer={
+            <TableFooter>
+              <TableRow className="dark:bg-neutral-900">
+                <TableCell
+                  className="dark:text-white cursor-default"
+                  colSpan={7}
+                >
+                  Total
+                </TableCell>
+                <TableCell
+                  className="dark:text-white cursor-default"
+                  colSpan={2}
+                >
+                  Total:{' '}
+                  {projects.reduce((acc, curr) => acc + (curr.budget || 0), 0)}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          }
+        />
       ) : (
         <div className="flex flex-col space-y-3">
           <Skeleton className="h-[125px] flex rounded-xl" />

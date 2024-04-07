@@ -6,36 +6,34 @@ import {
   SelectValue,
 } from '@/src/components/ui/tableSelect'
 import { api } from '@/src/lib/utils'
-import type { PriorityType, StatusType } from '@prisma/client'
-import { useState, type FC, type PropsWithChildren, useEffect } from 'react'
+import type { Role } from '@prisma/client'
+import { useSession } from 'next-auth/react'
+import type { FC, PropsWithChildren } from 'react'
 import { toast } from 'sonner'
 
-interface GeneralSelectProps {
+interface RoleSelectProps {
   placeholder: string | React.ReactNode
   mutate(): any
   id: string
-  priority?: boolean
-  status?: boolean
 }
 
-export const GeneralTableSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
+export const RoleSelect: FC<PropsWithChildren<RoleSelectProps>> = ({
   children,
   placeholder,
-  priority,
   mutate,
   id,
 }) => {
+  const { update } = useSession()
   const processSelect = (val: string) => {
     try {
-      const update = priority ? { priority: val } : { status: val }
-
-      toast.promise(api.put(`projekt?id=${id}`, update), {
-        loading: 'Upadating Project..',
+      toast.promise(api.put(`team/member?id=${id}`, { role: val as Role }), {
+        loading: 'Upadating Role..',
         error: (err) => err.response.statusText ?? err,
         success: () => {
           mutate()
+          update()
 
-          return 'Project Successfully Updated!'
+          return 'Role Updated!'
         },
       })
     } catch (error: any) {

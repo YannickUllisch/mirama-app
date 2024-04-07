@@ -29,11 +29,15 @@ import { Button } from '@src/components/ui/button'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  pagination?: boolean
+  footer?: React.JSX.Element
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pagination,
+  footer,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -107,36 +111,29 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-          <TableFooter>
-            <TableRow className="dark:bg-neutral-900">
-              <TableCell className="dark:text-white cursor-default" colSpan={7}>
-                Total
-              </TableCell>
-              <TableCell className="dark:text-white cursor-default" colSpan={2}>
-                Total: xx
-              </TableCell>
-            </TableRow>
-          </TableFooter>
+          {footer}
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      {pagination ? (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }

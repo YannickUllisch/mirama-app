@@ -100,7 +100,7 @@ const Sidebar = () => {
         <Command style={{ overflow: 'visible' }}>
           <CommandList style={{ overflow: 'visible' }}>
             {menuList.map((group) => (
-              <CommandGroup heading={group.group}>
+              <CommandGroup key={group.group} heading={group.group}>
                 {group.items.map((menu) => (
                   <a
                     key={menu.id}

@@ -2,7 +2,9 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import axios from 'axios'
 import type { Session } from 'next-auth'
-import { Role } from '@prisma/client'
+import { Role, type User } from '@prisma/client'
+import { getUserById } from './user'
+import { db } from './db'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -75,4 +77,23 @@ export const validateRequest = async (session: Session | null) => {
   }
 
   return null
+}
+
+/**
+ * This functions returns a boolean indicating if a specific user ID has Admin or Owner permissionss.
+ * @param id a unique user ID
+ * @param teamId the teamId for which the role is valid.
+ * @returns boolean whether or not user is Admin or Owner
+ */
+export const isTeamAdminOrOwner = (session: Session | null) => {
+  if (!session) {
+    return false
+  }
+  if (session.user.id && session.user.teamId && session.user.role) {
+    if (session.user.role === Role.ADMIN || session.user.role === Role.OWNER) {
+      return true
+    }
+  }
+
+  return false
 }
