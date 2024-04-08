@@ -61,7 +61,7 @@ const TeamPage = () => {
             key={`nameInput_${row.row.index}`}
             variant={'ghost'}
             className="flex items-center"
-            onClick={() => deleteRow(row.getValue() as string)}
+            onClick={() => deleteMember(row.getValue() as string)}
           >
             <Trash2 className="w-4 h-4 text-rose-600" />
           </Button>
@@ -69,7 +69,8 @@ const TeamPage = () => {
       },
     },
   ]
-  const deleteRow = (id: string) => {
+
+  const deleteMember = (id: string) => {
     try {
       toast.promise(api.delete(`team/member?id=${id}`), {
         loading: 'Deleting Project..',
@@ -90,17 +91,19 @@ const TeamPage = () => {
       <span style={{ fontSize: 20 }} className="font-bold">
         Team Page
       </span>
-      {teamMembers ? (
-        <DataTable columns={columns} data={teamMembers} />
-      ) : (
-        <div className="flex flex-col space-y-3">
-          <Skeleton className="h-[125px] flex rounded-xl" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 flex" />
-            <Skeleton className="h-4 flex" />
+      <div className="mt-10">
+        {teamMembers ? (
+          <DataTable columns={columns} data={teamMembers} />
+        ) : (
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[125px] flex rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 flex" />
+              <Skeleton className="h-4 flex" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

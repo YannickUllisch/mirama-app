@@ -24,7 +24,7 @@ const PublicHeader = () => {
   }, [theme])
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-black sm:flex sm:justify-between py-1 px-4 border-b dark:border-neutral-800">
+    <header className="sticky top-0 z-50 sm:flex sm:justify-between py-1 px-4 border-b dark:border-neutral-800">
       <Container>
         <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">

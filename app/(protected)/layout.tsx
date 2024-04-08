@@ -19,7 +19,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
               }
             />
             <main className="flex items-center flex-col h-screen mt-2">
-              <div className="w-11/12 h-5/6 shadow-sm bg-white dark:bg-neutral-950 p-10 rounded-xl ">
+              <div className="w-11/12 h-5/6 shadow-sm bg-white dark:bg-neutral-900/50 p-10 rounded-xl ">
                 {children}
               </div>
             </main>

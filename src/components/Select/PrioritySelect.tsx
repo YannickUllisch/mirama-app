@@ -9,28 +9,27 @@ import { api } from '@/src/lib/utils'
 import type { FC, PropsWithChildren } from 'react'
 import { toast } from 'sonner'
 
-interface ProjectTableSelectProps {
+interface PrioritySelectProps {
   placeholder: string | React.ReactNode
   mutate(): any
   id: string
-  priority?: boolean
-  status?: boolean
 }
 
-export const ProjectTableSelect: FC<
-  PropsWithChildren<ProjectTableSelectProps>
-> = ({ children, placeholder, priority, mutate, id }) => {
+export const PrioritySelect: FC<PropsWithChildren<PrioritySelectProps>> = ({
+  children,
+  placeholder,
+  mutate,
+  id,
+}) => {
   const processSelect = (val: string) => {
     try {
-      const update = priority ? { priority: val } : { status: val }
-
-      toast.promise(api.put(`projekt?id=${id}`, update), {
+      toast.promise(api.put(`projekt?id=${id}`, { priority: val }), {
         loading: 'Upadating Project..',
         error: (err) => err.response.statusText ?? err,
         success: () => {
           mutate()
 
-          return 'Project Successfully Updated!'
+          return 'Priority Successfully Updated!'
         },
       })
     } catch (error: any) {

@@ -90,15 +90,15 @@ const Sidebar = () => {
   ]
 
   return (
-    <aside className="flex flex-col min-w-[300] shadow-sm h-screen bg-white dark:bg-neutral-950 rounded-2xl">
+    <aside className="flex flex-col min-w-[300] shadow-sm h-screen bg-white dark:bg-neutral-900/50 rounded-2xl">
       <nav className="p-5 pb-2 flex justify-between items-center">
         <Link href={DEFAULT_LOGIN_REDIRECT}>
           <Image height={40} src={logo} alt={'Logo'} />
         </Link>
       </nav>
-      <div className="flex-1 p-2">
-        <Command style={{ overflow: 'visible' }}>
-          <CommandList style={{ overflow: 'visible' }}>
+      <div className="flex-1 p-2 ">
+        <Command>
+          <CommandList>
             {menuList.map((group) => (
               <CommandGroup key={group.group} heading={group.group}>
                 {group.items.map((menu) => (
@@ -109,7 +109,7 @@ const Sidebar = () => {
                   >
                     <CommandItem
                       style={{ fontSize: 13 }}
-                      className={`flex gap-3 cursor-pointer relastive hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
+                      className={`flex gap-3 cursor-pointerrelastive hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
                         menu.href === currPath
                           ? 'bg-neutral-100 dark:bg-neutral-800'
                           : ''

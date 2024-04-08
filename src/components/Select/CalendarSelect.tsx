@@ -45,7 +45,7 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
   }
 
   return (
-    <div className="flex items-center cursor-default justify-left">
+    <div className="flex items-center cursor-default justify-center mr-8">
       {date
         ? DateTime.fromISO(new Date(date).toISOString()).toFormat('dd.MM.yyyy')
         : ''}
@@ -62,7 +62,7 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
             selected={date}
             onSelect={setDate}
             onDayFocus={handleSelect}
-            className="rounded-md border shadow"
+            className="rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
           />
         </PopoverContent>
       </Popover>

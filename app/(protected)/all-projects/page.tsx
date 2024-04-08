@@ -2,13 +2,13 @@
 import { Button } from '@/src/components/ui/button'
 import {
   ArrowUpDown,
+  CalendarDays,
   ChevronDown,
   ChevronUp,
   CirclePlus,
-  Loader2,
   Trash2,
 } from 'lucide-react'
-import { api, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
+import { api, capitalize, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
 import {
   PriorityType,
   StatusType,
@@ -20,7 +20,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
 import { useState } from 'react'
-import { ProjectTableSelect } from '@/src/components/Select/ProjectsTableSelect'
+import { StatusSelect } from '@/src/components/Select/StatusSelect'
 import UserAvatar from '@/src/components/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
@@ -31,6 +31,9 @@ import NumberInput from '@/src/components/Inputs/NumberInput'
 import { UserSelect } from '@/src/components/Select/UserSelect'
 import { TableCell, TableFooter, TableRow } from '@/src/components/ui/table'
 import { useSession } from 'next-auth/react'
+import { NextSeo } from 'next-seo'
+import { DateTime } from 'luxon'
+import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -98,21 +101,24 @@ const ProjectsPage = () => {
 
       cell: (row) => {
         const managedBy = row.cell.getValue() as User | undefined
-        return (
-          <UserSelect
-            id={row.row.original.id}
-            mutate={updateProjects}
-            placeholder={
-              managedBy ? <UserAvatar username={managedBy.name} /> : ''
-            }
-          >
-            {users?.map((user) => (
-              <SelectItem value={user.id}>
-                <UserAvatar username={user.name} />
-              </SelectItem>
-            ))}
-          </UserSelect>
-        )
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <UserSelect
+              id={row.row.original.id}
+              mutate={updateProjects}
+              placeholder={
+                managedBy ? <UserAvatar username={managedBy.name} /> : ''
+              }
+            >
+              {users?.map((user) => (
+                <SelectItem value={user.id}>
+                  <UserAvatar username={user.name} />
+                </SelectItem>
+              ))}
+            </UserSelect>
+          )
+        }
+        return managedBy ? <UserAvatar username={managedBy.name} /> : ''
       },
     },
     {
@@ -120,21 +126,36 @@ const ProjectsPage = () => {
       header: ({ column }) => {
         return (
           <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            variant="default"
+            className="bg-inherit hover:bg-inherit shadow-none text-neutral-500  dark:text-neutral-400 dark:hover:bg-inherit cursor-text"
           >
             Start Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown
+              className="ml-2 h-4 w-4 cursor-pointer hover:text-neutral-700  dark:hover:text-neutral-200"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
           </Button>
         )
       },
       cell: (row) => {
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <CalendarSelect
+              startingDate={row.getValue() as Date}
+              project={row.row.original}
+              dateType="start"
+            />
+          )
+        }
         return (
-          <CalendarSelect
-            startingDate={row.getValue() as Date}
-            project={row.row.original}
-            dateType="start"
-          />
+          <div className="flex items-center cursor-default justify-center mr-8">
+            {DateTime.fromISO(
+              new Date(row.getValue() as Date).toISOString(),
+            ).toFormat('dd.MM.yyyy')}
+            <CalendarDays className="h-4 w-4 ml-1" />
+          </div>
         )
       },
     },
@@ -143,21 +164,36 @@ const ProjectsPage = () => {
       header: ({ column }) => {
         return (
           <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            variant="default"
+            className="bg-inherit hover:bg-inherit shadow-none text-neutral-500  dark:text-neutral-400 dark:hover:bg-inherit cursor-text"
           >
             End Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown
+              className="ml-2 h-4 w-4 cursor-pointer hover:text-neutral-700  dark:hover:text-neutral-200"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            />
           </Button>
         )
       },
       cell: (row) => {
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <CalendarSelect
+              startingDate={row.getValue() as Date}
+              project={row.row.original}
+              dateType="end"
+            />
+          )
+        }
         return (
-          <CalendarSelect
-            startingDate={row.getValue() as Date}
-            project={row.row.original}
-            dateType="end"
-          />
+          <div className="flex items-center cursor-default justify-center mr-8">
+            {DateTime.fromISO(
+              new Date(row.getValue() as Date).toISOString(),
+            ).toFormat('dd.MM.yyyy')}
+            <CalendarDays className="h-4 w-4 ml-1" />
+          </div>
         )
       },
     },
@@ -166,24 +202,24 @@ const ProjectsPage = () => {
       header: 'Priority',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
-          const type = row.getValue() as PriorityType
           return (
-            <ProjectTableSelect
+            <PrioritySelect
               id={row.row.original.id}
               mutate={updateProjects}
-              placeholder={type}
-              priority
+              placeholder={capitalize(
+                (row.getValue() as PriorityType).toString(),
+              )}
             >
               <SelectItem value={PriorityType.LOW}>
-                {PriorityType.LOW}
+                {capitalize(PriorityType.LOW.toString())}
               </SelectItem>
               <SelectItem value={PriorityType.MEDIUM}>
-                {PriorityType.MEDIUM}
+                {capitalize(PriorityType.MEDIUM.toString())}
               </SelectItem>
               <SelectItem value={PriorityType.HIGH}>
-                {PriorityType.HIGH}
+                {capitalize(PriorityType.HIGH.toString())}
               </SelectItem>
-            </ProjectTableSelect>
+            </PrioritySelect>
           )
         }
         return row.getValue()
@@ -193,49 +229,60 @@ const ProjectsPage = () => {
       accessorKey: 'status',
       header: 'Status',
       cell: (row) => {
-        return (
-          <ProjectTableSelect
-            id={row.row.original.id}
-            mutate={updateProjects}
-            placeholder={row.getValue() as StatusType}
-          >
-            <SelectItem value={StatusType.STARTING}>
-              {StatusType.STARTING}
-            </SelectItem>
-            <SelectItem value={StatusType.FINISHED}>
-              {StatusType.FINISHED}
-            </SelectItem>
-          </ProjectTableSelect>
-        )
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <StatusSelect
+              id={row.row.original.id}
+              mutate={updateProjects}
+              placeholder={capitalize(
+                (row.getValue() as StatusType).toString(),
+              )}
+            >
+              <SelectItem value={StatusType.STARTING}>
+                {capitalize(StatusType.STARTING.toString())}
+              </SelectItem>
+              <SelectItem value={StatusType.FINISHED}>
+                {capitalize(StatusType.FINISHED.toString())}
+              </SelectItem>
+            </StatusSelect>
+          )
+        }
+        return row.getValue()
       },
     },
     {
       accessorKey: 'budget',
       header: 'Budget',
       cell: (row) => {
-        return (
-          <NumberInput
-            defaultValue={row.getValue() as number}
-            id={row.row.original.id}
-            mutate={updateProjects}
-            key={`name${row.cell.id}`}
-          />
-        )
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <NumberInput
+              defaultValue={row.getValue() as number}
+              id={row.row.original.id}
+              mutate={updateProjects}
+              key={`name${row.cell.id}`}
+            />
+          )
+        }
+        return row.getValue()
       },
     },
     {
       header: 'Actions',
       cell: (row) => {
-        return (
-          <Button
-            key={`nameInput_${row.row.index}`}
-            variant={'ghost'}
-            className="flex items-center"
-            onClick={() => deleteRow(row.row.getValue('id'))}
-          >
-            <Trash2 className="w-4 h-4 text-rose-600" />
-          </Button>
-        )
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <Button
+              key={`nameInput_${row.row.index}`}
+              variant={'ghost'}
+              className="flex items-center"
+              onClick={() => deleteRow(row.row.getValue('id'))}
+            >
+              <Trash2 className="w-4 h-4 text-rose-600" />
+            </Button>
+          )
+        }
+        return null
       },
     },
   ]
@@ -274,6 +321,11 @@ const ProjectsPage = () => {
 
   return (
     <>
+      <NextSeo
+        title={'All Projects'}
+        description={'Overview of all Projects'}
+        noindex
+      />
       <div className="flex flex-col">
         <span style={{ fontSize: 20 }} className="font-bold">
           All Projects

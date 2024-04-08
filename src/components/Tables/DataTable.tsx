@@ -25,6 +25,7 @@ import {
 } from '@src/components/ui/collapsible'
 import CollapsibleTasks from './CollapsibleTasks'
 import { Button } from '@src/components/ui/button'
+import { Box, Loader, Tally1 } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -52,11 +53,17 @@ export function DataTable<TData, TValue>({
       sorting,
     },
     initialState: { pagination: { pageSize: 8 } },
+    defaultColumn: {
+      size: 150,
+      minSize: 10,
+      maxSize: 300,
+    },
+    columnResizeMode: 'onChange',
   })
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-md dark:border-neutral-800 border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -119,6 +126,7 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
+            className="dark:bg-inherit"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -127,6 +135,7 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
+            className="dark:bg-inherit"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
