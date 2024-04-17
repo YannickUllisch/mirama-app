@@ -13,6 +13,9 @@ const TextInput: FC<TextInputProps> = ({ id, defaultValue, mutate }) => {
   const [name, setName] = useState(defaultValue)
 
   const processInput = (id: string, newValue: string) => {
+    if (defaultValue === newValue) {
+      return
+    }
     if (!/[a-zA-Z0-9]+$/.test(newValue)) {
       toast.error('Given input includes non-allowed characters.')
       return

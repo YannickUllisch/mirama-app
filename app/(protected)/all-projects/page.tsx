@@ -34,6 +34,7 @@ import { useSession } from 'next-auth/react'
 import { NextSeo } from 'next-seo'
 import { DateTime } from 'luxon'
 import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
+import TaskDialog from '@/src/components/Dialogs/TaskDialog'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -338,6 +339,7 @@ const ProjectsPage = () => {
           >
             <CirclePlus className=" transition-all text-green-600" />
           </Button>
+          <TaskDialog />
         </div>
       </div>
       {projects ? (

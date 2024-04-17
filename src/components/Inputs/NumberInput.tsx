@@ -14,6 +14,9 @@ const NumberInput: FC<NumberInputProps> = ({ id, defaultValue, mutate }) => {
   const [budget, setBudget] = useState(defaultValue)
 
   const processInput = (id: string, newValue: number) => {
+    if (defaultValue === newValue) {
+      return
+    }
     if (!/^[0-9]+$/.test(newValue.toString())) {
       toast.error('Given input includes non-allowed characters.')
       return

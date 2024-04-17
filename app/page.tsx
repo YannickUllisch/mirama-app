@@ -12,7 +12,7 @@ const HomePage = () => {
       />
       <PublicHeader />
 
-      <main className="flex items-center flex-col h-screen">MIRAMA</main>
+      <main className="flex items-center flex-col h-screen">...</main>
     </>
   )
 }

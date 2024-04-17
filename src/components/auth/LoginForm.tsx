@@ -46,7 +46,7 @@ const LoginForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-4">
+        <div className="space-y-3">
           <FormField
             control={form.control}
             name="email"
@@ -57,7 +57,7 @@ const LoginForm = () => {
                   <Input
                     {...field}
                     disabled={isPending}
-                    placeholder="Email@example.com"
+                    placeholder="email@example.com"
                     type="email"
                   />
                 </FormControl>
@@ -84,7 +84,7 @@ const LoginForm = () => {
             )}
           />
           <Button asChild variant="link">
-            <Link href={'/'} className="ml-40 ">
+            <Link href={'/'} className="ml-40" style={{ fontSize: 11 }}>
               Forgot Password?
             </Link>
           </Button>

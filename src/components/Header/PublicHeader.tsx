@@ -28,7 +28,7 @@ const PublicHeader = () => {
       <Container>
         <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">
-            <Link href={DEFAULT_LOGIN_REDIRECT} className="ml-4 lg:ml-0">
+            <Link href={'/'} className="ml-4 lg:ml-0">
               <Image height={30} src={logo} alt={'Logo'} />
             </Link>
           </div>
@@ -44,7 +44,9 @@ const PublicHeader = () => {
               <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
             <Link href={'/auth/login'} className="mr-4">
-              <Button variant={'ghost'}>Sign In</Button>
+              <Button variant={'ghost'} className="hover:bg-neutral-200">
+                Sign In
+              </Button>
             </Link>
             <Link href={'/auth/register'}>
               <Button
