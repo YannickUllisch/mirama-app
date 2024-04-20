@@ -11,7 +11,11 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <SessionProvider>
         <div className="flex  h-full items-start justify-start">
-          {isSidebarExpanded ? <Sidebar /> : null}
+          {isSidebarExpanded ? (
+            <div>
+              <Sidebar />
+            </div>
+          ) : null}
           <div className="w-full">
             <Header
               toggleSidebar={() =>

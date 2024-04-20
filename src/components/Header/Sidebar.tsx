@@ -63,12 +63,6 @@ const Sidebar = () => {
           icon: <FolderOpen strokeWidth={1.5} className="w-7 h-7" />,
         },
         {
-          id: 3,
-          href: '/my-projects',
-          label: 'My Projects',
-          icon: <Folder strokeWidth={1.5} className="w-7 h-7" />,
-        },
-        {
           id: 4,
           href: '/gantt',
           label: 'Gantt',
@@ -91,7 +85,7 @@ const Sidebar = () => {
 
   return (
     <aside className="flex flex-col min-w-[300] shadow-sm h-screen bg-white dark:bg-neutral-900/50 rounded-2xl">
-      <nav className="p-5 pb-2 flex justify-between items-center">
+      <nav className="p-5 m-2 pb-2 flex justify-between items-center">
         <Link href={DEFAULT_LOGIN_REDIRECT}>
           <Image height={40} src={logo} alt={'Logo'} />
         </Link>

@@ -327,55 +327,55 @@ const ProjectsPage = () => {
         description={'Overview of all Projects'}
         noindex
       />
-      <div className="flex flex-col">
+      <div className="flex flex-col mb-1">
         <span style={{ fontSize: 20 }} className="font-bold">
           All Projects
         </span>
-        <div className="flex p-1">
-          <Button
-            variant="ghost"
-            className="p-1 rounded-lg w-10 h-10"
-            onClick={createRow}
-          >
-            <CirclePlus className=" transition-all text-green-600" />
+        <div className="flex p-2 gap-2">
+          <Button variant="outline" onClick={createRow}>
+            Add Project
           </Button>
-          <TaskDialog />
         </div>
       </div>
-      {projects ? (
-        <DataTable
-          columns={columns}
-          data={projects}
-          pagination
-          footer={
-            <TableFooter>
-              <TableRow className="dark:bg-neutral-900">
-                <TableCell
-                  className="dark:text-white cursor-default"
-                  colSpan={7}
-                >
-                  Total
-                </TableCell>
-                <TableCell
-                  className="dark:text-white cursor-default"
-                  colSpan={2}
-                >
-                  Total:{' '}
-                  {projects.reduce((acc, curr) => acc + (curr.budget || 0), 0)}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          }
-        />
-      ) : (
-        <div className="flex flex-col space-y-3">
-          <Skeleton className="h-[125px] flex rounded-xl" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 flex" />
-            <Skeleton className="h-4 flex" />
+      <div className="p-5 bg-inherit rounded-xl">
+        {projects ? (
+          <DataTable
+            columns={columns}
+            data={projects}
+            pagination
+            footer={
+              <TableFooter>
+                <TableRow className="dark:bg-neutral-900">
+                  <TableCell
+                    className="dark:text-white cursor-default"
+                    colSpan={7}
+                  >
+                    Total
+                  </TableCell>
+                  <TableCell
+                    className="dark:text-white cursor-default"
+                    colSpan={2}
+                  >
+                    Total:{' '}
+                    {projects.reduce(
+                      (acc, curr) => acc + (curr.budget || 0),
+                      0,
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            }
+          />
+        ) : (
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[125px] flex rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 flex" />
+              <Skeleton className="h-4 flex" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   )
 }

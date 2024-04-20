@@ -40,9 +40,6 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
             className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
           />
         </Button>
-        <Button variant={'ghost'} size={'icon'} aria-label="Search">
-          <Search strokeWidth={1.5} className="h-5 w-5" />
-        </Button>
         <Button variant={'ghost'} size={'icon'} aria-label="Notifications">
           <Bell strokeWidth={1.5} className="h-6 w-6" />
         </Button>
