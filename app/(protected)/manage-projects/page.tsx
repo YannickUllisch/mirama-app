@@ -110,7 +110,11 @@ const ProjectsPage = () => {
               placeholder={
                 managedBy ? (
                   <div className="flex items-center gap-1">
-                    <UserAvatar username={managedBy.name} />
+                    <UserAvatar
+                      username={managedBy.name}
+                      avatarSize={6}
+                      fontSize={10}
+                    />
                     {managedBy.name}
                   </div>
                 ) : (
@@ -121,7 +125,11 @@ const ProjectsPage = () => {
               {users?.map((user) => (
                 <SelectItem value={user.id}>
                   <div className="flex items-center gap-1">
-                    <UserAvatar username={user.name} />
+                    <UserAvatar
+                      avatarSize={6}
+                      fontSize={10}
+                      username={user.name}
+                    />
                     {user.name}
                   </div>
                 </SelectItem>
@@ -129,7 +137,11 @@ const ProjectsPage = () => {
             </UserSelect>
           )
         }
-        return managedBy ? <UserAvatar username={managedBy.name} /> : ''
+        return managedBy ? (
+          <UserAvatar avatarSize={6} fontSize={10} username={managedBy.name} />
+        ) : (
+          ''
+        )
       },
     },
     {

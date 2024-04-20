@@ -4,14 +4,23 @@ import { extractFirstLetters, getColorByName } from '@src/lib/utils'
 
 interface UserAvatarProps {
   username: string | null
+  avatarSize: number
+  fontSize?: number
 }
 
-const UserAvatar: FC<UserAvatarProps> = ({ username }) => {
+const UserAvatar: FC<UserAvatarProps> = ({
+  username,
+  avatarSize,
+  fontSize,
+}) => {
   const userColor = username ? getColorByName(username) : 'bg-neutral-400/20'
 
   return (
-    <Avatar className="cursor-pointer h-6 w-6 shadow">
-      <AvatarFallback className={userColor} style={{ fontSize: 10 }}>
+    <Avatar className={`cursor-pointer h-${avatarSize} w-${avatarSize} shadow`}>
+      <AvatarFallback
+        className={userColor}
+        style={fontSize ? { fontSize: fontSize } : {}}
+      >
         {username ? extractFirstLetters(username) : ''}
       </AvatarFallback>
     </Avatar>
