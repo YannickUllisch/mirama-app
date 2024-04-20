@@ -108,12 +108,22 @@ const ProjectsPage = () => {
               id={row.row.original.id}
               mutate={updateProjects}
               placeholder={
-                managedBy ? <UserAvatar username={managedBy.name} /> : ''
+                managedBy ? (
+                  <div className="flex items-center gap-1">
+                    <UserAvatar username={managedBy.name} />
+                    {managedBy.name}
+                  </div>
+                ) : (
+                  ''
+                )
               }
             >
               {users?.map((user) => (
                 <SelectItem value={user.id}>
-                  <UserAvatar username={user.name} />
+                  <div className="flex items-center gap-1">
+                    <UserAvatar username={user.name} />
+                    {user.name}
+                  </div>
                 </SelectItem>
               ))}
             </UserSelect>
@@ -329,13 +339,8 @@ const ProjectsPage = () => {
       />
       <div className="flex flex-col mb-1">
         <span style={{ fontSize: 20 }} className="font-bold">
-          All Projects
+          Manage Projects
         </span>
-        <div className="flex p-2 gap-2">
-          <Button variant="outline" onClick={createRow}>
-            Add Project
-          </Button>
-        </div>
       </div>
       <div className="p-5 bg-inherit rounded-xl">
         {projects ? (
@@ -375,6 +380,15 @@ const ProjectsPage = () => {
             </div>
           </div>
         )}
+        <div className="flex p-2 gap-2">
+          <Button
+            variant="outline"
+            className="bg-emerald-500"
+            onClick={createRow}
+          >
+            New Project
+          </Button>
+        </div>
       </div>
     </>
   )

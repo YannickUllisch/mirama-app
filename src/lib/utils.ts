@@ -105,3 +105,12 @@ export const capitalize = (str: string): string => {
 
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
+
+export const extractFirstLetters = (inputString: string): string => {
+  // Extract the first letter of each word
+  const firstLetters = inputString.split(' ').map((word) => word[0])
+  // Combine the first letters of the first two words
+  const result = firstLetters.slice(0, 2).join('')
+
+  return result
+}

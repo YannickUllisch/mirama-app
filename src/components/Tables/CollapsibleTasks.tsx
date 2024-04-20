@@ -90,7 +90,6 @@ const CollapsibleTasks: FC<CollapsibleTasksProps> = ({ projectId }) => {
               </TableRow>
             </>
           ))}
-
           <TableRow className="hover:bg-inherit dark:hover:bg-inherit">
             <TaskDialog
               projectId={projectId}

@@ -58,8 +58,8 @@ const Sidebar = () => {
         },
         {
           id: 2,
-          href: '/all-projects',
-          label: 'All Projects',
+          href: '/manage-projects',
+          label: 'Manage Projects',
           icon: <FolderOpen strokeWidth={1.5} className="w-7 h-7" />,
         },
         {

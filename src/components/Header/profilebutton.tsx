@@ -13,7 +13,7 @@ import {
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
-import { getColorByName } from '@/src/lib/utils'
+import { extractFirstLetters, getColorByName } from '@/src/lib/utils'
 
 const ProfileButton = () => {
   const { data: session } = useSession()
@@ -26,7 +26,7 @@ const ProfileButton = () => {
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
           <AvatarFallback className={userColor}>
-            {session?.user?.name?.slice(0, 2).toUpperCase()}
+            {extractFirstLetters(session?.user.name ?? '')}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
