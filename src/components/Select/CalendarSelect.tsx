@@ -60,6 +60,7 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
           <Calendar
             mode="single"
             selected={date}
+            defaultMonth={date}
             onSelect={setDate}
             onDayFocus={handleSelect}
             className="rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"

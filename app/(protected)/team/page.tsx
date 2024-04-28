@@ -5,7 +5,7 @@ import UserAvatar from '@/src/components/UserAvatar'
 import { Button } from '@/src/components/ui/button'
 import { Skeleton } from '@/src/components/ui/skeleton'
 import { SelectItem } from '@/src/components/ui/tableSelect'
-import { api, fetcher } from '@/src/lib/utils'
+import { api, capitalize, fetcher } from '@/src/lib/utils'
 import { Role, type User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
@@ -22,10 +22,15 @@ const TeamPage = () => {
     {
       accessorKey: 'name',
       header: 'Name',
+      id: 'nameRowTeam',
       cell: (row) => {
         return (
           <div key={row.cell.id} className="flex flex-row items-center gap-2">
-            <UserAvatar username={row.getValue() as string} />
+            <UserAvatar
+              username={row.getValue() as string}
+              avatarSize={6}
+              fontSize={10}
+            />
             {row.getValue() as string}{' '}
           </div>
         )
@@ -38,23 +43,27 @@ const TeamPage = () => {
     {
       accessorKey: 'role',
       header: 'Role',
+      id: 'roleRowTeam',
       cell: (row) => {
         return (
           <RoleSelect
             id={row.row.original.id}
             mutate={updateMembers}
-            placeholder={row.getValue() as Role}
+            placeholder={capitalize(row.getValue() as Role)}
           >
-            <SelectItem value={Role.USER}>{Role.USER}</SelectItem>
-            <SelectItem value={Role.ADMIN}>{Role.ADMIN}</SelectItem>
-            <SelectItem value={Role.OWNER}>{Role.OWNER}</SelectItem>
+            <SelectItem value={Role.FREELANCE}>
+              {capitalize(Role.FREELANCE)}
+            </SelectItem>
+            <SelectItem value={Role.USER}>{capitalize(Role.USER)}</SelectItem>
+            <SelectItem value={Role.ADMIN}>{capitalize(Role.ADMIN)}</SelectItem>
+            <SelectItem value={Role.OWNER}>{capitalize(Role.OWNER)}</SelectItem>
           </RoleSelect>
         )
       },
     },
     {
-      accessorKey: 'id',
       header: 'Actions',
+      id: 'actionsRowTeam',
       cell: (row) => {
         return (
           <Button

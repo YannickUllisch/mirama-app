@@ -44,10 +44,8 @@ export const RoleSelect: FC<PropsWithChildren<RoleSelectProps>> = ({
 
   return (
     <Select onValueChange={(val) => processSelect(val)}>
-      <SelectTrigger className="justify-left ">
-        <Button className="bg-orange-300 hover:bg-orange-200 text-black">
-          <SelectValue placeholder={placeholder} />
-        </Button>
+      <SelectTrigger className="justify-left">
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>{children}</SelectGroup>

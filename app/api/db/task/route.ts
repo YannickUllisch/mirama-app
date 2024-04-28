@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import type { Task } from '@prisma/client'
 import { db } from '@src/lib/db'
+import { DateTime } from 'luxon'
 import type { NextRequest } from 'next/server'
 
 export const GET = async (req: NextRequest) => {
@@ -32,6 +33,7 @@ export const POST = auth(async (req) => {
         description: task.description,
         taskName: task.taskName,
         teamId: session?.user.teamId ?? 'undefined',
+        dueDate: task.dueDate,
       },
     })
 

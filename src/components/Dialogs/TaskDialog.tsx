@@ -117,7 +117,14 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
                 <SelectGroup>
                   {users?.map((user) => (
                     <SelectItem value={user.id}>
-                      <UserAvatar username={user.name} />
+                      <div className="flex items-center gap-1">
+                        <UserAvatar
+                          avatarSize={6}
+                          fontSize={10}
+                          username={user.name}
+                        />
+                        {user.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectGroup>

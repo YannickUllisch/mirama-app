@@ -32,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   pagination?: boolean
   footer?: React.JSX.Element
+  collapsible?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -39,6 +40,7 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   footer,
+  collapsible,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -52,20 +54,20 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
     },
-    initialState: { pagination: { pageSize: 8 } },
+    initialState: { pagination: { pageSize: 10 } },
     defaultColumn: {
       size: 150,
-      minSize: 10,
-      maxSize: 300,
+      minSize: 100,
+      maxSize: 400,
     },
     columnResizeMode: 'onChange',
   })
 
   return (
     <div>
-      <div className="rounded-md dark:border-neutral-800 border">
+      <div className="rounded-md dark:border-neutral-800">
         <Table>
-          <TableHeader>
+          <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -101,9 +103,11 @@ export function DataTable<TData, TValue>({
                         </TableCell>
                       ))}
                     </TableRow>
-                    <CollapsibleContent asChild>
-                      <CollapsibleTasks projectId={row.getValue('id')} />
-                    </CollapsibleContent>
+                    {collapsible && (
+                      <CollapsibleContent className="w-20" asChild>
+                        <CollapsibleTasks projectId={row.getValue('id')} />
+                      </CollapsibleContent>
+                    )}
                   </>
                 </Collapsible>
               ))

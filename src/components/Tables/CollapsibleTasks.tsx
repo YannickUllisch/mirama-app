@@ -72,7 +72,7 @@ const CollapsibleTasks: FC<CollapsibleTasksProps> = ({ projectId }) => {
                 </TableCell>
                 <TableCell
                   className="dark:text-neutral-300 text-neutral-600"
-                  colSpan={6}
+                  colSpan={7}
                 >
                   {task.description}
                 </TableCell>
@@ -104,7 +104,7 @@ const CollapsibleTasks: FC<CollapsibleTasksProps> = ({ projectId }) => {
         </>
       ) : (
         <TableRow>
-          <TableCell colSpan={9} className="text-center">
+          <TableCell colSpan={10} className="text-center">
             <TaskDialog
               projectId={projectId}
               mutate={updateTasks}

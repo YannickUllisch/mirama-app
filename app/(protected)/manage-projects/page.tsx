@@ -1,11 +1,11 @@
 'use client'
 import { Button } from '@/src/components/ui/button'
 import {
+  Archive,
   ArrowUpDown,
+  CalendarCheck2,
   CalendarDays,
-  ChevronDown,
   ChevronUp,
-  CirclePlus,
   Trash2,
 } from 'lucide-react'
 import { api, capitalize, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
@@ -34,7 +34,8 @@ import { useSession } from 'next-auth/react'
 import { NextSeo } from 'next-seo'
 import { DateTime } from 'luxon'
 import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
-import TaskDialog from '@/src/components/Dialogs/TaskDialog'
+import GeneralTooltip from '@/src/components/Tooltips/GeneralTooltip'
+import GeneralAccordion from '@/src/components/GeneralAccordion'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -69,37 +70,42 @@ const ProjectsPage = () => {
         return (
           <CollapsibleTrigger
             key={`tasks${row.cell.id}`}
-            className="dark:text-white h-3.5 w-3.5 cursor-pointer transition-transform transform-gpu"
+            className={`dark:text-white h-3.5 w-3.5 cursor-pointer transition-all ease-out transform ${
+              collapsedRows[row.getValue() as string]
+                ? 'rotate-180'
+                : 'rotate-90'
+            }`}
             asChild
             onClick={() => toggleCollapse(row.getValue() as string)}
           >
-            {collapsedRows[row.getValue() as string] ? (
-              <ChevronUp />
-            ) : (
-              <ChevronDown />
-            )}
+            <ChevronUp />
           </CollapsibleTrigger>
         )
       },
     },
     {
       accessorKey: 'name',
+      id: 'nameRowAllProjects',
       header: 'Name',
+      size: 500,
       cell: (row) => {
-        return (
-          <TextInput
-            defaultValue={row.getValue() as string}
-            id={row.row.original.id}
-            mutate={updateProjects}
-            key={`name${row.cell.id}`}
-          />
-        )
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <TextInput
+              defaultValue={row.getValue() as string}
+              id={row.row.original.id}
+              mutate={updateProjects}
+              key={`name${row.cell.id}`}
+            />
+          )
+        }
+        return row.getValue()
       },
     },
     {
       accessorKey: 'managedBy',
       header: 'Managed By',
-
+      id: 'managedByRowAllProjects',
       cell: (row) => {
         const managedBy = row.cell.getValue() as User | undefined
         if (isTeamAdminOrOwner(session)) {
@@ -138,7 +144,14 @@ const ProjectsPage = () => {
           )
         }
         return managedBy ? (
-          <UserAvatar avatarSize={6} fontSize={10} username={managedBy.name} />
+          <div className="flex items-center gap-1">
+            <UserAvatar
+              avatarSize={6}
+              fontSize={10}
+              username={managedBy.name}
+            />
+            {managedBy.name}
+          </div>
         ) : (
           ''
         )
@@ -146,6 +159,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'startDate',
+      id: 'startRowAllProjects',
       header: ({ column }) => {
         return (
           <Button
@@ -184,6 +198,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'endDate',
+      id: 'endRowAllProjects',
       header: ({ column }) => {
         return (
           <Button
@@ -204,6 +219,7 @@ const ProjectsPage = () => {
         if (isTeamAdminOrOwner(session)) {
           return (
             <CalendarSelect
+              key={`endcalendar_${row.row.index}`}
               startingDate={row.getValue() as Date}
               project={row.row.original}
               dateType="end"
@@ -211,7 +227,10 @@ const ProjectsPage = () => {
           )
         }
         return (
-          <div className="flex items-center cursor-default justify-center mr-8">
+          <div
+            className="flex items-center cursor-default justify-center mr-8"
+            key={`calendarEnd_${row.row.index}`}
+          >
             {DateTime.fromISO(
               new Date(row.getValue() as Date).toISOString(),
             ).toFormat('dd.MM.yyyy')}
@@ -221,8 +240,35 @@ const ProjectsPage = () => {
       },
     },
     {
+      header: 'Days Remaining',
+      accessorKey: 'endDate',
+      id: 'remainingAllProjects',
+      cell: (row) => {
+        const daysRemaining = -Math.floor(
+          DateTime.utc().diff(
+            DateTime.fromISO(row.getValue() as string),
+            'days',
+          ).days,
+        )
+        return (
+          <div
+            className={`flex justify-center ${
+              daysRemaining <= 5
+                ? 'text-red-500'
+                : daysRemaining < 10 && daysRemaining > 5
+                  ? 'text-yellow-500'
+                  : 'text-emerald-500'
+            }`}
+          >
+            {daysRemaining > 0 ? daysRemaining : 0}
+          </div>
+        )
+      },
+    },
+    {
       accessorKey: 'priority',
       header: 'Priority',
+      id: 'priorityAllProjects',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -245,12 +291,13 @@ const ProjectsPage = () => {
             </PrioritySelect>
           )
         }
-        return row.getValue()
+        return capitalize(row.getValue() as string)
       },
     },
     {
       accessorKey: 'status',
       header: 'Status',
+      id: 'statusAllProjects',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -270,12 +317,13 @@ const ProjectsPage = () => {
             </StatusSelect>
           )
         }
-        return row.getValue()
+        return capitalize(row.getValue() as string)
       },
     },
     {
       accessorKey: 'budget',
       header: 'Budget',
+      id: 'budgetAllProjects',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -292,20 +340,56 @@ const ProjectsPage = () => {
     },
     {
       header: 'Actions',
+      id: 'actionsAllProjects',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <Button
-              key={`nameInput_${row.row.index}`}
-              variant={'ghost'}
-              className="flex items-center"
-              onClick={() => deleteRow(row.row.getValue('id'))}
-            >
-              <Trash2 className="w-4 h-4 text-rose-600" />
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <GeneralTooltip
+                key={`delete_${row.row.index}`}
+                tipText="Remove"
+                trigger={
+                  <Trash2
+                    onClick={() => deleteRow(row.row.getValue('id'))}
+                    className="w-3.5 h-3.5 text-rose-600 cursor-pointer"
+                  />
+                }
+              />
+              <GeneralTooltip
+                key={`archive_${row.row.index}`}
+                tipText="Archive"
+                trigger={
+                  <Archive
+                    onClick={() => archiveProject(row.row.original.id, true)}
+                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                  />
+                }
+              />
+
+              <GeneralTooltip
+                key={`gcalendar_${row.row.index}`}
+                tipText="Add to Google Calendar"
+                trigger={
+                  <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                }
+              />
+            </div>
           )
         }
-        return null
+
+        return (
+          <div className="flex items-center gap-1.5">
+            <GeneralTooltip
+              tipText="Add to Google Calendar"
+              trigger={
+                <CalendarCheck2
+                  key={`gcalendar_${row.row.index}`}
+                  className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer"
+                />
+              }
+            />
+          </div>
+        )
       },
     },
   ]
@@ -342,6 +426,20 @@ const ProjectsPage = () => {
     }
   }
 
+  const archiveProject = (id: string, archived: boolean) => {
+    try {
+      toast.promise(api.put(`projekt?id=${id}`, { archived: archived }), {
+        loading: 'Upadating Project..',
+        error: (err) => err.response.statusText ?? err,
+        success: () => {
+          return 'Project Archived!'
+        },
+      })
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
+
   return (
     <>
       <NextSeo
@@ -354,35 +452,55 @@ const ProjectsPage = () => {
           Manage Projects
         </span>
       </div>
-      <div className="p-5 bg-inherit rounded-xl">
+      <div className="flex justify-end mr-8">
+        <Button variant="outline" onClick={createRow}>
+          New Project
+        </Button>
+      </div>
+      <div className="mt-5">
         {projects ? (
-          <DataTable
-            columns={columns}
-            data={projects}
-            pagination
-            footer={
-              <TableFooter>
-                <TableRow className="dark:bg-neutral-900">
-                  <TableCell
-                    className="dark:text-white cursor-default"
-                    colSpan={7}
-                  >
-                    Total
-                  </TableCell>
-                  <TableCell
-                    className="dark:text-white cursor-default"
-                    colSpan={2}
-                  >
-                    Total:{' '}
-                    {projects.reduce(
-                      (acc, curr) => acc + (curr.budget || 0),
-                      0,
-                    )}
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            }
-          />
+          <>
+            <DataTable
+              columns={columns}
+              data={projects}
+              pagination
+              collapsible
+              footer={
+                <TableFooter>
+                  <TableRow className="dark:bg-neutral-900 bg-neutral-50">
+                    <TableCell
+                      className="dark:text-white cursor-default"
+                      colSpan={8}
+                    >
+                      Total
+                    </TableCell>
+                    <TableCell
+                      className="dark:text-white cursor-default"
+                      colSpan={2}
+                    >
+                      Total:{' '}
+                      {projects.reduce(
+                        (acc, curr) => acc + (curr.budget || 0),
+                        0,
+                      )}
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              }
+            />
+            <GeneralAccordion
+              trigger="Archived"
+              accordionContent={
+                <DataTable
+                  columns={columns}
+                  data={projects.filter((project) => {
+                    return project.archived
+                  })}
+                  collapsible
+                />
+              }
+            />
+          </>
         ) : (
           <div className="flex flex-col space-y-3">
             <Skeleton className="h-[125px] flex rounded-xl" />
@@ -392,15 +510,6 @@ const ProjectsPage = () => {
             </div>
           </div>
         )}
-        <div className="flex p-2 gap-2">
-          <Button
-            variant="outline"
-            className="bg-emerald-500"
-            onClick={createRow}
-          >
-            New Project
-          </Button>
-        </div>
       </div>
     </>
   )

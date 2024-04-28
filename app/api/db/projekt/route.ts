@@ -1,6 +1,7 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
-import { Role, PriorityType, StatusType } from '@prisma/client'
+import { Role, PriorityType, StatusType, type Project } from '@prisma/client'
+import { DateTime } from 'luxon'
 
 export const GET = auth(async (req) => {
   try {
@@ -33,6 +34,8 @@ export const POST = auth(async (req) => {
         status: StatusType.STARTING,
         teamId: session?.user.teamId ?? 'undefined',
         priority: PriorityType.LOW,
+        startDate: DateTime.now().toUTC().startOf('day').toJSDate(),
+        endDate: DateTime.now().toUTC().startOf('day').toJSDate(),
         tasks: undefined,
       },
     })
@@ -87,14 +90,21 @@ export const PUT = auth(async (req) => {
     // }
 
     const id = req.nextUrl.searchParams.get('id') as string
-    const project = (await req.json()) as {
-      startDate?: Date
-      endDate?: Date
-      name?: string
-      budget?: number
-      priority?: PriorityType
-      status?: StatusType
-      managedById?: string
+    const project = (await req.json()) as Partial<Project>
+
+    // Convert to correct timezone
+    if (project.startDate) {
+      project.startDate = DateTime.fromISO(project.startDate.toString())
+        .toUTC()
+        .startOf('day')
+        .plus({ days: 1 })
+        .toJSDate()
+    } else if (project.endDate) {
+      project.endDate = DateTime.fromISO(project.endDate.toString())
+        .toUTC()
+        .startOf('day')
+        .plus({ days: 1 })
+        .toJSDate()
     }
 
     const response = await db.project.update({
@@ -110,6 +120,7 @@ export const PUT = auth(async (req) => {
         priority: project.priority,
         status: project.status,
         managedById: project.managedById,
+        archived: project.archived,
       },
     })
 
