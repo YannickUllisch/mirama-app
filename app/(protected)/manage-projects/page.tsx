@@ -2,6 +2,7 @@
 import { Button } from '@/src/components/ui/button'
 import {
   Archive,
+  ArchiveRestore,
   ArrowUpDown,
   CalendarCheck2,
   CalendarDays,
@@ -19,7 +20,7 @@ import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { StatusSelect } from '@/src/components/Select/StatusSelect'
 import UserAvatar from '@/src/components/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
@@ -34,7 +35,7 @@ import { useSession } from 'next-auth/react'
 import { NextSeo } from 'next-seo'
 import { DateTime } from 'luxon'
 import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
-import GeneralTooltip from '@/src/components/Tooltips/GeneralTooltip'
+import GeneralTooltip from '@/src/components/GeneralTooltip'
 import GeneralAccordion from '@/src/components/GeneralAccordion'
 
 interface CollapsedRows {
@@ -61,6 +62,15 @@ const ProjectsPage = () => {
   >('/api/db/projekt', fetcher)
 
   const { data: users } = useSWR<User[]>('/api/db/user', fetcher)
+
+  const filteredProjects = useMemo(() => {
+    if (projects) {
+      return projects.filter((project) => {
+        return !project.archived
+      })
+    }
+    return []
+  }, [projects])
 
   const columns: ColumnDef<Project & { managedBy: User }>[] = [
     {
@@ -355,24 +365,43 @@ const ProjectsPage = () => {
                   />
                 }
               />
-              <GeneralTooltip
-                key={`archive_${row.row.index}`}
-                tipText="Archive"
-                trigger={
-                  <Archive
-                    onClick={() => archiveProject(row.row.original.id, true)}
-                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                  />
-                }
-              />
 
               <GeneralTooltip
-                key={`gcalendar_${row.row.index}`}
-                tipText="Add to Google Calendar"
+                key={`archive_${row.row.index}`}
+                tipText={row.row.original.archived ? 'Unarchive' : 'Archive'}
                 trigger={
-                  <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                  row.row.original.archived ? (
+                    <ArchiveRestore
+                      onClick={() =>
+                        archiveProject(
+                          row.row.original.id,
+                          !row.row.original.archived,
+                        )
+                      }
+                      className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                    />
+                  ) : (
+                    <Archive
+                      onClick={() =>
+                        archiveProject(
+                          row.row.original.id,
+                          !row.row.original.archived,
+                        )
+                      }
+                      className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                    />
+                  )
                 }
               />
+              {row.row.original.archived ? undefined : (
+                <GeneralTooltip
+                  key={`gcalendar_${row.row.index}`}
+                  tipText="Add to Google Calendar"
+                  trigger={
+                    <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                  }
+                />
+              )}
             </div>
           )
         }
@@ -432,6 +461,7 @@ const ProjectsPage = () => {
         loading: 'Upadating Project..',
         error: (err) => err.response.statusText ?? err,
         success: () => {
+          updateProjects()
           return 'Project Archived!'
         },
       })
@@ -462,7 +492,7 @@ const ProjectsPage = () => {
           <>
             <DataTable
               columns={columns}
-              data={projects}
+              data={filteredProjects}
               pagination
               collapsible
               footer={

@@ -9,7 +9,7 @@ import {
 
 interface GeneralAccordion {
   accordionContent: React.ReactNode
-  trigger: string
+  trigger: string | React.ReactNode
 }
 
 const GeneralAccordion: FC<GeneralAccordion> = (obj) => {
