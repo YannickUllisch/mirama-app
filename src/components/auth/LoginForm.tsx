@@ -16,11 +16,12 @@ import { FormError } from '@src/components/auth/popups/FormError'
 import { login } from '@src/lib/login'
 import { useState, useTransition } from 'react'
 import { LoginSchema } from '@/src/lib/schemas'
-import axios from 'axios'
 import Link from 'next/link'
+import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 
 const LoginForm = () => {
   const [error, setError] = useState<string | undefined>('')
+  const [success, setSuccess] = useState<string | undefined>('')
   const [isPending, startTransition] = useTransition()
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -33,6 +34,7 @@ const LoginForm = () => {
 
   const onSubmit = (vals: z.infer<typeof LoginSchema>) => {
     setError('')
+    setSuccess('')
 
     startTransition(() => {
       login(vals).then((data) => {
@@ -83,12 +85,8 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <Button asChild variant="link">
-            <Link href={'/'} className="ml-40" style={{ fontSize: 11 }}>
-              Forgot Password?
-            </Link>
-          </Button>
         </div>
+        <FormSuccess message={success} />
         <FormError message={error} />
         <Button type="submit" className="w-full" disabled={isPending}>
           Login

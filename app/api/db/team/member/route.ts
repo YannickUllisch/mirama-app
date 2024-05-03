@@ -1,6 +1,8 @@
 import { auth } from '@/auth'
 import { db } from '@/src/lib/db'
-import type { Role } from '@prisma/client'
+import { validateRequest } from '@/src/lib/utils'
+import { Role, type User } from '@prisma/client'
+import { validate } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
@@ -55,6 +57,12 @@ export const DELETE = auth(async (req) => {
 export const PUT = auth(async (req) => {
   try {
     const session = req.auth
+
+    const validatedRequest = await validateRequest(session)
+
+    if (validatedRequest) {
+      return validatedRequest
+    }
     const id = req.nextUrl.searchParams.get('id') as string
 
     const member = (await req.json()) as {
@@ -74,6 +82,43 @@ export const PUT = auth(async (req) => {
     // Need to Update/Mutate Session here, to make role change work immediately.
 
     return new Response(JSON.stringify(response))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
+
+export const POST = auth(async (req) => {
+  try {
+    const session = req.auth
+    if (!session) {
+      return Response.json(
+        {},
+        { status: 401, statusText: 'You need to be logged in' },
+      )
+    }
+    if (!session.user.teamId) {
+      return Response.json(
+        {},
+        { status: 401, statusText: 'You need to be part of a Team' },
+      )
+    }
+    if (session.user.role !== Role.ADMIN && session.user.role !== Role.OWNER) {
+      return Response.json(
+        {},
+        { status: 401, statusText: 'You are not allowed to invite Members' },
+      )
+    }
+
+    const user = (await req.json()) as Omit<User, 'id' | 'teamId'>
+
+    await db.user.create({
+      data: {
+        ...user,
+        teamId: session.user.teamId,
+      },
+    })
+
+    return Response.json({})
   } catch (err) {
     return new Response(JSON.stringify(err))
   }

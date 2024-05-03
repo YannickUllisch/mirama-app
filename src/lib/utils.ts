@@ -2,9 +2,9 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import axios from 'axios'
 import type { Session } from 'next-auth'
-import { Role, type User } from '@prisma/client'
-import { getUserById } from './user'
-import { db } from './db'
+import { Role } from '@prisma/client'
+import { getUserById } from '@src/lib/user'
+import { db } from '@src/lib/db'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -69,9 +69,10 @@ export const validateRequest = async (session: Session | null) => {
     )
   }
 
+  console.log(session.user.role.toString())
   if (
-    session.user.role.toString() !== Role.OWNER ||
-    session.user.role.toString() !== Role.OWNER
+    session.user.role.toString() !== Role.OWNER &&
+    session.user.role.toString() !== Role.ADMIN
   ) {
     return Response.json({}, { status: 403, statusText: 'Invalid Permission' })
   }

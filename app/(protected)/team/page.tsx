@@ -1,4 +1,5 @@
 'use client'
+import EmailInput from '@/src/components/Inputs/EmailInput'
 import { RoleSelect } from '@/src/components/Select/RoleSelect'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import UserAvatar from '@/src/components/UserAvatar'
@@ -70,7 +71,7 @@ const TeamPage = () => {
             key={`nameInput_${row.row.index}`}
             variant={'ghost'}
             className="flex items-center"
-            onClick={() => deleteMember(row.getValue() as string)}
+            onClick={() => deleteMember(row.row.original.id)}
           >
             <Trash2 className="w-4 h-4 text-rose-600" />
           </Button>
@@ -82,7 +83,7 @@ const TeamPage = () => {
   const deleteMember = (id: string) => {
     try {
       toast.promise(api.delete(`team/member?id=${id}`), {
-        loading: 'Deleting Project..',
+        loading: 'Deleting Member..',
         success: () => {
           updateMembers((prev) => prev?.filter((member) => member.id !== id))
 
@@ -96,11 +97,14 @@ const TeamPage = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <main className="flex flex-col">
       <span style={{ fontSize: 20 }} className="font-bold">
         Team Page
       </span>
-      <div className="mt-10">
+      <div className="mt-8 mb-2">
+        <EmailInput mutate={updateMembers} />
+      </div>
+      <div>
         {teamMembers ? (
           <DataTable columns={columns} data={teamMembers} />
         ) : (
@@ -113,7 +117,7 @@ const TeamPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   )
 }
 
