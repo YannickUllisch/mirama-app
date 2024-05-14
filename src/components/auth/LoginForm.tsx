@@ -16,7 +16,6 @@ import { FormError } from '@src/components/auth/popups/FormError'
 import { login } from '@src/lib/login'
 import { useState, useTransition } from 'react'
 import { LoginSchema } from '@/src/lib/schemas'
-import Link from 'next/link'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 
 const LoginForm = () => {
