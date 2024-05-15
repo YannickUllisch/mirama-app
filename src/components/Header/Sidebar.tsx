@@ -62,12 +62,6 @@ const Sidebar = () => {
           label: 'Manage Projects',
           icon: <FolderOpen strokeWidth={1.5} className="w-7 h-7" />,
         },
-        {
-          id: 4,
-          href: '/gantt',
-          label: 'Gantt',
-          icon: <GanttChartSquare strokeWidth={1.5} className="w-7 h-7" />,
-        },
       ],
     },
     {
@@ -103,7 +97,7 @@ const Sidebar = () => {
                   >
                     <CommandItem
                       style={{ fontSize: 13 }}
-                      className={`flex gap-3 cursor-pointerrelastive hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
+                      className={`flex gap-3 cursor-pointer relative hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
                         menu.href === currPath
                           ? 'bg-neutral-100 dark:bg-neutral-800'
                           : ''

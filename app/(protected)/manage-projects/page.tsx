@@ -32,7 +32,6 @@ import NumberInput from '@/src/components/Inputs/NumberInput'
 import { UserSelect } from '@/src/components/Select/UserSelect'
 import { TableCell, TableFooter, TableRow } from '@/src/components/ui/table'
 import { useSession } from 'next-auth/react'
-import { NextSeo } from 'next-seo'
 import { DateTime } from 'luxon'
 import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 import GeneralTooltip from '@/src/components/GeneralTooltip'
@@ -472,11 +471,6 @@ const ProjectsPage = () => {
 
   return (
     <>
-      <NextSeo
-        title={'All Projects'}
-        description={'Overview of all Projects'}
-        noindex
-      />
       <div className="flex flex-col mb-1">
         <span style={{ fontSize: 20 }} className="font-bold">
           Manage Projects

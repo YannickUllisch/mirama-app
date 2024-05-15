@@ -69,7 +69,6 @@ export const validateRequest = async (session: Session | null) => {
     )
   }
 
-  console.log(session.user.role.toString())
   if (
     session.user.role.toString() !== Role.OWNER &&
     session.user.role.toString() !== Role.ADMIN

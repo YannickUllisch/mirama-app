@@ -1,34 +1,17 @@
-'use client'
-import Header from '@/src/components/Header/Header'
-import Sidebar from '@/src/components/Header/Sidebar'
+import HeadersLayout from '@/src/components/Header/HeadersLayout'
+import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
-import { useState } from 'react'
+
+export const metadata: Metadata = {
+  title: 'Projects | Mirama',
+  description: 'Project and Task Management',
+}
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true)
-
   return (
     <>
       <SessionProvider>
-        <div className="flex  h-full items-start justify-start">
-          {isSidebarExpanded ? (
-            <div>
-              <Sidebar />
-            </div>
-          ) : null}
-          <div className="w-full">
-            <Header
-              toggleSidebar={() =>
-                setIsSidebarExpanded((prevState) => !prevState)
-              }
-            />
-            <main className="flex items-center flex-col h-screen mt-2">
-              <div className="w-[98%] h-full shadow-sm bg-white dark:bg-neutral-900/50 p-10 rounded-xl ">
-                {children}
-              </div>
-            </main>
-          </div>
-        </div>
+        <HeadersLayout>{children}</HeadersLayout>
       </SessionProvider>
     </>
   )

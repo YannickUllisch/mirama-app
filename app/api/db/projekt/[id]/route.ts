@@ -1,24 +1,27 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
 
-// export const GET = auth(async (req) => {
-//   try {
-//     const session = req.auth
-//     const id = req.nextUrl.const
-//     response = await db.project.findMany({
-//       where: {
-//         teamId: session?.user.teamId,
-//       },
-//       include: {
-//         managedBy: true,
-//       },
-//       orderBy: {
-//         endDate: 'desc',
-//       },
-//     })
+export const GET = auth(async (req) => {
+  try {
+    const _session = req.auth
 
-//     return new Response(JSON.stringify(response))
-//   } catch (err) {
-//     return new Response(JSON.stringify(err))
-//   }
-// })
+    // const validatedRequest = await validateRequest(session)
+    // if (validatedRequest) {
+    //   return validatedRequest
+    // }
+
+    const projectId = req.nextUrl.searchParams.get('id') as string
+    const response = await db.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        managedBy: true,
+        tasks: true,
+      },
+    })
+    return new Response(JSON.stringify(response))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
