@@ -16,7 +16,9 @@ const UserAvatar: FC<UserAvatarProps> = ({
   const userColor = username ? getColorByName(username) : 'bg-neutral-400/20'
 
   return (
-    <Avatar className={`cursor-pointer h-${avatarSize} w-${avatarSize} shadow`}>
+    <Avatar
+      className={`cursor-pointer h-${avatarSize} w-${avatarSize} shadow flex`}
+    >
       <AvatarFallback
         className={userColor}
         style={fontSize ? { fontSize: fontSize } : {}}

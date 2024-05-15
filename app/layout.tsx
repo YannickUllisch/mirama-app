@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@/src/components/ThemeProvider'
 import './globals.css'
 import { Toaster } from 'sonner'
-import { SWRConfig } from 'swr'
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,4 +14,5 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     </html>
   )
 }
+
 export default RootLayout

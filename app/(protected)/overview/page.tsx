@@ -32,35 +32,30 @@ const OverviewPage = () => {
         {projects?.map((project) => (
           <Card
             onClick={() => router.push(`/overview/${project.id}`)}
-            className="flex w-56 flex-col m-2 cursor-pointer hover:bg-neutral-100"
+            className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100"
           >
             <CardHeader
               style={{ fontSize: 25 }}
-              className="justify-center flex items-center m-1"
+              className="justify-center flex items-start m-1"
             >
               {project.name}
             </CardHeader>
-            <CardContent className="flex flex-col items-center">
-              {' '}
-              <div style={{ fontSize: 12 }} className="flex items-center gap-1">
-                Managed By
-                <UserAvatar
-                  username={project.managedBy.name}
-                  avatarSize={6}
-                  fontSize={8}
-                />
+            <CardContent className="flex flex-col items-start">
+              <div style={{ fontSize: 12 }}>
+                Managed By: {project.managedBy.name}
               </div>
-              <div style={{ fontSize: 11 }} className="flex items-center ">
-                <CalendarDays className="h-3 w-3 mr-1" />
+              <div
+                style={{ fontSize: 11 }}
+                className="flex flex-row items-center gap-1 align-middle"
+              >
+                <CalendarDays className="w-4 h-4" />
                 {`${DateTime.fromISO(
                   new Date(project.startDate as Date).toISOString(),
                 ).toFormat('dd.MM')} - ${DateTime.fromISO(
                   new Date(project.endDate as Date).toISOString(),
                 ).toFormat('dd.MM')}`}
               </div>
-              <div style={{ fontSize: 11 }} className={'flex justify-center'}>
-                Your Tasks: 0
-              </div>
+              <div style={{ fontSize: 11 }}>Your Tasks: 0</div>
             </CardContent>
             <CardFooter />
           </Card>
