@@ -54,7 +54,10 @@ const colorClasses = [
   'bg-teal-500/40',
 ]
 
-export const validateRequest = async (session: Session | null) => {
+export const validateRequest = async (
+  session: Session | null,
+  roles?: Role[],
+) => {
   if (!session) {
     return Response.json(
       {},
@@ -62,18 +65,15 @@ export const validateRequest = async (session: Session | null) => {
     )
   }
 
+  if (roles && !roles.includes(session.user.role)) {
+    return Response.json({}, { status: 401, statusText: 'Invalid Permission' })
+  }
+
   if (!session.user.role) {
     return Response.json(
       {},
       { status: 401, statusText: 'You Need to be in Team' },
     )
-  }
-
-  if (
-    session.user.role.toString() !== Role.OWNER &&
-    session.user.role.toString() !== Role.ADMIN
-  ) {
-    return Response.json({}, { status: 403, statusText: 'Invalid Permission' })
   }
 
   return null

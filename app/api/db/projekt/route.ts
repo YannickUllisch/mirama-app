@@ -1,11 +1,17 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
-import { Role, PriorityType, StatusType, type Project } from '@prisma/client'
+import { PriorityType, Role, StatusType, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
+import { validateRequest } from '@/src/lib/utils'
 
 export const GET = auth(async (req) => {
   try {
     const session = req.auth
+    const validatedRequest = await validateRequest(session)
+    if (validatedRequest) {
+      return validatedRequest
+    }
+
     const response = await db.project.findMany({
       where: {
         teamId: session?.user.teamId,
@@ -27,6 +33,13 @@ export const GET = auth(async (req) => {
 export const POST = auth(async (req) => {
   try {
     const session = req.auth
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
+    if (validatedRequest) {
+      return validatedRequest
+    }
 
     await db.project.create({
       data: {
@@ -48,16 +61,24 @@ export const POST = auth(async (req) => {
 export const DELETE = auth(async (req) => {
   try {
     const session = req.auth
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
+    if (validatedRequest) {
+      return validatedRequest
+    }
+
     const id = req.nextUrl.searchParams.get('id') as string
 
-    const response = await db.project.delete({
+    await db.project.delete({
       where: {
         id,
         teamId: session?.user.teamId ?? 'undefined',
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return new Response('Project Deleted')
   } catch (err) {
     return new Response(JSON.stringify(err))
   }
@@ -66,28 +87,13 @@ export const DELETE = auth(async (req) => {
 export const PUT = auth(async (req) => {
   try {
     const session = req.auth
-
-    if (!session) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You need to be Logged In' },
-      )
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
+    if (validatedRequest) {
+      return validatedRequest
     }
-    if (!session.user.role) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You Need to be in Team' },
-      )
-    }
-    // if (
-    //   session.user.role.toString() !== Role.OWNER ||
-    //   session.user.role.toString() !== Role.OWNER
-    // ) {
-    //   return Response.json(
-    //     {},
-    //     { status: 403, statusText: 'Invalid Permission' },
-    //   )
-    // }
 
     const id = req.nextUrl.searchParams.get('id') as string
     const project = (await req.json()) as Partial<Project>
@@ -107,7 +113,7 @@ export const PUT = auth(async (req) => {
         .toJSDate()
     }
 
-    const response = await db.project.update({
+    await db.project.update({
       where: {
         id,
         teamId: session?.user.teamId,
@@ -124,7 +130,7 @@ export const PUT = auth(async (req) => {
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return new Response('Project Updated')
   } catch (err: any) {
     return new Response(err, { status: 401, statusText: 'Error Occurred!' })
   }

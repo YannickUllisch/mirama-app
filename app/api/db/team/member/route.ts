@@ -6,19 +6,11 @@ import { validate } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
+    // Checking Permissions
     const session = req.auth
-
-    if (!session) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You need to be Logged In' },
-      )
-    }
-    if (!session.user.role) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You Need to be in Team' },
-      )
+    const validatedRequest = await validateRequest(session)
+    if (validatedRequest) {
+      return validatedRequest
     }
 
     const response = await db.user.findMany({
@@ -35,7 +27,13 @@ export const GET = auth(async (req) => {
 
 export const DELETE = auth(async (req) => {
   try {
+    // Checking Permissions
     const session = req.auth
+    // So far only owners can delete members. TODO: Only let Admins remove users with rank lower than themselves
+    const validatedRequest = await validateRequest(session, [Role.OWNER])
+    if (validatedRequest) {
+      return validatedRequest
+    }
     const id = req.nextUrl.searchParams.get('id') as string
 
     const response = await db.user.delete({
@@ -58,7 +56,10 @@ export const PUT = auth(async (req) => {
   try {
     const session = req.auth
 
-    const validatedRequest = await validateRequest(session)
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
 
     if (validatedRequest) {
       return validatedRequest
@@ -89,24 +90,14 @@ export const PUT = auth(async (req) => {
 
 export const POST = auth(async (req) => {
   try {
+    // Checking Permissions
     const session = req.auth
-    if (!session) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You need to be logged in' },
-      )
-    }
-    if (!session.user.teamId) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You need to be part of a Team' },
-      )
-    }
-    if (session.user.role !== Role.ADMIN && session.user.role !== Role.OWNER) {
-      return Response.json(
-        {},
-        { status: 401, statusText: 'You are not allowed to invite Members' },
-      )
+    const validatedRequest = await validateRequest(session, [
+      Role.OWNER,
+      Role.ADMIN,
+    ])
+    if (validatedRequest) {
+      return validatedRequest
     }
 
     const user = (await req.json()) as Omit<User, 'id' | 'teamId'>
@@ -114,7 +105,7 @@ export const POST = auth(async (req) => {
     await db.user.create({
       data: {
         ...user,
-        teamId: session.user.teamId,
+        teamId: session?.user.teamId,
       },
     })
 

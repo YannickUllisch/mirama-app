@@ -1,14 +1,15 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/auth'
+import { validateRequest } from '@/src/lib/utils'
 
 export const GET = auth(async (req) => {
   try {
-    const _session = req.auth
-
-    // const validatedRequest = await validateRequest(session)
-    // if (validatedRequest) {
-    //   return validatedRequest
-    // }
+    // Checking Permissions
+    const session = req.auth
+    const validatedRequest = await validateRequest(session)
+    if (validatedRequest) {
+      return validatedRequest
+    }
 
     const projectId = req.nextUrl.searchParams.get('id') as string
     const response = await db.project.findUnique({

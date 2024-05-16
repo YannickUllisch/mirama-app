@@ -22,7 +22,7 @@ const OverviewPage = () => {
       tasks: Task[]
       managedBy: User
     })[]
-  >('/api/db/projekt/personal-dashboard', fetcher)
+  >('/api/db/projekt/overview', fetcher)
 
   return (
     <div className="flex flex-col">
