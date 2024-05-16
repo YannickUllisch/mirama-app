@@ -1,3 +1,4 @@
+'use client'
 import { GanttComponent, Inject, Selection } from '@syncfusion/ej2-react-gantt'
 
 const _dataSource = [
@@ -19,10 +20,9 @@ const _taskFields = {
 
 const GanttChart = () => {
   return (
-    <div> yo</div>
-    // <GanttComponent dataSource={dataSource} taskFields={taskFields}>
-    //   <Inject services={[Selection]} />
-    // </GanttComponent>
+    <GanttComponent>
+      <Inject services={[Selection]} />
+    </GanttComponent>
   )
 }
 

@@ -46,7 +46,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'tasks',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <TasksTab />,
+      component: <TasksTab projectId={params.projectId as string} />,
     },
     {
       id: 'gantt',

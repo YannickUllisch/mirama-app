@@ -33,6 +33,7 @@ const OverviewPage = () => {
       <div className="grid grid-cols-4">
         {projects?.map((project) => (
           <Card
+            key={`${project.id}-card`}
             onClick={() => router.push(`/overview/${project.id}`)}
             className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900"
           >

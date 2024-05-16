@@ -1348,6 +1348,21 @@
     "@syncfusion/ej2-popups" "~25.2.3"
     "@syncfusion/ej2-splitbuttons" "~25.2.3"
 
+"@syncfusion/ej2-kanban@25.2.3":
+  version "25.2.3"
+  resolved "https://registry.yarnpkg.com/@syncfusion/ej2-kanban/-/ej2-kanban-25.2.3.tgz#90002de964d2fbd72fd7523c912d3ff7e9da8a3e"
+  integrity sha512-NCNrycBN878c8OMozm7cAfnT+7U+ozKQQzVWUwFVo4nukzinKyBbiZBViHwbGL6qxNCQ/WsjMhDT69k50adiTA==
+  dependencies:
+    "@syncfusion/ej2-base" "~25.2.3"
+    "@syncfusion/ej2-buttons" "~25.2.3"
+    "@syncfusion/ej2-data" "~25.2.3"
+    "@syncfusion/ej2-dropdowns" "~25.2.3"
+    "@syncfusion/ej2-inputs" "~25.2.3"
+    "@syncfusion/ej2-layouts" "~25.2.3"
+    "@syncfusion/ej2-navigations" "~25.2.3"
+    "@syncfusion/ej2-notifications" "~25.2.3"
+    "@syncfusion/ej2-popups" "~25.2.3"
+
 "@syncfusion/ej2-layouts@~25.2.3":
   version "25.2.3"
   resolved "https://registry.yarnpkg.com/@syncfusion/ej2-layouts/-/ej2-layouts-25.2.3.tgz#d827d6f13129997e5f239876f276114b7c3b551f"
@@ -1401,7 +1416,7 @@
     "@syncfusion/ej2-base" "~25.2.3"
     "@syncfusion/ej2-buttons" "~25.2.4"
 
-"@syncfusion/ej2-react-base@^25.2.3", "@syncfusion/ej2-react-base@~25.2.3":
+"@syncfusion/ej2-react-base@~25.2.3":
   version "25.2.3"
   resolved "https://registry.yarnpkg.com/@syncfusion/ej2-react-base/-/ej2-react-base-25.2.3.tgz#0f641cb55c2346ed143bd5fbd89cc8247bffd29e"
   integrity sha512-DJxjhHR9QJzAGIEl4XCmHNVxpkL5uFm0PU0pufQrjNgmorQDo0iQJ4abk59B8Uw1WFmuU4/5Y+KFImExdE92gg==
@@ -1415,6 +1430,15 @@
   dependencies:
     "@syncfusion/ej2-base" "~25.2.3"
     "@syncfusion/ej2-gantt" "25.2.4"
+    "@syncfusion/ej2-react-base" "~25.2.3"
+
+"@syncfusion/ej2-react-kanban@^25.2.3":
+  version "25.2.3"
+  resolved "https://registry.yarnpkg.com/@syncfusion/ej2-react-kanban/-/ej2-react-kanban-25.2.3.tgz#023a637598e67890b84acf3eea6147af5d8d6fbc"
+  integrity sha512-x0SWu6wIXTr+9J7ofFHm5udvJzCEkmN3CXQGyDnY3Zv4ceku7kG5/wli/0Jerwiadug3OhvWL/KBacm31QUEYA==
+  dependencies:
+    "@syncfusion/ej2-base" "~25.2.3"
+    "@syncfusion/ej2-kanban" "25.2.3"
     "@syncfusion/ej2-react-base" "~25.2.3"
 
 "@syncfusion/ej2-richtexteditor@~25.2.4":
