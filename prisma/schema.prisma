@@ -82,7 +82,9 @@ enum PriorityType {
 }
 
 enum StatusType {
-    STARTING
+    NOTSTARTED
+    ONHOLD
+    ONGOING
     FINISHED
 }
 
@@ -108,6 +110,13 @@ model Project {
     teamId      String
 }
 
+enum TaskStatusType {
+    TODO
+    INPROGRESS
+    INREVIEW
+    DONE
+}
+
 model Task {
   id          String            @default(cuid()) @id
 
@@ -115,9 +124,10 @@ model Task {
   assignedToId String?
   dueDate      DateTime?
 
-  taskName    String?           @default("")
+  title       String
   description String? 
-  completed   Boolean           @default(false)
+  priority    PriorityType    @default(LOW)
+  status      TaskStatusType
 
   project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId   String 

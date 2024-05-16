@@ -16,8 +16,8 @@ const HeadersLayout: FC<PropsWithChildren> = ({ children }) => {
         <Header
           toggleSidebar={() => setIsSidebarExpanded((prevState) => !prevState)}
         />
-        <main className="flex items-center flex-col h-screen mt-2">
-          <div className="w-[99%] h-full shadow-sm bg-white dark:bg-neutral-900/50 p-10 rounded-xl ">
+        <main className="flex items-center flex-col h-screen">
+          <div className="w-full h-full bg-white dark:bg-neutral-900/50 p-8">
             {children}
           </div>
         </main>

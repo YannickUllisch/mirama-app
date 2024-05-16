@@ -317,12 +317,10 @@ const ProjectsPage = () => {
                 (row.getValue() as StatusType).toString(),
               )}
             >
-              <SelectItem value={StatusType.STARTING}>
-                {capitalize(StatusType.STARTING.toString())}
-              </SelectItem>
-              <SelectItem value={StatusType.FINISHED}>
-                {capitalize(StatusType.FINISHED.toString())}
-              </SelectItem>
+              <SelectItem value={StatusType.NOTSTARTED}>Not Started</SelectItem>
+              <SelectItem value={StatusType.ONHOLD}>On Hold</SelectItem>
+              <SelectItem value={StatusType.ONGOING}>Ongoing</SelectItem>
+              <SelectItem value={StatusType.FINISHED}>Finished</SelectItem>
             </StatusSelect>
           )
         }
@@ -472,12 +470,14 @@ const ProjectsPage = () => {
   return (
     <>
       <div className="flex flex-col mb-1">
-        <span style={{ fontSize: 20 }} className="font-bold">
-          Manage Projects
-        </span>
+        <span style={{ fontSize: 23 }}>Manage Projects</span>
       </div>
       <div className="flex justify-end mr-8">
-        <Button variant="outline" onClick={createRow}>
+        <Button
+          variant="outline"
+          className="dark:bg-neutral-900 dark:hover:bg-neutral-800"
+          onClick={createRow}
+        >
           New Project
         </Button>
       </div>

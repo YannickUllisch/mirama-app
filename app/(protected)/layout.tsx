@@ -1,4 +1,4 @@
-import HeadersLayout from '@/src/components/Header/HeadersLayout'
+import HeadersLayout from '@/src/components/Header/Layout'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 

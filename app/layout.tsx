@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
-      <body className="bg-neutral-100 dark:bg-neutral-950">
+      <body className="bg-white dark:bg-neutral-950">
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main>{children}</main>

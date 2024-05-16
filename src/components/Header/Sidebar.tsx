@@ -48,19 +48,19 @@ const Sidebar = () => {
 
   const menuList: iMenuList[] = [
     {
-      group: 'General',
+      group: 'Projects',
       items: [
         {
           id: 1,
           href: '/overview',
           label: 'Overview',
-          icon: <LayoutPanelTop strokeWidth={1.5} className="w-7 h-7" />,
+          icon: <LayoutPanelTop strokeWidth={1.2} className="w-7 h-7" />,
         },
         {
           id: 2,
           href: '/manage-projects',
           label: 'Manage Projects',
-          icon: <FolderOpen strokeWidth={1.5} className="w-7 h-7" />,
+          icon: <FolderOpen strokeWidth={1.2} className="w-7 h-7" />,
         },
       ],
     },
@@ -71,14 +71,14 @@ const Sidebar = () => {
           id: 6,
           href: '/team',
           label: 'Team',
-          icon: <Users strokeWidth={1.5} className="w-7 h-7" />,
+          icon: <Users strokeWidth={1.2} className="w-7 h-7" />,
         },
       ],
     },
   ]
 
   return (
-    <aside className="flex flex-col min-w-[300] shadow-sm h-screen bg-white dark:bg-neutral-900/50 rounded-2xl">
+    <aside className="flex flex-col min-w-[300] h-[825px] bg-white dark:bg-neutral-900/50 border-r-2 border-neutral-100 dark:border-neutral-800 ">
       <nav className="p-5 m-2 pb-2 flex justify-between items-center">
         <Link href={DEFAULT_LOGIN_REDIRECT}>
           <Image height={40} src={logo} alt={'Logo'} />

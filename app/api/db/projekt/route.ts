@@ -44,7 +44,7 @@ export const POST = auth(async (req) => {
     await db.project.create({
       data: {
         name: 'New Project',
-        status: StatusType.STARTING,
+        status: StatusType.ONGOING,
         teamId: session?.user.teamId ?? 'undefined',
         priority: PriorityType.LOW,
         startDate: DateTime.now().toUTC().startOf('day').toJSDate(),

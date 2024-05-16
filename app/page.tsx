@@ -1,4 +1,5 @@
 'use client'
+
 import PublicHeader from '@/src/components/Header/PublicHeader'
 
 const HomePage = () => {

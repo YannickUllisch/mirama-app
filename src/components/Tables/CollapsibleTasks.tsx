@@ -68,7 +68,7 @@ const CollapsibleTasks: FC<CollapsibleTasksProps> = ({ projectId }) => {
                 key={task.id}
               >
                 <TableCell className="dark:text-neutral-300 text-neutral-600">
-                  {task.taskName}
+                  {task.title}
                 </TableCell>
                 <TableCell
                   className="dark:text-neutral-300 text-neutral-600"
