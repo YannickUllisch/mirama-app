@@ -12,6 +12,7 @@ import { DateTime } from 'luxon'
 import TaskDialog from '@/src/components/Dialogs/TaskDialog'
 import { Button } from '@/src/components/ui/button'
 import { Plus } from 'lucide-react'
+import { Checkbox } from '@src/components/ui/checkbox'
 
 interface TaskProps {
   projectId: string
@@ -31,26 +32,48 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
 
   const columns: ColumnDef<Task>[] = [
     {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
       accessorKey: 'id',
       header: 'ID',
-      cell: () => {
-        return '#'
+      cell: (row) => {
+        return `#${row.row.index + 1}`
       },
     },
     {
       accessorKey: 'title',
       header: 'Title',
-      id: 'taskTitleRow',
+      id: 'Title',
     },
     {
       accessorKey: 'description',
       header: 'Description',
-      id: 'taskDescRow',
+      id: 'Description',
     },
     {
       accessorKey: 'status',
       header: 'Status',
-      id: 'taskStatusRow',
+      id: 'Status',
       cell: (row) => {
         return capitalize(row.cell.getValue() as string)
       },
@@ -58,7 +81,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
     {
       accessorKey: 'assignedTo',
       header: 'Assignee',
-      id: 'assignedToRowTaskList',
+      id: 'Assignee',
       cell: (row) => {
         const assignedTo = row.cell.getValue() as User | undefined
         if (isTeamAdminOrOwner(session)) {
@@ -113,7 +136,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
     {
       accessorKey: 'dueDate',
       header: 'Due Date',
-      id: 'taskDueDateRow',
+      id: 'Due Date',
       cell: (row) => {
         return (
           <div
@@ -132,9 +155,13 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
     <div>
       {tasks ? (
         <div className="rounded-sm">
-          <DataTable columns={columns} data={tasks} />{' '}
+          <DataTable
+            columns={columns}
+            data={tasks}
+            columnvisibility
+            rowselection
+          />
           <div className="w-full h-[40px] border-t-0 border bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-            {' '}
             <TaskDialog
               projectId={projectId}
               mutate={updateTasks}
@@ -147,7 +174,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
                   <Plus width={15} /> Create
                 </Button>
               }
-            />{' '}
+            />
           </div>
         </div>
       ) : null}

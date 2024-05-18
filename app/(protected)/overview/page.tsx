@@ -1,12 +1,10 @@
 'use client'
-import UserAvatar from '@/src/components/UserAvatar'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from '@/src/components/ui/card'
-import { Separator } from '@/src/components/ui/separator'
 import { fetcher, getColorByName } from '@/src/lib/utils'
 import type { Project, Task, User } from '@prisma/client'
 import { CalendarDays } from 'lucide-react'

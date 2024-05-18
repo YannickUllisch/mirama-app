@@ -2,8 +2,6 @@ import { auth } from '@/auth'
 import { validateRequest } from '@/src/lib/utils'
 import type { Task } from '@prisma/client'
 import { db } from '@src/lib/db'
-import { DateTime } from 'luxon'
-import type { NextRequest } from 'next/server'
 
 export const GET = auth(async (req) => {
   try {
@@ -14,7 +12,7 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const projectId = req.nextUrl.searchParams.get('projectId') as string
+    const projectId = new URL(req.url).searchParams.get('projectId') as string
     // If specific ID is given in query, we return only project corresponding to that ID
     if (projectId) {
       const response = await db.task.findMany({
@@ -70,7 +68,7 @@ export const DELETE = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
 
     const response = await db.task.delete({
       where: {

@@ -1,7 +1,7 @@
 'use client'
-import { capitalize, fetcher } from '@/src/lib/utils'
+import { fetcher } from '@/src/lib/utils'
 import { type Project, Role, type Task, type User } from '@prisma/client'
-import React, { type FC } from 'react'
+import React, { useEffect, useState, type FC } from 'react'
 import useSWR from 'swr'
 import {
   Tabs,
@@ -23,6 +23,7 @@ import {
   BreadcrumbSeparator,
 } from '@/src/components/ui/breadcrumb'
 import { ClipboardList, GanttChart, List, SendToBack } from 'lucide-react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
@@ -64,7 +65,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'gantt',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GanttTab />,
+      component: <GanttTab projectId={params.projectId as string} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt
@@ -82,6 +83,20 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       ),
     },
   ]
+  const [tab, setTab] = useState('list')
+
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get('tab')
+
+  useEffect(() => {
+    if (currentTab !== tab) {
+      const newParams = new URLSearchParams(searchParams)
+      newParams.set('tab', tab)
+      router.replace(`${pathname}?${newParams.toString()}`)
+    }
+  }, [tab, currentTab, pathname, searchParams, router])
 
   return (
     <div>
@@ -97,7 +112,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
         </BreadcrumbList>
       </Breadcrumb>
       <div className="mt2">
-        <Tabs defaultValue="list" className="w-full">
+        <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="justify-center flex">
             {projectTabs.map(
               (tabHeader) =>

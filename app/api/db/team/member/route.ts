@@ -34,7 +34,7 @@ export const DELETE = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
 
     const response = await db.user.delete({
       where: {
@@ -64,7 +64,7 @@ export const PUT = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
 
     const member = (await req.json()) as {
       role?: Role

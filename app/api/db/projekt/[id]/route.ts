@@ -11,10 +11,10 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const projectId = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
     const response = await db.project.findUnique({
       where: {
-        id: projectId,
+        id,
       },
       include: {
         managedBy: true,

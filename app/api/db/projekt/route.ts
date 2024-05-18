@@ -69,7 +69,7 @@ export const DELETE = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
 
     await db.project.delete({
       where: {
@@ -95,7 +95,7 @@ export const PUT = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = req.nextUrl.searchParams.get('id') as string
+    const id = new URL(req.url).searchParams.get('id') as string
     const project = (await req.json()) as Partial<Project>
 
     // Convert to correct timezone
