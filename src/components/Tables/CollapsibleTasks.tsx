@@ -5,7 +5,7 @@ import {
   TableRow,
 } from '@src/components/ui/table'
 import type { Task, User } from '@prisma/client'
-import { api, fetcher } from '@/src/lib/utils'
+import { api } from '@/src/lib/utils'
 import useSWR from 'swr'
 import { Loader2, Table, Trash2 } from 'lucide-react'
 import type { FC } from 'react'
@@ -27,7 +27,7 @@ const CollapsibleTasks: FC<CollapsibleTasksProps> = ({ projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`, fetcher)
+  >(`/api/db/task?projectId=${projectId}`)
 
   const deleteRow = (id: string) => {
     try {

@@ -112,7 +112,7 @@ model Project {
 
 enum TaskStatusType {
     TODO
-    INPROGRESS
+    DOING
     INREVIEW
     DONE
 }

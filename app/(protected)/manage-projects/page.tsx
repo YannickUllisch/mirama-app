@@ -9,7 +9,7 @@ import {
   ChevronUp,
   Trash2,
 } from 'lucide-react'
-import { api, capitalize, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
+import { api, capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
 import {
   PriorityType,
   StatusType,
@@ -22,7 +22,7 @@ import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
 import { useMemo, useState } from 'react'
 import { StatusSelect } from '@/src/components/Select/StatusSelect'
-import UserAvatar from '@/src/components/UserAvatar'
+import UserAvatar from '@/src/components/Header/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
@@ -54,13 +54,14 @@ const ProjectsPage = () => {
     }))
   }
 
-  const { data: projects, mutate: updateProjects } = useSWR<
-    (Project & {
-      managedBy: User
-    })[]
-  >('/api/db/projekt', fetcher)
+  const { data: projects, mutate: updateProjects } =
+    useSWR<
+      (Project & {
+        managedBy: User
+      })[]
+    >('/api/db/projekt')
 
-  const { data: users } = useSWR<User[]>('/api/db/user', fetcher)
+  const { data: users } = useSWR<User[]>('/api/db/user')
 
   const filteredProjects = useMemo(() => {
     if (projects) {

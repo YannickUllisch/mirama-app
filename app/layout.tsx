@@ -2,6 +2,8 @@ import { ThemeProvider } from '@/src/components/ThemeProvider'
 import './globals.css'
 import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
+import SwrProvider from '@/src/components/SwrProvider'
+import SessionWrapper from '@/src/components/SessionWrapper'
 
 export const metadata: Metadata = {
   title: 'Start | Mirama',
@@ -12,10 +14,14 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
       <body className="bg-white dark:bg-neutral-950">
-        <Toaster />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main>{children}</main>
-        </ThemeProvider>
+        <SessionWrapper>
+          <Toaster />
+          <SwrProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <main>{children}</main>
+            </ThemeProvider>
+          </SwrProvider>
+        </SessionWrapper>
       </body>
     </html>
   )

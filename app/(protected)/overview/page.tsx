@@ -5,9 +5,10 @@ import {
   CardFooter,
   CardHeader,
 } from '@/src/components/ui/card'
-import { fetcher, getColorByName } from '@/src/lib/utils'
+import { Skeleton } from '@/src/components/ui/skeleton'
+import { getColorByName } from '@/src/lib/utils'
 import type { Project, Task, User } from '@prisma/client'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
@@ -20,7 +21,7 @@ const OverviewPage = () => {
       tasks: Task[]
       managedBy: User
     })[]
-  >('/api/db/projekt/overview', fetcher)
+  >('/api/db/projekt/overview')
 
   return (
     <div className="flex flex-col">
@@ -28,44 +29,48 @@ const OverviewPage = () => {
         Overview
       </span>
       <div className="grid grid-cols-4">
-        {projects?.map((project) => (
-          <Card
-            className={`w-[50px] shadow-none border-none ${getColorByName(
-              project.name,
-            )}`}
-          >
+        {projects ? (
+          projects?.map((project) => (
             <Card
-              key={`${project.id}-card`}
-              onClick={() => router.push(`/overview/${project.id}`)}
-              className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900"
+              className={`w-[50px] shadow-none border-none ${getColorByName(
+                project.name,
+              )}`}
             >
-              <CardHeader
-                style={{ fontSize: 25 }}
-                className="justify-center flex items-start m-1 "
+              <Card
+                key={`${project.id}-card`}
+                onClick={() => router.push(`/overview/${project.id}`)}
+                className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900"
               >
-                {project.name}
-              </CardHeader>
-              <CardContent className="flex flex-col items-start">
-                <div style={{ fontSize: 12 }}>
-                  Managed By: {project.managedBy.name}
-                </div>
-                <div
-                  style={{ fontSize: 11 }}
-                  className="flex flex-row items-center gap-1 align-middle"
+                <CardHeader
+                  style={{ fontSize: 25 }}
+                  className="justify-center flex items-start m-1 "
                 >
-                  <CalendarDays className="w-4 h-4" />
-                  {`${DateTime.fromISO(
-                    new Date(project.startDate as Date).toISOString(),
-                  ).toFormat('dd.MM')} - ${DateTime.fromISO(
-                    new Date(project.endDate as Date).toISOString(),
-                  ).toFormat('dd.MM')}`}
-                </div>
-                <div style={{ fontSize: 11 }}>Your Tasks: 0</div>
-              </CardContent>
-              <CardFooter />
+                  {project.name}
+                </CardHeader>
+                <CardContent className="flex flex-col items-start">
+                  <div style={{ fontSize: 12 }}>
+                    Managed By: {project.managedBy.name}
+                  </div>
+                  <div
+                    style={{ fontSize: 11 }}
+                    className="flex flex-row items-center gap-1 align-middle"
+                  >
+                    <CalendarDays className="w-4 h-4" />
+                    {`${DateTime.fromISO(
+                      new Date(project.startDate as Date).toISOString(),
+                    ).toFormat('dd.MM')} - ${DateTime.fromISO(
+                      new Date(project.endDate as Date).toISOString(),
+                    ).toFormat('dd.MM')}`}
+                  </div>
+                  <div style={{ fontSize: 11 }}>Your Tasks: 0</div>
+                </CardContent>
+                <CardFooter />
+              </Card>
             </Card>
-          </Card>
-        ))}
+          ))
+        ) : (
+          <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
+        )}
       </div>
     </div>
   )

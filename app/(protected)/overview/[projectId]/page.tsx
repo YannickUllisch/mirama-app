@@ -1,5 +1,4 @@
 'use client'
-import { fetcher } from '@/src/lib/utils'
 import { type Project, Role, type Task, type User } from '@prisma/client'
 import React, { useEffect, useState, type FC } from 'react'
 import useSWR from 'swr'
@@ -34,7 +33,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       tasks: Task[]
       managedBy: User
     }
-  >(`/api/db/projekt/${params.projectId}?id=${params.projectId}`, fetcher)
+  >(`/api/db/projekt/${params.projectId}?id=${params.projectId}`)
 
   const projectTabs: {
     roles: Role[]

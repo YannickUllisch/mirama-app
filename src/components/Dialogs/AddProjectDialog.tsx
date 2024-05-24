@@ -14,7 +14,7 @@ import { Button } from '@src/components/ui/button'
 import { Label } from '@src/components/ui/label'
 import { Input } from '@src/components/ui/input'
 import useSWR from 'swr'
-import type { Task, User } from '@prisma/client'
+import type { Project, Task, User } from '@prisma/client'
 import { api, cn } from '@/src/lib/utils'
 import {
   Select,
@@ -33,35 +33,33 @@ import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Calendar } from '../ui/calendar'
 
-interface TaskDialogProps {
+interface AddProjectDialogProps {
   mutate?(): any
   button: React.ReactNode
-  projectId: string
 }
 
-const TaskDialog: FC<TaskDialogProps> = (props) => {
+const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   const { data: session } = useSession()
   const [datePopupOpen, setDatePopupOpen] = useState(false)
   // States
-  const [task, setTask] = useState<Task>({
+  const [project, setProject] = useState<Project>({
     id: v4(),
-    assignedToId: null,
-    title: '',
-    dueDate: new Date(),
-    teamId: session?.user.teamId,
-    description: null,
-    status: 'TODO',
+    budget: 0,
+    archived: false,
+    endDate: new Date(0),
+    name: '',
     priority: 'LOW',
-    projectId: props.projectId,
-    taskName: null,
-  } as Task)
+    status: 'ONHOLD',
+    startDate: new Date(0),
+    teamId: session?.user.teamId,
+  } as Project)
 
   // Fetching Data
   const { data: users } = useSWR<User[]>('/api/db/user')
 
   const createtask = () => {
     try {
-      toast.promise(api.post('task', task), {
+      toast.promise(api.post('project', project), {
         loading: 'Adding Task..',
         error: (err) => err.statusText ?? err,
         success: () => {
@@ -79,18 +77,17 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
   }
 
   const handleClose = () => {
-    setTask({
+    setProject({
       id: v4(),
-      assignedToId: null,
-      title: '',
-      dueDate: new Date(),
-      teamId: session?.user.teamId,
-      description: null,
-      status: 'TODO',
+      budget: 0,
+      archived: false,
+      endDate: new Date(0),
+      name: '',
       priority: 'LOW',
-      projectId: props.projectId,
-      taskName: null,
-    } as Task)
+      status: 'ONHOLD',
+      startDate: new Date(0),
+      teamId: session?.user.teamId,
+    } as Project)
   }
 
   return (
@@ -105,22 +102,12 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Title</Label>
+            <Label className="text-right">Name</Label>
             <Input
               id="title"
               className="col-span-3"
               onChangeCapture={(e) =>
-                setTask({ ...task, title: e.currentTarget.value })
-              }
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Description</Label>
-            <Input
-              id="end-date"
-              className="col-span-3"
-              onChangeCapture={(e) =>
-                setTask({ ...task, description: e.currentTarget.value })
+                setProject({ ...project, name: e.currentTarget.value })
               }
             />
           </div>
@@ -135,19 +122,21 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
                   variant={'outline'}
                   className={cn(
                     'w-[240px] justify-start text-left font-normal',
-                    !task.dueDate && 'text-muted-foreground',
+                    !project.endDate && 'text-muted-foreground',
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {task.dueDate ? format(task.dueDate, 'PPP') : ''}
+                  {project.endDate ? format(project.endDate, 'PPP') : ''}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   onDayFocus={() => setDatePopupOpen(false)}
                   mode="single"
-                  selected={task.dueDate ?? undefined}
-                  onSelect={(e) => setTask({ ...task, dueDate: e as Date })}
+                  selected={project.endDate ?? undefined}
+                  onSelect={(e) =>
+                    setProject({ ...project, endDate: e as Date })
+                  }
                   initialFocus
                   className="dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
                 />
@@ -158,7 +147,9 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
             <Label className="text-right">Assign To</Label>
             <Select
               required
-              onValueChange={(val) => setTask({ ...task, assignedToId: val })}
+              onValueChange={(val) =>
+                setProject({ ...project, managedById: val })
+              }
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select User" />
@@ -204,4 +195,4 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
   )
 }
 
-export default TaskDialog
+export default AddProjectDialog

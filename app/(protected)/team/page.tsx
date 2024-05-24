@@ -2,11 +2,11 @@
 import EmailInput from '@/src/components/Inputs/EmailInput'
 import { RoleSelect } from '@/src/components/Select/RoleSelect'
 import { DataTable } from '@/src/components/Tables/DataTable'
-import UserAvatar from '@/src/components/UserAvatar'
+import UserAvatar from '@/src/components/Header/UserAvatar'
 import { Button } from '@/src/components/ui/button'
 import { Skeleton } from '@/src/components/ui/skeleton'
 import { SelectItem } from '@/src/components/ui/tableSelect'
-import { api, capitalize, fetcher } from '@/src/lib/utils'
+import { api, capitalize } from '@/src/lib/utils'
 import { Role, type User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
@@ -16,7 +16,6 @@ import useSWR from 'swr'
 const TeamPage = () => {
   const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
     '/api/db/team/member',
-    fetcher,
   )
 
   const columns: ColumnDef<User>[] = [

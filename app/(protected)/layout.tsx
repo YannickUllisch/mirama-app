@@ -8,12 +8,6 @@ export const metadata: Metadata = {
 }
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <SessionProvider>
-        <HeadersLayout>{children}</HeadersLayout>
-      </SessionProvider>
-    </>
-  )
+  return <HeadersLayout>{children}</HeadersLayout>
 }
 export default ProtectedLayout

@@ -1,10 +1,10 @@
-import { capitalize, fetcher, isTeamAdminOrOwner } from '@/src/lib/utils'
+import { capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
 import type { Task, User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useSession } from 'next-auth/react'
 import React, { type FC } from 'react'
 import { UserSelect } from '@/src/components/Select/UserSelect'
-import UserAvatar from '@/src/components/UserAvatar'
+import UserAvatar from '@/src/components/Header/UserAvatar'
 import useSWR from 'swr'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import { DataTable } from '@/src/components/Tables/DataTable'
@@ -13,6 +13,7 @@ import TaskDialog from '@/src/components/Dialogs/TaskDialog'
 import { Button } from '@/src/components/ui/button'
 import { Plus } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
+import { Skeleton } from '../ui/skeleton'
 
 interface TaskProps {
   projectId: string
@@ -22,13 +23,13 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
   const { data: session } = useSession()
 
   // Fetching Data
-  const { data: users } = useSWR<User[]>('/api/db/user', fetcher)
+  const { data: users } = useSWR<User[]>('/api/db/user')
 
   const { data: tasks, mutate: updateTasks } = useSWR<
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`, fetcher)
+  >(`/api/db/task?projectId=${projectId}`)
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -177,7 +178,15 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
             />
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="flex flex-col space-y-3">
+          <Skeleton className="h-[125px] flex rounded-xl" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 flex" />
+            <Skeleton className="h-4 flex" />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

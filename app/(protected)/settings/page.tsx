@@ -1,6 +1,4 @@
-import { auth, signOut } from '@/auth'
-import GanttChart from '@/src/components/Syncfusion/gantt'
-import { Button } from '@/src/components/ui/button'
+import { auth } from '@/auth'
 
 const SettingsPage = async () => {
   const session = await auth()

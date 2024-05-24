@@ -2,7 +2,6 @@ import React, { type FC } from 'react'
 import GanttChart from '../Syncfusion/gantt'
 import useSWR from 'swr'
 import type { Task, User } from '@prisma/client'
-import { fetcher } from '@/src/lib/utils'
 
 interface TabProps {
   projectId: string
@@ -13,7 +12,7 @@ const GanttTab: FC<TabProps> = ({ projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`, fetcher)
+  >(`/api/db/task?projectId=${projectId}`)
   return <> {tasks ? <GanttChart tasks={tasks} /> : null}</>
 }
 

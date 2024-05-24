@@ -1,36 +1,69 @@
 import { useSortable } from '@dnd-kit/sortable'
 import type { FC } from 'react'
 import { CSS } from '@dnd-kit/utilities'
-import type { Task, User } from '@prisma/client'
-import KanbanTaskBox from './KanbanTaskBox'
-import type { KanbanColumn } from '@/src/lib/types'
+import type { UniqueIdentifier } from '@dnd-kit/core'
+import { Button } from '../ui/button'
+import clsx from 'clsx'
 import { capitalize } from '@/src/lib/utils'
 
-interface KambanContainerProps {
-  column: KanbanColumn
-  tasks: (Task & {
-    assignedTo: User
-  })[]
+interface ContainerProps {
+  id: UniqueIdentifier
+  children: React.ReactNode
+  title?: string
+  description?: string
+  onAddItem?: () => void
 }
-const KanbanContainer: FC<KambanContainerProps> = ({ column, tasks }) => {
-  const { setNodeRef, attributes, listeners } = useSortable({
-    id: column.id,
-    data: { type: 'Column', column },
-  })
 
+const KanbanContainer: FC<ContainerProps> = ({
+  id,
+  children,
+  title,
+  description,
+  onAddItem,
+}) => {
+  const {
+    attributes,
+    setNodeRef,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: id,
+    data: {
+      type: 'container',
+    },
+  })
   return (
     <div
+      {...attributes}
       ref={setNodeRef}
-      className="bg-neutral-100 dark:bg-neutral-900/80  max-w-[350px] w-[250px] h-[500px] max-h-[500px] rounded-md flex flex-col p-2"
+      style={{
+        transition,
+        transform: CSS.Translate.toString(transform),
+      }}
+      className={clsx(
+        'w-full h-full p-4 bg-neutral-100 border rounded-xl flex flex-col gap-y-4',
+        isDragging && 'opacity-50',
+      )}
     >
-      <div {...attributes} {...listeners}>
-        {capitalize(column.type)}
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-y-1">
+          <h1 className="text-gray-800 text-xl">{capitalize(title ?? '')}</h1>
+          <p className="text-gray-400 text-sm">{description}</p>
+        </div>
+        <Button
+          className="border p-2 text-xs rounded-xl shadow-lg hover:shadow-xl"
+          {...listeners}
+        >
+          Drag Handle
+        </Button>
       </div>
-      <div className="flex flex-grow flex-col gap-y-1">
-        {tasks.map((task) => (
-          <KanbanTaskBox task={task} key={task.id} />
-        ))}
-      </div>
+
+      {children}
+      <Button variant="ghost" onClick={onAddItem}>
+        Add Item
+      </Button>
     </div>
   )
 }

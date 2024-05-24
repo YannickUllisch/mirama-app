@@ -200,22 +200,10 @@ export function DataTable<TData, TValue>({
       {rowselection ? (
         <>
           {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-            <Dialog defaultOpen>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you absolutely sure?</DialogTitle>
-                  <DialogDescription>
-                    <div className="flex-1 text-sm text-muted-foreground">
-                      {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                      {table.getFilteredRowModel().rows.length} row(s) selected.
-                    </div>
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button type="submit">Confirm</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <div className="flex-1 text-sm text-muted-foreground z-5">
+              {table.getFilteredSelectedRowModel().rows.length} of{' '}
+              {table.getFilteredRowModel().rows.length} row(s) selected.
+            </div>
           ) : null}
         </>
       ) : null}

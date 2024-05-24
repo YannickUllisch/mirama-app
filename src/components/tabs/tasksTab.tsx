@@ -2,7 +2,6 @@
 import type { FC } from 'react'
 import type { Task, User } from '@prisma/client'
 import useSWR from 'swr'
-import { fetcher } from '@/src/lib/utils'
 import KanbanBoard from '../Kanban/KanbanBoard'
 
 interface TabProps {
@@ -14,7 +13,7 @@ const Overview: FC<TabProps> = ({ projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`, fetcher)
+  >(`/api/db/task?projectId=${projectId}`)
 
   return <> {tasks ? <KanbanBoard tasks={tasks} /> : null}</>
 }
