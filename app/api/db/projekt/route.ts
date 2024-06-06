@@ -40,16 +40,12 @@ export const POST = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-
+    const project = (await req.json()) as Omit<Project, 'id' | 'teamId'>
     await db.project.create({
       data: {
-        name: 'New Project',
-        status: StatusType.ONGOING,
+        ...project,
         teamId: session?.user.teamId ?? 'undefined',
-        priority: PriorityType.LOW,
-        startDate: DateTime.now().toUTC().startOf('day').toJSDate(),
-        endDate: DateTime.now().toUTC().startOf('day').toJSDate(),
-        tasks: undefined,
+        id: undefined,
       },
     })
     return new Response('Project Created')

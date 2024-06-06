@@ -7,6 +7,7 @@ import {
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
+  Plus,
   Trash2,
 } from 'lucide-react'
 import { api, capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
@@ -36,6 +37,7 @@ import { DateTime } from 'luxon'
 import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 import GeneralTooltip from '@/src/components/GeneralTooltip'
 import GeneralAccordion from '@/src/components/GeneralAccordion'
+import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -437,22 +439,6 @@ const ProjectsPage = () => {
     }
   }
 
-  const createRow = () => {
-    try {
-      toast.promise(api.post('projekt'), {
-        loading: 'Creating Project..',
-        error: (err) => err.statusText ?? err,
-        success: () => {
-          updateProjects()
-
-          return 'Project Successfully Created!'
-        },
-      })
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
   const archiveProject = (id: string, archived: boolean) => {
     try {
       toast.promise(api.put(`projekt?id=${id}`, { archived: archived }), {
@@ -474,13 +460,18 @@ const ProjectsPage = () => {
         <span style={{ fontSize: 23 }}>Manage Projects</span>
       </div>
       <div className="flex justify-end mr-8">
-        <Button
-          variant="outline"
-          className="dark:bg-neutral-900 dark:hover:bg-neutral-800"
-          onClick={createRow}
-        >
-          New Project
-        </Button>
+        <AddProjectDialog
+          mutate={updateProjects}
+          button={
+            <Button
+              className="gap-1"
+              style={{ fontSize: 11, textDecoration: 'none' }}
+              variant="link"
+            >
+              <Plus width={15} /> Create
+            </Button>
+          }
+        />
       </div>
       <div className="mt-5">
         {projects ? (

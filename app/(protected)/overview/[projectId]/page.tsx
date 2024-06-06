@@ -21,8 +21,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/src/components/ui/breadcrumb'
-import { ClipboardList, GanttChart, List, SendToBack } from 'lucide-react'
+import {
+  ClipboardList,
+  GanttChart,
+  List,
+  SendToBack,
+  Settings,
+} from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import SettingsTab from '@/src/components/tabs/settingsTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
@@ -78,6 +85,16 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <SendToBack width={15} /> Backlog
+        </div>
+      ),
+    },
+    {
+      id: 'settings',
+      roles: [Role.ADMIN, Role.OWNER],
+      component: <SettingsTab />,
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <Settings width={15} /> Settings
         </div>
       ),
     },

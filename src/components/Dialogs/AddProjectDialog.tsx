@@ -14,8 +14,8 @@ import { Button } from '@src/components/ui/button'
 import { Label } from '@src/components/ui/label'
 import { Input } from '@src/components/ui/input'
 import useSWR from 'swr'
-import type { Project, Task, User } from '@prisma/client'
-import { api, cn } from '@/src/lib/utils'
+import { PriorityType, type Project, Task, type User } from '@prisma/client'
+import { api, capitalize, cn } from '@/src/lib/utils'
 import {
   Select,
   SelectTrigger,
@@ -40,17 +40,18 @@ interface AddProjectDialogProps {
 
 const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   const { data: session } = useSession()
-  const [datePopupOpen, setDatePopupOpen] = useState(false)
+  const [startDatePopup, setStartDatePopup] = useState(false)
+  const [endDatePopup, setEndDatePopup] = useState(false)
   // States
   const [project, setProject] = useState<Project>({
     id: v4(),
     budget: 0,
     archived: false,
-    endDate: new Date(0),
+    endDate: new Date(),
     name: '',
     priority: 'LOW',
-    status: 'ONHOLD',
-    startDate: new Date(0),
+    status: 'ONGOING',
+    startDate: new Date(),
     teamId: session?.user.teamId,
   } as Project)
 
@@ -59,15 +60,15 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
 
   const createtask = () => {
     try {
-      toast.promise(api.post('project', project), {
-        loading: 'Adding Task..',
+      toast.promise(api.post('projekt', project), {
+        loading: 'Adding Project..',
         error: (err) => err.statusText ?? err,
         success: () => {
           if (props.mutate) {
             props.mutate()
           }
 
-          return 'Tasks Added!'
+          return 'Project Added!'
         },
       })
       handleClose()
@@ -81,11 +82,11 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
       id: v4(),
       budget: 0,
       archived: false,
-      endDate: new Date(0),
+      endDate: new Date(),
       name: '',
       priority: 'LOW',
-      status: 'ONHOLD',
-      startDate: new Date(0),
+      status: 'ONGOING',
+      startDate: new Date(),
       teamId: session?.user.teamId,
     } as Project)
   }
@@ -95,7 +96,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
       <DialogTrigger asChild>{props.button}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Task</DialogTitle>
+          <DialogTitle>New Project</DialogTitle>
           <DialogDescription>
             Make changes to your profile here.
           </DialogDescription>
@@ -112,10 +113,42 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Due Date</Label>
+            <Label className="text-right">Start Date</Label>
             <Popover
-              open={datePopupOpen}
-              onOpenChange={() => setDatePopupOpen((curr) => !curr)}
+              open={startDatePopup}
+              onOpenChange={() => setStartDatePopup((curr) => !curr)}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant={'outline'}
+                  className={cn(
+                    'w-[240px] justify-start text-left font-normal',
+                    !project.startDate && 'text-muted-foreground',
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {project.startDate ? format(project.startDate, 'PPP') : ''}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  onDayFocus={() => setStartDatePopup(false)}
+                  mode="single"
+                  selected={project.startDate ?? undefined}
+                  onSelect={(e) =>
+                    setProject({ ...project, startDate: e as Date })
+                  }
+                  initialFocus
+                  className="dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">End Date</Label>
+            <Popover
+              open={endDatePopup}
+              onOpenChange={() => setEndDatePopup((curr) => !curr)}
             >
               <PopoverTrigger asChild>
                 <Button
@@ -131,7 +164,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
-                  onDayFocus={() => setDatePopupOpen(false)}
+                  onDayFocus={() => setEndDatePopup(false)}
                   mode="single"
                   selected={project.endDate ?? undefined}
                   onSelect={(e) =>
@@ -144,7 +177,44 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
             </Popover>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Assign To</Label>
+            <Label className="text-right">Priority</Label>
+            <Select
+              required
+              onValueChange={(val) =>
+                setProject({ ...project, priority: val as PriorityType })
+              }
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={PriorityType.LOW}>
+                  {capitalize(PriorityType.LOW.toString())}
+                </SelectItem>
+                <SelectItem value={PriorityType.MEDIUM}>
+                  {capitalize(PriorityType.MEDIUM.toString())}
+                </SelectItem>
+                <SelectItem value={PriorityType.HIGH}>
+                  {capitalize(PriorityType.HIGH.toString())}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Budget</Label>
+            <Input
+              id="budget"
+              className="col-span-3"
+              onChangeCapture={(e) =>
+                setProject({
+                  ...project,
+                  budget: Number(e.currentTarget.value),
+                })
+              }
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Managed By</Label>
             <Select
               required
               onValueChange={(val) =>
