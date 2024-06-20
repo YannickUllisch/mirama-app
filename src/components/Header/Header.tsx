@@ -3,7 +3,7 @@ import { useTheme } from 'next-themes'
 import React, { type FC } from 'react'
 import { Button } from '@src/components/ui/button'
 import { AlignLeft, Bell, Moon, Search, Sun } from 'lucide-react'
-import ProfileButton from '@/src/components/Header/ProfileButton'
+import ProfileButton from '@/src/components/Dialogs/ProfileButton'
 
 interface HeaderProps {
   toggleSidebar: () => void
