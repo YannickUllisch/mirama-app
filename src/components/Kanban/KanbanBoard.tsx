@@ -1,19 +1,18 @@
-import { type FC, useMemo, useState } from 'react'
+import { type FC, useMemo, useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 import KanbanContainer from './KanbanContainer'
 import {
   DndContext,
   type DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
-  DragOverlay,
-  closestCorners,
-  DragOverEvent,
   type UniqueIdentifier,
   type DragMoveEvent,
+  DragOverlay,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -22,20 +21,21 @@ import {
 } from '@dnd-kit/sortable'
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
+import { api } from '@/src/lib/utils'
 
 const defaultCols: DndType[] = [
   {
-    id: v4(),
+    id: `container-${v4()}`,
     title: TaskStatusType.TODO,
     items: [],
   },
   {
-    id: v4(),
+    id: `container-${v4()}`,
     title: TaskStatusType.DOING,
     items: [],
   },
   {
-    id: v4(),
+    id: `container-${v4()}`,
     title: TaskStatusType.DONE,
     items: [],
   },
@@ -59,12 +59,42 @@ interface KanbanBoardProps {
 const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
   const [containers, setContainers] = useState<DndType[]>(defaultCols)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [currentContainerId, setCurrentContainerId] =
+  const [_currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier | null>()
-  const [containerName, setContainerName] = useState('')
-  const [itemName, setItemName] = useState('')
-  const [showAddItemModal, setShowAddItemModal] = useState(false)
-  const [showAddContainerModal, setShowAddContainerModal] = useState(false)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Container updates on every event change>
+  useEffect(() => {
+    if (tasks) {
+      for (const task of tasks) {
+        const container = containers.find(
+          (container) => container.title === task.status,
+        )
+        if (!container) continue
+        const existingItem = container?.items.find(
+          (item) => item.id === `item-${task.id}`,
+        )
+        if (existingItem) continue
+        container.items.push({
+          id: `item-${task.id}`,
+          title: task.title,
+        })
+        setContainers([...containers])
+      }
+    }
+  }, [tasks])
+
+  const onAddItem = (containerId: UniqueIdentifier) => {
+    const id = `item-${v4()}`
+    const container = containers.find((item) => item.id === containerId)
+    if (!container) return
+    container.items.push({
+      id,
+      title: 'TMPADD',
+    })
+    setContainers([...containers])
+    //setItemName('')
+    //setShowAddItemModal(false)
+  }
 
   // DnD Handlers
   const sensors = useSensors(
@@ -86,9 +116,18 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
     }
   }
 
+  const findItemTitle = (id: UniqueIdentifier | undefined) => {
+    const container = findValueOfItems(id, 'item')
+    if (!container) return ''
+    const item = container.items.find((item) => item.id === id)
+    if (!item) return ''
+    return item.title
+  }
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
-    setActiveId(active.id)
+    const { id } = active
+    setActiveId(id)
   }
 
   const handleDragMove = (event: DragMoveEvent) => {
@@ -188,33 +227,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
 
-    // Handling Container Sorting
-    if (
-      active.id.toString().includes('container') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find the index of the active and over container
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === active.id,
-      )
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === over.id,
-      )
-      // Swap the active and over container
-      let newItems = [...containers]
-      newItems = arrayMove(newItems, activeContainerIndex, overContainerIndex)
-      setContainers(newItems)
-    }
-
     // Handling item Sorting
     if (
-      active.id.toString().includes('item') &&
+      active?.id.toString().includes('item') &&
       over?.id.toString().includes('item') &&
-      active &&
-      over &&
       active.id !== over.id
     ) {
       // Find the active and over container
@@ -258,12 +274,11 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
         setContainers(newItems)
       }
     }
+
     // Handling item dropping into Container
     if (
       active.id.toString().includes('item') &&
       over?.id.toString().includes('container') &&
-      active &&
-      over &&
       active.id !== over.id
     ) {
       // Find the active and over container
@@ -284,6 +299,9 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
         (item) => item.id === active.id,
       )
 
+      // Updating status for moved item in database
+      //api.put(`task?id=${active.id.toString().substring(5)}`)
+
       const newItems = [...containers]
       const [removeditem] = newItems[activeContainerIndex].items.splice(
         activeitemIndex,
@@ -300,7 +318,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
       <div className="flex w-full gap-6">
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCorners}
+          collisionDetection={closestCenter}
           onDragStart={handleDragStart}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
@@ -311,11 +329,14 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
                 key={container.id}
                 title={container.title}
                 id={container.id}
-                onAddItem={() => {}}
+                onAddItem={() => {
+                  setCurrentContainerId(container.id)
+                  onAddItem(container.id)
+                }}
               >
                 <SortableContext items={container.items.map((i) => i.id)}>
                   {container.items.map((item) => (
-                    <div>
+                    <div key={item.id}>
                       <KanbanItem
                         key={item.id}
                         id={item.id}
@@ -327,6 +348,13 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
               </KanbanContainer>
             ))}
           </SortableContext>
+          <DragOverlay adjustScale={false}>
+            {activeId?.toString().includes('item') && (
+              <div className="opacity-70">
+                <KanbanItem id={activeId} title={findItemTitle(activeId)} />
+              </div>
+            )}
+          </DragOverlay>
         </DndContext>
       </div>
     </div>

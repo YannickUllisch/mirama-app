@@ -1,10 +1,9 @@
+import { getColorByName } from '@/src/lib/utils'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Task, User } from '@prisma/client'
+import type { User } from '@prisma/client'
 import type { FC } from 'react'
-import { Button } from '../ui/button'
-import clsx from 'clsx'
 
 type ItemsType = {
   id: UniqueIdentifier
@@ -30,24 +29,15 @@ const KanbanItem: FC<ItemsType> = ({ id, title }) => {
     <div
       ref={setNodeRef}
       {...attributes}
+      {...listeners}
       style={{
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={clsx(
-        'px-2 py-4 bg-white shadow-md rounded-xl w-full border border-transparent hover:border-gray-200 cursor-pointer',
-        isDragging && 'opacity-50',
-      )}
+      className={`px-2 py-4 bg-white dark:bg-neutral-800 shadow-sm rounded-xl w-full border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 cursor-pointer'
+      ${isDragging && 'opacity-50'}`}
     >
-      <div className="flex items-center justify-between">
-        {title}
-        <Button
-          className="border p-2 text-xs rounded-xl shadow-lg hover:shadow-xl"
-          {...listeners}
-        >
-          Drag Handle
-        </Button>
-      </div>
+      <div className="flex items-center justify-between">{title}</div>
     </div>
   )
 }

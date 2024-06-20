@@ -29,7 +29,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`)
+  >(projectId ? `/api/db/task?projectId=${projectId}` : '')
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -88,6 +88,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
             <UserSelect
+              key={row.cell.id}
               id={row.row.original.id}
               mutate={updateTasks}
               placeholder={
@@ -106,7 +107,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
               }
             >
               {users?.map((user) => (
-                <SelectItem value={user.id}>
+                <SelectItem value={user.id} key={user.id}>
                   <div className="flex items-center gap-1">
                     <UserAvatar
                       avatarSize={6}

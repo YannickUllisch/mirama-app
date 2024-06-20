@@ -134,7 +134,11 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
               (tabHeader) =>
                 session &&
                 tabHeader.roles.includes(session.user.role) && (
-                  <TabsTrigger style={{ fontSize: 12 }} value={tabHeader.id}>
+                  <TabsTrigger
+                    style={{ fontSize: 12 }}
+                    value={tabHeader.id}
+                    key={tabHeader.id}
+                  >
                     {tabHeader.headerComponent}
                   </TabsTrigger>
                 ),

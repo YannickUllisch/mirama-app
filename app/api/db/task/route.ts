@@ -82,3 +82,28 @@ export const DELETE = auth(async (req) => {
     return new Response(JSON.stringify(err))
   }
 })
+
+export const PUT = auth(async (req) => {
+  try {
+    // Checking Permissions
+    const session = req.auth
+    const validatedRequest = await validateRequest(session)
+    if (validatedRequest) {
+      return validatedRequest
+    }
+    const id = new URL(req.url).searchParams.get('id') as string
+
+    await db.task.update({
+      where: {
+        id,
+      },
+      data: {
+        status: 'DOING',
+      },
+    })
+
+    return new Response(JSON.stringify('hi'))
+  } catch (err) {
+    return new Response(JSON.stringify(err))
+  }
+})
