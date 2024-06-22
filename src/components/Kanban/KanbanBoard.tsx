@@ -46,6 +46,7 @@ interface DndType {
   items: {
     id: UniqueIdentifier
     title: string
+    assignedTo: User | null
   }[]
 }
 
@@ -76,6 +77,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
         container.items.push({
           id: `item-${task.id}`,
           title: task.title,
+          assignedTo: task.assignedTo,
         })
         setContainers([...containers])
       }
@@ -89,6 +91,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
     container.items.push({
       id,
       title: 'TMPADD',
+      assignedTo: null,
     })
     setContainers([...containers])
     //setItemName('')
@@ -113,6 +116,14 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
         container.items.find((item) => item.id === id),
       )
     }
+  }
+
+  const findItemUser = (id: UniqueIdentifier | undefined) => {
+    const container = findValueOfItems(id, 'item')
+    if (!container) return null
+    const item = container.items.find((item) => item.id === id)
+    if (!item) return null
+    return item.assignedTo
   }
 
   const findItemTitle = (id: UniqueIdentifier | undefined) => {
@@ -340,6 +351,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
                         key={item.id}
                         id={item.id}
                         title={item.title}
+                        assignedTo={item.assignedTo}
                       />
                     </div>
                   ))}
@@ -350,7 +362,11 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
           <DragOverlay adjustScale={false}>
             {activeId?.toString().includes('item') && (
               <div className="opacity-70">
-                <KanbanItem id={activeId} title={findItemTitle(activeId)} />
+                <KanbanItem
+                  id={activeId}
+                  title={findItemTitle(activeId)}
+                  assignedTo={findItemUser(activeId)}
+                />
               </div>
             )}
           </DragOverlay>

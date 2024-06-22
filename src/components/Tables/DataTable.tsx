@@ -27,14 +27,6 @@ import { useState } from 'react'
 import { Collapsible, CollapsibleContent } from '@src/components/ui/collapsible'
 import CollapsibleTasks from './CollapsibleTasks'
 import { Button } from '@src/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@src/components/ui/dialog'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -88,14 +80,14 @@ export function DataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="gap-1 flex justify-self-end hover:bg-neutral-900"
-                style={{ fontSize: 11, textDecoration: 'none' }}
+                className="gap-1 flex justify-self-end hover:underline mb-1"
+                style={{ fontSize: 11 }}
                 variant="link"
               >
                 Hide Columns
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="center">
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -197,7 +189,7 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       ) : null}
-      {rowselection ? (
+      {/* {rowselection ? (
         <>
           {table.getFilteredSelectedRowModel().rows.length > 0 ? (
             <div className="flex-1 text-sm text-muted-foreground z-5">
@@ -206,7 +198,7 @@ export function DataTable<TData, TValue>({
             </div>
           ) : null}
         </>
-      ) : null}
+      ) : null} */}
     </div>
   )
 }

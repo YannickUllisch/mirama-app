@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback } from '@src/components/ui/avatar'
 import type { FC } from 'react'
 import { extractFirstLetters, getColorByName } from '@src/lib/utils'
+import { CircleUserRound } from 'lucide-react'
 
 interface UserAvatarProps {
   username: string | null
@@ -16,14 +17,16 @@ const UserAvatar: FC<UserAvatarProps> = ({
   const userColor = username ? getColorByName(username) : 'bg-neutral-400/20'
 
   return (
-    <Avatar
-      className={`cursor-pointer h-${avatarSize} w-${avatarSize} shadow flex`}
-    >
+    <Avatar className={`cursor-pointer h-${avatarSize} w-${avatarSize} flex`}>
       <AvatarFallback
-        className={userColor}
+        className={username ? userColor : ''}
         style={fontSize ? { fontSize: fontSize } : {}}
       >
-        {username ? extractFirstLetters(username) : ''}
+        {username ? (
+          extractFirstLetters(username)
+        ) : (
+          <CircleUserRound strokeWidth={0.8} />
+        )}
       </AvatarFallback>
     </Avatar>
   )

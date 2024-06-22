@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { type FC, useState } from 'react'
 import { toast } from 'sonner'
 import { Input } from '@/src/components/ui/tableInput'
 import { Button } from '../ui/button'

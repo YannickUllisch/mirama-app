@@ -23,7 +23,7 @@ const NumberInput: FC<NumberInputProps> = ({ id, defaultValue, mutate }) => {
     }
     try {
       toast.promise(api.put(`projekt?id=${id}`, { budget: newValue }), {
-        loading: 'Upadting Project..',
+        loading: 'Updating Project..',
         error: (err) => err.response.statusText ?? err,
         success: () => {
           mutate()

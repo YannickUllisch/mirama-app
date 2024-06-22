@@ -78,13 +78,13 @@ const Sidebar = () => {
   ]
 
   return (
-    <aside className="flex flex-col min-w-[300] h-[825px] bg-white dark:bg-neutral-900/50 border-r-2 border-neutral-100 dark:border-neutral-800 ">
+    <aside className="flex flex-col min-w-[300] h-full bg-inherit border-r-2 border-neutral-100 dark:border-neutral-800">
       <nav className="p-5 m-2 pb-2 flex justify-between items-center">
         <Link href={DEFAULT_LOGIN_REDIRECT}>
           <Image height={40} src={logo} alt={'Logo'} />
         </Link>
       </nav>
-      <div className="flex-1 p-2 ">
+      <div className="flex-1 p-2">
         <Command>
           <CommandList>
             {menuList.map((group) => (

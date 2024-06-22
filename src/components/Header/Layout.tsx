@@ -2,27 +2,27 @@
 import React, { type PropsWithChildren, useState, type FC } from 'react'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import Footer from '@/src/components/Footer/Footer'
 
 const HeadersLayout: FC<PropsWithChildren> = ({ children }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true)
   return (
-    <div className="flex  h-full items-start justify-start">
-      {isSidebarExpanded ? (
-        <div>
-          <Sidebar />
+    <>
+      <div className="flex min-h-screen items-start justify-start">
+        {isSidebarExpanded ? <Sidebar /> : null}
+        <div className="w-full">
+          <Header
+            toggleSidebar={() =>
+              setIsSidebarExpanded((prevState) => !prevState)
+            }
+          />
+          <main className="flex h-full items-center flex-col">
+            <div className="w-full h-full bg-inherit p-8">{children}</div>
+          </main>
         </div>
-      ) : null}
-      <div className="w-full">
-        <Header
-          toggleSidebar={() => setIsSidebarExpanded((prevState) => !prevState)}
-        />
-        <main className="flex items-center flex-col h-screen">
-          <div className="w-full h-full bg-white dark:bg-neutral-900/50 p-8">
-            {children}
-          </div>
-        </main>
       </div>
-    </div>
+      <Footer />
+    </>
   )
 }
 

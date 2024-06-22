@@ -13,7 +13,7 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <header className="flex gap-2 p-4 justify-between w-full bg-white border-b-2 dark:bg-neutral-900/50 dark:border-neutral-800 border-neutral-100">
+    <header className="flex gap-2 p-4 justify-between w-full bg-inherit border-b-2 dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start">
         <Button
           variant="ghost"
