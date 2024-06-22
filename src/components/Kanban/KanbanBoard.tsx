@@ -21,7 +21,6 @@ import {
 } from '@dnd-kit/sortable'
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
-import { api } from '@/src/lib/utils'
 
 const defaultCols: DndType[] = [
   {

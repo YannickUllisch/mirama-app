@@ -3,8 +3,6 @@ import { twMerge } from 'tailwind-merge'
 import axios from 'axios'
 import type { Session } from 'next-auth'
 import { Role } from '@prisma/client'
-import { getUserById } from '@src/lib/user'
-import { db } from '@src/lib/db'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

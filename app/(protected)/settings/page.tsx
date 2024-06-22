@@ -1,9 +1,9 @@
-import { auth } from '@/auth'
+import { auth } from '@auth'
 
 const SettingsPage = async () => {
-  const session = await auth()
+  const _session = await auth()
 
-  return <div className=" dark:text-white">{JSON.stringify(session)}</div>
+  return <div className=" dark:text-white">Settings</div>
 }
 
 export default SettingsPage

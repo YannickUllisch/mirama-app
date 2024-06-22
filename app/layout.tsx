@@ -14,14 +14,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
       <body className="bg-white dark:bg-neutral-950">
-        <SessionWrapper>
-          <Toaster />
-          <SwrProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <main>{children}</main>
-            </ThemeProvider>
-          </SwrProvider>
-        </SessionWrapper>
+        <Toaster />
+        <SwrProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <main>{children}</main>
+          </ThemeProvider>
+        </SwrProvider>
       </body>
     </html>
   )

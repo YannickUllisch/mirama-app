@@ -3,7 +3,7 @@ import type * as z from 'zod'
 import { RegisterSchema } from '@src/lib/schemas'
 import bcryptjs from 'bcryptjs'
 import { db } from '@src/lib/db'
-import { signIn } from '@/auth'
+import { signIn } from '@/src/lib/auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { AuthError } from 'next-auth'
 

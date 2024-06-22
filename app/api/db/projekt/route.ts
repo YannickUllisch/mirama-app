@@ -1,5 +1,5 @@
 import { db } from '@src/lib/db'
-import { auth } from '@/auth'
+import { auth } from '@/src/lib/auth'
 import { PriorityType, Role, StatusType, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@/src/lib/utils'

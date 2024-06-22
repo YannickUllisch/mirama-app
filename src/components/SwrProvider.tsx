@@ -17,7 +17,7 @@ const SwrProvider: FC<PropsWithChildren> = ({ children }) => {
             tmpKey = regMatch[1]
           }
           toast.error(
-            `${tmpKey} failed with error: ${
+            `${tmpKey} error: ${
               error?.response?.data?.message || error?.message || error
             }`,
           )
