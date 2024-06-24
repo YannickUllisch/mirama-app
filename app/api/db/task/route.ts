@@ -12,7 +12,7 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const projectId = new URL(req.url).searchParams.get('projectId') as string
+    const projectId = req.nextUrl.searchParams.get('projectId') as string
     // If specific ID is given in query, we return only project corresponding to that ID
     if (projectId) {
       const response = await db.task.findMany({
@@ -24,10 +24,12 @@ export const GET = auth(async (req) => {
         },
       })
 
-      return new Response(JSON.stringify(response))
+      return Response.json(response, {status: 200})
     }
+
+    return Response.json({}, {status: 400, statusText: 'Project ID needs to be defined'})
   } catch (err: any) {
-    return new Response(err, { status: 401, statusText: 'Error Occurred!' })
+    return Response.json(err, { status: 500, statusText: 'Error Occurred!'})
   }
 })
 
@@ -54,9 +56,9 @@ export const POST = auth(async (req) => {
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return Response.json(response, {status: 200})
   } catch (err: any) {
-    return new Response(err, { status: 401, statusText: 'Error Occurred!' })
+    return Response.json(err, { status: 500, statusText: 'Error Occurred!'})
   }
 })
 
