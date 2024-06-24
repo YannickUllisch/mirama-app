@@ -1,8 +1,8 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/src/lib/auth'
-import { PriorityType, Role, StatusType, type Project } from '@prisma/client'
+import { Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
-import { validateRequest } from '@/src/lib/utils'
+import { validateRequest } from '@/src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {
@@ -24,9 +24,12 @@ export const GET = auth(async (req) => {
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return Response.json(response, { status: 200 })
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -41,6 +44,14 @@ export const POST = auth(async (req) => {
       return validatedRequest
     }
     const project = (await req.json()) as Omit<Project, 'id' | 'teamId'>
+
+    if (!project) {
+      return Response.json(
+        { ok: false, message: 'Project attributes must be defined in request' },
+        { status: 400 },
+      )
+    }
+
     await db.project.create({
       data: {
         ...project,
@@ -48,9 +59,15 @@ export const POST = auth(async (req) => {
         id: undefined,
       },
     })
-    return new Response('Project Created')
+    return Response.json(
+      { ok: true, message: 'Project created' },
+      { status: 201 },
+    )
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -65,7 +82,14 @@ export const DELETE = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = new URL(req.url).searchParams.get('id') as string
+    const id = req.nextUrl.searchParams.get('id') as string
+
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'Project ID must be defined in request' },
+        { status: 400 },
+      )
+    }
 
     await db.project.delete({
       where: {
@@ -74,9 +98,15 @@ export const DELETE = auth(async (req) => {
       },
     })
 
-    return new Response('Project Deleted')
+    return Response.json(
+      { ok: true, message: 'Project Successfully created' },
+      { status: 201 },
+    )
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -91,8 +121,20 @@ export const PUT = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = new URL(req.url).searchParams.get('id') as string
+    const id = req.nextUrl.searchParams.get('id') as string
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'Project ID must be defined in request' },
+        { status: 400 },
+      )
+    }
     const project = (await req.json()) as Partial<Project>
+    if (!project) {
+      return Response.json(
+        { ok: false, message: 'Project attributes must be defined in request' },
+        { status: 400 },
+      )
+    }
 
     // Convert to correct timezone
     if (project.startDate) {
@@ -126,8 +168,14 @@ export const PUT = auth(async (req) => {
       },
     })
 
-    return new Response('Project Updated')
+    return Response.json(
+      { ok: true, message: 'Project Successfully updated' },
+      { status: 200 },
+    )
   } catch (err: any) {
-    return new Response(err, { status: 401, statusText: 'Error Occurred!' })
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })

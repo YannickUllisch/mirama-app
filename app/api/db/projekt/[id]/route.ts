@@ -1,6 +1,6 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/src/lib/auth'
-import { validateRequest } from '@/src/lib/utils'
+import { validateRequest } from '@/src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {
@@ -11,7 +11,15 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = new URL(req.url).searchParams.get('id') as string
+    const id = req.nextUrl.searchParams.get('id') as string
+
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'Task ID needs to be defined in request' },
+        { status: 400 },
+      )
+    }
+
     const response = await db.project.findUnique({
       where: {
         id,
@@ -21,8 +29,11 @@ export const GET = auth(async (req) => {
         tasks: true,
       },
     })
-    return new Response(JSON.stringify(response))
+    return Response.json(response, { status: 200 })
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })

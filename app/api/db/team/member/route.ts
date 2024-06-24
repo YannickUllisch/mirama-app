@@ -1,6 +1,6 @@
 import { auth } from '@/src/lib/auth'
 import { db } from '@/src/lib/db'
-import { validateRequest } from '@/src/lib/utils'
+import { validateRequest } from '@/src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
 import { validate } from 'uuid'
 
@@ -19,9 +19,12 @@ export const GET = auth(async (req) => {
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return Response.json(response, { status: 200 })
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -34,18 +37,31 @@ export const DELETE = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = new URL(req.url).searchParams.get('id') as string
+    const id = req.nextUrl.searchParams.get('id') as string
 
-    const response = await db.user.delete({
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'User ID needs to be defined in request' },
+        { status: 400 },
+      )
+    }
+
+    await db.user.delete({
       where: {
         id,
         teamId: session?.user.teamId ?? 'undefined',
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return Response.json(
+      { ok: true, message: 'User Successfully deleted' },
+      { status: 200 },
+    )
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -64,13 +80,27 @@ export const PUT = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = new URL(req.url).searchParams.get('id') as string
+    const id = req.nextUrl.searchParams.get('id') as string
+
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'User ID needs to be defined in request' },
+        { status: 400 },
+      )
+    }
 
     const member = (await req.json()) as {
       role?: Role
     }
 
-    const response = await db.user.update({
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'User attrivutes need to be defined in request' },
+        { status: 400 },
+      )
+    }
+
+    await db.user.update({
       where: {
         id,
         teamId: session?.user.teamId ?? 'undefined',
@@ -82,9 +112,15 @@ export const PUT = auth(async (req) => {
 
     // Need to Update/Mutate Session here, to make role change work immediately.
 
-    return new Response(JSON.stringify(response))
+    return Response.json(
+      { ok: true, message: 'User Successfully Updated' },
+      { status: 200 },
+    )
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })
 
@@ -102,6 +138,13 @@ export const POST = auth(async (req) => {
 
     const user = (await req.json()) as Omit<User, 'id' | 'teamId'>
 
+    if (!user) {
+      return Response.json(
+        { ok: false, message: 'User attributes need to be defined in request' },
+        { status: 400 },
+      )
+    }
+
     await db.user.create({
       data: {
         ...user,
@@ -109,8 +152,11 @@ export const POST = auth(async (req) => {
       },
     })
 
-    return Response.json({})
+    return Response.json({ ok: true, message: 'Member Added' }, { status: 200 })
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })

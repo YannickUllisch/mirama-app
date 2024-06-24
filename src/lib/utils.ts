@@ -50,31 +50,6 @@ const colorClasses = [
   'bg-teal-500/40',
 ]
 
-export const validateRequest = async (
-  session: Session | null,
-  roles?: Role[],
-) => {
-  if (!session) {
-    return Response.json(
-      {},
-      { status: 401, statusText: 'You need to be Logged In' },
-    )
-  }
-
-  if (roles && !roles.includes(session.user.role)) {
-    return Response.json({}, { status: 401, statusText: 'Invalid Permission' })
-  }
-
-  if (!session.user.role) {
-    return Response.json(
-      {},
-      { status: 401, statusText: 'You Need to be in Team' },
-    )
-  }
-
-  return null
-}
-
 /**
  * This functions returns a boolean indicating if a specific user ID has Admin or Owner permissionss.
  * @param id a unique user ID

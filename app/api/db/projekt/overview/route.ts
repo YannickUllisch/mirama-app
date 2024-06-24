@@ -1,6 +1,6 @@
 import { db } from '@src/lib/db'
 import { auth } from '@/src/lib/auth'
-import { validateRequest } from '@/src/lib/utils'
+import { validateRequest } from '@/src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {
@@ -26,8 +26,11 @@ export const GET = auth(async (req) => {
       },
     })
 
-    return new Response(JSON.stringify(response))
+    return Response.json(response, { status: 200 })
   } catch (err) {
-    return new Response(JSON.stringify(err))
+    return Response.json(
+      { ok: false, message: `Failed with Error ${err}` },
+      { status: 500 },
+    )
   }
 })

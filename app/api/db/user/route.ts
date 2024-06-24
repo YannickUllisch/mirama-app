@@ -30,5 +30,5 @@ export const GET = async (_req: NextRequest) => {
   // If none of the above flags are provided, return all users.
   const response = await db.user.findMany()
 
-  return new Response(JSON.stringify(response))
+  return Response.json(response, { status: 200 })
 }
