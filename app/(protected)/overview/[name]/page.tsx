@@ -8,11 +8,11 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/src/components/ui/tabs'
-import TasksTab from '@/src/components/tabs/tasksTab'
-import GanttTab from '@/src/components/tabs/ganttTab'
+import TasksTab from '@/src/components/ProjectTabs/tasksTab'
+import GanttTab from '@/src/components/ProjectTabs/ganttTab'
 import { useSession } from 'next-auth/react'
-import BacklogTab from '@/src/components/tabs/backlogTab'
-import ListTab from '@/src/components/tabs/listTab'
+import BacklogTab from '@/src/components/ProjectTabs/backlogTab'
+import ListTab from '@/src/components/ProjectTabs/listTab'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,7 +29,7 @@ import {
   Settings,
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import SettingsTab from '@/src/components/tabs/settingsTab'
+import SettingsTab from '@/src/components/ProjectTabs/settingsTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
@@ -40,7 +40,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       tasks: Task[]
       managedBy: User
     }
-  >(`/api/db/projekt/${params.projectId}?id=${params.projectId}`)
+  >(`/api/db/projekt/${params.name}?name=${params.name}`)
 
   const projectTabs: {
     roles: Role[]
@@ -51,7 +51,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'list',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <ListTab projectId={project?.id ?? ''} />,
+      component: <ListTab projectName={project?.name as string} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <List width={15} /> List
@@ -61,7 +61,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'tasks',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <TasksTab projectId={params.projectId as string} />,
+      component: <TasksTab projectName={params.name as string} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <ClipboardList width={15} /> Tasks
@@ -71,7 +71,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'gantt',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GanttTab projectId={params.projectId as string} />,
+      component: <GanttTab projectName={params.name as string} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt
@@ -116,17 +116,9 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
 
   return (
     <div>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/overview">Overview</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{project?.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <span style={{ fontSize: 23 }} className="mb-6">
+        {project?.name}
+      </span>
       <div className="mt2">
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="justify-center flex">

@@ -27,6 +27,7 @@ import { useState } from 'react'
 import { Collapsible, CollapsibleContent } from '@src/components/ui/collapsible'
 import CollapsibleTasks from './CollapsibleTasks'
 import { Button } from '@src/components/ui/button'
+import { Wrench } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -34,8 +35,8 @@ interface DataTableProps<TData, TValue> {
   pagination?: boolean
   footer?: React.JSX.Element
   collapsible?: boolean
-  rowselection?: boolean
   columnvisibility?: boolean
+  tableHeader?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -45,7 +46,7 @@ export function DataTable<TData, TValue>({
   footer,
   collapsible,
   columnvisibility,
-  rowselection,
+  tableHeader,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
@@ -76,38 +77,43 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div>
-        {columnvisibility ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="gap-1 flex justify-self-end hover:underline mb-1"
-                style={{ fontSize: 11 }}
-                variant="link"
-              >
-                Hide Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
+        <div className="flex items-center m-1 ">
+          {tableHeader}
+          {columnvisibility ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
+                  <Wrench width={15} className="ml-2" />
+                  <Button
+                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    variant="link"
+                  >
+                    Column Options
+                  </Button>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+        </div>
         <Table className="border dark:border-neutral-800">
           <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
             {table.getHeaderGroups().map((headerGroup) => (

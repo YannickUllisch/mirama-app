@@ -5,12 +5,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import { getUserById } from '@/src/lib/user'
 import type { Role } from '@prisma/client'
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       if (user.id) {

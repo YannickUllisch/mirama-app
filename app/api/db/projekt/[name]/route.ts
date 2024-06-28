@@ -11,18 +11,18 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = req.nextUrl.searchParams.get('id') as string
+    const name = req.nextUrl.searchParams.get('name') as string
 
-    if (!id) {
+    if (!name) {
       return Response.json(
-        { ok: false, message: 'Task ID needs to be defined in request' },
+        { ok: false, message: 'Project Name needs to be defined in request' },
         { status: 400 },
       )
     }
 
-    const response = await db.project.findUnique({
+    const response = await db.project.findFirst({
       where: {
-        id,
+        name,
       },
       include: {
         managedBy: true,

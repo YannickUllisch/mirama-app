@@ -1,3 +1,4 @@
+'use client'
 import { capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
 import type { Task, User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -14,13 +15,15 @@ import { Button } from '@/src/components/ui/button'
 import { Plus } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Skeleton } from '../ui/skeleton'
+import { usePathname, useRouter } from 'next/navigation'
 
 interface TaskProps {
-  projectId: string
+  projectName: string
 }
 
-const ListTab: FC<TaskProps> = ({ projectId }) => {
+const ListTab: FC<TaskProps> = ({ projectName }) => {
   const { data: session } = useSession()
+  const router = useRouter()
 
   // Fetching Data
   const { data: users } = useSWR<User[]>('/api/db/user')
@@ -29,7 +32,7 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(projectId ? `/api/db/task?projectId=${projectId}` : '')
+  >(projectName ? `/api/db/task?projectName=${projectName}` : '')
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -161,23 +164,22 @@ const ListTab: FC<TaskProps> = ({ projectId }) => {
             columns={columns}
             data={tasks}
             columnvisibility
-            rowselection
-          />
-          <div className="w-full h-[40px] border-t-0 border bg-neutral-50 dark:bg-neutral-900/50 dark:border-neutral-800">
-            <TaskDialog
-              projectId={projectId}
-              mutate={updateTasks}
-              button={
+            tableHeader={
+              // biome-ignore lint/a11y/useKeyWithClickEvents: <Mouse is enough for current use cases>
+              <div
+                onClick={() => router.push(`${projectName}/create`)}
+                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+              >
+                <Plus width={15} className="ml-2" />
                 <Button
-                  className="gap-1"
                   style={{ fontSize: 11, textDecoration: 'none' }}
                   variant="link"
                 >
-                  <Plus width={15} /> Create
+                  New Task
                 </Button>
-              }
-            />
-          </div>
+              </div>
+            }
+          />
         </div>
       ) : (
         <div className="flex flex-col space-y-3">

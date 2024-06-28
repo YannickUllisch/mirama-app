@@ -12,12 +12,14 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const projectId = req.nextUrl.searchParams.get('projectId') as string
+    const name = req.nextUrl.searchParams.get('projectName') as string
     // If specific ID is given in query, we return only project corresponding to that ID
-    if (projectId) {
+    if (name) {
       const response = await db.task.findMany({
         where: {
-          projectId,
+          project: {
+            name,
+          },
         },
         include: {
           assignedTo: true,

@@ -128,7 +128,9 @@ export const PUT = auth(async (req) => {
         { status: 400 },
       )
     }
-    const project = (await req.json()) as Partial<Project>
+    const project = (await req.json()) as Partial<
+      Omit<Project, 'id' | 'teamId'>
+    >
     if (!project) {
       return Response.json(
         { ok: false, message: 'Project attributes must be defined in request' },
@@ -157,14 +159,7 @@ export const PUT = auth(async (req) => {
         teamId: session?.user.teamId,
       },
       data: {
-        name: project.name,
-        endDate: project.endDate,
-        startDate: project.startDate,
-        budget: project.budget,
-        priority: project.priority,
-        status: project.status,
-        managedById: project.managedById,
-        archived: project.archived,
+        ...project,
       },
     })
 

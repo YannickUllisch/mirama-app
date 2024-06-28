@@ -94,7 +94,7 @@ model Project {
     name        String
 
     managedBy   User?           @relation(fields: [managedById], references: [id], onDelete: SetNull)
-    managedById String?
+    managedById String?       
 
     startDate   DateTime        
     endDate     DateTime        

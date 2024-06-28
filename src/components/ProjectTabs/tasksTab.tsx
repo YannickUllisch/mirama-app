@@ -5,15 +5,15 @@ import useSWR from 'swr'
 import KanbanBoard from '../Kanban/KanbanBoard'
 
 interface TabProps {
-  projectId: string
+  projectName: string
 }
 
-const Overview: FC<TabProps> = ({ projectId }) => {
+const Overview: FC<TabProps> = ({ projectName }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectId=${projectId}`)
+  >(`/api/db/task?projectName=${projectName}`)
 
   return <> {tasks ? <KanbanBoard tasks={tasks} /> : null}</>
 }

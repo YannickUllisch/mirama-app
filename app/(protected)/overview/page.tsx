@@ -7,7 +7,7 @@ import {
 } from '@/src/components/ui/card'
 import { getColorByName } from '@/src/lib/utils'
 import type { Project, Task, User } from '@prisma/client'
-import { CalendarDays, Loader2 } from 'lucide-react'
+import { CalendarDays, Loader2, Plus } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -25,9 +25,9 @@ const OverviewPage = () => {
     })[]
   >('/api/db/projekt/overview')
 
-  const handleClick = (id: string) => {
+  const handleClick = (name: string) => {
     setLoading(true)
-    router.push(`/overview/${id}`)
+    router.push(`/overview/${name}`)
   }
 
   return (
@@ -41,17 +41,17 @@ const OverviewPage = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-4 gap-y-5">
         {projects ? (
           projects?.map((project) => (
             <Card
+              key={`${project.id}-card`}
               className={`w-[50px] shadow-none border-none ${getColorByName(
                 project.name,
               )}`}
             >
               <Card
-                key={`${project.id}-card`}
-                onClick={() => handleClick(project.id)}
+                onClick={() => handleClick(project.name)}
                 className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900"
               >
                 <CardHeader
@@ -83,6 +83,23 @@ const OverviewPage = () => {
         ) : (
           <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
         )}
+        <Card className={'w-[50px] shadow-none border-none bg-green-500'}>
+          <Card
+            onClick={() => ''}
+            className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900"
+          >
+            <CardHeader
+              style={{ fontSize: 25 }}
+              className="justify-center flex items-start m-1 "
+            >
+              Create New
+            </CardHeader>
+            <CardContent className="flex flex-col justify-center align-middle">
+              <Plus />
+            </CardContent>
+            <CardFooter />
+          </Card>
+        </Card>
       </div>
     </div>
   )

@@ -20,3 +20,11 @@ export const RegisterSchema = z.object({
     message: 'Minimum 6 characters required',
   }),
 })
+
+export const ProjectSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Name needs to contain at least 1 character' }),
+  startDate: z.date(),
+  endDate: z.date(),
+})
