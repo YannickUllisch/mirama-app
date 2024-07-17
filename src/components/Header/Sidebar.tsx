@@ -1,13 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import {
-  Folder,
-  FolderOpen,
-  GanttChartSquare,
-  LayoutPanelTop,
-  Users,
-} from 'lucide-react'
+import { FolderOpen, LayoutPanelTop, Users } from 'lucide-react'
 import Link from 'next/link'
 import mirageLogoWhite from '@public/logo/mirage-logo-white.png'
 import mirageLogoBlack from '@public/logo/mirage-logo-black.png'
@@ -20,7 +14,7 @@ import {
   CommandList,
 } from '@src/components/ui/command'
 import { useTheme } from 'next-themes'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 interface iMenuList {
   group: string
@@ -35,7 +29,6 @@ const Sidebar = () => {
   const [logo, setLogo] = useState(mirageLogoWhite)
 
   const { theme } = useTheme()
-  const router = useRouter()
   const currPath = usePathname()
 
   useEffect(() => {
@@ -90,11 +83,7 @@ const Sidebar = () => {
             {menuList.map((group) => (
               <CommandGroup key={group.group} heading={group.group}>
                 {group.items.map((menu) => (
-                  <a
-                    key={menu.id}
-                    // biome-ignore lint/a11y/useValidAnchor: <TODO: Find better component which can be used to reroute here.>
-                    onClick={() => router.push(menu.href)}
-                  >
+                  <Link href={menu.href} key={menu.id}>
                     <CommandItem
                       style={{ fontSize: 13 }}
                       className={`flex gap-3 cursor-pointer relative hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
@@ -106,7 +95,7 @@ const Sidebar = () => {
                       {menu.icon}
                       {menu.label}
                     </CommandItem>
-                  </a>
+                  </Link>
                 ))}
               </CommandGroup>
             ))}

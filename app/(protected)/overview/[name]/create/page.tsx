@@ -14,8 +14,8 @@ const CreateTaskPage = () => {
       <div className="flex items-center gap-5 dark:text-white">
         <span style={{ fontSize: 20 }}>Create Task</span>
         <div>|</div>
-        <div className="flex items-center hover:bg-neutral-100 p-1 ">
-          <Undo width={15} />{' '}
+        <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+          <Undo width={15} className="ml-2" />
           <Button
             style={{ textDecoration: 'none' }}
             variant={'link'}

@@ -1,9 +1,8 @@
 'use client'
-import { useTheme } from 'next-themes'
-import React, { useEffect, useState, type FC } from 'react'
+import React, { type FC } from 'react'
 import { Button } from '@src/components/ui/button'
-import { AlignLeft, Bell, Moon, Search, Sun } from 'lucide-react'
-import ProfileButton from '@/src/components/Dialogs/ProfileButton'
+import { AlignLeft, Bell } from 'lucide-react'
+import ProfileButton from '@/src/components/Header/ProfileButton'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -12,8 +11,9 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
-} from '../ui/breadcrumb'
+} from '@/src/components/ui/breadcrumb'
 import { capitalize } from '@/src/lib/utils'
+import Link from 'next/link'
 
 interface HeaderProps {
   toggleSidebar: () => void
@@ -47,9 +47,11 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
                     {index < pathSegments.length - 1 ? (
                       <>
                         <BreadcrumbItem key={segment}>
-                          <BreadcrumbLink href={accumulatedPath}>
-                            {capitalize(segment)}
-                          </BreadcrumbLink>
+                          <Link href={accumulatedPath} passHref legacyBehavior>
+                            <BreadcrumbLink>
+                              {capitalize(segment)}
+                            </BreadcrumbLink>
+                          </Link>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                       </>

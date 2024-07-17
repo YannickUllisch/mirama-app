@@ -35,9 +35,11 @@ const ProfileButton = () => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">
-          <Link href={'/settings'}> Settings </Link>
-        </DropdownMenuItem>
+        <Link href={'/settings'} legacyBehavior passHref>
+          <DropdownMenuItem className="cursor-pointer">
+            Settings
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuItem
           aria-label="Toggle Theme"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

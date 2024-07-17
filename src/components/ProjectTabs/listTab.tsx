@@ -2,8 +2,9 @@
 import { capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
 import type { Task, User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
-import { useSession } from 'next-auth/react'
-import React, { type FC } from 'react'
+import { signOut, useSession } from 'next-auth/react'
+import type React from 'react'
+import { useState, type FC } from 'react'
 import { UserSelect } from '@/src/components/Select/UserSelect'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import useSWR from 'swr'
@@ -12,10 +13,18 @@ import { DataTable } from '@/src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
 import TaskDialog from '@/src/components/Dialogs/TaskDialog'
 import { Button } from '@/src/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Ellipsis, Link, Plus, Trash2 } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Skeleton } from '../ui/skeleton'
 import { usePathname, useRouter } from 'next/navigation'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
 
 interface TaskProps {
   projectName: string
@@ -68,6 +77,30 @@ const ListTab: FC<TaskProps> = ({ projectName }) => {
       accessorKey: 'title',
       header: 'Title',
       id: 'Title',
+      cell: ({ getValue }) => {
+        const [menuOpen, setMenuOpen] = useState(false)
+
+        return (
+          <div className="flex items-center justify-between group w-full">
+            <span>{getValue() as React.ReactNode}</span>
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis
+                  size={28}
+                  className={`cursor-pointer ${
+                    !menuOpen ? 'invisible group-hover:visible' : 'visible'
+                  } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm`}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => ''}>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )
+      },
     },
     {
       accessorKey: 'description',
