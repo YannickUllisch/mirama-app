@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SessionWrapper>
-      <HeadersLayout>
-        <Suspense fallback={<Loading />}>{children} </Suspense>
-      </HeadersLayout>
-    </SessionWrapper>
+    <Suspense fallback={<Loading />}>
+      <SessionWrapper>
+        <HeadersLayout>{children}</HeadersLayout>
+      </SessionWrapper>
+    </Suspense>
   )
 }
 export default ProtectedLayout

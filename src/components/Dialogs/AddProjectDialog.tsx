@@ -227,7 +227,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
               <SelectContent>
                 <SelectGroup>
                   {users?.map((user) => (
-                    <SelectItem value={user.id}>
+                    <SelectItem value={user.id} key={user.id}>
                       <div className="flex items-center gap-1">
                         <UserAvatar
                           avatarSize={6}

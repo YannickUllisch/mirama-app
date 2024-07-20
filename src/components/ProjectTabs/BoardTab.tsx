@@ -8,13 +8,13 @@ interface TabProps {
   projectName: string
 }
 
-const Overview: FC<TabProps> = ({ projectName }) => {
+const BoardTab: FC<TabProps> = ({ projectName }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
     })[]
   >(`/api/db/task?projectName=${projectName}`)
 
-  return <> {tasks ? <KanbanBoard tasks={tasks} /> : null}</>
+  return <KanbanBoard tasks={tasks ?? []} />
 }
-export default Overview
+export default BoardTab

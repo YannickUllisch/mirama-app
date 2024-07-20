@@ -49,7 +49,7 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
                         <BreadcrumbItem key={segment}>
                           <Link href={accumulatedPath} passHref legacyBehavior>
                             <BreadcrumbLink>
-                              {capitalize(segment)}
+                              {capitalize(segment.replace(/-/g, ' '))}
                             </BreadcrumbLink>
                           </Link>
                         </BreadcrumbItem>
@@ -57,7 +57,9 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
                       </>
                     ) : (
                       <BreadcrumbItem key={segment}>
-                        <BreadcrumbPage>{capitalize(segment)}</BreadcrumbPage>
+                        <BreadcrumbPage>
+                          {capitalize(segment.replace(/-/g, ' '))}
+                        </BreadcrumbPage>
                       </BreadcrumbItem>
                     )}
                   </BreadcrumbList>

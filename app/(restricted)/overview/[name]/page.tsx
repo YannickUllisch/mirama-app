@@ -8,28 +8,20 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/src/components/ui/tabs'
-import TasksTab from '@/src/components/ProjectTabs/tasksTab'
-import GanttTab from '@/src/components/ProjectTabs/ganttTab'
 import { useSession } from 'next-auth/react'
-import BacklogTab from '@/src/components/ProjectTabs/backlogTab'
-import ListTab from '@/src/components/ProjectTabs/listTab'
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/src/components/ui/breadcrumb'
-import {
+  BookOpen,
   ClipboardList,
   GanttChart,
   List,
-  SendToBack,
   Settings,
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import SettingsTab from '@/src/components/ProjectTabs/settingsTab'
+import PersonalTab from '@/src/components/ProjectTabs/PersonalTab'
+import ListTab from '@/src/components/ProjectTabs/ListTab'
+import BoardTab from '@/src/components/ProjectTabs/BoardTab'
+import GanttTab from '@/src/components/ProjectTabs/GanttTab'
+import SettingsTab from '@/src/components/ProjectTabs/SettingsTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
@@ -49,22 +41,37 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     headerComponent: JSX.Element
   }[] = [
     {
-      id: 'list',
+      id: 'personal',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <ListTab projectName={project?.name as string} />,
+      component: <PersonalTab />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
-          <List width={15} /> List
+          <BookOpen width={15} /> Personal
+        </div>
+      ),
+    },
+    {
+      id: 'list',
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      component: (
+        <ListTab
+          projectName={project?.name as string}
+          projectId={project?.id as string}
+        />
+      ),
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <List width={15} /> Task List
         </div>
       ),
     },
     {
       id: 'tasks',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <TasksTab projectName={params.name as string} />,
+      component: <BoardTab projectName={params.name as string} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
-          <ClipboardList width={15} /> Tasks
+          <ClipboardList width={15} /> Board
         </div>
       ),
     },
@@ -79,19 +86,9 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       ),
     },
     {
-      id: 'backlog',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <BacklogTab />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <SendToBack width={15} /> Backlog
-        </div>
-      ),
-    },
-    {
       id: 'settings',
       roles: [Role.ADMIN, Role.OWNER],
-      component: <SettingsTab />,
+      component: <SettingsTab project={project as Project} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <Settings width={15} /> Settings
@@ -99,7 +96,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       ),
     },
   ]
-  const [tab, setTab] = useState('list')
+  const [tab, setTab] = useState('personal')
 
   const router = useRouter()
   const pathname = usePathname()
@@ -115,38 +112,33 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <div>
-      <span style={{ fontSize: 23 }} className="mb-6">
-        {project?.name}
-      </span>
-      <div className="mt2">
-        <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="justify-center flex">
-            {projectTabs.map(
-              (tabHeader) =>
-                session &&
-                tabHeader.roles.includes(session.user.role) && (
-                  <TabsTrigger
-                    style={{ fontSize: 12 }}
-                    value={tabHeader.id}
-                    key={tabHeader.id}
-                  >
-                    {tabHeader.headerComponent}
-                  </TabsTrigger>
-                ),
-            )}
-          </TabsList>
+    <div className="mt2">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <TabsList className="justify-center flex">
           {projectTabs.map(
-            (tab) =>
+            (tabHeader) =>
               session &&
-              tab.roles.includes(session.user.role) && (
-                <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                  {tab.component}
-                </TabsContent>
+              tabHeader.roles.includes(session.user.role) && (
+                <TabsTrigger
+                  style={{ fontSize: 12 }}
+                  value={tabHeader.id}
+                  key={tabHeader.id}
+                >
+                  {tabHeader.headerComponent}
+                </TabsTrigger>
               ),
           )}
-        </Tabs>
-      </div>
+        </TabsList>
+        {projectTabs.map(
+          (tab) =>
+            session &&
+            tab.roles.includes(session.user.role) && (
+              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+                {tab.component}
+              </TabsContent>
+            ),
+        )}
+      </Tabs>
     </div>
   )
 }

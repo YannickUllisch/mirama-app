@@ -21,7 +21,6 @@ const HeadersLayout: FC<PropsWithChildren> = ({ children }) => {
           </main>
         </div>
       </div>
-      <Footer />
     </>
   )
 }

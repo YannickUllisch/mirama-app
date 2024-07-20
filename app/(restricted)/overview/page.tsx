@@ -22,12 +22,6 @@ const OverviewPage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex">
-        <span style={{ fontSize: 23 }} className="mb-6">
-          Overview
-        </span>
-      </div>
-
       <div className="grid grid-cols-4 gap-y-5">
         {projects ? (
           projects?.map((project) => (

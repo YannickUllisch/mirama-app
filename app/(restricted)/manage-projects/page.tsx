@@ -21,13 +21,12 @@ import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { StatusSelect } from '@/src/components/Select/StatusSelect'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
-import { Skeleton } from '@/src/components/ui/skeleton'
 import TextInput from '@/src/components/Inputs/TextInput'
 import NumberInput from '@/src/components/Inputs/NumberInput'
 import { UserSelect } from '@/src/components/Select/UserSelect'
@@ -97,7 +96,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'name',
-      id: 'nameRowAllProjects',
+      id: 'Name',
       header: 'Name',
       size: 500,
       cell: (row) => {
@@ -117,18 +116,20 @@ const ProjectsPage = () => {
     {
       accessorKey: 'managedBy',
       header: 'Managed By',
-      id: 'managedByRowAllProjects',
+      id: 'Managed By',
       cell: (row) => {
         const managedBy = row.cell.getValue() as User | undefined
         if (isTeamAdminOrOwner(session)) {
           return (
             <UserSelect
+              key={managedBy?.id}
               id={row.row.original.id}
               mutate={updateProjects}
               placeholder={
                 managedBy ? (
                   <div className="flex items-center gap-1">
                     <UserAvatar
+                      key={managedBy.name}
                       username={managedBy.name}
                       avatarSize={6}
                       fontSize={10}
@@ -141,9 +142,10 @@ const ProjectsPage = () => {
               }
             >
               {users?.map((user) => (
-                <SelectItem value={user.id}>
+                <SelectItem key={user.id} value={user.id}>
                   <div className="flex items-center gap-1">
                     <UserAvatar
+                      key={user.name}
                       avatarSize={6}
                       fontSize={10}
                       username={user.name}
@@ -158,6 +160,7 @@ const ProjectsPage = () => {
         return managedBy ? (
           <div className="flex items-center gap-1">
             <UserAvatar
+              key={managedBy.name}
               avatarSize={6}
               fontSize={10}
               username={managedBy.name}
@@ -171,7 +174,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'startDate',
-      id: 'startRowAllProjects',
+      id: 'Start Date',
       header: ({ column }) => {
         return (
           <Button
@@ -210,7 +213,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'endDate',
-      id: 'endRowAllProjects',
+      id: 'End Date',
       header: ({ column }) => {
         return (
           <Button
@@ -254,7 +257,7 @@ const ProjectsPage = () => {
     {
       header: 'Days Remaining',
       accessorKey: 'endDate',
-      id: 'remainingAllProjects',
+      id: 'Days Remaining',
       cell: (row) => {
         const daysRemaining = -Math.floor(
           DateTime.utc().diff(
@@ -280,7 +283,7 @@ const ProjectsPage = () => {
     {
       accessorKey: 'priority',
       header: 'Priority',
-      id: 'priorityAllProjects',
+      id: 'Priority',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -309,7 +312,7 @@ const ProjectsPage = () => {
     {
       accessorKey: 'status',
       header: 'Status',
-      id: 'statusAllProjects',
+      id: 'Status',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -333,7 +336,7 @@ const ProjectsPage = () => {
     {
       accessorKey: 'budget',
       header: 'Budget',
-      id: 'budgetAllProjects',
+      id: 'Budget',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -350,7 +353,7 @@ const ProjectsPage = () => {
     },
     {
       header: 'Actions',
-      id: 'actionsAllProjects',
+      id: 'Actions',
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -456,77 +459,58 @@ const ProjectsPage = () => {
 
   return (
     <>
-      <div className="flex flex-col mb-1">
-        <span style={{ fontSize: 23 }}>Manage Projects</span>
-      </div>
-      <div className="flex justify-end mr-8">
-        <AddProjectDialog
-          mutate={updateProjects}
-          button={
-            <Button
-              className="gap-1"
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
-            >
-              <Plus width={15} /> Create
-            </Button>
-          }
-        />
-      </div>
-      <div className="mt-5">
-        {projects ? (
-          <>
-            <DataTable
-              columns={columns}
-              data={filteredProjects}
-              pagination
-              collapsible
-              footer={
-                <TableFooter>
-                  <TableRow className="dark:bg-neutral-900 bg-neutral-50">
-                    <TableCell
-                      className="dark:text-white cursor-default"
-                      colSpan={8}
-                    >
-                      Total
-                    </TableCell>
-                    <TableCell
-                      className="dark:text-white cursor-default"
-                      colSpan={2}
-                    >
-                      Total:{' '}
-                      {projects.reduce(
-                        (acc, curr) => acc + (curr.budget || 0),
-                        0,
-                      )}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              }
-            />
-            <GeneralAccordion
-              trigger="Archived"
-              accordionContent={
-                <DataTable
-                  columns={columns}
-                  data={projects.filter((project) => {
-                    return project.archived
-                  })}
-                  collapsible
-                />
-              }
-            />
-          </>
-        ) : (
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[125px] flex rounded-xl" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 flex" />
-              <Skeleton className="h-4 flex" />
-            </div>
-          </div>
-        )}
-      </div>
+      <DataTable
+        columns={columns}
+        data={filteredProjects}
+        pagination
+        collapsible
+        columnvisibility
+        tableHeader={
+          <AddProjectDialog
+            key={'Project Dialog'}
+            mutate={updateProjects}
+            button={
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Plus width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  New Project
+                </Button>
+              </div>
+            }
+          />
+        }
+        footer={
+          <TableFooter>
+            <TableRow className="dark:bg-neutral-900 bg-neutral-50">
+              <TableCell className="dark:text-white cursor-default" colSpan={8}>
+                Total
+              </TableCell>
+              <TableCell className="dark:text-white cursor-default" colSpan={2}>
+                Total:{' '}
+                {projects?.reduce((acc, curr) => acc + (curr.budget || 0), 0) ??
+                  0}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        }
+      />
+      <GeneralAccordion
+        trigger="Archived"
+        accordionContent={
+          <DataTable
+            columns={columns}
+            data={
+              projects?.filter((project) => {
+                return project.archived
+              }) ?? []
+            }
+            collapsible
+          />
+        }
+      />
     </>
   )
 }

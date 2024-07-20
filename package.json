@@ -55,6 +55,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.2",
     "react-resizable-panels": "^2.0.16",
+    "react-social-icons": "^6.16.0",
     "shadcn-ui": "^0.8.0",
     "sharp": "^0.33.3",
     "sonner": "^1.4.41",

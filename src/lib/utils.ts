@@ -69,12 +69,15 @@ export const isTeamAdminOrOwner = (session: Session | null) => {
   return false
 }
 
-export const capitalize = (str: string): string => {
-  if (str.length === 0) {
-    return str
+export const capitalize = (input: string | string[]): string | string[] => {
+  const capitalizeWord = (str: string) =>
+    str.replace(/\b\w/g, (char) => char.toUpperCase())
+
+  if (Array.isArray(input)) {
+    return input.map(capitalizeWord)
   }
 
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  return capitalizeWord(input)
 }
 
 export const extractFirstLetters = (inputString: string): string => {

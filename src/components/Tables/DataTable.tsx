@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
           {tableHeader}
           {columnvisibility ? (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
                   <Wrench width={15} className="ml-2" />
                   <Button
@@ -195,16 +195,14 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       ) : null}
-      {/* {rowselection ? (
-        <>
-          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-            <div className="flex-1 text-sm text-muted-foreground z-5">
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-          ) : null}
-        </>
-      ) : null} */}
+      <>
+        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+          <div className="flex-1 text-sm text-muted-foreground z-5">
+            {table.getFilteredSelectedRowModel().rows.length} of{' '}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        ) : null}
+      </>
     </div>
   )
 }

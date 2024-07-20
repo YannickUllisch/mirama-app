@@ -97,7 +97,6 @@ const TeamPage = () => {
 
   return (
     <main className="flex flex-col">
-      <span style={{ fontSize: 20 }}>Team Page</span>
       <div className="mt-8 mb-2">
         <EmailInput mutate={updateMembers} />
       </div>
