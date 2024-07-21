@@ -4,7 +4,7 @@ import type { Task, User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useSession } from 'next-auth/react'
 import type React from 'react'
-import { useState, type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import { UserSelect } from '@/src/components/Select/UserSelect'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import useSWR from 'swr'
@@ -38,6 +38,8 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       assignedTo: User
     })[]
   >(projectName ? `/api/db/task?projectName=${projectName}` : '')
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -73,7 +75,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       accessorKey: 'title',
       header: 'Title',
       id: 'Title',
-      cell: ({ getValue }) => {
+      cell: ({ getValue, row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
 
         return (
@@ -82,9 +84,12 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Ellipsis
+                  onClick={() => row.toggleSelected(true)}
                   size={28}
                   className={`cursor-pointer ${
-                    !menuOpen ? 'invisible group-hover:visible' : 'visible'
+                    !menuOpen && !row.getIsSelected()
+                      ? 'invisible group-hover:visible'
+                      : 'visible'
                   } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm`}
                 />
               </DropdownMenuTrigger>
@@ -185,6 +190,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       },
     },
   ]
+
   return (
     <div>
       <div className="rounded-sm">

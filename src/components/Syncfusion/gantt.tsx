@@ -43,22 +43,20 @@ const taskValues: TaskFieldsModel = {
 }
 
 interface GanttChartProps {
-  tasks: (Task & {
-    assignedTo: User
-  })[]
+  tasks: Task[]
 }
 
 const GanttChart: FC<GanttChartProps> = ({ tasks }) => {
   return (
     <>
       <GanttComponent
-        dataSource={tasks}
+        dataSource={data}
         allowFiltering={true}
         allowSorting={true}
         taskFields={taskValues}
         resources={projectResources}
         height="400px"
-        width="1300px"
+        width="1100px"
       >
         <Inject services={[Edit, Filter, Sort]} />
       </GanttComponent>

@@ -45,7 +45,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'personal',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <PersonalTab />,
+      component: <PersonalTab tasks={project?.tasks ?? []} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <BookOpen width={15} /> Personal
@@ -80,7 +80,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'gantt',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GanttTab projectName={params.name as string} />,
+      component: <GanttTab tasks={project?.tasks ?? []} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt

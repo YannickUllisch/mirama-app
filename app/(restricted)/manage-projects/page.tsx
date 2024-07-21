@@ -20,8 +20,7 @@ import {
 import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
-import { CollapsibleTrigger } from '@/src/components/ui/collapsible'
-import { Suspense, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { StatusSelect } from '@/src/components/Select/StatusSelect'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
@@ -37,25 +36,11 @@ import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 import GeneralTooltip from '@/src/components/GeneralTooltip'
 import GeneralAccordion from '@/src/components/GeneralAccordion'
 import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
-import TaskDialog from '@/src/components/Dialogs/TaskDialog'
 import ConfirmationDialog from '@/src/components/Dialogs/ConfirmationDialog'
-
-interface CollapsedRows {
-  [projectId: string]: boolean
-}
 
 const ProjectsPage = () => {
   // States
-  const [collapsedRows, setCollapsedRows] = useState<CollapsedRows>({})
-
   const { data: session } = useSession()
-
-  const toggleCollapse = (projectId: string) => {
-    setCollapsedRows((prevState) => ({
-      ...prevState,
-      [projectId]: !prevState[projectId],
-    }))
-  }
 
   const { data: projects, mutate: updateProjects } =
     useSWR<
@@ -78,22 +63,16 @@ const ProjectsPage = () => {
   const columns: ColumnDef<Project & { managedBy: User }>[] = [
     {
       accessorKey: 'id',
-      header: 'Tasks',
-      cell: (row) => {
-        return (
-          <CollapsibleTrigger
-            key={`tasks${row.cell.id}`}
+      header: '',
+      cell: ({ row }) => {
+        return row.getCanExpand() ? (
+          <ChevronUp
             className={`dark:text-white h-3.5 w-3.5 cursor-pointer transition-all ease-out transform ${
-              collapsedRows[row.getValue() as string]
-                ? 'rotate-180'
-                : 'rotate-90'
+              row.getIsExpanded() ? 'rotate-180' : 'rotate-90'
             }`}
-            asChild
-            onClick={() => toggleCollapse(row.getValue() as string)}
-          >
-            <ChevronUp />
-          </CollapsibleTrigger>
-        )
+            onClick={row.getToggleExpandedHandler()}
+          />
+        ) : null
       },
     },
     {
@@ -470,7 +449,6 @@ const ProjectsPage = () => {
         columns={columns}
         data={filteredProjects}
         pagination
-        collapsible
         columnvisibility
         tableHeader={
           <AddProjectDialog
@@ -514,7 +492,6 @@ const ProjectsPage = () => {
                 return project.archived
               }) ?? []
             }
-            collapsible
           />
         }
       />

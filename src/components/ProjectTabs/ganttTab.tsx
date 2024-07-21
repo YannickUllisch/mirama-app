@@ -4,15 +4,10 @@ import useSWR from 'swr'
 import type { Task, User } from '@prisma/client'
 
 interface TabProps {
-  projectName: string
+  tasks: Task[]
 }
 
-const GanttTab: FC<TabProps> = ({ projectName }) => {
-  const { data: tasks } = useSWR<
-    (Task & {
-      assignedTo: User
-    })[]
-  >(`/api/db/task?projectName=${projectName}`)
+const GanttTab: FC<TabProps> = ({ tasks }) => {
   return <> {tasks ? <GanttChart tasks={tasks} /> : null}</>
 }
 

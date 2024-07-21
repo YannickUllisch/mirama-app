@@ -23,9 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/src/components/ui/table'
+import type React from 'react'
 import { useState } from 'react'
-import { Collapsible, CollapsibleContent } from '@src/components/ui/collapsible'
-import CollapsibleTasks from './CollapsibleTasks'
 import { Button } from '@src/components/ui/button'
 import { Wrench } from 'lucide-react'
 
@@ -34,9 +33,9 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   pagination?: boolean
   footer?: React.JSX.Element
-  collapsible?: boolean
   columnvisibility?: boolean
   tableHeader?: React.ReactNode
+  expandedContent?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -44,7 +43,7 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   footer,
-  collapsible,
+  expandedContent,
   columnvisibility,
   tableHeader,
 }: DataTableProps<TData, TValue>) {
@@ -60,6 +59,8 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+    enableRowSelection: true,
+    getRowCanExpand: () => true,
     state: {
       sorting,
       rowSelection,
@@ -136,28 +137,32 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <Collapsible key={`collapsible${row.id}`} asChild>
-                  <>
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
+                <>
+                  <TableRow
+                    key={row.id}
+                    className="group"
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {row.getIsExpanded() && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={row.getVisibleCells().length}
+                        className=""
+                      >
+                        {expandedContent}
+                      </TableCell>
                     </TableRow>
-                    {collapsible && (
-                      <CollapsibleContent className="w-20" asChild>
-                        <CollapsibleTasks projectId={row.getValue('id')} />
-                      </CollapsibleContent>
-                    )}
-                  </>
-                </Collapsible>
+                  )}
+                </>
               ))
             ) : (
               <TableRow>
