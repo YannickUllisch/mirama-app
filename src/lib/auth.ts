@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import authConfig from '@/auth.config'
+import authConfig from '@/src/lib/auth.config'
 import { db } from '@src/lib/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { getUserById } from '@/src/lib/user'
@@ -49,6 +49,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return token
     },
+  },
+  pages: {
+    error: '/',
+    newUser: '/',
+    signIn: '/auth/login',
+    signOut: '/',
   },
   adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
