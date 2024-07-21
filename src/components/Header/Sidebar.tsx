@@ -71,36 +71,39 @@ const Sidebar = () => {
   ]
 
   return (
-    <aside className="flex flex-col min-w-[300] h-full bg-inherit border-r-2 border-neutral-100 dark:border-neutral-800">
-      <nav className="p-5 m-2 pb-2 flex justify-between items-center">
-        <Link href={DEFAULT_LOGIN_REDIRECT}>
-          <Image height={40} src={logo} alt={'Logo'} />
-        </Link>
-      </nav>
-      <div className="flex-1 p-2">
-        <Command>
-          <CommandList>
-            {menuList.map((group) => (
-              <CommandGroup key={group.group} heading={group.group}>
-                {group.items.map((menu) => (
-                  <Link href={menu.href} key={menu.id}>
-                    <CommandItem
-                      style={{ fontSize: 13 }}
-                      className={`flex gap-3 cursor-pointer relative hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
-                        menu.href === currPath
-                          ? 'bg-neutral-100 dark:bg-neutral-800'
-                          : ''
-                      }`}
-                    >
-                      {menu.icon}
-                      {menu.label}
-                    </CommandItem>
-                  </Link>
-                ))}
-              </CommandGroup>
-            ))}
-          </CommandList>
-        </Command>
+    <aside className="flex flex-col min-w-[300px] h-screen bg-inherit border-r-2 border-neutral-100 dark:border-neutral-800">
+      <div className="flex-1 flex flex-col">
+        <nav className="p-5 m-2 pb-2 flex justify-between items-center">
+          <Link href={DEFAULT_LOGIN_REDIRECT}>
+            <Image height={40} src={logo} alt={'Logo'} />
+          </Link>
+        </nav>
+
+        <div className="flex-1 p-2">
+          <Command>
+            <CommandList>
+              {menuList.map((group) => (
+                <CommandGroup key={group.group} heading={group.group}>
+                  {group.items.map((menu) => (
+                    <Link href={menu.href} key={menu.id}>
+                      <CommandItem
+                        style={{ fontSize: 13 }}
+                        className={`flex gap-3 cursor-pointer relative hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
+                          menu.href === currPath
+                            ? 'bg-neutral-100 dark:bg-neutral-800'
+                            : ''
+                        }`}
+                      >
+                        {menu.icon}
+                        {menu.label}
+                      </CommandItem>
+                    </Link>
+                  ))}
+                </CommandGroup>
+              ))}
+            </CommandList>
+          </Command>
+        </div>
       </div>
     </aside>
   )

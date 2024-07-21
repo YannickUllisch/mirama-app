@@ -4,13 +4,16 @@ import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
 import SwrProvider from '@/src/components/SwrProvider'
 import Footer from '@/src/components/Footer/Footer'
+import InfoFooter from '@/src/components/Footer/InfoFooter'
+import { auth } from '@auth'
 
 export const metadata: Metadata = {
   title: 'Start | Mirama',
   description: 'Entry Page for Management System',
 }
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth()
   return (
     <html suppressHydrationWarning lang="en">
       <body className="bg-white dark:bg-neutral-900/10">
@@ -18,6 +21,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         <SwrProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <main>{children}</main>
+            {!session && <InfoFooter />}
             <Footer />
           </ThemeProvider>
         </SwrProvider>

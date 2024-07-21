@@ -14,10 +14,8 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
 import { extractFirstLetters, getColorByName } from '@/src/lib/utils'
-import { useTheme } from 'next-themes'
 
 const ProfileButton = () => {
-  const { theme, setTheme } = useTheme()
   const { data: session } = useSession()
   const userColor = session?.user?.name
     ? getColorByName(session?.user?.name)
@@ -40,12 +38,6 @@ const ProfileButton = () => {
             Settings
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem
-          aria-label="Toggle Theme"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >
-          Change Theme
-        </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => signOut({ callbackUrl: '/', redirect: true })}

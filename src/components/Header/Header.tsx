@@ -70,9 +70,9 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button variant={'ghost'} size={'icon'} aria-label="Notifications">
+        {/* <Button variant={'ghost'} size={'icon'} aria-label="Notifications">
           <Bell strokeWidth={1.5} className="h-4 w-4" />
-        </Button>
+        </Button> */}
         <ProfileButton />
       </div>
     </header>

@@ -17,7 +17,7 @@ interface ConfirmationDialogProps {
   dialogDesc: string
   submitButtonText: string
   dialogTrigger: React.ReactNode
-  onConfirmation: () => void
+  onConfirmation: (id?: string) => void
 }
 
 const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
@@ -45,7 +45,7 @@ const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
             <Button
               type="button"
               variant="default"
-              onClick={onConfirmation}
+              onClick={() => onConfirmation()}
               className="bg-red-600 hover:bg-red-500 dark:text-white"
             >
               {submitButtonText}

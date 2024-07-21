@@ -37,6 +37,8 @@ import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 import GeneralTooltip from '@/src/components/GeneralTooltip'
 import GeneralAccordion from '@/src/components/GeneralAccordion'
 import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
+import TaskDialog from '@/src/components/Dialogs/TaskDialog'
+import ConfirmationDialog from '@/src/components/Dialogs/ConfirmationDialog'
 
 interface CollapsedRows {
   [projectId: string]: boolean
@@ -362,9 +364,14 @@ const ProjectsPage = () => {
                 key={`delete_${row.row.index}`}
                 tipText="Remove"
                 trigger={
-                  <Trash2
-                    onClick={() => deleteRow(row.row.getValue('id'))}
-                    className="w-3.5 h-3.5 text-rose-600 cursor-pointer"
+                  <ConfirmationDialog
+                    dialogTitle={'Are you sure?'}
+                    dialogDesc={'Deleting a project can not be undone!'}
+                    submitButtonText={'Delete'}
+                    dialogTrigger={
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
+                    }
+                    onConfirmation={() => deleteProject(row.row.original.id)}
                   />
                 }
               />
@@ -426,7 +433,7 @@ const ProjectsPage = () => {
     },
   ]
 
-  const deleteRow = (id: string) => {
+  const deleteProject = (id?: string) => {
     try {
       toast.promise(api.delete(`projekt?id=${id}`), {
         loading: 'Deleting Project..',

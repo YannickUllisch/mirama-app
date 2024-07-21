@@ -208,17 +208,6 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
               projectId={projectId}
               mutate={updateTasks}
             />
-            // <Link href={`${projectName}/create`} legacyBehavior passHref>
-            //   <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            //     <Plus width={15} className="ml-2" />
-            //     <Button
-            //       style={{ fontSize: 11, textDecoration: 'none' }}
-            //       variant="link"
-            //     >
-            //       New Task
-            //     </Button>
-            //   </div>
-            // </Link>
           }
         />
       </div>

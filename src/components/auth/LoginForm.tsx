@@ -87,7 +87,11 @@ const LoginForm = () => {
         </div>
         <FormSuccess message={success} />
         <FormError message={error} />
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="w-full bg-orange-500 hover:bg-orange-400 dark:bg-orange-600 dark:hover:bg-orange-500 text-white"
+          disabled={isPending}
+        >
           Login
         </Button>
       </form>
