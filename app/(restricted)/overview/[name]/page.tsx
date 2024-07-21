@@ -10,6 +10,7 @@ import {
 } from '@/src/components/ui/tabs'
 import { useSession } from 'next-auth/react'
 import {
+  BarChartBig,
   BookOpen,
   ClipboardList,
   GanttChart,
@@ -21,6 +22,7 @@ import PersonalTab from '@/src/components/ProjectTabs/PersonalTab'
 import ListTab from '@/src/components/ProjectTabs/ListTab'
 import BoardTab from '@/src/components/ProjectTabs/BoardTab'
 import GanttTab from '@/src/components/ProjectTabs/GanttTab'
+import AnalyticsTab from '@/src/components/ProjectTabs/AnalyticsTab'
 import SettingsTab from '@/src/components/ProjectTabs/SettingsTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
@@ -82,6 +84,16 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt
+        </div>
+      ),
+    },
+    {
+      id: 'analytics',
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      component: <AnalyticsTab />,
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <BarChartBig width={15} /> Analytics
         </div>
       ),
     },
