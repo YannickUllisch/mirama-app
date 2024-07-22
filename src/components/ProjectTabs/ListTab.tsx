@@ -1,7 +1,7 @@
 'use client'
 import { capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
 import type { Task, User } from '@prisma/client'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import { useSession } from 'next-auth/react'
 import type React from 'react'
 import { useEffect, useState, type FC } from 'react'
@@ -21,6 +21,7 @@ import {
 } from '@/src/components/ui/dropdown-menu'
 import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '../ui/button'
+import SelectionDialog from '../Dialogs/SelectionDialog'
 
 interface TaskProps {
   projectId: string
@@ -39,7 +40,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     })[]
   >(projectName ? `/api/db/task?projectName=${projectName}` : '')
 
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -84,17 +85,16 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Ellipsis
-                  onClick={() => row.toggleSelected(true)}
                   size={28}
                   className={`cursor-pointer ${
                     !menuOpen && !row.getIsSelected()
                       ? 'invisible group-hover:visible'
                       : 'visible'
-                  } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm`}
+                  } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50`}
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => ''}>
+                <DropdownMenuItem onClick={() => console.log('Delete clicked')}>
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -192,31 +192,38 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
   ]
 
   return (
-    <div>
-      <div className="rounded-sm">
-        <DataTable
-          columns={columns}
-          data={tasks ?? []}
-          columnvisibility
-          tableHeader={
-            <TaskDialog
-              button={
-                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                  <Plus width={15} className="ml-2" />
-                  <Button
-                    style={{ fontSize: 11, textDecoration: 'none' }}
-                    variant="link"
-                  >
-                    New Task
-                  </Button>
-                </div>
-              }
-              projectId={projectId}
-              mutate={updateTasks}
-            />
-          }
-        />
-      </div>
+    <div className="rounded-sm outline-none">
+      <DataTable
+        columns={columns}
+        data={tasks ?? []}
+        columnvisibility
+        enableRowSelection
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+        tableHeader={
+          <TaskDialog
+            button={
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Plus width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  New Task
+                </Button>
+              </div>
+            }
+            projectId={projectId}
+            mutate={updateTasks}
+          />
+        }
+      />
+      <SelectionDialog
+        open={Object.keys(rowSelection).length > 0}
+        onClose={() => setRowSelection({})}
+        selectionAmount={Object.keys(rowSelection).length}
+        actionButton={<Button onClick={() => 'TODO: DELETE'}>Delete</Button>}
+      />
     </div>
   )
 }

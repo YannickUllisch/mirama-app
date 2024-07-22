@@ -8,6 +8,7 @@ import {
   useReactTable,
   getPaginationRowModel,
   type VisibilityState,
+  type RowSelectionState,
 } from '@tanstack/react-table'
 import {
   DropdownMenu,
@@ -23,43 +24,54 @@ import {
   TableHeader,
   TableRow,
 } from '@/src/components/ui/table'
-import type React from 'react'
-import { useState } from 'react'
+import React from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@src/components/ui/button'
 import { Wrench } from 'lucide-react'
 
-interface DataTableProps<TData, TValue> {
+interface TableData {
+  id: string
+}
+
+interface DataTableProps<TData extends TableData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pagination?: boolean
+  enableRowSelection?: boolean
+  onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
+  rowSelection?: RowSelectionState
   footer?: React.JSX.Element
   columnvisibility?: boolean
   tableHeader?: React.ReactNode
   expandedContent?: React.ReactNode
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends TableData, TValue>({
   columns,
   data,
   pagination,
+  enableRowSelection,
+  rowSelection,
+  onRowSelectionChange,
   footer,
   expandedContent,
   columnvisibility,
   tableHeader,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const table = useReactTable({
     data,
     columns,
+    // Sets row ID to the ID of the given data.
+    getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setRowSelection,
+    enableRowSelection,
+    onRowSelectionChange,
     onColumnVisibilityChange: setColumnVisibility,
-    enableRowSelection: true,
     getRowCanExpand: () => true,
     state: {
       sorting,
@@ -137,11 +149,27 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <>
+                <React.Fragment key={`cell${row.id}`}>
                   <TableRow
                     key={row.id}
                     className="group"
-                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={(event) => {
+                      // When shift is not pressed, and a new
+                      if (event.shiftKey) {
+                        row.toggleSelected()
+                      } else {
+                        if (onRowSelectionChange) {
+                          onRowSelectionChange({})
+                        }
+
+                        row.toggleSelected()
+                      }
+                    }}
+                    data-state={
+                      enableRowSelection && row.getIsSelected()
+                        ? 'selected'
+                        : null
+                    }
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
@@ -152,7 +180,7 @@ export function DataTable<TData, TValue>({
                       </TableCell>
                     ))}
                   </TableRow>
-                  {row.getIsExpanded() && (
+                  {enableRowSelection && row.getIsExpanded() && (
                     <TableRow>
                       <TableCell
                         colSpan={row.getVisibleCells().length}
@@ -162,7 +190,7 @@ export function DataTable<TData, TValue>({
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
@@ -200,14 +228,14 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       ) : null}
-      <>
-        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          <div className="flex-1 text-sm text-muted-foreground z-5">
-            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-        ) : null}
-      </>
+
+      {enableRowSelection &&
+      table.getFilteredSelectedRowModel().rows.length > 0 ? (
+        <div className="flex-1 text-sm text-muted-foreground z-5">
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+      ) : null}
     </div>
   )
 }
