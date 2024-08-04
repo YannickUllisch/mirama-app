@@ -108,12 +108,13 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       ),
     },
   ]
-  const [tab, setTab] = useState('personal')
 
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentTab = searchParams.get('tab')
+
+  const [tab, setTab] = useState(currentTab ?? 'personal')
 
   useEffect(() => {
     if (currentTab !== tab) {

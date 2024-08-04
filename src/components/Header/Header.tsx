@@ -21,10 +21,14 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
   const pathname = usePathname()
+  // We extract all segments from the URL for breadcrumbs.
+  // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
   const pathSegments: string[] = pathname
     .split('/')
     .filter((segment) => segment)
     .map((segment) => decodeURIComponent(segment))
+    .filter((segment) => segment.length !== 25)
+
   let accumulatedPath = ''
 
   return (

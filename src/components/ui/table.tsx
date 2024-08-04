@@ -51,19 +51,31 @@ const TableFooter = React.forwardRef<
 ))
 TableFooter.displayName = 'TableFooter'
 
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      'border-b dark:border-b-neutral-800 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted dark:hover:bg-neutral-900',
-      className,
-    )}
-    {...props}
-  />
-))
+// We change the TableRowPops to extract the current selection state. This allows us to give conditional styling for selected rows.
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-state'?: 'selected' | null
+}
+const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
+  ({ className, ...props }, ref) => {
+    const dataState = props['data-state']
+
+    return (
+      <tr
+        ref={ref}
+        className={cn(
+          'border-b dark:border-b-neutral-800 transition-colors',
+          {
+            'hover:bg-muted/50 dark:hover:bg-neutral-900':
+              dataState !== 'selected',
+            'bg-blue-500/20': dataState === 'selected',
+          },
+          className,
+        )}
+        {...props}
+      />
+    )
+  },
+)
 TableRow.displayName = 'TableRow'
 
 const TableHead = React.forwardRef<

@@ -22,6 +22,8 @@ import {
 import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '../ui/button'
 import SelectionDialog from '../Dialogs/SelectionDialog'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface TaskProps {
   projectId: string
@@ -55,13 +57,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
           aria-label="Select all"
         />
       ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
+
       enableSorting: false,
       enableHiding: false,
     },
@@ -78,10 +74,15 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       id: 'Title',
       cell: ({ getValue, row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
-
         return (
           <div className="flex items-center justify-between group w-full">
-            <span>{getValue() as React.ReactNode}</span>
+            <Link
+              href={`${usePathname()}/edit/${row.original.id}`}
+              className="hover:underline"
+            >
+              {getValue() as string}
+            </Link>
+
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Ellipsis
@@ -94,6 +95,11 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href={`${usePathname()}/edit/${row.original.id}`}>
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => console.log('Delete clicked')}>
                   Delete
                 </DropdownMenuItem>
@@ -218,12 +224,12 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
           />
         }
       />
-      <SelectionDialog
+      {/* <SelectionDialog
         open={Object.keys(rowSelection).length > 0}
         onClose={() => setRowSelection({})}
         selectionAmount={Object.keys(rowSelection).length}
         actionButton={<Button onClick={() => 'TODO: DELETE'}>Delete</Button>}
-      />
+      /> */}
     </div>
   )
 }
