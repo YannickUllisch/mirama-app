@@ -28,7 +28,7 @@ import {
 import React from 'react'
 import { useState } from 'react'
 import { Button } from '@src/components/ui/button'
-import { GripVertical, Wrench } from 'lucide-react'
+import { ArrowDown, ChevronDown, GripVertical, Wrench } from 'lucide-react'
 import { Checkbox } from '../ui/checkbox'
 
 interface TableData {
@@ -89,7 +89,6 @@ export function DataTable<TData extends TableData, TValue>({
     initialState: { pagination: { pageSize: 10 } },
     defaultColumn: {
       size: 25,
-      minSize: 25,
       maxSize: 600,
     },
   })
@@ -105,11 +104,16 @@ export function DataTable<TData extends TableData, TValue>({
                 <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
                   <Wrench width={15} className="ml-2" />
                   <Button
-                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    style={{
+                      fontSize: 11,
+                      textDecoration: 'none',
+                      padding: 10,
+                    }}
                     variant="link"
                   >
                     Column Options
                   </Button>
+                  <ChevronDown width={15} className="mr-2" />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center">
@@ -135,7 +139,7 @@ export function DataTable<TData extends TableData, TValue>({
           ) : null}
         </div>
         <Table
-          className="border dark:border-neutral-800"
+          className="border dark:border-neutral-800 overflow-scroll"
           // style={{ width: table.getTotalSize() }}
         >
           <TableHeader className="dark:bg-neutral-900 bg-neutral-50">

@@ -133,12 +133,21 @@ export const PUT = auth(async (req) => {
       )
     }
 
+    const task = (await req.json()) as Partial<Omit<Task, 'id' | 'teamId'>>
+    if (!task) {
+      return Response.json(
+        { ok: false, message: 'Task attributes must be defined in request' },
+        { status: 400 },
+      )
+    }
+
     await db.task.update({
       where: {
         id,
+        teamId: session?.user.teamId,
       },
       data: {
-        status: 'DOING',
+        ...task,
       },
     })
 

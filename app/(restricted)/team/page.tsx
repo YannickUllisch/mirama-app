@@ -1,6 +1,5 @@
 'use client'
 import EmailInput from '@/src/components/Inputs/EmailInput'
-import { RoleSelect } from '@/src/components/Select/RoleSelect'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import { Button } from '@/src/components/ui/button'
@@ -12,8 +11,12 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
+import GeneralSelect from '@/src/components/Select/GeneralSelect'
+import { useSession } from 'next-auth/react'
 
 const TeamPage = () => {
+  const { update } = useSession()
+
   const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
     '/api/db/team/member',
   )
@@ -44,12 +47,16 @@ const TeamPage = () => {
       accessorKey: 'role',
       header: 'Role',
       id: 'roleRowTeam',
-      cell: (row) => {
+      cell: ({ row, getValue }) => {
         return (
-          <RoleSelect
-            id={row.row.original.id}
+          <GeneralSelect
+            key={`role${row.id}`}
+            id={row.original.id}
             mutate={updateMembers}
-            placeholder={capitalize(row.getValue() as Role)}
+            initialValue={capitalize(getValue() as Role)}
+            apiRoute="team/member"
+            paramToUpdate="role"
+            onSuccess={update}
           >
             <SelectItem value={Role.FREELANCE}>
               {capitalize(Role.FREELANCE)}
@@ -57,7 +64,7 @@ const TeamPage = () => {
             <SelectItem value={Role.USER}>{capitalize(Role.USER)}</SelectItem>
             <SelectItem value={Role.ADMIN}>{capitalize(Role.ADMIN)}</SelectItem>
             <SelectItem value={Role.OWNER}>{capitalize(Role.OWNER)}</SelectItem>
-          </RoleSelect>
+          </GeneralSelect>
         )
       },
     },

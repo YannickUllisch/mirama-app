@@ -21,22 +21,19 @@ import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { useMemo } from 'react'
-import { StatusSelect } from '@/src/components/Select/StatusSelect'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import CalendarSelect from '@/src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
-import TextInput from '@/src/components/Inputs/TextInput'
-import NumberInput from '@/src/components/Inputs/NumberInput'
-import { UserSelect } from '@/src/components/Select/UserSelect'
 import { TableCell, TableFooter, TableRow } from '@/src/components/ui/table'
 import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
-import { PrioritySelect } from '@/src/components/Select/PrioritySelect'
 import GeneralTooltip from '@/src/components/GeneralTooltip'
 import GeneralAccordion from '@/src/components/GeneralAccordion'
 import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
 import ConfirmationDialog from '@/src/components/Dialogs/ConfirmationDialog'
+import EditableCell from '@/src/components/Inputs/EditableCell'
+import GeneralSelect from '@/src/components/Select/GeneralSelect'
 
 const ProjectsPage = () => {
   // States
@@ -79,34 +76,38 @@ const ProjectsPage = () => {
       accessorKey: 'name',
       id: 'Name',
       header: 'Name',
-      size: 500,
-      cell: (row) => {
+      size: 150,
+      cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <TextInput
-              defaultValue={row.getValue() as string}
-              id={row.row.original.id}
+            <EditableCell
+              key={`name${row.id}`}
+              apiRoute="projekt"
+              id={row.original.id}
               mutate={updateProjects}
-              key={`name${row.cell.id}`}
+              initialValue={getValue() as string}
+              paramToUpdate="name"
             />
           )
         }
-        return row.getValue()
+        return getValue()
       },
     },
     {
       accessorKey: 'managedBy',
       header: 'Managed By',
       id: 'Managed By',
-      cell: (row) => {
-        const managedBy = row.cell.getValue() as User | undefined
+      cell: ({ row }) => {
+        const managedBy = row.original.managedBy as User | undefined
         if (isTeamAdminOrOwner(session)) {
           return (
-            <UserSelect
-              key={managedBy?.id}
-              id={row.row.original.id}
+            <GeneralSelect
+              key={`managedbY${row.id}`}
+              id={row.original.id}
               mutate={updateProjects}
-              placeholder={
+              apiRoute="projekt"
+              paramToUpdate="managedById"
+              initialValue={
                 managedBy ? (
                   <div className="flex items-center gap-1">
                     <UserAvatar
@@ -135,7 +136,7 @@ const ProjectsPage = () => {
                   </div>
                 </SelectItem>
               ))}
-            </UserSelect>
+            </GeneralSelect>
           )
         }
         return managedBy ? (
@@ -239,6 +240,7 @@ const ProjectsPage = () => {
       header: 'Days Remaining',
       accessorKey: 'endDate',
       id: 'Days Remaining',
+      size: 20,
       cell: (row) => {
         const daysRemaining = -Math.floor(
           DateTime.utc().diff(
@@ -265,15 +267,16 @@ const ProjectsPage = () => {
       accessorKey: 'priority',
       header: 'Priority',
       id: 'Priority',
-      cell: (row) => {
+      cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <PrioritySelect
-              id={row.row.original.id}
+            <GeneralSelect
+              key={`priority${row.id}`}
+              apiRoute="projekt"
+              paramToUpdate="priority"
+              id={row.original.id}
               mutate={updateProjects}
-              placeholder={capitalize(
-                (row.getValue() as PriorityType).toString(),
-              )}
+              initialValue={capitalize((getValue() as PriorityType).toString())}
             >
               <SelectItem value={PriorityType.LOW}>
                 {capitalize(PriorityType.LOW.toString())}
@@ -284,52 +287,56 @@ const ProjectsPage = () => {
               <SelectItem value={PriorityType.HIGH}>
                 {capitalize(PriorityType.HIGH.toString())}
               </SelectItem>
-            </PrioritySelect>
+            </GeneralSelect>
           )
         }
-        return capitalize(row.getValue() as string)
+        return capitalize(getValue() as string)
       },
     },
     {
       accessorKey: 'status',
       header: 'Status',
       id: 'Status',
-      cell: (row) => {
+      cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <StatusSelect
-              id={row.row.original.id}
+            <GeneralSelect
+              key={`status${row.id}`}
+              id={row.original.id}
               mutate={updateProjects}
-              placeholder={capitalize(
-                (row.getValue() as StatusType).toString(),
-              )}
+              initialValue={capitalize((getValue() as StatusType).toString())}
+              apiRoute="projekt"
+              paramToUpdate="status"
             >
               <SelectItem value={StatusType.NOTSTARTED}>Not Started</SelectItem>
               <SelectItem value={StatusType.ONHOLD}>On Hold</SelectItem>
               <SelectItem value={StatusType.ONGOING}>Ongoing</SelectItem>
               <SelectItem value={StatusType.FINISHED}>Finished</SelectItem>
-            </StatusSelect>
+            </GeneralSelect>
           )
         }
-        return capitalize(row.getValue() as string)
+        return capitalize(getValue() as string)
       },
     },
     {
       accessorKey: 'budget',
       header: 'Budget',
+      size: 100,
       id: 'Budget',
-      cell: (row) => {
+      cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <NumberInput
-              defaultValue={row.getValue() as number}
-              id={row.row.original.id}
+            <EditableCell
+              key={`name${row.id}`}
+              initialValue={getValue() as number}
+              id={row.original.id}
               mutate={updateProjects}
-              key={`name${row.cell.id}`}
+              apiRoute="projekt"
+              paramToUpdate="budget"
             />
           )
         }
-        return row.getValue()
+        return getValue()
       },
     },
     {

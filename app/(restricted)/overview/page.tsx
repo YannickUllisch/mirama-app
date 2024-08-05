@@ -31,7 +31,7 @@ const OverviewPage = () => {
                 project.name,
               )}`}
             >
-              <Link href={`/overview/${project.name}`} legacyBehavior passHref>
+              <Link href={`/overview/${project.name}`} legacyBehavior>
                 <Card className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                   <CardHeader
                     style={{ fontSize: 25 }}

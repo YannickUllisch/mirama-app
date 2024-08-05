@@ -1,17 +1,15 @@
 'use client'
-import { capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
-import type { Task, User } from '@prisma/client'
+import { capitalize } from '@/src/lib/utils'
+import { type Task, TaskStatusType, type User } from '@prisma/client'
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
-import { useSession } from 'next-auth/react'
 import type React from 'react'
-import { useEffect, useState, type FC } from 'react'
-import { UserSelect } from '@/src/components/Select/UserSelect'
+import { useState, type FC } from 'react'
 import UserAvatar from '@/src/components/Header/UserAvatar'
 import useSWR from 'swr'
 import { SelectItem } from '@/src/components/ui/tableSelect'
 import { DataTable } from '@/src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
-import { Ellipsis, Plus } from 'lucide-react'
+import { ChevronDown, Ellipsis, Plus, SlidersHorizontal } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
   DropdownMenu,
@@ -21,9 +19,9 @@ import {
 } from '@/src/components/ui/dropdown-menu'
 import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '../ui/button'
-import SelectionDialog from '../Dialogs/SelectionDialog'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import GeneralSelect from '../Select/GeneralSelect'
 
 interface TaskProps {
   projectId: string
@@ -31,8 +29,6 @@ interface TaskProps {
 }
 
 const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
-  const { data: session } = useSession()
-
   // Fetching Data
   const { data: users } = useSWR<User[]>('/api/db/user')
 
@@ -118,8 +114,24 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       accessorKey: 'status',
       header: 'Status',
       id: 'Status',
-      cell: (row) => {
-        return capitalize(row.cell.getValue() as string)
+      cell: ({ row, getValue }) => {
+        return (
+          <GeneralSelect
+            key={`status${row.id}`}
+            id={row.original.id}
+            mutate={updateTasks}
+            initialValue={capitalize(
+              (getValue() as TaskStatusType).toString().toLowerCase(),
+            )}
+            apiRoute="task"
+            paramToUpdate="status"
+          >
+            <SelectItem value={TaskStatusType.TODO}>To Do</SelectItem>
+            <SelectItem value={TaskStatusType.DOING}>Doing</SelectItem>
+            <SelectItem value={TaskStatusType.INREVIEW}>In Review</SelectItem>
+            <SelectItem value={TaskStatusType.DONE}>Done</SelectItem>
+          </GeneralSelect>
+        )
       },
     },
     {
@@ -128,53 +140,41 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       id: 'Assignee',
       cell: (row) => {
         const assignedTo = row.cell.getValue() as User | undefined
-        if (isTeamAdminOrOwner(session)) {
-          return (
-            <UserSelect
-              key={row.cell.id}
-              id={row.row.original.id}
-              mutate={updateTasks}
-              placeholder={
-                assignedTo ? (
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      username={assignedTo.name}
-                      avatarSize={6}
-                      fontSize={10}
-                    />
-                    {assignedTo.name}
-                  </div>
-                ) : (
-                  ''
-                )
-              }
-            >
-              {users?.map((user) => (
-                <SelectItem value={user.id} key={user.id}>
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      avatarSize={6}
-                      fontSize={10}
-                      username={user.name}
-                    />
-                    {user.name}
-                  </div>
-                </SelectItem>
-              ))}
-            </UserSelect>
-          )
-        }
-        return assignedTo ? (
-          <div className="flex items-center gap-1">
-            <UserAvatar
-              avatarSize={6}
-              fontSize={10}
-              username={assignedTo.name}
-            />
-            {assignedTo.name}
-          </div>
-        ) : (
-          ''
+        return (
+          <GeneralSelect
+            key={row.cell.id}
+            id={row.row.original.id}
+            mutate={updateTasks}
+            apiRoute="task"
+            paramToUpdate="assignedToId"
+            initialValue={
+              assignedTo ? (
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    username={assignedTo.name}
+                    avatarSize={6}
+                    fontSize={10}
+                  />
+                  {assignedTo.name}
+                </div>
+              ) : (
+                ''
+              )
+            }
+          >
+            {users?.map((user) => (
+              <SelectItem value={user.id} key={user.id}>
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    avatarSize={6}
+                    fontSize={10}
+                    username={user.name}
+                  />
+                  {user.name}
+                </div>
+              </SelectItem>
+            ))}
+          </GeneralSelect>
         )
       },
     },
@@ -207,29 +207,35 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         tableHeader={
-          <TaskDialog
-            button={
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Plus width={15} className="ml-2" />
-                <Button
-                  style={{ fontSize: 11, textDecoration: 'none' }}
-                  variant="link"
-                >
-                  New Task
-                </Button>
-              </div>
-            }
-            projectId={projectId}
-            mutate={updateTasks}
-          />
+          <>
+            <TaskDialog
+              button={
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Plus width={15} className="ml-2" />
+                  <Button
+                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    variant="link"
+                  >
+                    New Task
+                  </Button>
+                </div>
+              }
+              projectId={projectId}
+              mutate={updateTasks}
+            />
+            <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <SlidersHorizontal width={15} className="ml-2" />
+              <Button
+                style={{ fontSize: 11, textDecoration: 'none', padding: 10 }}
+                variant="link"
+              >
+                Filter
+              </Button>
+              <ChevronDown width={15} className="mr-2" />
+            </div>
+          </>
         }
       />
-      {/* <SelectionDialog
-        open={Object.keys(rowSelection).length > 0}
-        onClose={() => setRowSelection({})}
-        selectionAmount={Object.keys(rowSelection).length}
-        actionButton={<Button onClick={() => 'TODO: DELETE'}>Delete</Button>}
-      /> */}
     </div>
   )
 }
