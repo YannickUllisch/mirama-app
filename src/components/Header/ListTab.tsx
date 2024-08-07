@@ -21,9 +21,9 @@ import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { toast } from 'sonner'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
 
 interface TaskProps {
   projectId: string

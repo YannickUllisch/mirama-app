@@ -21,9 +21,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import PersonalTab from '@src/components/ProjectTabs/PersonalTab'
 import BoardTab from '@src/components/ProjectTabs/BoardTab'
 import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
-import ListTab from '@src/components/ProjectTabs/ListTab'
 import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
 import GanttTab from '@src/components/ProjectTabs/GanttTab'
+import ListTab from '@src/components/Header/ListTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
