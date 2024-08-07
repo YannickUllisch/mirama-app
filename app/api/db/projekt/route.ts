@@ -82,25 +82,27 @@ export const DELETE = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = req.nextUrl.searchParams.get('id') as string
+    const ids = (await req.json()) as string[]
 
-    if (!id) {
+    if (!ids || !Array.isArray(ids)) {
       return Response.json(
-        { ok: false, message: 'Project ID must be defined in request' },
+        { ok: false, message: 'Invalid request body' },
         { status: 400 },
       )
     }
 
-    await db.project.delete({
+    await db.project.deleteMany({
       where: {
-        id,
+        id: {
+          in: ids,
+        },
         teamId: session?.user.teamId ?? 'undefined',
       },
     })
 
     return Response.json(
-      { ok: true, message: 'Project Successfully created' },
-      { status: 201 },
+      { ok: true, message: 'Projects Deleted' },
+      { status: 200 },
     )
   } catch (err) {
     return Response.json(

@@ -11,7 +11,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
-import GeneralSelect from '@/src/components/Select/GeneralSelect'
+import GeneralTableSelect from '@/src/components/Select/GeneralTableSelect'
 import { useSession } from 'next-auth/react'
 
 const TeamPage = () => {
@@ -49,7 +49,7 @@ const TeamPage = () => {
       id: 'roleRowTeam',
       cell: ({ row, getValue }) => {
         return (
-          <GeneralSelect
+          <GeneralTableSelect
             key={`role${row.id}`}
             id={row.original.id}
             mutate={updateMembers}
@@ -64,7 +64,7 @@ const TeamPage = () => {
             <SelectItem value={Role.USER}>{capitalize(Role.USER)}</SelectItem>
             <SelectItem value={Role.ADMIN}>{capitalize(Role.ADMIN)}</SelectItem>
             <SelectItem value={Role.OWNER}>{capitalize(Role.OWNER)}</SelectItem>
-          </GeneralSelect>
+          </GeneralTableSelect>
         )
       },
     },

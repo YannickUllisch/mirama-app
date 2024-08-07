@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { validateRequest } from '@/src/lib/validateRequest'
-import type { Task } from '@prisma/client'
+import { Role, type Task } from '@prisma/client'
 import { db } from '@src/lib/db'
 
 export const GET = auth(async (req) => {
@@ -60,14 +60,9 @@ export const POST = auth(async (req) => {
 
     await db.task.create({
       data: {
-        projectId: task.projectId,
-        assignedToId: task.assignedToId,
-        description: task.description,
-        status: task.status,
-        priority: task.priority,
-        title: task.title,
+        ...task,
+        id: undefined,
         teamId: session?.user.teamId ?? 'undefined',
-        dueDate: task.dueDate,
       },
     })
 
@@ -85,29 +80,35 @@ export const POST = auth(async (req) => {
 
 export const DELETE = auth(async (req) => {
   try {
-    // Checking Permissions
     const session = req.auth
     const validatedRequest = await validateRequest(session)
+
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = req.nextUrl.searchParams.get('id') as string
 
-    if (!id) {
+    const ids = (await req.json()) as string[]
+
+    if (!ids || !Array.isArray(ids) || ids.length < 1) {
       return Response.json(
-        { ok: false, message: 'Task ID needs to be defined in request' },
+        { ok: false, message: 'Invalid request body' },
         { status: 400 },
       )
     }
 
-    await db.task.delete({
+    await db.task.deleteMany({
       where: {
-        id,
-        teamId: session?.user.teamId,
+        id: {
+          in: ids,
+        },
+        teamId: session?.user.teamId ?? 'undefined',
       },
     })
 
-    return Response.json({ ok: true, message: 'Task Deleted' }, { status: 200 })
+    return Response.json(
+      { ok: true, message: 'Tasks Deleted' },
+      { status: 200 },
+    )
   } catch (err) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },

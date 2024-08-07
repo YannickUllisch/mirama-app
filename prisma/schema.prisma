@@ -60,6 +60,7 @@ model User {
 
   // These are needed for overview of personal projets and tasks a user is assigned to.
   projects      Project[]
+  //  projects      ProjectUser[]
   tasks         Task[]
 
   teamId        String?
@@ -108,6 +109,8 @@ model Project {
 
     team        Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
     teamId      String
+
+    // users       ProjectUser[]
 }
 
 
@@ -139,3 +142,16 @@ model Task {
   team          Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId        String
 }
+
+// Join table to represent many-to-many relationship between Project and User
+// model ProjectUser {
+//     id          String     @default(cuid()) @id
+//     projectId   String
+//     userId      String
+//     isManager   Boolean    @default(false)
+
+//     project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+//     user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//     @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
+// }

@@ -53,7 +53,6 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
     status: 'TODO',
     priority: 'LOW',
     projectId: props.projectId,
-    taskName: null,
     dateCreated: new Date(),
     dateFinished: new Date(),
   } as Task)
@@ -91,7 +90,6 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
       status: 'TODO',
       priority: 'LOW',
       projectId: props.projectId,
-      taskName: null,
       dateCreated: new Date(),
       dateFinished: new Date(),
     } as Task)

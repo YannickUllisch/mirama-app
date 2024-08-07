@@ -33,7 +33,9 @@ import GeneralAccordion from '@/src/components/GeneralAccordion'
 import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
 import ConfirmationDialog from '@/src/components/Dialogs/ConfirmationDialog'
 import EditableCell from '@/src/components/Inputs/EditableCell'
-import GeneralSelect from '@/src/components/Select/GeneralSelect'
+import GeneralTableSelect from '@/src/components/Select/GeneralTableSelect'
+import { updateResourceById } from '@/src/lib/api/updateResource'
+import { deleteResources } from '@/src/lib/api/deleteResource'
 
 const ProjectsPage = () => {
   // States
@@ -101,7 +103,7 @@ const ProjectsPage = () => {
         const managedBy = row.original.managedBy as User | undefined
         if (isTeamAdminOrOwner(session)) {
           return (
-            <GeneralSelect
+            <GeneralTableSelect
               key={`managedbY${row.id}`}
               id={row.original.id}
               mutate={updateProjects}
@@ -136,7 +138,7 @@ const ProjectsPage = () => {
                   </div>
                 </SelectItem>
               ))}
-            </GeneralSelect>
+            </GeneralTableSelect>
           )
         }
         return managedBy ? (
@@ -270,7 +272,7 @@ const ProjectsPage = () => {
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <GeneralSelect
+            <GeneralTableSelect
               key={`priority${row.id}`}
               apiRoute="projekt"
               paramToUpdate="priority"
@@ -287,7 +289,7 @@ const ProjectsPage = () => {
               <SelectItem value={PriorityType.HIGH}>
                 {capitalize(PriorityType.HIGH.toString())}
               </SelectItem>
-            </GeneralSelect>
+            </GeneralTableSelect>
           )
         }
         return capitalize(getValue() as string)
@@ -300,7 +302,7 @@ const ProjectsPage = () => {
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <GeneralSelect
+            <GeneralTableSelect
               key={`status${row.id}`}
               id={row.original.id}
               mutate={updateProjects}
@@ -312,7 +314,7 @@ const ProjectsPage = () => {
               <SelectItem value={StatusType.ONHOLD}>On Hold</SelectItem>
               <SelectItem value={StatusType.ONGOING}>Ongoing</SelectItem>
               <SelectItem value={StatusType.FINISHED}>Finished</SelectItem>
-            </GeneralSelect>
+            </GeneralTableSelect>
           )
         }
         return capitalize(getValue() as string)
@@ -419,9 +421,9 @@ const ProjectsPage = () => {
     },
   ]
 
-  const deleteProject = (id?: string) => {
+  const deleteProject = (id: string) => {
     try {
-      toast.promise(api.delete(`projekt?id=${id}`), {
+      toast.promise(deleteResources('projekt', [id]), {
         loading: 'Deleting Project..',
         success: () => {
           updateProjects((prev) => prev?.filter((project) => project.id !== id))
@@ -437,14 +439,19 @@ const ProjectsPage = () => {
 
   const archiveProject = (id: string, archived: boolean) => {
     try {
-      toast.promise(api.put(`projekt?id=${id}`, { archived: archived }), {
-        loading: 'Upadating Project..',
-        error: (err) => err.response.statusText ?? err,
-        success: () => {
-          updateProjects()
-          return 'Project Archived!'
+      toast.promise(
+        updateResourceById('projekt', id, {
+          archived: archived,
+        }),
+        {
+          loading: 'Updating Project..',
+          error: (err) => err.response.statusText ?? err,
+          success: () => {
+            updateProjects()
+            return 'Project Archived!'
+          },
         },
-      })
+      )
     } catch (error: any) {
       toast.error(error)
     }

@@ -21,7 +21,9 @@ import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import GeneralSelect from '../Select/GeneralSelect'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
+import { toast } from 'sonner'
+import { deleteResources } from '@/src/lib/api/deleteResource'
 
 interface TaskProps {
   projectId: string
@@ -53,7 +55,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
           aria-label="Select all"
         />
       ),
-
+      size: 30,
       enableSorting: false,
       enableHiding: false,
     },
@@ -96,7 +98,9 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
                     Edit
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log('Delete clicked')}>
+                <DropdownMenuItem
+                  onClick={() => deleteTasks(Object.keys(rowSelection))}
+                >
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -116,7 +120,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       id: 'Status',
       cell: ({ row, getValue }) => {
         return (
-          <GeneralSelect
+          <GeneralTableSelect
             key={`status${row.id}`}
             id={row.original.id}
             mutate={updateTasks}
@@ -130,7 +134,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
             <SelectItem value={TaskStatusType.DOING}>Doing</SelectItem>
             <SelectItem value={TaskStatusType.INREVIEW}>In Review</SelectItem>
             <SelectItem value={TaskStatusType.DONE}>Done</SelectItem>
-          </GeneralSelect>
+          </GeneralTableSelect>
         )
       },
     },
@@ -141,7 +145,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       cell: (row) => {
         const assignedTo = row.cell.getValue() as User | undefined
         return (
-          <GeneralSelect
+          <GeneralTableSelect
             key={row.cell.id}
             id={row.row.original.id}
             mutate={updateTasks}
@@ -174,7 +178,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
                 </div>
               </SelectItem>
             ))}
-          </GeneralSelect>
+          </GeneralTableSelect>
         )
       },
     },
@@ -196,6 +200,22 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
       },
     },
   ]
+
+  const deleteTasks = (ids: string[]) => {
+    try {
+      toast.promise(deleteResources('task', ids), {
+        loading: 'Deleting..',
+        success: () => {
+          updateTasks((prev) => prev?.filter((task) => !ids.includes(task.id)))
+
+          return 'Successfully Deleted!'
+        },
+        error: (err) => err.message ?? err,
+      })
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
 
   return (
     <div className="rounded-sm outline-none">
@@ -231,6 +251,21 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
               >
                 Filter
               </Button>
+              <ChevronDown width={15} className="mr-2" />
+            </div>
+            <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <Link
+                href={`${usePathname()}/create/${projectId}`}
+                legacyBehavior
+              >
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none', padding: 10 }}
+                  variant="link"
+                >
+                  Create Page
+                </Button>
+              </Link>
+
               <ChevronDown width={15} className="mr-2" />
             </div>
           </>
