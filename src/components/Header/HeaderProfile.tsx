@@ -15,7 +15,7 @@ import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
 import { extractFirstLetters, getColorByName } from '@src/lib/utils'
 
-const ProfileButton = () => {
+const HeaderProfile = () => {
   const { data: session } = useSession()
   const userColor = session?.user?.name
     ? getColorByName(session?.user?.name)
@@ -49,4 +49,4 @@ const ProfileButton = () => {
   )
 }
 
-export default ProfileButton
+export default HeaderProfile

@@ -2,7 +2,6 @@
 import React, { type FC } from 'react'
 import { Button } from '@src/components/ui/button'
 import { AlignLeft, Bell } from 'lucide-react'
-import ProfileButton from '@src/components/Header/ProfileButton'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -12,6 +11,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@src/components/ui/breadcrumb'
+import HeaderProfile from '@src/components/Header/HeaderProfile'
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 
@@ -77,7 +77,7 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
         {/* <Button variant={'ghost'} size={'icon'} aria-label="Notifications">
           <Bell strokeWidth={1.5} className="h-4 w-4" />
         </Button> */}
-        <ProfileButton />
+        <HeaderProfile />
       </div>
     </header>
   )
