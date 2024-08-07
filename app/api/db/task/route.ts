@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { validateRequest } from '@/src/lib/validateRequest'
+import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type Task } from '@prisma/client'
 import { db } from '@src/lib/db'
 

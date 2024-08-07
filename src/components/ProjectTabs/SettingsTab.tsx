@@ -1,10 +1,10 @@
 'use client'
-import { api } from '@/src/lib/utils'
+import { api } from '@api'
 import { useRouter } from 'next/navigation'
 import React, { type FC } from 'react'
 import { toast } from 'sonner'
-import { Button } from '../ui/button'
-import { Checkbox } from '../ui/checkbox'
+import { Button } from '@src/components/ui/button'
+import { Checkbox } from '@src/components/ui/checkbox'
 import type { Project } from '@prisma/client'
 import ConfirmationDialog from '../Dialogs/ConfirmationDialog'
 

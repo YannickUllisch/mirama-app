@@ -1,5 +1,5 @@
 'use client'
-import { Button } from '@/src/components/ui/button'
+import { Button } from '@src/components/ui/button'
 import type { Task, User } from '@prisma/client'
 import { Undo } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'

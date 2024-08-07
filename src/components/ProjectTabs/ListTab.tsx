@@ -1,13 +1,13 @@
 'use client'
-import { capitalize } from '@/src/lib/utils'
+import { capitalize } from '@src/lib/utils'
 import { type Task, TaskStatusType, type User } from '@prisma/client'
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import type React from 'react'
 import { useState, type FC } from 'react'
-import UserAvatar from '@/src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Header/UserAvatar'
 import useSWR from 'swr'
-import { SelectItem } from '@/src/components/ui/tableSelect'
-import { DataTable } from '@/src/components/Tables/DataTable'
+import { SelectItem } from '@src/components/ui/tableSelect'
+import { DataTable } from '@src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
 import { ChevronDown, Ellipsis, Plus, SlidersHorizontal } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -16,14 +16,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/src/components/ui/dropdown-menu'
+} from '@src/components/ui/dropdown-menu'
 import TaskDialog from '../Dialogs/TaskDialog'
-import { Button } from '../ui/button'
+import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { toast } from 'sonner'
-import { deleteResources } from '@/src/lib/api/deleteResource'
+import { deleteResources } from '@src/lib/api/deleteResource'
 
 interface TaskProps {
   projectId: string

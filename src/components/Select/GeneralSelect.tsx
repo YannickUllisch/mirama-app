@@ -6,7 +6,7 @@ import {
   SelectGroup,
   SelectTrigger,
   SelectValue,
-} from '../ui/tableSelect'
+} from '@src/components/ui/tableSelect'
 
 interface GeneralSelectProps {
   initialValue: string | React.ReactNode

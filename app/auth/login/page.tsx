@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 
-import LoginForm from '@/src/components/auth/LoginForm'
-import AuthCard from '@/src/components/auth/AuthCard'
+import LoginForm from '@src/components/auth/LoginForm'
+import AuthCard from '@src/components/auth/AuthCard'
 
 const LoginPage = () => {
   return (

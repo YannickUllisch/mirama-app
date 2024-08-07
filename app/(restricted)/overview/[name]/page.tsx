@@ -7,7 +7,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/src/components/ui/tabs'
+} from '@src/components/ui/tabs'
 import { useSession } from 'next-auth/react'
 import {
   BarChartBig,
@@ -18,12 +18,12 @@ import {
   Settings,
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import PersonalTab from '@/src/components/ProjectTabs/PersonalTab'
-import ListTab from '@/src/components/ProjectTabs/ListTab'
-import BoardTab from '@/src/components/ProjectTabs/BoardTab'
-import GanttTab from '@/src/components/ProjectTabs/GanttTab'
-import AnalyticsTab from '@/src/components/ProjectTabs/AnalyticsTab'
-import SettingsTab from '@/src/components/ProjectTabs/SettingsTab'
+import PersonalTab from '@src/components/ProjectTabs/PersonalTab'
+import BoardTab from '@src/components/ProjectTabs/BoardTab'
+import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
+import ListTab from '@src/components/ProjectTabs/ListTab'
+import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
+import GanttTab from '@src/components/ProjectTabs/GanttTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,

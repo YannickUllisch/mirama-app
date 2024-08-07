@@ -1,6 +1,6 @@
 'use server'
 
-import PublicHeader from '@/src/components/Header/PublicHeader'
+import PublicHeader from '@src/components/Header/PublicHeader'
 
 const HomePage = async () => {
   return (

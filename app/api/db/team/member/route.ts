@@ -1,6 +1,6 @@
-import { auth } from '@/src/lib/auth'
-import { db } from '@/src/lib/db'
-import { validateRequest } from '@/src/lib/validateRequest'
+import { auth } from '@src/lib/auth'
+import { db } from '@src/lib/db'
+import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
 import { validate } from 'uuid'
 

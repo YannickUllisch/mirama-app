@@ -1,7 +1,7 @@
 'use client'
-import RegisterForm from '@/src/components/auth/RegisterForm'
+import RegisterForm from '@src/components/auth/RegisterForm'
 import React from 'react'
-import AuthCard from '@/src/components/auth/AuthCard'
+import AuthCard from '@src/components/auth/AuthCard'
 
 const RegisterPage = () => {
   return (

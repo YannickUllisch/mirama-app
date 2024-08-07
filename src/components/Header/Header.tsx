@@ -2,7 +2,7 @@
 import React, { type FC } from 'react'
 import { Button } from '@src/components/ui/button'
 import { AlignLeft, Bell } from 'lucide-react'
-import ProfileButton from '@/src/components/Header/ProfileButton'
+import ProfileButton from '@src/components/Header/ProfileButton'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -11,8 +11,8 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
-} from '@/src/components/ui/breadcrumb'
-import { capitalize } from '@/src/lib/utils'
+} from '@src/components/ui/breadcrumb'
+import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 
 interface HeaderProps {

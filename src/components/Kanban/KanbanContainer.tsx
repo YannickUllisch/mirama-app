@@ -3,9 +3,9 @@ import type { FC } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import clsx from 'clsx'
-import { capitalize } from '@/src/lib/utils'
+import { capitalize } from '@src/lib/utils'
 import { TaskStatusType } from '@prisma/client'
-import { Button } from '../ui/button'
+import { Button } from '@src/components/ui/button'
 import { SquarePlus } from 'lucide-react'
 
 interface ContainerProps {

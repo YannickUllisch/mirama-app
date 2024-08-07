@@ -1,6 +1,5 @@
 'use client'
-
-import { api } from '@/src/lib/utils'
+import { api } from '@api'
 import { Calendar } from '@src/components/ui/calendar'
 import { CalendarDays } from 'lucide-react'
 import { type FC, useState } from 'react'

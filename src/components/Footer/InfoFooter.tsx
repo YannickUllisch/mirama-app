@@ -4,10 +4,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/src/components/ui/card'
+} from '@src/components/ui/card'
 import Link from 'next/link'
 import { Linkedin, Rss } from 'lucide-react'
-import { Button } from '@/src/components/ui/button'
+import { Button } from '@src/components/ui/button'
 
 const InfoFooter = () => {
   return (

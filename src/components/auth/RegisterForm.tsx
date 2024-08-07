@@ -15,7 +15,7 @@ import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { register } from '@src/lib/register'
 import { useState, useTransition } from 'react'
-import { RegisterSchema } from '@/src/lib/schemas'
+import { RegisterSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 
 const RegisterForm = () => {

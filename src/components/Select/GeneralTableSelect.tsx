@@ -6,9 +6,9 @@ import {
   SelectGroup,
   SelectTrigger,
   SelectValue,
-} from '../ui/tableSelect'
+} from '@src/components/ui/tableSelect'
 import { toast } from 'sonner'
-import { updateResourceById } from '@/src/lib/api/updateResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface GeneralTableSelectProps {
   initialValue: string | React.ReactNode

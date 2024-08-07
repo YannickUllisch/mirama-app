@@ -1,8 +1,8 @@
 import React, { type FC, useState } from 'react'
 import { toast } from 'sonner'
-import { Input } from '@/src/components/ui/tableInput'
-import { Button } from '../ui/button'
-import { api } from '@/src/lib/utils'
+import { Input } from '@src/components/ui/tableInput'
+import { Button } from '@src/components/ui/button'
+import { api } from '@api'
 
 interface EmailInputProps {
   mutate?(): any

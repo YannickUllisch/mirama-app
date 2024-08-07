@@ -15,7 +15,8 @@ import { Label } from '@src/components/ui/label'
 import { Input } from '@src/components/ui/input'
 import useSWR from 'swr'
 import { PriorityType, type Project, Task, type User } from '@prisma/client'
-import { api, capitalize, cn } from '@/src/lib/utils'
+import { capitalize, cn } from '@src/lib/utils'
+import { api } from '@api'
 import {
   Select,
   SelectTrigger,
@@ -24,14 +25,18 @@ import {
   SelectGroup,
   SelectItem,
 } from '@src/components/ui/select'
-import UserAvatar from '@/src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Header/UserAvatar'
 import { toast } from 'sonner'
 import { v4 } from 'uuid'
 import { useSession } from 'next-auth/react'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@src/components/ui/popover'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
-import { Calendar } from '../ui/calendar'
+import { Calendar } from '@src/components/ui/calendar'
 
 interface AddProjectDialogProps {
   mutate?(): any

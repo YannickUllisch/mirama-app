@@ -1,5 +1,5 @@
 'use client'
-import { Button } from '@/src/components/ui/button'
+import { Button } from '@src/components/ui/button'
 import {
   Archive,
   ArchiveRestore,
@@ -10,7 +10,8 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
-import { api, capitalize, isTeamAdminOrOwner } from '@/src/lib/utils'
+import { api } from '@api'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import {
   PriorityType,
   StatusType,
@@ -19,23 +20,23 @@ import {
 } from '@prisma/client'
 import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
-import { DataTable } from '@/src/components/Tables/DataTable'
+import { DataTable } from '@src/components/Tables/DataTable'
 import { useMemo } from 'react'
-import UserAvatar from '@/src/components/Header/UserAvatar'
-import { SelectItem } from '@/src/components/ui/tableSelect'
-import CalendarSelect from '@/src/components/Select/CalendarSelect'
+import UserAvatar from '@src/components/Header/UserAvatar'
+import { SelectItem } from '@src/components/ui/tableSelect'
+import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
-import { TableCell, TableFooter, TableRow } from '@/src/components/ui/table'
+import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
-import GeneralTooltip from '@/src/components/GeneralTooltip'
-import GeneralAccordion from '@/src/components/GeneralAccordion'
-import AddProjectDialog from '@/src/components/Dialogs/AddProjectDialog'
-import ConfirmationDialog from '@/src/components/Dialogs/ConfirmationDialog'
-import EditableCell from '@/src/components/Inputs/EditableCell'
-import GeneralTableSelect from '@/src/components/Select/GeneralTableSelect'
-import { updateResourceById } from '@/src/lib/api/updateResource'
-import { deleteResources } from '@/src/lib/api/deleteResource'
+import GeneralTooltip from '@src/components/GeneralTooltip'
+import GeneralAccordion from '@src/components/GeneralAccordion'
+import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import EditableCell from '@src/components/Inputs/EditableCell'
+import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { deleteResources } from '@src/lib/api/deleteResource'
 
 const ProjectsPage = () => {
   // States

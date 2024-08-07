@@ -13,7 +13,7 @@ import {
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
-import { extractFirstLetters, getColorByName } from '@/src/lib/utils'
+import { extractFirstLetters, getColorByName } from '@src/lib/utils'
 
 const ProfileButton = () => {
   const { data: session } = useSession()

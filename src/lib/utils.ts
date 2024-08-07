@@ -1,26 +1,11 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import axios from 'axios'
 import type { Session } from 'next-auth'
 import { Role } from '@prisma/client'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
-const envURL = {
-  dev: 'http://localhost:3000',
-  prod: 'https://mirage-management.vercel.app',
-}
-
-export const api = axios.create({
-  baseURL: `${
-    envURL[(process.env.NEXT_PUBLIC_ENV as 'dev' | 'prod') ?? 'dev']
-  }/api/db/`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
 
 export const getColorByName = (username: string) => {
   // Hash the username string

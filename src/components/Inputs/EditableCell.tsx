@@ -1,8 +1,8 @@
 'use client'
 import React, { type FC, useEffect, useState } from 'react'
-import { Input } from '../ui/tableInput'
+import { Input } from '@src/components/ui/tableInput'
 import { toast } from 'sonner'
-import { updateResourceById } from '@/src/lib/api/updateResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface EditableCellProps {
   id: string

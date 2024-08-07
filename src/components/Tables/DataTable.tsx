@@ -24,12 +24,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/src/components/ui/table'
+} from '@src/components/ui/table'
 import React from 'react'
 import { useState } from 'react'
 import { Button } from '@src/components/ui/button'
 import { ArrowDown, ChevronDown, GripVertical, Wrench } from 'lucide-react'
-import { Checkbox } from '../ui/checkbox'
+import { Checkbox } from '@src/components/ui/checkbox'
 
 interface TableData {
   id: string

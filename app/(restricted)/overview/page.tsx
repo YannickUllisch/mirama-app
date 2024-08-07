@@ -4,8 +4,8 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-} from '@/src/components/ui/card'
-import { getColorByName } from '@/src/lib/utils'
+} from '@src/components/ui/card'
+import { getColorByName } from '@src/lib/utils'
 import type { Project, Task, User } from '@prisma/client'
 import { CalendarDays, Loader2, Plus } from 'lucide-react'
 import { DateTime } from 'luxon'

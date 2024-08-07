@@ -1,4 +1,4 @@
-import { api } from '../utils'
+import { api } from '@api'
 
 export const updateResourceById = async <T>(
   route: string,

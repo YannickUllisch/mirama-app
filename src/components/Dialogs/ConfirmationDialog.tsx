@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog'
-import { Button } from '@/src/components/ui/button'
+} from '@src/components/ui/dialog'
+import { Button } from '@src/components/ui/button'
 
 interface ConfirmationDialogProps {
   dialogTitle: string
