@@ -23,7 +23,7 @@ import BoardTab from '@src/components/ProjectTabs/BoardTab'
 import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
 import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
 import GanttTab from '@src/components/ProjectTabs/GanttTab'
-import ListTab from '@src/components/Header/ListTab'
+import ListTab from '@src/components/ProjectTabs/ListTab'
 
 const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
