@@ -10,7 +10,6 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
-import { api } from '@api'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import {
   PriorityType,

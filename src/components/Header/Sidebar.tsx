@@ -1,19 +1,12 @@
 'use client'
-
-import { useEffect, useState } from 'react'
-import { FolderOpen, LayoutPanelTop, Users } from 'lucide-react'
+import { Archive, FolderOpen, Home, Leaf, Users } from 'lucide-react'
 import Link from 'next/link'
-import mirageLogoWhite from '@public/logo/mirage-logo-white.png'
-import mirageLogoBlack from '@public/logo/mirage-logo-black.png'
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
-import Image from 'next/image'
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
 } from '@src/components/ui/command'
-import { useTheme } from 'next-themes'
 import { usePathname } from 'next/navigation'
 
 interface iMenuList {
@@ -26,18 +19,7 @@ interface iMenuList {
   }[]
 }
 const Sidebar = () => {
-  const [logo, setLogo] = useState(mirageLogoWhite)
-
-  const { theme } = useTheme()
   const currPath = usePathname()
-
-  useEffect(() => {
-    if (theme === 'light') {
-      setLogo(mirageLogoBlack)
-    } else {
-      setLogo(mirageLogoWhite)
-    }
-  }, [theme])
 
   const menuList: iMenuList[] = [
     {
@@ -45,15 +27,21 @@ const Sidebar = () => {
       items: [
         {
           id: 1,
-          href: '/overview',
-          label: 'Overview',
-          icon: <LayoutPanelTop strokeWidth={1.2} className="w-7 h-7" />,
+          href: '/app',
+          label: 'Dashboard',
+          icon: <Home strokeWidth={1.2} className="w-5 h-5" />,
         },
         {
           id: 2,
-          href: '/manage-projects',
-          label: 'Manage Projects',
-          icon: <FolderOpen strokeWidth={1.2} className="w-7 h-7" />,
+          href: '/app/management',
+          label: 'Management',
+          icon: <FolderOpen strokeWidth={1.2} className="w-5 h-5" />,
+        },
+        {
+          id: 2,
+          href: '/app/archive',
+          label: 'Archive',
+          icon: <Archive strokeWidth={1.2} className="w-5 h-5" />,
         },
       ],
     },
@@ -62,22 +50,23 @@ const Sidebar = () => {
       items: [
         {
           id: 6,
-          href: '/team',
+          href: '/app/team',
           label: 'Team',
-          icon: <Users strokeWidth={1.2} className="w-7 h-7" />,
+          icon: <Users strokeWidth={1.2} className="w-5 h-5" />,
         },
       ],
     },
   ]
 
   return (
-    <aside className="flex flex-col min-w-[300px] h-screen bg-inherit border-r-2 border-neutral-100 dark:border-neutral-800">
+    <aside className="flex flex-col min-w-[250px] h-screen bg-inherit border-r-2 border-neutral-100 dark:border-neutral-800">
       <div className="flex-1 flex flex-col">
-        <nav className="p-5 m-2 pb-2 flex justify-between items-center">
-          <Link href={DEFAULT_LOGIN_REDIRECT}>
-            <Image height={40} src={logo} alt={'Logo'} />
-          </Link>
-        </nav>
+        <Link href={'/'} className="ml-4 p-4 lg:ml-0 flex gap-2 items-center">
+          <Leaf width={40} height={30} className="text-rose-500" />
+          <span className="font-semibold" style={{ fontSize: 30 }}>
+            MIRAMA
+          </span>
+        </Link>
 
         <div className="flex-1 p-2">
           <Command>

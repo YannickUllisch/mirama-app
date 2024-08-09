@@ -12,7 +12,7 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
 
-const OverviewPage = () => {
+const AppHomePage = () => {
   const { data: projects } = useSWR<
     (Project & {
       tasks: Task[]
@@ -31,7 +31,7 @@ const OverviewPage = () => {
                 project.name,
               )}`}
             >
-              <Link href={`/overview/${project.name}`} legacyBehavior prefetch>
+              <Link href={`/app/${project.name}`} legacyBehavior prefetch>
                 <Card className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                   <CardHeader
                     style={{ fontSize: 25 }}
@@ -85,4 +85,4 @@ const OverviewPage = () => {
   )
 }
 
-export default OverviewPage
+export default AppHomePage
