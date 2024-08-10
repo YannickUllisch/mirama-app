@@ -1,9 +1,9 @@
 'use client'
 import { capitalize } from '@src/lib/utils'
 import { type Task, TaskStatusType, type User } from '@prisma/client'
-import type { ColumnDef, Row, RowSelectionState } from '@tanstack/react-table'
+import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import type React from 'react'
-import { useCallback, useEffect, useState, type FC } from 'react'
+import { useState, type FC } from 'react'
 import UserAvatar from '@src/components/Header/UserAvatar'
 import useSWR from 'swr'
 import { SelectItem } from '@src/components/ui/tableSelect'
@@ -94,7 +94,6 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Ellipsis
-                  onClickCapture={() => console.log('first')}
                   size={28}
                   className={`cursor-pointer ${
                     !menuOpen && !row.getIsSelected()
@@ -249,10 +248,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
         tableHeader={
           <>
             <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-              <Link
-                href={`${usePathname()}/create/${projectId}`}
-                legacyBehavior
-              >
+              <Link href={`${pathname}/create/${projectId}`} legacyBehavior>
                 <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                   <Plus width={15} className="ml-2" />
                   <Button

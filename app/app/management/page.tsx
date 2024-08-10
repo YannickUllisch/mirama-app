@@ -329,8 +329,9 @@ const ProjectsPage = () => {
       },
     },
     {
-      header: 'Actions',
       id: 'Actions',
+      header: 'Actions',
+      enableResizing: false,
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (

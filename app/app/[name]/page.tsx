@@ -44,6 +44,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   // Since we match all names in the URL, if the project does not exist we do not want
   // The user to have access to any nonintentional data
   useEffect(() => {
+    // TODO: If project is loaded but session.user is not assigned to it, redirect.
     if (!isLoading && !project) {
       redirect('/app')
     }
