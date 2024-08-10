@@ -17,7 +17,12 @@ import {
   List,
   Settings,
 } from 'lucide-react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  redirect,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
 import PersonalTab from '@src/components/ProjectTabs/PersonalTab'
 import BoardTab from '@src/components/ProjectTabs/BoardTab'
 import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
@@ -29,12 +34,20 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   params,
 }) => {
   const { data: session } = useSession()
-  const { data: project } = useSWR<
+  const { data: project, isLoading } = useSWR<
     Project & {
       tasks: Task[]
       managedBy: User
     }
   >(`/api/db/projekt/${params.name}?name=${params.name}`)
+
+  // Since we match all names in the URL, if the project does not exist we do not want
+  // The user to have access to any nonintentional data
+  useEffect(() => {
+    if (!isLoading && !project) {
+      redirect('/app')
+    }
+  }, [isLoading, project])
 
   const projectTabs: {
     roles: Role[]

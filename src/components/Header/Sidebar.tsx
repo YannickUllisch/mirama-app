@@ -38,7 +38,7 @@ const Sidebar = () => {
           icon: <FolderOpen strokeWidth={1.2} className="w-5 h-5" />,
         },
         {
-          id: 2,
+          id: 3,
           href: '/app/archive',
           label: 'Archive',
           icon: <Archive strokeWidth={1.2} className="w-5 h-5" />,

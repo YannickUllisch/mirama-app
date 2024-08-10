@@ -31,7 +31,12 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return Response.redirect(new URL('/auth/login', nextUrl))
+    return Response.redirect(
+      new URL(
+        `/auth/login?callbackUrl=${req.nextUrl.pathname}`,
+        nextUrl.origin,
+      ),
+    )
   }
 
   return

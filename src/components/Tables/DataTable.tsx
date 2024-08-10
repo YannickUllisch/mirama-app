@@ -28,8 +28,15 @@ import {
 import React from 'react'
 import { useState } from 'react'
 import { Button } from '@src/components/ui/button'
-import { ArrowDown, ChevronDown, GripVertical, Wrench } from 'lucide-react'
+import {
+  ArrowDown,
+  ChevronDown,
+  GripVertical,
+  Loader2,
+  Wrench,
+} from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
+import { DataTablePagination } from './Pagination'
 
 interface TableData {
   id: string
@@ -38,6 +45,7 @@ interface TableData {
 interface DataTableProps<TData extends TableData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  dataLoading?: boolean
   pagination?: boolean
   enableRowSelection?: boolean
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
@@ -51,6 +59,7 @@ interface DataTableProps<TData extends TableData, TValue> {
 export function DataTable<TData extends TableData, TValue>({
   columns,
   data,
+  dataLoading,
   pagination,
   enableRowSelection,
   rowSelection,
@@ -86,7 +95,10 @@ export function DataTable<TData extends TableData, TValue>({
       columnVisibility,
       columnSizing: colSizing,
     },
-    initialState: { pagination: { pageSize: 10 } },
+    initialState: {
+      pagination: { pageSize: 10 },
+      sorting: [{ id: 'id', desc: true }],
+    },
     defaultColumn: {
       size: 25,
       maxSize: 600,
@@ -256,7 +268,14 @@ export function DataTable<TData extends TableData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {dataLoading ? (
+                    <div className="flex w-full align-center justify-center">
+                      {' '}
+                      <Loader2 className="h-6 w-6 animate-spin dark:text-white " />{' '}
+                    </div>
+                  ) : (
+                    'No results.'
+                  )}
                 </TableCell>
               </TableRow>
             )}
@@ -264,36 +283,11 @@ export function DataTable<TData extends TableData, TValue>({
           {footer}
         </Table>
       </div>
-      {pagination ? (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="dark:bg-inherit"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="dark:bg-inherit"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      ) : null}
-
-      {enableRowSelection &&
-      table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <div className="flex-1 text-sm text-muted-foreground z-5">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-      ) : null}
+      <DataTablePagination
+        table={table}
+        enableRowSelection={enableRowSelection}
+        pagination={pagination ?? false}
+      />
     </div>
   )
 }

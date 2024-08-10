@@ -13,7 +13,7 @@ import Link from 'next/link'
 import useSWR from 'swr'
 
 const AppHomePage = () => {
-  const { data: projects } = useSWR<
+  const { data: projects, isLoading } = useSWR<
     (Project & {
       tasks: Task[]
       managedBy: User
@@ -21,10 +21,10 @@ const AppHomePage = () => {
   >('/api/db/projekt/overview')
 
   return (
-    <div className="flex flex-col">
-      <div className="grid grid-cols-4 gap-y-5">
-        {projects ? (
-          projects?.map((project) => (
+    <>
+      <div className="flex flex-col">
+        <div className="grid grid-cols-4 gap-y-5">
+          {projects?.map((project) => (
             <Card
               key={`${project.id}-card`}
               className={`w-[50px] shadow-none border-none ${getColorByName(
@@ -59,29 +59,15 @@ const AppHomePage = () => {
                 </Card>
               </Link>
             </Card>
-          ))
-        ) : (
-          <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
-        )}
-        {/* <Card className={'w-[50px] shadow-none border-none bg-green-500'}>
-          <Card
-            onClick={() => ''}
-            className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900"
-          >
-            <CardHeader
-              style={{ fontSize: 25 }}
-              className="justify-center flex items-start m-1 "
-            >
-              Create New
-            </CardHeader>
-            <CardContent className="flex flex-col justify-center align-middle">
-              <Plus />
-            </CardContent>
-            <CardFooter />
-          </Card>
-        </Card> */}
+          ))}
+        </div>
       </div>
-    </div>
+      {isLoading && (
+        <div className="h-full w-full flex justify-center">
+          <Loader2 className="h-8 w-8 animate-spin ml-2 dark:text-white m-1" />
+        </div>
+      )}
+    </>
   )
 }
 

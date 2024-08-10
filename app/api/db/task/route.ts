@@ -1,7 +1,9 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { Role, type Task } from '@prisma/client'
+import type { Task } from '@prisma/client'
 import { db } from '@src/lib/db'
+import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
+import { v4 } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
@@ -49,6 +51,9 @@ export const POST = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
+
+    // We will derive a new unique ID and find the teamId based on session server side.
+    // This is done for security purposes.
     const task = (await req.json()) as Omit<Task, 'id' | 'teamId'>
 
     if (!task) {
@@ -58,11 +63,27 @@ export const POST = auth(async (req) => {
       )
     }
 
+    // Gathering required information to generate Task Code
+    const project = await db.project.findFirst({
+      where: {
+        id: task.projectId,
+      },
+    })
+    const newId = v4()
+    if (!project) {
+      return Response.json(
+        { ok: false, message: 'Task must be linked to a Project.' },
+        { status: 400 },
+      )
+    }
+
+    // Creating Task
     await db.task.create({
       data: {
         ...task,
-        id: undefined,
+        id: newId,
         teamId: session?.user.teamId ?? 'undefined',
+        taskCode: await generateTaskId(project.name, newId),
       },
     })
 

@@ -36,6 +36,7 @@ import EditableCell from '@src/components/Inputs/EditableCell'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 
 const ProjectsPage = () => {
   // States
@@ -77,7 +78,9 @@ const ProjectsPage = () => {
     {
       accessorKey: 'name',
       id: 'Name',
-      header: 'Name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       size: 150,
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
@@ -97,7 +100,9 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'managedBy',
-      header: 'Managed By',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Managed By" />
+      ),
       id: 'Managed By',
       cell: ({ row }) => {
         const managedBy = row.original.managedBy as User | undefined
@@ -159,22 +164,9 @@ const ProjectsPage = () => {
     {
       accessorKey: 'startDate',
       id: 'Start Date',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="default"
-            className="bg-inherit hover:bg-inherit shadow-none text-neutral-500  dark:text-neutral-400 dark:hover:bg-inherit cursor-text"
-          >
-            Start Date
-            <ArrowUpDown
-              className="ml-2 h-4 w-4 cursor-pointer hover:text-neutral-700  dark:hover:text-neutral-200"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            />
-          </Button>
-        )
-      },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Start Date" />
+      ),
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -198,22 +190,9 @@ const ProjectsPage = () => {
     {
       accessorKey: 'endDate',
       id: 'End Date',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="default"
-            className="bg-inherit hover:bg-inherit shadow-none text-neutral-500  dark:text-neutral-400 dark:hover:bg-inherit cursor-text"
-          >
-            End Date
-            <ArrowUpDown
-              className="ml-2 h-4 w-4 cursor-pointer hover:text-neutral-700  dark:hover:text-neutral-200"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            />
-          </Button>
-        )
-      },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="End Date" />
+      ),
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -239,7 +218,9 @@ const ProjectsPage = () => {
       },
     },
     {
-      header: 'Days Remaining',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Days Remaining" />
+      ),
       accessorKey: 'endDate',
       id: 'Days Remaining',
       size: 20,
@@ -267,7 +248,9 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'priority',
-      header: 'Priority',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Priority" />
+      ),
       id: 'Priority',
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
@@ -297,7 +280,9 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       id: 'Status',
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
@@ -322,7 +307,9 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'budget',
-      header: 'Budget',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Budget" />
+      ),
       size: 100,
       id: 'Budget',
       cell: ({ row, getValue }) => {

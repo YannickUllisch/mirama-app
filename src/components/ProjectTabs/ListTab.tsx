@@ -1,9 +1,9 @@
 'use client'
 import { capitalize } from '@src/lib/utils'
 import { type Task, TaskStatusType, type User } from '@prisma/client'
-import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
+import type { ColumnDef, Row, RowSelectionState } from '@tanstack/react-table'
 import type React from 'react'
-import { useState, type FC } from 'react'
+import { useCallback, useEffect, useState, type FC } from 'react'
 import UserAvatar from '@src/components/Header/UserAvatar'
 import useSWR from 'swr'
 import { SelectItem } from '@src/components/ui/tableSelect'
@@ -17,13 +17,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import TaskDialog from '../Dialogs/TaskDialog'
 import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
+import { DataTableColumnHeader } from '../Tables/ColumnHeader'
+import TaskDialog from '../Dialogs/TaskDialog'
 
 interface TaskProps {
   projectId: string
@@ -32,13 +33,20 @@ interface TaskProps {
 
 const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
   // Fetching Data
-  const { data: users } = useSWR<User[]>('/api/db/user')
+  const { data: users, isLoading: usersLoading } =
+    useSWR<User[]>('/api/db/user')
 
-  const { data: tasks, mutate: updateTasks } = useSWR<
+  const {
+    data: tasks,
+    mutate: updateTasks,
+    isLoading: tasksLoading,
+  } = useSWR<
     (Task & {
       assignedTo: User
     })[]
   >(projectName ? `/api/db/task?projectName=${projectName}` : '')
+
+  const pathname = usePathname()
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
@@ -56,26 +64,28 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
         />
       ),
       size: 30,
-      enableSorting: false,
       enableHiding: false,
+      enableSorting: false,
     },
     {
-      accessorKey: 'id',
-      header: 'ID',
-      cell: (row) => {
-        return `#${row.row.index + 1}`
-      },
+      accessorKey: 'taskCode',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Code" />
+      ),
     },
     {
       accessorKey: 'title',
-      header: 'Title',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Title" />
+      ),
       id: 'Title',
       cell: ({ getValue, row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
+
         return (
           <div className="flex items-center justify-between group w-full">
             <Link
-              href={`${usePathname()}/edit/${row.original.id}`}
+              href={`${pathname}/edit/${row.original.id}`}
               className="hover:underline"
             >
               {getValue() as string}
@@ -84,6 +94,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Ellipsis
+                  onClickCapture={() => console.log('first')}
                   size={28}
                   className={`cursor-pointer ${
                     !menuOpen && !row.getIsSelected()
@@ -94,12 +105,10 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link href={`${usePathname()}/edit/${row.original.id}`}>
-                    Edit
-                  </Link>
+                  <Link href={`${pathname}/edit/${row.original.id}`}>Edit</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => deleteTasks(Object.keys(rowSelection))}
+                  onClick={() => deleteTasks([row.original.id])}
                 >
                   Delete
                 </DropdownMenuItem>
@@ -111,12 +120,16 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     },
     {
       accessorKey: 'description',
-      header: 'Description',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Description" />
+      ),
       id: 'Description',
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       id: 'Status',
       cell: ({ row, getValue }) => {
         return (
@@ -140,7 +153,9 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     },
     {
       accessorKey: 'assignedTo',
-      header: 'Assignee',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Assignee" />
+      ),
       id: 'Assignee',
       cell: (row) => {
         const assignedTo = row.cell.getValue() as User | undefined
@@ -184,8 +199,11 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     },
     {
       accessorKey: 'dueDate',
-      header: 'Due Date',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Due Date" />
+      ),
       id: 'Due Date',
+      enableResizing: false,
       cell: (row) => {
         return (
           <div
@@ -223,11 +241,29 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
         columns={columns}
         data={tasks ?? []}
         columnvisibility
+        pagination
         enableRowSelection
+        dataLoading={tasksLoading || usersLoading}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         tableHeader={
           <>
+            <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <Link
+                href={`${usePathname()}/create/${projectId}`}
+                legacyBehavior
+              >
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Plus width={15} className="ml-2" />
+                  <Button
+                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    variant="link"
+                  >
+                    New Task
+                  </Button>
+                </div>
+              </Link>
+            </div>
             <TaskDialog
               button={
                 <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
@@ -251,21 +287,6 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
               >
                 Filter
               </Button>
-              <ChevronDown width={15} className="mr-2" />
-            </div>
-            <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-              <Link
-                href={`${usePathname()}/create/${projectId}`}
-                legacyBehavior
-              >
-                <Button
-                  style={{ fontSize: 11, textDecoration: 'none', padding: 10 }}
-                  variant="link"
-                >
-                  Create Page
-                </Button>
-              </Link>
-
               <ChevronDown width={15} className="mr-2" />
             </div>
           </>

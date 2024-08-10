@@ -14,12 +14,16 @@ const Footer = async () => {
         <div className="gap-4 md:gap-2 items-center flex">
           <ToggleTheme height="4" width="4" />
           <span>·</span>
-          <Link className="hover:underline" href="/privacy-policy">
+          <Link className="hover:underline" href="/privacy">
             Privacy Policy
           </Link>
           <span>·</span>
-          <Link className="hover:underline" href="/terms-and-conditions">
-            Terms and conditions
+          <Link className="hover:underline" href="/termsofservice">
+            Terms of Service
+          </Link>
+          <span>·</span>
+          <Link className="hover:underline" href="/cookies">
+            Cookie Policy
           </Link>
         </div>
       </div>

@@ -60,6 +60,7 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
     projectId: props.projectId,
     dateCreated: new Date(),
     dateFinished: new Date(),
+    taskCode: '',
   } as Task)
 
   // Fetching Data
@@ -97,6 +98,7 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
       projectId: props.projectId,
       dateCreated: new Date(),
       dateFinished: new Date(),
+      taskCode: '',
     } as Task)
   }
 

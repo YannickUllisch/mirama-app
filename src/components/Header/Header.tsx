@@ -27,7 +27,7 @@ const Header: FC<HeaderProps> = ({ toggleSidebar }) => {
     .split('/')
     .filter((segment) => segment)
     .map((segment) => decodeURIComponent(segment))
-    .filter((segment) => segment.length !== 25)
+    .filter((segment) => segment.length < 25)
 
   let accumulatedPath = ''
 
