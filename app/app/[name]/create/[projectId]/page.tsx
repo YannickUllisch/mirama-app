@@ -15,20 +15,21 @@ import React, { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
+import { postResource } from '@src/lib/api/postResource'
 
 const CreateTaskPage = () => {
   const { projectId } = useParams()
   const router = useRouter()
 
   // TODO: Replace this with only Users added to the project later
-  const { data: users } = useSWR<User[]>('/api/db/user')
+  const { data: users } = useSWR<User[]>('/api/db/member/team')
 
   const [isPending, startTransition] = useTransition()
   const {
     register,
     watch,
     handleSubmit,
-    formState: { errors },
+    //formState: { errors },
   } = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
@@ -44,9 +45,9 @@ const CreateTaskPage = () => {
 
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
-      router.back()
-      console.log(vals)
-      // Logic onSubmit here
+      postResource('task', vals).then(() => {
+        router.back()
+      })
     })
   }
 

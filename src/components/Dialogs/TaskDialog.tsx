@@ -37,6 +37,7 @@ import {
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Calendar } from '@src/components/ui/calendar'
+import { postResource } from '@src/lib/api/postResource'
 
 interface TaskDialogProps {
   mutate?(): any
@@ -64,25 +65,12 @@ const TaskDialog: FC<TaskDialogProps> = (props) => {
   } as Task)
 
   // Fetching Data
-  const { data: users } = useSWR<User[]>('/api/db/user')
+  const { data: users } = useSWR<User[]>('/api/db/team/member')
 
   const createtask = () => {
-    try {
-      toast.promise(api.post('task', task), {
-        loading: 'Adding Task..',
-        error: (err) => err.statusText ?? err,
-        success: () => {
-          if (props.mutate) {
-            props.mutate()
-          }
-
-          return 'Tasks Added!'
-        },
-      })
+    postResource('task', task, { mutate: props.mutate }).then(() => {
       handleClose()
-    } catch (error: any) {
-      toast.error(error)
-    }
+    })
   }
 
   const handleClose = () => {

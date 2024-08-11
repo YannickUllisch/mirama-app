@@ -1,6 +1,12 @@
 'use client'
 import { capitalize } from '@src/lib/utils'
-import { type Task, TaskStatusType, type User } from '@prisma/client'
+import {
+  type Project,
+  type ProjectUser,
+  type Task,
+  TaskStatusType,
+  type User,
+} from '@prisma/client'
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import type React from 'react'
 import { useState, type FC } from 'react'
@@ -27,15 +33,13 @@ import { DataTableColumnHeader } from '../Tables/ColumnHeader'
 import TaskDialog from '../Dialogs/TaskDialog'
 
 interface TaskProps {
-  projectId: string
-  projectName: string
+  project: Project & {
+    users: (ProjectUser & { user: User })[]
+  }
 }
 
-const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
-  // Fetching Data
-  const { data: users, isLoading: usersLoading } =
-    useSWR<User[]>('/api/db/user')
-
+const ListTab: FC<TaskProps> = ({ project }) => {
+  // We fetch tasks instead of passing from parent to have more specific control.
   const {
     data: tasks,
     mutate: updateTasks,
@@ -44,7 +48,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(projectName ? `/api/db/task?projectName=${projectName}` : '')
+  >(project ? `/api/db/task?projectName=${project.name}` : '')
 
   const pathname = usePathname()
 
@@ -107,7 +111,11 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
                   <Link href={`${pathname}/edit/${row.original.id}`}>Edit</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => deleteTasks([row.original.id])}
+                  onClick={() =>
+                    deleteResources('task', [row.original.id], {
+                      mutate: updateTasks,
+                    })
+                  }
                 >
                   Delete
                 </DropdownMenuItem>
@@ -180,15 +188,16 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
               )
             }
           >
-            {users?.map((user) => (
-              <SelectItem value={user.id} key={user.id}>
+            {/* We iterate over project.users to only allow members connected to the current project */}
+            {project.users?.map((user) => (
+              <SelectItem value={user.userId} key={user.userId}>
                 <div className="flex items-center gap-1">
                   <UserAvatar
                     avatarSize={6}
                     fontSize={10}
-                    username={user.name}
+                    username={user.user.name}
                   />
-                  {user.name}
+                  {user.user.name}
                 </div>
               </SelectItem>
             ))}
@@ -218,22 +227,6 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
     },
   ]
 
-  const deleteTasks = (ids: string[]) => {
-    try {
-      toast.promise(deleteResources('task', ids), {
-        loading: 'Deleting..',
-        success: () => {
-          updateTasks((prev) => prev?.filter((task) => !ids.includes(task.id)))
-
-          return 'Successfully Deleted!'
-        },
-        error: (err) => err.message ?? err,
-      })
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
   return (
     <div className="rounded-sm outline-none">
       <DataTable
@@ -242,23 +235,28 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
         columnvisibility
         pagination
         enableRowSelection
-        dataLoading={tasksLoading || usersLoading}
+        dataLoading={tasksLoading}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         tableHeader={
           <>
             <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-              <Link href={`${pathname}/create/${projectId}`} legacyBehavior>
-                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                  <Plus width={15} className="ml-2" />
-                  <Button
-                    style={{ fontSize: 11, textDecoration: 'none' }}
-                    variant="link"
-                  >
-                    New Task
-                  </Button>
-                </div>
-              </Link>
+              {project && (
+                <Link
+                  href={`${pathname}/create/${project ? project.id : ''}`}
+                  legacyBehavior
+                >
+                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                    <Plus width={15} className="ml-2" />
+                    <Button
+                      style={{ fontSize: 11, textDecoration: 'none' }}
+                      variant="link"
+                    >
+                      New Task
+                    </Button>
+                  </div>
+                </Link>
+              )}
             </div>
             <TaskDialog
               button={
@@ -272,7 +270,7 @@ const ListTab: FC<TaskProps> = ({ projectName, projectId }) => {
                   </Button>
                 </div>
               }
-              projectId={projectId}
+              projectId={project ? project.id : ''}
               mutate={updateTasks}
             />
             <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">

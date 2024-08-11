@@ -2,7 +2,6 @@
 import { Button } from '@src/components/ui/button'
 import {
   Archive,
-  ArchiveRestore,
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
@@ -22,7 +21,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
-import { toast } from 'sonner'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
@@ -50,8 +48,9 @@ const ProjectsPage = () => {
     })[]
   >('/api/db/projekt?archived=false')
 
-  const { data: users, isLoading: usersLoading } =
-    useSWR<User[]>('/api/db/user')
+  const { data: users, isLoading: usersLoading } = useSWR<User[]>(
+    '/api/db/team/member',
+  )
 
   const columns: ColumnDef<Project & { users: ProjectUser[] }>[] = [
     {
@@ -291,11 +290,11 @@ const ProjectsPage = () => {
       id: 'Actions',
       header: 'Actions',
       enableResizing: false,
-      cell: (row) => {
+      cell: ({ row }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
             <div className="flex items-center gap-1.5">
-              <GeneralTooltip key={`delete_${row.row.index}`} tipText="Remove">
+              <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
                 <ConfirmationDialog
                   dialogTitle={'Are you sure?'}
                   dialogDesc={'Deleting a project can not be undone!'}
@@ -303,38 +302,34 @@ const ProjectsPage = () => {
                   dialogTrigger={
                     <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
                   }
-                  onConfirmation={() => deleteProject(row.row.original.id)}
+                  onConfirmation={() =>
+                    deleteResources('projekt', [row.original.id], {
+                      mutate: updateProjects,
+                    })
+                  }
                 />
               </GeneralTooltip>
               <GeneralTooltip
-                key={`archive_${row.row.index}`}
-                tipText={row.row.original.archived ? 'Unarchive' : 'Archive'}
+                key={`archive_${row.id}`}
+                tipText={row.original.archived ? 'Unarchive' : 'Archive'}
               >
-                {row.row.original.archived ? (
-                  <ArchiveRestore
-                    onClick={() =>
-                      archiveProject(
-                        row.row.original.id,
-                        !row.row.original.archived,
-                      )
-                    }
-                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                  />
-                ) : (
-                  <Archive
-                    onClick={() =>
-                      archiveProject(
-                        row.row.original.id,
-                        !row.row.original.archived,
-                      )
-                    }
-                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                  />
-                )}
+                <Archive
+                  onClick={() =>
+                    updateResourceById(
+                      'projekt',
+                      row.original.id,
+                      {
+                        archived: !row.original.archived,
+                      },
+                      { mutate: updateProjects },
+                    )
+                  }
+                  className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                />
               </GeneralTooltip>
-              {row.row.original.archived ? undefined : (
+              {row.original.archived ? undefined : (
                 <GeneralTooltip
-                  key={`gcalendar_${row.row.index}`}
+                  key={`gcalendar_${row.id}`}
                   tipText="Add to Google Calendar"
                 >
                   <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
@@ -348,7 +343,7 @@ const ProjectsPage = () => {
           <div className="flex items-center gap-1.5">
             <GeneralTooltip tipText="Add to Google Calendar">
               <CalendarCheck2
-                key={`gcalendar_${row.row.index}`}
+                key={`gcalendar_${row.id}`}
                 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer"
               />
             </GeneralTooltip>
@@ -357,42 +352,6 @@ const ProjectsPage = () => {
       },
     },
   ]
-
-  const deleteProject = (id: string) => {
-    try {
-      toast.promise(deleteResources('projekt', [id]), {
-        loading: 'Deleting Project..',
-        success: () => {
-          updateProjects((prev) => prev?.filter((project) => project.id !== id))
-
-          return 'Project Successfully Deleted!'
-        },
-        error: (err) => err.message ?? err,
-      })
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
-  const archiveProject = (id: string, archived: boolean) => {
-    try {
-      toast.promise(
-        updateResourceById('projekt', id, {
-          archived: archived,
-        }),
-        {
-          loading: 'Updating Project..',
-          error: (err) => err.response.statusText ?? err,
-          success: () => {
-            updateProjects()
-            return 'Project Archived!'
-          },
-        },
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
 
   return (
     <>

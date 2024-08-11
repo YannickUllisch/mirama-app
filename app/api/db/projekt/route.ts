@@ -4,6 +4,7 @@ import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const GET = auth(async (req) => {
   try {
@@ -18,11 +19,35 @@ export const GET = auth(async (req) => {
     const archivedStatus = JSON.parse(
       req.nextUrl.searchParams.get('archived') as string,
     )
+    // If Team Owner or Admin, all projects should be returned.
+    if (isTeamAdminOrOwner(session)) {
+      const adminResponse = await db.project.findMany({
+        where: {
+          teamId: session?.user.teamId,
+          archived: archivedStatus ? archivedStatus : false,
+        },
+        include: {
+          users: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      })
 
+      return Response.json(adminResponse, { status: 200 })
+    }
+
+    // If not Admin or Owner Role, only projects the User is linked to should be returned.
     const response = await db.project.findMany({
       where: {
         teamId: session?.user.teamId,
         archived: archivedStatus ? archivedStatus : false,
+        users: {
+          some: {
+            userId: session?.user.id,
+          },
+        },
       },
       include: {
         users: {
@@ -30,9 +55,6 @@ export const GET = auth(async (req) => {
             user: true,
           },
         },
-      },
-      orderBy: {
-        endDate: 'desc',
       },
     })
 

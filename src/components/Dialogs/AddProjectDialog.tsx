@@ -51,6 +51,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '../ui/multiselect'
+import { postResource } from '@src/lib/api/postResource'
 
 interface AddProjectDialogProps {
   mutate?(): any
@@ -80,25 +81,12 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   } as Project & { users: ProjectUser[] })
 
   // Fetching Data
-  const { data: users } = useSWR<User[]>('/api/db/user')
+  const { data: users } = useSWR<User[]>('/api/db/team/member')
 
   const createProject = () => {
-    try {
-      toast.promise(api.post('projekt', project), {
-        loading: 'Adding Project..',
-        error: (err) => err.statusText ?? err,
-        success: () => {
-          if (props.mutate) {
-            props.mutate()
-          }
-
-          return 'Project Added!'
-        },
-      })
+    postResource('projekt', project, { mutate: props.mutate }).then(() => {
       handleClose()
-    } catch (error: any) {
-      toast.error(error)
-    }
+    })
   }
 
   const handleClose = () => {
@@ -123,7 +111,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here.
+            Input required attributes to create new Project.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

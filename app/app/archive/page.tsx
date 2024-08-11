@@ -20,7 +20,6 @@ import { ArchiveRestore, CalendarDays, ChevronUp, Trash2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import React from 'react'
-import { toast } from 'sonner'
 import useSWR from 'swr'
 
 const ArchivePage = () => {
@@ -31,14 +30,13 @@ const ArchivePage = () => {
     isLoading: projectsLoading,
   } = useSWR<
     (Project & {
-      users: ProjectUser[]
+      users: (ProjectUser & { user: User })[]
     })[]
-  >('/api/db/projekt/overview?archived=true')
+  >('/api/db/projekt?archived=true')
 
-  const { data: users, isLoading: usersLoading } =
-    useSWR<User[]>('/api/db/user')
-
-  const columns: ColumnDef<Project & { users: ProjectUser[] }>[] = [
+  const columns: ColumnDef<
+    Project & { users: (ProjectUser & { user: User })[] }
+  >[] = [
     {
       accessorKey: 'id',
       enableHiding: false,
@@ -71,12 +69,7 @@ const ArchivePage = () => {
       id: 'Managed By',
       cell: ({ row }) => {
         const managedBy = row.original.users.filter((user) => user.isManager)
-        const managerNames =
-          users
-            ?.filter((user) =>
-              managedBy.some((manager) => manager.userId === user.id),
-            )
-            .map((u) => u.name as string) ?? []
+        const managerNames = managedBy.map((manager) => manager.user.name ?? '')
 
         return managerNames ? (
           <AvatarGroup
@@ -166,11 +159,11 @@ const ArchivePage = () => {
       id: 'Actions',
       header: 'Actions',
       enableResizing: false,
-      cell: (row) => {
+      cell: ({ row }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
             <div className="flex items-center gap-1.5">
-              <GeneralTooltip key={`delete_${row.row.index}`} tipText="Remove">
+              <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
                 <ConfirmationDialog
                   dialogTitle={'Are you sure?'}
                   dialogDesc={
@@ -180,18 +173,23 @@ const ArchivePage = () => {
                   dialogTrigger={
                     <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
                   }
-                  onConfirmation={() => deleteProject(row.row.original.id)}
+                  onConfirmation={() =>
+                    deleteResources('projekt', [row.original.id], {
+                      mutate: updateProjects,
+                    })
+                  }
                 />
               </GeneralTooltip>
-              <GeneralTooltip
-                key={`unarchive${row.row.index}`}
-                tipText={'Unarchive'}
-              >
+              <GeneralTooltip key={`unarchive${row.id}`} tipText={'Unarchive'}>
                 <ArchiveRestore
                   onClick={() =>
-                    archiveProject(
-                      row.row.original.id,
-                      !row.row.original.archived,
+                    updateResourceById(
+                      'projekt',
+                      row.original.id,
+                      {
+                        archived: !row.original.archived,
+                      },
+                      { mutate: updateProjects },
                     )
                   }
                   className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
@@ -204,42 +202,6 @@ const ArchivePage = () => {
     },
   ]
 
-  const deleteProject = (id: string) => {
-    try {
-      toast.promise(deleteResources('projekt', [id]), {
-        loading: 'Deleting Project..',
-        success: () => {
-          updateProjects((prev) => prev?.filter((project) => project.id !== id))
-
-          return 'Project Successfully Deleted!'
-        },
-        error: (err) => err.message ?? err,
-      })
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
-  const archiveProject = (id: string, archived: boolean) => {
-    try {
-      toast.promise(
-        updateResourceById('projekt', id, {
-          archived: archived,
-        }),
-        {
-          loading: 'Updating Project..',
-          error: (err) => err.response.statusText ?? err,
-          success: () => {
-            updateProjects()
-            return 'Project Archived!'
-          },
-        },
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
   return (
     <DataTable
       pagination
@@ -247,7 +209,7 @@ const ArchivePage = () => {
       expandedContent
       columns={columns}
       data={projects ?? []}
-      dataLoading={projectsLoading || usersLoading}
+      dataLoading={projectsLoading}
     />
   )
 }

@@ -5,11 +5,11 @@ import React, { type FC } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
-import type { Project } from '@prisma/client'
+import type { Project, ProjectUser, User } from '@prisma/client'
 import ConfirmationDialog from '../Dialogs/ConfirmationDialog'
 
 interface SettingsTabProps {
-  project: Project
+  project: Project & { users: (ProjectUser & { user: User })[] }
 }
 
 const SettingsTab: FC<SettingsTabProps> = ({ project }) => {

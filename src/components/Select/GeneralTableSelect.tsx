@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/tableSelect'
-import { toast } from 'sonner'
 import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface GeneralTableSelectProps {
@@ -33,29 +32,14 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
   stylingProps,
 }) => {
   const onValueChange = async (val: string) => {
-    try {
-      toast.promise(
-        updateResourceById(apiRoute, id, {
-          [paramToUpdate]: val,
-        }),
-        {
-          loading: 'Updating...',
-          error: (err) => err,
-          success: () => {
-            // Mutate updates the fetched data, which then updates the table value.
-            if (mutate) {
-              mutate()
-            }
-            if (onSuccess) {
-              onSuccess()
-            }
-            return 'Successfully Updated!'
-          },
-        },
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
+    updateResourceById(
+      apiRoute,
+      id,
+      {
+        [paramToUpdate]: val,
+      },
+      { mutate: mutate, onSuccess: onSuccess },
+    )
   }
 
   return (

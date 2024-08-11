@@ -5,23 +5,54 @@ import {
   CardFooter,
   CardHeader,
 } from '@src/components/ui/card'
-import { getColorByName } from '@src/lib/utils'
+import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Project, ProjectUser, User } from '@prisma/client'
-import { CalendarDays, Loader2 } from 'lucide-react'
+import { CalendarDays, Loader2, Plus } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
 import AvatarGroup from '@src/components/Header/AvatarGroup'
+import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
+import { Button } from '@src/components/ui/button'
+import { useSession } from 'next-auth/react'
 
 const AppHomePage = () => {
-  const { data: projects, isLoading } = useSWR<
+  const { data: session } = useSession()
+  const {
+    data: projects,
+    mutate,
+    isLoading,
+  } = useSWR<
     (Project & {
       users: (ProjectUser & { user: User })[]
     })[]
-  >('/api/db/projekt/overview')
+  >('/api/db/projekt')
 
   return (
     <>
+      <div className="w-full mb-3 flex items-center">
+        {isTeamAdminOrOwner(session) && (
+          <AddProjectDialog
+            key={'Project Dialog'}
+            mutate={mutate}
+            button={
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Plus width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  New Project
+                </Button>
+              </div>
+            }
+          />
+        )}
+        {projects && projects?.length < 1 ? (
+          <span>You are currently not part of any Project.</span>
+        ) : null}
+      </div>
+
       <div className="flex flex-col">
         <div className="grid grid-cols-4 gap-y-5">
           {projects?.map((project) => (

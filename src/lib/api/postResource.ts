@@ -2,27 +2,22 @@ import { api } from '@api'
 import { toast } from 'sonner'
 import type { KeyedMutator } from 'swr'
 
-export const updateResourceById = async <T, U>(
+export const postResource = async <T, U>(
   route: string,
-  id: string,
   params: T,
   options?: {
     mutate?: KeyedMutator<U[]>
-    onSuccess?: () => void
   },
 ) => {
   try {
-    toast.promise(api.put(`${route}?id=${id}`, params), {
-      loading: 'Updating..',
+    toast.promise(api.post(route, params), {
+      loading: 'Creating..',
       error: (err) => err.response.statusText ?? err,
       success: () => {
         if (options?.mutate) {
           options.mutate()
         }
-        if (options?.onSuccess) {
-          options.onSuccess
-        }
-        return 'Successfully Updated Resource!'
+        return 'Resource Created!'
       },
     })
   } catch (error: any) {

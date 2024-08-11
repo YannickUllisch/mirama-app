@@ -53,24 +53,14 @@ const EditableCell: FC<EditableCellProps> = ({
       return
     }
 
-    try {
-      toast.promise(
-        updateResourceById(apiRoute, id, {
-          [paramToUpdate]: typeof initialValue === 'string' ? value : +value,
-        }),
-        {
-          loading: 'Updating...',
-          error: (err) => err,
-          success: () => {
-            // Mutate updates the fetched data, which then updates the table value.
-            mutate()
-            return 'Successfully Updated!'
-          },
-        },
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
+    updateResourceById(
+      apiRoute,
+      id,
+      {
+        [paramToUpdate]: typeof initialValue === 'string' ? value : +value,
+      },
+      { mutate: mutate },
+    )
   }
   return (
     <Input

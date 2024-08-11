@@ -1,22 +1,21 @@
 'use client'
-import EmailInput from '@src/components/Inputs/EmailInput'
 import { DataTable } from '@src/components/Tables/DataTable'
 import UserAvatar from '@src/components/Header/UserAvatar'
 import { Button } from '@src/components/ui/button'
 import { SelectItem } from '@src/components/ui/tableSelect'
-import { capitalize } from '@src/lib/utils'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Role, type User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { Plus, Trash2 } from 'lucide-react'
 import useSWR from 'swr'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { useSession } from 'next-auth/react'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 
 const TeamPage = () => {
-  const { update } = useSession()
+  const { data: session, update } = useSession()
 
   const {
     data: teamMembers,
@@ -86,7 +85,11 @@ const TeamPage = () => {
             key={`nameInput_${row.index}`}
             variant={'ghost'}
             className="flex items-center"
-            onClick={() => deleteMember(row.original.id)}
+            onClick={() =>
+              deleteResources('team/member', [row.original.id], {
+                mutate: updateMembers,
+              })
+            }
           >
             <Trash2 className="w-4 h-4 text-rose-600" />
           </Button>
@@ -95,35 +98,26 @@ const TeamPage = () => {
     },
   ]
 
-  const deleteMember = (id: string) => {
-    deleteResources('team/member', [id])
-    try {
-      toast.promise(deleteResources('team/member', [id]), {
-        loading: 'Deleting Member..',
-        success: () => {
-          updateMembers((prev) => prev?.filter((member) => member.id !== id))
-
-          return 'Team Member Removed!'
-        },
-        error: (err) => err.message ?? err,
-      })
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
   return (
     <main className="flex flex-col">
-      <div className="mt-8 mb-2">
-        <EmailInput mutate={updateMembers} />
-      </div>
-      <div>
-        <DataTable
-          columns={columns}
-          data={teamMembers ?? []}
-          dataLoading={membersLoading}
-        />
-      </div>
+      {isTeamAdminOrOwner(session) && (
+        <AddMemberDialog mutate={updateMembers}>
+          <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+            <Plus width={15} className="ml-2" />
+            <Button
+              style={{ fontSize: 11, textDecoration: 'none' }}
+              variant="link"
+            >
+              Add User
+            </Button>
+          </div>
+        </AddMemberDialog>
+      )}
+      <DataTable
+        columns={columns}
+        data={teamMembers ?? []}
+        dataLoading={membersLoading}
+      />
     </main>
   )
 }

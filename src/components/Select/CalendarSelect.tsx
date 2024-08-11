@@ -11,6 +11,7 @@ import {
 import type { Project } from '@prisma/client'
 import { toast } from 'sonner'
 import { DateTime } from 'luxon'
+import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface CalendarSelectProps {
   startingDate: Date
@@ -24,19 +25,13 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
   dateType,
 }) => {
   const [date, setDate] = useState<Date | undefined>(startingDate)
-
   const [popupOpen, setPopupOpen] = useState(false)
 
   const handleSelect = (date: Date) => {
     setPopupOpen(false)
     try {
-      const update =
-        dateType === 'start' ? { startDate: date } : { endDate: date }
-
-      toast.promise(api.put(`projekt?id=${project.id}`, update), {
-        loading: 'Updating Date..',
-        success: 'Date Successfully Updated!',
-        error: (err) => err.message ?? err,
+      updateResourceById('projekt', project.id, {
+        [dateType === 'start' ? 'startDate' : 'endDate']: date,
       })
     } catch (error: any) {
       toast.error(error)

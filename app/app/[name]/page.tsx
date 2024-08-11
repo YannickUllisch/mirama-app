@@ -1,5 +1,11 @@
 'use client'
-import { type Project, Role, type Task, type User } from '@prisma/client'
+import {
+  type Project,
+  type ProjectUser,
+  Role,
+  type Task,
+  type User,
+} from '@prisma/client'
 import React, { useEffect, useState, type FC } from 'react'
 import useSWR from 'swr'
 import {
@@ -37,7 +43,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
   const { data: project, isLoading } = useSWR<
     Project & {
       tasks: Task[]
-      managedBy: User
+      users: (ProjectUser & { user: User })[]
     }
   >(`/api/db/projekt/${params.name}?name=${params.name}`)
 
@@ -71,8 +77,11 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
       component: (
         <ListTab
-          projectName={project?.name as string}
-          projectId={project?.id as string}
+          project={
+            project as Project & {
+              users: (ProjectUser & { user: User })[]
+            }
+          }
         />
       ),
       headerComponent: (
@@ -114,7 +123,13 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'settings',
       roles: [Role.ADMIN, Role.OWNER],
-      component: <SettingsTab project={project as Project} />,
+      component: (
+        <SettingsTab
+          project={
+            project as Project & { users: (ProjectUser & { user: User })[] }
+          }
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <Settings width={15} /> Settings
