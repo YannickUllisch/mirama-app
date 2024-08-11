@@ -7,7 +7,7 @@ import {
 } from '@prisma/client'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralTooltip from '@src/components/GeneralTooltip'
-import AvatarGroup from '@src/components/Header/AvatarGroup'
+import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { DataTable } from '@src/components/Tables/DataTable'

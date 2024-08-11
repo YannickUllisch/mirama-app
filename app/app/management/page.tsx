@@ -32,7 +32,7 @@ import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import AvatarGroup from '@src/components/Header/AvatarGroup'
+import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 
 const ProjectsPage = () => {
   // States

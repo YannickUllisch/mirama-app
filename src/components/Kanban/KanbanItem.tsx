@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { User } from '@prisma/client'
 import type { FC } from 'react'
-import UserAvatar from '../Header/UserAvatar'
+import UserAvatar from '../Avatar/UserAvatar'
 import { ClipboardCheck } from 'lucide-react'
 
 type ItemsType = {

@@ -1,5 +1,5 @@
 'use client'
-import UserAvatar from '@src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { Button } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'

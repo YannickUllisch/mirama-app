@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import UserAvatar from './UserAvatar' // Adjust the import path as needed
-import { cn } from '@src/lib/utils'
 
 interface AvatarGroupProps {
   usernames: string[]

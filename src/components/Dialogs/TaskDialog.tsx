@@ -25,7 +25,7 @@ import {
   SelectGroup,
   SelectItem,
 } from '@src/components/ui/select'
-import UserAvatar from '@src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { toast } from 'sonner'
 import { v4 } from 'uuid'
 import { useSession } from 'next-auth/react'

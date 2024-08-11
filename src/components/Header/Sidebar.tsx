@@ -1,5 +1,5 @@
 'use client'
-import { Archive, FolderOpen, Home, Leaf, Users } from 'lucide-react'
+import { Archive, Calendar, FolderOpen, Home, Leaf, Users } from 'lucide-react'
 import Link from 'next/link'
 import {
   Command,
@@ -42,6 +42,12 @@ const Sidebar = () => {
           href: '/app/archive',
           label: 'Archive',
           icon: <Archive strokeWidth={1.2} className="w-5 h-5" />,
+        },
+        {
+          id: 4,
+          href: '/app/calendar',
+          label: 'Calendar',
+          icon: <Calendar strokeWidth={1.2} className="w-5 h-5" />,
         },
       ],
     },

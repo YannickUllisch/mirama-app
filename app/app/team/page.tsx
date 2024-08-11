@@ -1,6 +1,6 @@
 'use client'
 import { DataTable } from '@src/components/Tables/DataTable'
-import UserAvatar from '@src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { Button } from '@src/components/ui/button'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'

@@ -10,7 +10,7 @@ import {
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import type React from 'react'
 import { useState, type FC } from 'react'
-import UserAvatar from '@src/components/Header/UserAvatar'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import useSWR from 'swr'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
