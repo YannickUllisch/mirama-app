@@ -5,7 +5,6 @@ import bcryptjs from 'bcryptjs'
 import { db } from '@src/lib/db'
 import { signIn } from '@src/lib/auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
-import { AuthError } from 'next-auth'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -14,7 +13,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: 'Invalid fields!' }
   }
 
-  const { name, email, password } = validatedFields.data
+  const { email, password } = validatedFields.data
   const hashedPassword = await bcryptjs.hash(password, 10)
 
   const existingUser = await db.user.findUnique({
@@ -24,19 +23,18 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   })
 
   // Dont let already used Emails register again
-  if (existingUser?.name && existingUser.password) {
-    return { error: 'Account with this Email already exists' }
+  if (existingUser?.password && existingUser.emailVerified) {
+    return { error: 'This Email is not allowed.' }
   }
 
   // We only let existing users create accounts, since its a invite only system.
   // Once one has been invited and registers we automatically verify their Email.
-  if (existingUser && !existingUser.name && !existingUser.password) {
+  if (existingUser && !existingUser.password) {
     await db.user.update({
       where: {
         email,
       },
       data: {
-        name,
         password: hashedPassword,
         emailVerified: new Date(),
       },
