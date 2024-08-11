@@ -32,7 +32,7 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
   onSuccess,
   stylingProps,
 }) => {
-  const onValueChange = (val: string) => {
+  const onValueChange = async (val: string) => {
     try {
       toast.promise(
         updateResourceById(apiRoute, id, {

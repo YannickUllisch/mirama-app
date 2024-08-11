@@ -1,8 +1,9 @@
 import { db } from '@src/lib/db'
 import { auth } from '@src/lib/auth'
-import { Role, type Project } from '@prisma/client'
+import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
+import { v4 } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
@@ -12,12 +13,23 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
+    // We often only want to fetch either archived or non-archived projects.
+    // Optionally this can be given in the request URL.
+    const archivedStatus = JSON.parse(
+      req.nextUrl.searchParams.get('archived') as string,
+    )
+
     const response = await db.project.findMany({
       where: {
         teamId: session?.user.teamId,
+        archived: archivedStatus ? archivedStatus : false,
       },
       include: {
-        managedBy: true,
+        users: {
+          include: {
+            user: true,
+          },
+        },
       },
       orderBy: {
         endDate: 'desc',
@@ -43,7 +55,10 @@ export const POST = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const project = (await req.json()) as Omit<Project, 'id' | 'teamId'>
+    const project = (await req.json()) as Omit<
+      Project & { users: ProjectUser[] },
+      'id' | 'teamId'
+    >
 
     if (!project) {
       return Response.json(
@@ -52,13 +67,63 @@ export const POST = auth(async (req) => {
       )
     }
 
-    await db.project.create({
-      data: {
-        ...project,
-        teamId: session?.user.teamId ?? 'undefined',
-        id: undefined,
-      },
-    })
+    const generatedId = v4()
+
+    try {
+      await db.project.create({
+        data: {
+          ...project,
+          teamId: session?.user.teamId ?? 'undefined',
+          id: generatedId,
+          users: undefined,
+        },
+      })
+    } catch (err) {
+      console.error('Error in creating project', err)
+      throw err
+    }
+
+    // Create ProjectUser records, to handle many to many relationship
+    try {
+      const userIds = project.users.map((pu) => pu.userId)
+
+      // Check if all user IDs exist in the User table
+      const existingUsers = await db.user.findMany({
+        where: {
+          id: { in: userIds },
+        },
+        select: { id: true },
+      })
+
+      const existingUserIds = new Set(existingUsers.map((user) => user.id))
+
+      // Filter out users that don't exist in the User table
+      const validProjectUsers = project.users.filter((pu) =>
+        existingUserIds.has(pu.userId),
+      )
+
+      if (validProjectUsers.length !== project.users.length) {
+        console.warn(
+          'Some user IDs do not exist in the User table and will be skipped',
+        )
+      }
+
+      await db.projectUser.createMany({
+        data: project.users.map((pu) => {
+          return {
+            projectId: generatedId,
+            userId: pu.userId,
+            isManager: pu.isManager,
+            id: undefined,
+          }
+        }),
+        skipDuplicates: true,
+      })
+    } catch (err) {
+      console.error('Error in creating ProjectUser Records', err)
+      throw err
+    }
+
     return Response.json(
       { ok: true, message: 'Project created' },
       { status: 201 },

@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -8,16 +8,18 @@ import {
 } from '@src/components/ui/accordion'
 
 interface GeneralAccordion {
-  accordionContent: React.ReactNode
   trigger: string | React.ReactNode
 }
 
-const GeneralAccordion: FC<GeneralAccordion> = (obj) => {
+const GeneralAccordion: FC<PropsWithChildren<GeneralAccordion>> = ({
+  children,
+  trigger,
+}) => {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
-        <AccordionTrigger>{obj.trigger}</AccordionTrigger>
-        <AccordionContent>{obj.accordionContent}</AccordionContent>
+        <AccordionTrigger>{trigger}</AccordionTrigger>
+        <AccordionContent>{children}</AccordionContent>
       </AccordionItem>
     </Accordion>
   )

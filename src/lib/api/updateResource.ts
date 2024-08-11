@@ -1,4 +1,5 @@
 import { api } from '@api'
+import { toast } from 'sonner'
 
 export const updateResourceById = async <T>(
   route: string,

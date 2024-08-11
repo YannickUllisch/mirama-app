@@ -2,7 +2,6 @@
 import { useTheme } from 'next-themes'
 import React, { type FC } from 'react'
 import { Moon, Sun } from 'lucide-react'
-import GeneralTooltip from '../GeneralTooltip'
 
 interface ToggleThemeProps {
   width: string

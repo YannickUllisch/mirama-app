@@ -2,7 +2,6 @@ import { auth } from '@src/lib/auth'
 import { db } from '@src/lib/db'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
-import { validate } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
@@ -37,18 +36,21 @@ export const DELETE = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const id = req.nextUrl.searchParams.get('id') as string
 
-    if (!id) {
+    const ids = (await req.json()) as string[]
+
+    if (!ids || !Array.isArray(ids) || ids.length < 1) {
       return Response.json(
-        { ok: false, message: 'User ID needs to be defined in request' },
+        { ok: false, message: 'Invalid request body' },
         { status: 400 },
       )
     }
 
-    await db.user.delete({
+    await db.user.deleteMany({
       where: {
-        id,
+        id: {
+          in: ids,
+        },
         teamId: session?.user.teamId ?? 'undefined',
       },
     })

@@ -1,5 +1,5 @@
 import type React from 'react'
-import { type FC, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogClose,
@@ -14,7 +14,13 @@ import { Button } from '@src/components/ui/button'
 import { Label } from '@src/components/ui/label'
 import { Input } from '@src/components/ui/input'
 import useSWR from 'swr'
-import { PriorityType, type Project, Task, type User } from '@prisma/client'
+import {
+  PriorityType,
+  type Project,
+  Task,
+  type User,
+  type ProjectUser,
+} from '@prisma/client'
 import { capitalize, cn } from '@src/lib/utils'
 import { api } from '@api'
 import {
@@ -37,6 +43,14 @@ import {
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Calendar } from '@src/components/ui/calendar'
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '../ui/multiselect'
 
 interface AddProjectDialogProps {
   mutate?(): any
@@ -48,7 +62,11 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   const [startDatePopup, setStartDatePopup] = useState(false)
   const [endDatePopup, setEndDatePopup] = useState(false)
   // States
-  const [project, setProject] = useState<Project>({
+  const [project, setProject] = useState<
+    Project & {
+      users: ProjectUser[]
+    }
+  >({
     id: v4(),
     budget: 0,
     archived: false,
@@ -58,12 +76,13 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
     status: 'ONGOING',
     startDate: new Date(),
     teamId: session?.user.teamId,
-  } as Project)
+    users: [],
+  } as Project & { users: ProjectUser[] })
 
   // Fetching Data
   const { data: users } = useSWR<User[]>('/api/db/user')
 
-  const createtask = () => {
+  const createProject = () => {
     try {
       toast.promise(api.post('projekt', project), {
         loading: 'Adding Project..',
@@ -93,7 +112,8 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
       status: 'ONGOING',
       startDate: new Date(),
       teamId: session?.user.teamId,
-    } as Project)
+      users: [],
+    } as Project & { users: ProjectUser[] })
   }
 
   return (
@@ -218,21 +238,38 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
               }
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4 ">
             <Label className="text-right">Managed By</Label>
-            <Select
-              required
-              onValueChange={(val) =>
-                setProject({ ...project, managedById: val })
+            <MultiSelector
+              className="col-span-3 flex-grow"
+              values={project.users.map((p) => p.userId)}
+              onValuesChange={(userIds) =>
+                setProject((prevProject) => ({
+                  ...prevProject,
+                  users: userIds.map((id) => {
+                    const existingProjectUser = prevProject.users.find(
+                      (pu) => pu.userId === id,
+                    )
+                    return (
+                      existingProjectUser || {
+                        id: v4(),
+                        isManager: true, // Adjust as needed
+                        projectId: prevProject.id,
+                        userId: id,
+                      }
+                    )
+                  }),
+                }))
               }
+              loop
             >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select User" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
+              <MultiSelectorTrigger>
+                <MultiSelectorInput placeholder="Select Project Managers" />
+              </MultiSelectorTrigger>
+              <MultiSelectorContent>
+                <MultiSelectorList>
                   {users?.map((user) => (
-                    <SelectItem value={user.id} key={user.id}>
+                    <MultiSelectorItem value={user.id} key={user.id}>
                       <div className="flex items-center gap-1">
                         <UserAvatar
                           avatarSize={6}
@@ -241,11 +278,11 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
                         />
                         {user.name}
                       </div>
-                    </SelectItem>
+                    </MultiSelectorItem>
                   ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+                </MultiSelectorList>
+              </MultiSelectorContent>
+            </MultiSelector>
           </div>
         </div>
         <DialogFooter>
@@ -258,10 +295,10 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
             <Button
               type="button"
               variant="default"
-              onClick={createtask}
-              className="bg-emerald-600 hover:bg-emerald-500"
+              onClick={createProject}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white"
             >
-              Add Task
+              Create
             </Button>
           </DialogClose>
         </DialogFooter>

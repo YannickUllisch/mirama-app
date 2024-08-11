@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -8,15 +8,14 @@ import {
 } from '@src/components/ui/tooltip'
 
 interface ToolTipProps {
-  trigger: React.ReactNode
   tipText: string
 }
 
-const GeneralTooltip: FC<ToolTipProps> = (obj) => {
+const GeneralTooltip: FC<PropsWithChildren<ToolTipProps>> = (obj) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{obj.trigger}</TooltipTrigger>
+        <TooltipTrigger>{obj.children}</TooltipTrigger>
         <TooltipContent side="bottom">{obj.tipText}</TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -6,17 +6,17 @@ import {
   CardHeader,
 } from '@src/components/ui/card'
 import { getColorByName } from '@src/lib/utils'
-import type { Project, Task, User } from '@prisma/client'
-import { CalendarDays, Loader2, Plus } from 'lucide-react'
+import type { Project, ProjectUser, User } from '@prisma/client'
+import { CalendarDays, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
+import AvatarGroup from '@src/components/Header/AvatarGroup'
 
 const AppHomePage = () => {
   const { data: projects, isLoading } = useSWR<
     (Project & {
-      tasks: Task[]
-      managedBy: User
+      users: (ProjectUser & { user: User })[]
     })[]
   >('/api/db/projekt/overview')
 
@@ -40,8 +40,19 @@ const AppHomePage = () => {
                     {project.name}
                   </CardHeader>
                   <CardContent className="flex flex-col items-start">
-                    <div style={{ fontSize: 12 }}>
-                      Managed By: {project.managedBy.name}
+                    <div
+                      style={{ fontSize: 12 }}
+                      className="flex gap-2 items-center mb-2"
+                    >
+                      Managed By:{' '}
+                      <AvatarGroup
+                        usernames={
+                          project.users.map((u) => u.user.name ?? '') ?? []
+                        }
+                        avatarSize={6}
+                        previewAmount={2}
+                        fontSize={8}
+                      />
                     </div>
                     <div
                       style={{ fontSize: 11 }}

@@ -25,7 +25,11 @@ export const GET = auth(async (req) => {
         name,
       },
       include: {
-        managedBy: true,
+        users: {
+          include: {
+            user: true,
+          },
+        },
         tasks: true,
       },
     })

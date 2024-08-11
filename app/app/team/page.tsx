@@ -3,10 +3,8 @@ import EmailInput from '@src/components/Inputs/EmailInput'
 import { DataTable } from '@src/components/Tables/DataTable'
 import UserAvatar from '@src/components/Header/UserAvatar'
 import { Button } from '@src/components/ui/button'
-import { Skeleton } from '@src/components/ui/skeleton'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { capitalize } from '@src/lib/utils'
-import { api } from '@api'
 import { Role, type User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
@@ -14,39 +12,49 @@ import { toast } from 'sonner'
 import useSWR from 'swr'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { useSession } from 'next-auth/react'
+import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import { deleteResources } from '@src/lib/api/deleteResource'
 
 const TeamPage = () => {
   const { update } = useSession()
 
-  const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
-    '/api/db/team/member',
-  )
+  const {
+    data: teamMembers,
+    mutate: updateMembers,
+    isLoading: membersLoading,
+  } = useSWR<User[]>('/api/db/team/member')
 
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: 'name',
-      header: 'Name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       id: 'nameRowTeam',
-      cell: (row) => {
+      cell: ({ row, getValue }) => {
         return (
-          <div key={row.cell.id} className="flex flex-row items-center gap-2">
+          <div key={row.id} className="flex flex-row items-center gap-2">
             <UserAvatar
-              username={row.getValue() as string}
+              username={getValue() as string}
               avatarSize={6}
               fontSize={10}
             />
-            {row.getValue() as string}{' '}
+            {getValue() as string}
           </div>
         )
       },
     },
     {
       accessorKey: 'email',
-      header: 'Email',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
     },
     {
       accessorKey: 'role',
-      header: 'Role',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Role" />
+      ),
       id: 'roleRowTeam',
       cell: ({ row, getValue }) => {
         return (
@@ -72,13 +80,13 @@ const TeamPage = () => {
     {
       header: 'Actions',
       id: 'actionsRowTeam',
-      cell: (row) => {
+      cell: ({ row }) => {
         return (
           <Button
-            key={`nameInput_${row.row.index}`}
+            key={`nameInput_${row.index}`}
             variant={'ghost'}
             className="flex items-center"
-            onClick={() => deleteMember(row.row.original.id)}
+            onClick={() => deleteMember(row.original.id)}
           >
             <Trash2 className="w-4 h-4 text-rose-600" />
           </Button>
@@ -88,8 +96,9 @@ const TeamPage = () => {
   ]
 
   const deleteMember = (id: string) => {
+    deleteResources('team/member', [id])
     try {
-      toast.promise(api.delete(`team/member?id=${id}`), {
+      toast.promise(deleteResources('team/member', [id]), {
         loading: 'Deleting Member..',
         success: () => {
           updateMembers((prev) => prev?.filter((member) => member.id !== id))
@@ -109,17 +118,11 @@ const TeamPage = () => {
         <EmailInput mutate={updateMembers} />
       </div>
       <div>
-        {teamMembers ? (
-          <DataTable columns={columns} data={teamMembers} />
-        ) : (
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[125px] flex rounded-xl" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 flex" />
-              <Skeleton className="h-4 flex" />
-            </div>
-          </div>
-        )}
+        <DataTable
+          columns={columns}
+          data={teamMembers ?? []}
+          dataLoading={membersLoading}
+        />
       </div>
     </main>
   )

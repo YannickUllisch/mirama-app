@@ -3,7 +3,6 @@ import { Button } from '@src/components/ui/button'
 import {
   Archive,
   ArchiveRestore,
-  ArrowUpDown,
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
@@ -13,6 +12,7 @@ import {
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import {
   PriorityType,
+  type ProjectUser,
   StatusType,
   type Project,
   type User,
@@ -20,8 +20,6 @@ import {
 import useSWR from 'swr'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { useMemo } from 'react'
-import UserAvatar from '@src/components/Header/UserAvatar'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { toast } from 'sonner'
@@ -29,7 +27,6 @@ import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
 import GeneralTooltip from '@src/components/GeneralTooltip'
-import GeneralAccordion from '@src/components/GeneralAccordion'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import EditableCell from '@src/components/Inputs/EditableCell'
@@ -37,32 +34,30 @@ import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import AvatarGroup from '@src/components/Header/AvatarGroup'
 
 const ProjectsPage = () => {
   // States
   const { data: session } = useSession()
 
-  const { data: projects, mutate: updateProjects } =
-    useSWR<
-      (Project & {
-        managedBy: User
-      })[]
-    >('/api/db/projekt')
+  const {
+    data: projects,
+    mutate: updateProjects,
+    isLoading: projectsLoading,
+  } = useSWR<
+    (Project & {
+      users: ProjectUser[]
+    })[]
+  >('/api/db/projekt?archived=false')
 
-  const { data: users } = useSWR<User[]>('/api/db/user')
+  const { data: users, isLoading: usersLoading } =
+    useSWR<User[]>('/api/db/user')
 
-  const filteredProjects = useMemo(() => {
-    if (projects) {
-      return projects.filter((project) => {
-        return !project.archived
-      })
-    }
-    return []
-  }, [projects])
-
-  const columns: ColumnDef<Project & { managedBy: User }>[] = [
+  const columns: ColumnDef<Project & { users: ProjectUser[] }>[] = [
     {
       accessorKey: 'id',
+      enableHiding: false,
+      enableSorting: false,
       header: '',
       cell: ({ row }) => {
         return row.getCanExpand() ? (
@@ -99,63 +94,27 @@ const ProjectsPage = () => {
       },
     },
     {
-      accessorKey: 'managedBy',
+      accessorKey: 'users',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Managed By" />
       ),
       id: 'Managed By',
       cell: ({ row }) => {
-        const managedBy = row.original.managedBy as User | undefined
-        if (isTeamAdminOrOwner(session)) {
-          return (
-            <GeneralTableSelect
-              key={`managedbY${row.id}`}
-              id={row.original.id}
-              mutate={updateProjects}
-              apiRoute="projekt"
-              paramToUpdate="managedById"
-              initialValue={
-                managedBy ? (
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      key={managedBy.name}
-                      username={managedBy.name}
-                      avatarSize={6}
-                      fontSize={10}
-                    />
-                    {managedBy.name}
-                  </div>
-                ) : (
-                  ''
-                )
-              }
-            >
-              {users?.map((user) => (
-                <SelectItem key={user.id} value={user.id}>
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      key={user.name}
-                      avatarSize={6}
-                      fontSize={10}
-                      username={user.name}
-                    />
-                    {user.name}
-                  </div>
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        }
-        return managedBy ? (
-          <div className="flex items-center gap-1">
-            <UserAvatar
-              key={managedBy.name}
-              avatarSize={6}
-              fontSize={10}
-              username={managedBy.name}
-            />
-            {managedBy.name}
-          </div>
+        const managedBy = row.original.users.filter((user) => user.isManager)
+        const managerNames =
+          users
+            ?.filter((user) =>
+              managedBy.some((manager) => manager.userId === user.id),
+            )
+            .map((u) => u.name as string) ?? []
+
+        return managerNames ? (
+          <AvatarGroup
+            usernames={managerNames ?? []}
+            avatarSize={7}
+            previewAmount={2}
+            fontSize={10}
+          />
         ) : (
           ''
         )
@@ -336,57 +295,50 @@ const ProjectsPage = () => {
         if (isTeamAdminOrOwner(session)) {
           return (
             <div className="flex items-center gap-1.5">
-              <GeneralTooltip
-                key={`delete_${row.row.index}`}
-                tipText="Remove"
-                trigger={
-                  <ConfirmationDialog
-                    dialogTitle={'Are you sure?'}
-                    dialogDesc={'Deleting a project can not be undone!'}
-                    submitButtonText={'Delete'}
-                    dialogTrigger={
-                      <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
-                    }
-                    onConfirmation={() => deleteProject(row.row.original.id)}
-                  />
-                }
-              />
-
+              <GeneralTooltip key={`delete_${row.row.index}`} tipText="Remove">
+                <ConfirmationDialog
+                  dialogTitle={'Are you sure?'}
+                  dialogDesc={'Deleting a project can not be undone!'}
+                  submitButtonText={'Delete'}
+                  dialogTrigger={
+                    <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
+                  }
+                  onConfirmation={() => deleteProject(row.row.original.id)}
+                />
+              </GeneralTooltip>
               <GeneralTooltip
                 key={`archive_${row.row.index}`}
                 tipText={row.row.original.archived ? 'Unarchive' : 'Archive'}
-                trigger={
-                  row.row.original.archived ? (
-                    <ArchiveRestore
-                      onClick={() =>
-                        archiveProject(
-                          row.row.original.id,
-                          !row.row.original.archived,
-                        )
-                      }
-                      className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                    />
-                  ) : (
-                    <Archive
-                      onClick={() =>
-                        archiveProject(
-                          row.row.original.id,
-                          !row.row.original.archived,
-                        )
-                      }
-                      className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                    />
-                  )
-                }
-              />
+              >
+                {row.row.original.archived ? (
+                  <ArchiveRestore
+                    onClick={() =>
+                      archiveProject(
+                        row.row.original.id,
+                        !row.row.original.archived,
+                      )
+                    }
+                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                  />
+                ) : (
+                  <Archive
+                    onClick={() =>
+                      archiveProject(
+                        row.row.original.id,
+                        !row.row.original.archived,
+                      )
+                    }
+                    className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
+                  />
+                )}
+              </GeneralTooltip>
               {row.row.original.archived ? undefined : (
                 <GeneralTooltip
                   key={`gcalendar_${row.row.index}`}
                   tipText="Add to Google Calendar"
-                  trigger={
-                    <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
-                  }
-                />
+                >
+                  <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                </GeneralTooltip>
               )}
             </div>
           )
@@ -394,15 +346,12 @@ const ProjectsPage = () => {
 
         return (
           <div className="flex items-center gap-1.5">
-            <GeneralTooltip
-              tipText="Add to Google Calendar"
-              trigger={
-                <CalendarCheck2
-                  key={`gcalendar_${row.row.index}`}
-                  className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer"
-                />
-              }
-            />
+            <GeneralTooltip tipText="Add to Google Calendar">
+              <CalendarCheck2
+                key={`gcalendar_${row.row.index}`}
+                className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer"
+              />
+            </GeneralTooltip>
           </div>
         )
       },
@@ -449,7 +398,8 @@ const ProjectsPage = () => {
     <>
       <DataTable
         columns={columns}
-        data={filteredProjects}
+        data={projects ?? []}
+        dataLoading={projectsLoading || usersLoading}
         pagination
         columnvisibility
         tableHeader={
@@ -482,19 +432,6 @@ const ProjectsPage = () => {
               </TableCell>
             </TableRow>
           </TableFooter>
-        }
-      />
-      <GeneralAccordion
-        trigger="Archived"
-        accordionContent={
-          <DataTable
-            columns={columns}
-            data={
-              projects?.filter((project) => {
-                return project.archived
-              }) ?? []
-            }
-          />
         }
       />
     </>

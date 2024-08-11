@@ -47,9 +47,10 @@ model User {
   teamId        String?
   accounts      Account[]
   // These are needed for overview of personal projets and tasks a user is assigned to.
-  projects      Project[]
   tasks         Task[]
   team          Team?     @relation(fields: [teamId], references: [id])
+
+  projects      ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
 }
 
 model VerificationToken {
@@ -64,7 +65,6 @@ model VerificationToken {
 model Project {
   id          String       @id @default(cuid())
   name        String
-  managedById String?
   startDate   DateTime
   endDate     DateTime
   priority    PriorityType @default(LOW)
@@ -72,8 +72,11 @@ model Project {
   budget      Int?         @default(0)
   archived    Boolean      @default(false)
   teamId      String
-  managedBy   User?        @relation(fields: [managedById], references: [id])
+
   team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // Relation to ProjectUser for managing the many-to-many relationship
+  users       ProjectUser[]
   tasks       Task[]
 }
 
@@ -123,14 +126,14 @@ enum TaskStatusType {
 }
 
 // // Join table to represent many-to-many relationship between Project and User
-// // model ProjectUser {
-// //     id          String     @default(cuid()) @id
-// //     projectId   String
-// //     userId      String
-// //     isManager   Boolean    @default(false)
+model ProjectUser {
+    id          String     @default(cuid()) @id
+    projectId   String
+    userId      String
+    isManager   Boolean    @default(false)
 
-// //     project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-// //     user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-// //     @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
-// // }
+    @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
+}
