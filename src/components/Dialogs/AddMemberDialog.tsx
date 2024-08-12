@@ -7,7 +7,7 @@ import React, {
   useState,
   useTransition,
 } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Input } from '@src/components/ui/input'
 import {
@@ -23,8 +23,22 @@ import {
 import { Button } from '@src/components/ui/button'
 import { postResource } from '@src/lib/api/postResource'
 import type { KeyedMutator } from 'swr'
-import type { User } from '@prisma/client'
+import { Role, type User } from '@prisma/client'
 import { Label } from '../ui/label'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
 interface AddMemberDialogProps {
   mutate: KeyedMutator<User[]>
@@ -36,12 +50,7 @@ const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
 }) => {
   const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const {
-    register,
-    handleSubmit,
-    reset,
-    //formState: { errors },
-  } = useForm<z.infer<typeof InvitationSchema>>({
+  const form = useForm<z.infer<typeof InvitationSchema>>({
     resolver: zodResolver(InvitationSchema),
     defaultValues: {
       email: '',
@@ -54,7 +63,7 @@ const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
     startTransition(() => {
       postResource('team/member', vals, { mutate })
         .then(() => {
-          reset()
+          form.reset()
           setIsOpen(false)
         })
         .catch(() => {
@@ -74,47 +83,90 @@ const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
             Input all required attributes to add Member.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-4 items-center gap-4 py-4">
-            <Label className="text-right">Name</Label>
-            <Input
-              type="text"
-              id="name"
-              className="col-span-3"
-              {...register('name')}
-              placeholder="Enter Member Name"
-              disabled={isPending}
-              autoComplete="off"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Email</Label>
-            <Input
-              type="text"
-              id="email"
-              className="col-span-3"
-              {...register('email')}
-              placeholder="Enter Email"
-              disabled={isPending}
-              autoComplete="off"
-            />
-          </div>
-          {/* TODO: Add Role Select */}
-          <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button type="button" variant="link">
-                Close
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="mb-10 space-y-3 mx-[2%]">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Name"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="email@example.com"
+                        type="email"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel>Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={Role.USER}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role for Member" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={Role.USER}>{Role.USER}</SelectItem>
+                        <SelectItem value={Role.FREELANCE}>
+                          {Role.FREELANCE}
+                        </SelectItem>
+                        <SelectItem value={Role.ADMIN}>{Role.ADMIN}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="link">
+                  Close
+                </Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              >
+                Add
               </Button>
-            </DialogClose>
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
-            >
-              Add
-            </Button>
-          </DialogFooter>
-        </form>
+            </DialogFooter>
+          </form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   )

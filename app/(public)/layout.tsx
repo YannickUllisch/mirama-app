@@ -4,6 +4,7 @@ import TestFooter from '@src/components/Footer/TestFooter'
 import PublicHeader from '@src/components/Header/PublicHeader'
 import { auth } from '@auth'
 import React, { type FC, type PropsWithChildren } from 'react'
+import Footer from '@src/components/Footer/Footer'
 
 const Layout: FC<PropsWithChildren> = async ({ children }) => {
   const session = await auth()
@@ -13,6 +14,7 @@ const Layout: FC<PropsWithChildren> = async ({ children }) => {
       {children}
       {/* <TestFooter />
       <InfoFooter /> */}
+      <Footer />
     </>
   )
 }

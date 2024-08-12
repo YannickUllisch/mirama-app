@@ -24,15 +24,15 @@ export const getColorByName = (username: string) => {
 
 // Array of Tailwind CSS color classes
 const colorClasses = [
-  'bg-red-500/40',
-  'bg-blue-500/40',
-  'bg-green-500/40',
-  'bg-yellow-500/40',
-  'bg-indigo-500/40',
-  'bg-purple-500/40',
-  'bg-pink-500/40',
-  'bg-gray-500/40',
-  'bg-teal-500/40',
+  'bg-red-500',
+  'bg-blue-500',
+  'bg-green-500',
+  'bg-yellow-500',
+  'bg-indigo-500',
+  'bg-purple-500',
+  'bg-pink-500',
+  'bg-gray-500',
+  'bg-teal-500',
 ]
 
 /**

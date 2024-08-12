@@ -13,7 +13,8 @@ import {
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
-import { extractFirstLetters, getColorByName } from '@src/lib/utils'
+import { capitalize, extractFirstLetters, getColorByName } from '@src/lib/utils'
+import { ChevronDown, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
 
 const HeaderProfile = () => {
   const { data: session } = useSession()
@@ -24,25 +25,47 @@ const HeaderProfile = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
-          <AvatarFallback className={userColor}>
-            {extractFirstLetters(session?.user.name ?? '')}
-          </AvatarFallback>
-        </Avatar>
+        <div className="flex items-center gap-3 cursor-pointer p-1 rounded-md hover:bg-neutral-50 hover:dark:bg-neutral-900">
+          <Avatar className="w-8 h-8">
+            <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
+              {extractFirstLetters(session?.user.name ?? '')}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span style={{ fontSize: 12 }}>{session?.user.name}</span>
+            <span style={{ fontSize: 9 }}>
+              {capitalize(session?.user.role.toLowerCase() ?? 'No role')}
+            </span>
+          </div>
+          <ChevronsUpDown width={15} />
+        </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuContent className="md:w-[200px]">
+        <DropdownMenuLabel>
+          <div className="flex flex-col">
+            <span className="font-normal" style={{ fontSize: 11 }}>
+              Signed in as
+            </span>
+            <span style={{ fontSize: 12 }}>{session?.user.email}</span>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={'/settings'} legacyBehavior passHref>
+        <Link href={'/app/settings'} legacyBehavior passHref>
           <DropdownMenuItem className="cursor-pointer">
-            Settings
+            <div className="flex items-center gap-3">
+              <Settings width={17} />
+              Account settings
+            </div>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => signOut({ callbackUrl: '/', redirect: true })}
         >
-          Log Out
+          <div className="flex items-center gap-3">
+            <LogOut width={17} />
+            Sign out
+          </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

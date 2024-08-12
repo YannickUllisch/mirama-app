@@ -54,7 +54,11 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     if (!isLoading && !project) {
       redirect('/app')
     }
-  }, [isLoading, project])
+
+    if (project && !project.users.some((u) => u.userId === session?.user.id)) {
+      redirect('/app')
+    }
+  }, [isLoading, project, session])
 
   const projectTabs: {
     roles: Role[]

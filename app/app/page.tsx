@@ -53,20 +53,22 @@ const AppHomePage = () => {
         ) : null}
       </div>
 
-      <div className="flex flex-col">
+      <div>
         <div className="grid grid-cols-4 gap-y-5">
           {projects?.map((project) => (
             <Card
               key={`${project.id}-card`}
-              className={`w-[50px] shadow-none border-none ${getColorByName(
+              className={`w-[50px] h-[full] shadow-none border-none ${getColorByName(
                 project.name,
               )}`}
             >
               <Link href={`/app/${project.name}`} legacyBehavior prefetch>
-                <Card className="flex w-64 flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
+                <Card className="flex min-w-64 h-full flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                   <CardHeader
-                    style={{ fontSize: 25 }}
-                    className="justify-center flex items-start m-1 "
+                    style={{
+                      fontSize: 25,
+                    }}
+                    className="justify-center flex items-start m-1"
                   >
                     {project.name}
                   </CardHeader>
