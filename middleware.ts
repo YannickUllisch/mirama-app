@@ -6,7 +6,6 @@ import {
   publicRoutes,
 } from '@/routes'
 import authConfig from '@src/lib/auth.config'
-import { NextResponse } from 'next/server'
 
 const { auth } = NextAuth(authConfig)
 
@@ -45,17 +44,4 @@ export default auth((req) => {
 // Optionally, don't invoke Middleware on some paths
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-}
-
-export function middleware(request: Request) {
-  // Store current request url in a custom header, which you can read later
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-url', request.url)
-
-  return NextResponse.next({
-    request: {
-      // Apply new request headers
-      headers: requestHeaders,
-    },
-  })
 }

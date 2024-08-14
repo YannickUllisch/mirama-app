@@ -6,6 +6,8 @@ import AppHeader from '@src/components/Header/AppHeader'
 import type { Metadata } from 'next'
 import SwrProvider from '@src/components/SwrProvider'
 import Footer from '@src/components/Footer/Footer'
+import { headers } from 'next/headers'
+import { auth } from '@src/lib/auth'
 
 export const metadata: Metadata = {
   title: 'Projects | Mirama',
@@ -13,15 +15,16 @@ export const metadata: Metadata = {
 }
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth()
   return (
     <SessionWrapper>
       <SwrProvider>
-        <div className="grid grid-cols-[auto_1fr] min-h-screen">
+        <div className="grid md:grid-cols-[auto_1fr] min-h-screen">
           <div className="relative hidden md:block border-r-2 min-w-[210px] border-neutral-100 dark:border-neutral-800">
             <Sidebar />
           </div>
           <div className="flex flex-col">
-            <AppHeader />
+            <AppHeader session={session} />
             <div className="flex-1 p-8  min-h-[700px]">
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </div>

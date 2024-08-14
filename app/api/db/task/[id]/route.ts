@@ -1,6 +1,7 @@
 import { db } from '@src/lib/db'
 import { auth } from '@src/lib/auth'
 import { validateRequest } from '@src/lib/validateRequest'
+import { redirect } from 'next/navigation'
 
 export const GET = auth(async (req) => {
   try {
@@ -11,8 +12,7 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const id = req.nextUrl.searchParams.get('id') as string
-
+    const id = req.nextUrl.pathname.split('/').pop()
     if (!id) {
       return Response.json(
         { ok: false, message: 'Task ID needs to be defined in request' },

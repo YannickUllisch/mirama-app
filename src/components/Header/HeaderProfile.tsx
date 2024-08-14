@@ -11,13 +11,12 @@ import {
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
 import { capitalize, extractFirstLetters, getColorByName } from '@src/lib/utils'
-import { ChevronDown, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import { ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import type { Session } from 'next-auth'
 
-const HeaderProfile = () => {
-  const { data: session } = useSession()
+const HeaderProfile = ({ session }: { session: Session | null }) => {
   const userColor = session?.user?.name
     ? getColorByName(session?.user?.name)
     : 'bg-neutral-400/20'

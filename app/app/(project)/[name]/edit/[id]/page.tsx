@@ -6,14 +6,12 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import React, { type FC } from 'react'
 import useSWR from 'swr'
 
-const EditTaskPage: FC<{ params: { [key: string]: string | string[] } }> = ({
-  params,
-}) => {
+const EditTaskPage = ({ params }: { params: { id: string } }) => {
   const { data: task } = useSWR<
     Task & {
       assignedTo: User
     }
-  >(`/api/db/task/${params.id}?id=${params.id}`)
+  >(`/api/db/task/${params.id}`)
 
   const router = useRouter()
   const _params = useParams()

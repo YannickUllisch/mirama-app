@@ -109,7 +109,7 @@ const RegisterForm = () => {
         <FormSuccess message={success} />
         <Button
           type="submit"
-          className="w-full bg-rose-500 hover:bg-rose-400 dark:bg-rose-600 dark:hover:bg-rose-500 text-white"
+          className="w-full bg-primary hover:bg-primary-light dark:bg-primary-dark dark:hover:bg-primary text-white"
           disabled={isPending}
         >
           Create Account

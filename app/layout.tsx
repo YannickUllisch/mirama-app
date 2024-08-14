@@ -14,8 +14,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body className="bg-white dark:bg-neutral-900/10">
         <Toaster />
-
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
         </ThemeProvider>
       </body>

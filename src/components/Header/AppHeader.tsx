@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { FC, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -14,16 +14,21 @@ import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
 import { AlignLeft } from 'lucide-react'
 import HeaderProfile from '@src/components/Header/HeaderProfile'
+import type { Session } from 'next-auth'
 
-const AppHeader = () => {
+const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
+
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
-  const pathSegments: string[] = pathname
-    .split('/')
-    .filter((segment) => segment)
-    .map((segment) => decodeURIComponent(segment))
-    .filter((segment) => segment.length < 25)
+  const pathSegments: string[] = useMemo(() => {
+    if (!pathname) return []
+    return pathname
+      .split('/')
+      .filter((segment) => segment)
+      .map((segment) => decodeURIComponent(segment))
+      .filter((segment) => segment.length < 25)
+  }, [pathname])
 
   let accumulatedPath = ''
 
@@ -66,7 +71,7 @@ const AppHeader = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <HeaderProfile />
+        <HeaderProfile session={session} />
       </div>
     </header>
   )

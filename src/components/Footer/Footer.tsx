@@ -6,8 +6,8 @@ import ToggleTheme from './ToggleTheme'
 
 const Footer = async () => {
   return (
-    <div className="bg-transparent mx-auto flex h-[80px] border-t-2 border-neutral-100 dark:border-neutral-800 text-black/80 dark:text-white/80 w-full ">
-      <div className="w-full max-w-xs sm:max-w-5xl md:max-w-7xl xl:max-w-6xl lg:max-w-4xl mx-auto text-xs align-center justify-between flex">
+    <div className="bg-white dark:bg-neutral-900/10 mx-auto flex h-[80px] border-t-2 border-neutral-100 dark:border-neutral-800 text-black/80 dark:text-white/80 w-full ">
+      <div className="w-full max-w-md md:max-w-7xl xl:max-w-6xl lg:max-w-4xl mx-auto text-xs align-center justify-between flex">
         <div className="items-center flex text-black/80 dark:text-white/80">
           <div>{`Copyright © ${DateTime.now().year} Mirage Studio`}</div>
         </div>

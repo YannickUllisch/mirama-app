@@ -30,6 +30,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@studio-freight/lenis": "^1.0.42",
     "@syncfusion/ej2-base": "^25.2.3",
     "@syncfusion/ej2-react-gantt": "^25.2.4",
     "@tanstack/react-table": "^8.15.0",

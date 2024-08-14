@@ -11,8 +11,8 @@ import { Button } from '@src/components/ui/button'
 
 const InfoFooter = () => {
   return (
-    <div className="p-8 bg-white dark:bg-neutral-900 border-t border-neutral-100 dark:border-neutral-800">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-sm ml-[350px] ">
+    <div className="p-8 bg-white dark:bg-neutral-900/10 border-t border-neutral-100 dark:border-neutral-800">
+      <div className="max-w-2xl mx-auto grid grid-cols-3 md:grid-cols-3 gap-8 text-sm ">
         <Card className="bg-inherit shadow-none border-none">
           <CardHeader>
             <CardTitle>General</CardTitle>

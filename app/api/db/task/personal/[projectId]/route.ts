@@ -1,7 +1,6 @@
 import { db } from '@src/lib/db'
 import { auth } from '@src/lib/auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { redirect } from 'next/navigation'
 
 export const GET = auth(async (req) => {
   try {
@@ -14,29 +13,22 @@ export const GET = auth(async (req) => {
 
     // Extracting name from dynamic route
     // TODO: find better way to do this
-    const name = req.nextUrl.pathname.split('/').pop()
+    const projectId = req.nextUrl.pathname.split('/').pop()
 
-    if (!name) {
+    if (!projectId) {
       return Response.json(
-        { ok: false, message: 'Project Name needs to be defined in request' },
+        { ok: false, message: 'Project ID needs to be defined in request' },
         { status: 400 },
       )
     }
 
-    const response = await db.project.findFirst({
+    const response = await db.task.findFirst({
       where: {
-        name,
-      },
-      include: {
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        tasks: true,
+        id: projectId,
+        assignedToId: session?.user.id,
+        teamId: session?.user.teamId ?? 'undefined',
       },
     })
-
     return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(

@@ -20,6 +20,7 @@ import {
   BookOpen,
   ClipboardList,
   GanttChart,
+  LayoutList,
   List,
   Settings,
 } from 'lucide-react'
@@ -35,17 +36,16 @@ import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
 import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
 import GanttTab from '@src/components/ProjectTabs/GanttTab'
 import ListTab from '@src/components/ProjectTabs/ListTab'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
 
-const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
-  params,
-}) => {
+const ProjectPage = ({ params }: { params: { name: string } }) => {
   const { data: session } = useSession()
   const { data: project, isLoading } = useSWR<
     Project & {
       tasks: Task[]
       users: (ProjectUser & { user: User })[]
     }
-  >(`/api/db/projekt/${params.name}?name=${params.name}`)
+  >(`/api/db/projekt/${params.name}`)
 
   // Since we match all names in the URL, if the project does not exist we do not want
   // The user to have access to any nonintentional data
@@ -55,7 +55,11 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       redirect('/app')
     }
 
-    if (project && !project.users.some((u) => u.userId === session?.user.id)) {
+    if (
+      project &&
+      !isTeamAdminOrOwner(session) &&
+      !project.users.some((u) => u.userId === session?.user.id)
+    ) {
       redirect('/app')
     }
   }, [isLoading, project, session])
@@ -69,7 +73,15 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
     {
       id: 'personal',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <PersonalTab tasks={project?.tasks ?? []} />,
+      component: (
+        <PersonalTab
+          tasks={
+            project?.tasks.filter(
+              (task) => task.assignedToId === session?.user.id,
+            ) ?? []
+          }
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <BookOpen width={15} /> Personal
@@ -90,7 +102,7 @@ const ProjectPage: FC<{ params: { [key: string]: string | string[] } }> = ({
       ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
-          <List width={15} /> Task List
+          <LayoutList width={15} /> Task List
         </div>
       ),
     },

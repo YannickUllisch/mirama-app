@@ -8,7 +8,7 @@ import type { FC } from 'react'
 const PublicHeader: FC<React.PropsWithChildren<{ session: Session | null }>> =
   async ({ session }) => {
     return (
-      <header className="sticky top-0 z-50 sm:flex  py-1 px-4 mx-auto w-full max-w-7xl">
+      <header className="sticky top-0 backdrop-blur-sm z-50 sm:flex py-1 px-4 mx-auto w-full max-w-8xl">
         <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
           <div className="flex items-center">
             <Link
@@ -26,7 +26,7 @@ const PublicHeader: FC<React.PropsWithChildren<{ session: Session | null }>> =
               <Link href={'/app'} passHref legacyBehavior>
                 <Button
                   variant={'destructive'}
-                  className="bg-rose-500 hover:bg-rose-400 dark:bg-rose-600 dark:hover:bg-rose-500"
+                  className="bg-primary hover:bg-primary-light dark:bg-primary-dark dark:hover:bg-primary"
                 >
                   Dashboard
                 </Button>
@@ -44,7 +44,7 @@ const PublicHeader: FC<React.PropsWithChildren<{ session: Session | null }>> =
                 <Link href={'/auth/register'} passHref legacyBehavior>
                   <Button
                     variant={'destructive'}
-                    className="bg-rose-500 hover:bg-rose-400 dark:bg-rose-600 dark:hover:bg-rose-500"
+                    className="bg-primary hover:bg-primary-dark"
                   >
                     Get Started
                   </Button>

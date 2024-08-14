@@ -1,6 +1,5 @@
 'use client'
 import {
-  Archive,
   Calendar,
   ChevronsLeft,
   ChevronsUpDown,
@@ -10,17 +9,11 @@ import {
   Users,
 } from 'lucide-react'
 import Link from 'next/link'
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from '@src/components/ui/command'
+import { Command, CommandGroup, CommandList } from '@src/components/ui/command'
 import { usePathname } from 'next/navigation'
 import type { iMenuList } from '@src/lib/constants'
 import SidebarItem from './SidebarItem'
 import { useState } from 'react'
-import { Button } from '../ui/button'
 
 const Sidebar = () => {
   const currPath = usePathname()
@@ -41,6 +34,7 @@ const Sidebar = () => {
           icon: <LayoutGrid strokeWidth={1.2} className="w-6 h-7" />,
           subItems: [
             { href: '/app/projects', label: 'Projects' },
+            { href: '/app/tasks', label: 'Tasks' },
             { href: '/app/archive', label: 'Archive' },
           ],
         },
@@ -65,14 +59,13 @@ const Sidebar = () => {
 
   return (
     <aside className="fixed flex flex-col w-[210px] min-h-screen">
-      <div className="flex justify-start items-center relative">
-        <Link href={'/'} className="p-4 flex gap-2 items-center">
-          <Leaf width={37} height={37} className="text-rose-500" />
+      <div className="flex justify-evenly items-center relative">
+        <Link href={'/'} className="p-4 flex gap-2 items-center justify-center">
           <span className="font-semibold" style={{ fontSize: 25.4 }}>
-            MIRAMA
+            MIRAGE.
           </span>
         </Link>
-        {/* <ChevronsUpDown strokeWidth={2} width={15} className="cursor-pointer" /> */}
+        <ChevronsUpDown strokeWidth={2} width={15} className="cursor-pointer" />
       </div>
 
       <div className="grow overflow-hidden p-2 border-t-2 border-neutral-100 dark:border-neutral-800 mt-0.5">
