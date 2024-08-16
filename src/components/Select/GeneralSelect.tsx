@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { FC, PropsWithChildren } from 'react'
+import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
 import {
   Select,
   SelectContent,
@@ -7,26 +7,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/tableSelect'
+import { cn } from '@src/lib/utils'
 
 interface GeneralSelectProps {
-  initialValue: string | React.ReactNode
-  id: string
-  onSuccess?(): any
+  value: string
+  setValue: Dispatch<SetStateAction<string>>
   stylingProps?: {
-    triggerStyle?: string
+    triggerclassname?: string
   }
 }
 
 const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
   children,
-  initialValue,
-  onSuccess,
+  value,
+  setValue,
   stylingProps,
 }) => {
   return (
-    <Select onValueChange={(val) => ''}>
-      <SelectTrigger className={stylingProps?.triggerStyle}>
-        <SelectValue placeholder={initialValue} />
+    <Select value={value} onValueChange={setValue}>
+      <SelectTrigger className={cn('', stylingProps?.triggerclassname)}>
+        <SelectValue placeholder={value} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>{children}</SelectGroup>

@@ -13,11 +13,10 @@ const PublicHeader: FC<React.PropsWithChildren<{ session: Session | null }>> =
           <div className="flex items-center">
             <Link
               href={'/'}
-              className="md:ml-4  sm:ml-0 lg:ml-0 flex gap-2 items-center"
+              className="md:ml-4  sm:ml-0 lg:ml-0 flex gap-2 items-start"
             >
-              <Leaf width={40} height={30} className="text-rose-500" />
               <span className="font-semibold" style={{ fontSize: 30 }}>
-                MIRAMA
+                MIRAGE.
               </span>
             </Link>
           </div>

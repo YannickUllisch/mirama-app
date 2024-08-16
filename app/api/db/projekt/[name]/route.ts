@@ -18,7 +18,7 @@ export const GET = auth(async (req) => {
 
     if (!name) {
       return Response.json(
-        { ok: false, message: 'Project Name needs to be defined in request' },
+        { ok: false, message: 'Project ID needs to be defined in request' },
         { status: 400 },
       )
     }

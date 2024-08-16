@@ -30,7 +30,7 @@ const Sidebar = () => {
         },
         {
           href: '',
-          label: 'All Projects',
+          label: 'My Work',
           icon: <LayoutGrid strokeWidth={1.2} className="w-6 h-7" />,
           subItems: [
             { href: '/app/projects', label: 'Projects' },
@@ -65,7 +65,6 @@ const Sidebar = () => {
             MIRAGE.
           </span>
         </Link>
-        <ChevronsUpDown strokeWidth={2} width={15} className="cursor-pointer" />
       </div>
 
       <div className="grow overflow-hidden p-2 border-t-2 border-neutral-100 dark:border-neutral-800 mt-0.5">

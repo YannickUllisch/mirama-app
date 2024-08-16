@@ -2,8 +2,8 @@
 import { Button } from '@src/components/ui/button'
 import type { Task, User } from '@prisma/client'
 import { Undo } from 'lucide-react'
-import { useParams, usePathname, useRouter } from 'next/navigation'
-import React, { type FC } from 'react'
+import { useRouter } from 'next/navigation'
+import React from 'react'
 import useSWR from 'swr'
 
 const EditTaskPage = ({ params }: { params: { id: string } }) => {
@@ -14,7 +14,6 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
   >(`/api/db/task/${params.id}`)
 
   const router = useRouter()
-  const _params = useParams()
 
   return (
     <main className="flex flex-col">

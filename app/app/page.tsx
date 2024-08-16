@@ -7,7 +7,14 @@ import {
 } from '@src/components/ui/card'
 import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Project, ProjectUser, User } from '@prisma/client'
-import { CalendarDays, Loader2, Plus } from 'lucide-react'
+import {
+  CalendarDays,
+  Folder,
+  Grid2x2,
+  Home,
+  Loader2,
+  Plus,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
@@ -29,33 +36,36 @@ const AppHomePage = () => {
   >('/api/db/projekt')
 
   return (
-    <>
-      <div className="w-full mb-3 flex items-center">
+    <div className="flex flex-col overflow-hidden">
+      <div className="flex items-center gap-4 dark:text-white mb-6">
+        <Home width={20} />
+        <span style={{ fontSize: 20 }}>Dashboard</span>
+
         {isTeamAdminOrOwner(session) && (
-          <AddProjectDialog
-            key={'Project Dialog'}
-            mutate={mutate}
-            button={
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Plus width={15} className="ml-2" />
-                <Button
-                  className="text-text"
-                  style={{ fontSize: 11, textDecoration: 'none' }}
-                  variant="link"
-                >
-                  New Project
-                </Button>
-              </div>
-            }
-          />
+          <>
+            <span>|</span>
+            <AddProjectDialog
+              key={'Project Dialog'}
+              mutate={mutate}
+              button={
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Plus width={15} className="ml-2" />
+                  <Button
+                    className="text-text"
+                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    variant="link"
+                  >
+                    New Project
+                  </Button>
+                </div>
+              }
+            />
+          </>
         )}
-        {projects && projects?.length < 1 ? (
-          <span>You are currently not part of any Project.</span>
-        ) : null}
       </div>
 
       <div>
-        <div className="grid grid-cols-4 gap-y-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-y-5">
           {projects?.map((project) => (
             <Card
               key={`${project.id}-card`}
@@ -112,7 +122,7 @@ const AppHomePage = () => {
           <Loader2 className="h-8 w-8 animate-spin ml-2 dark:text-white m-1" />
         </div>
       )}
-    </>
+    </div>
   )
 }
 

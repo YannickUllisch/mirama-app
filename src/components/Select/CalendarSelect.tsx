@@ -17,12 +17,14 @@ interface CalendarSelectProps {
   startingDate: Date
   project: Project
   dateType?: string
+  mutate?: () => any
 }
 
 export const CalendarSelect: FC<CalendarSelectProps> = ({
   startingDate,
   project,
   dateType,
+  mutate,
 }) => {
   const [date, setDate] = useState<Date | undefined>(startingDate)
   const [popupOpen, setPopupOpen] = useState(false)
@@ -30,9 +32,14 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
   const handleSelect = (date: Date) => {
     setPopupOpen(false)
     try {
-      updateResourceById('projekt', project.id, {
-        [dateType === 'start' ? 'startDate' : 'endDate']: date,
-      })
+      updateResourceById(
+        'projekt',
+        project.id,
+        {
+          [dateType === 'start' ? 'startDate' : 'endDate']: date,
+        },
+        { mutate: mutate },
+      )
     } catch (error: any) {
       toast.error(error)
     }

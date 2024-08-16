@@ -16,7 +16,13 @@ import { deleteResources } from '@src/lib/api/deleteResource'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArchiveRestore, CalendarDays, ChevronUp, Trash2 } from 'lucide-react'
+import {
+  Archive,
+  ArchiveRestore,
+  CalendarDays,
+  ChevronUp,
+  Trash2,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import React from 'react'
@@ -91,11 +97,11 @@ const ArchivePage = () => {
       ),
       cell: (row) => {
         return (
-          <div className="flex items-center cursor-default justify-center mr-8">
+          <div className="flex items-center cursor-default justify-start gap-1">
             {DateTime.fromISO(
               new Date(row.getValue() as Date).toISOString(),
             ).toFormat('dd.MM.yyyy')}
-            <CalendarDays className="h-4 w-4 ml-1" />
+            <CalendarDays className="h-4 w-4" />
           </div>
         )
       },
@@ -109,13 +115,13 @@ const ArchivePage = () => {
       cell: (row) => {
         return (
           <div
-            className="flex items-center cursor-default justify-center mr-8"
+            className="flex items-center cursor-default justify-start gap-1"
             key={`calendarEnd_${row.row.index}`}
           >
             {DateTime.fromISO(
               new Date(row.getValue() as Date).toISOString(),
             ).toFormat('dd.MM.yyyy')}
-            <CalendarDays className="h-4 w-4 ml-1" />
+            <CalendarDays className="h-4 w-4" />
           </div>
         )
       },
@@ -203,14 +209,20 @@ const ArchivePage = () => {
   ]
 
   return (
-    <DataTable
-      pagination
-      columnvisibility
-      expandedContent
-      columns={columns}
-      data={projects ?? []}
-      dataLoading={projectsLoading}
-    />
+    <>
+      <div className="flex items-center gap-4 dark:text-white mb-5">
+        <Archive width={20} />
+        <span style={{ fontSize: 20 }}>Project Archive</span>
+      </div>
+      <DataTable
+        pagination
+        columnvisibility
+        expandedContent
+        columns={columns}
+        data={projects ?? []}
+        dataLoading={projectsLoading}
+      />
+    </>
   )
 }
 

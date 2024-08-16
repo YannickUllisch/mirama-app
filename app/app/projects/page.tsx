@@ -5,6 +5,7 @@ import {
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
+  Folder,
   Plus,
   Trash2,
 } from 'lucide-react'
@@ -33,6 +34,7 @@ import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import { useEffect, useMemo } from 'react'
 
 const ProjectsPage = () => {
   // States
@@ -159,6 +161,7 @@ const ProjectsPage = () => {
               startingDate={row.getValue() as Date}
               project={row.row.original}
               dateType="end"
+              mutate={updateProjects}
             />
           )
         }
@@ -182,13 +185,15 @@ const ProjectsPage = () => {
       accessorKey: 'endDate',
       id: 'Days Remaining',
       size: 20,
-      cell: (row) => {
-        const daysRemaining = -Math.floor(
-          DateTime.utc().diff(
-            DateTime.fromISO(row.getValue() as string),
-            'days',
-          ).days,
-        )
+      cell: ({ row }) => {
+        const endDate = row.original.endDate.toString()
+        const daysRemaining = useMemo(() => {
+          return -Math.floor(
+            DateTime.utc().diff(DateTime.fromISO(endDate as string), 'days')
+              .days,
+          )
+        }, [endDate])
+
         return (
           <div
             className={`flex justify-center ${
@@ -355,6 +360,10 @@ const ProjectsPage = () => {
 
   return (
     <>
+      <div className="flex items-center gap-4 dark:text-white mb-2">
+        <Folder width={20} />
+        <span style={{ fontSize: 20 }}>All Projects</span>
+      </div>
       <DataTable
         columns={columns}
         data={projects ?? []}

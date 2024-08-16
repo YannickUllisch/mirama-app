@@ -6,7 +6,7 @@ import { SelectItem } from '@src/components/ui/tableSelect'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Role, type User } from '@prisma/client'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Users } from 'lucide-react'
 import useSWR from 'swr'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { useSession } from 'next-auth/react'
@@ -100,19 +100,28 @@ const TeamPage = () => {
 
   return (
     <main className="flex flex-col">
-      {isTeamAdminOrOwner(session) && (
-        <AddMemberDialog mutate={updateMembers}>
-          <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            <Plus width={15} className="ml-2" />
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
-            >
-              Add User
-            </Button>
-          </div>
-        </AddMemberDialog>
-      )}
+      <div className="flex items-center gap-4 dark:text-white mb-6">
+        <Users width={20} />
+        <span style={{ fontSize: 20 }}>Team</span>
+
+        {isTeamAdminOrOwner(session) && (
+          <>
+            <span>|</span>
+            <AddMemberDialog mutate={updateMembers}>
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Plus width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  Add User
+                </Button>
+              </div>
+            </AddMemberDialog>
+          </>
+        )}
+      </div>
+
       <DataTable
         columns={columns}
         data={teamMembers ?? []}

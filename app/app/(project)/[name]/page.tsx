@@ -17,12 +17,13 @@ import {
 import { useSession } from 'next-auth/react'
 import {
   BarChartBig,
-  BookOpen,
+  BookCheck,
   ClipboardList,
+  Folder,
   GanttChart,
   LayoutList,
-  List,
   Settings,
+  Undo,
 } from 'lucide-react'
 import {
   redirect,
@@ -30,17 +31,17 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation'
-import PersonalTab from '@src/components/ProjectTabs/PersonalTab'
 import BoardTab from '@src/components/ProjectTabs/BoardTab'
 import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
 import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
 import GanttTab from '@src/components/ProjectTabs/GanttTab'
 import ListTab from '@src/components/ProjectTabs/ListTab'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { Button } from '@src/components/ui/button'
 
 const ProjectPage = ({ params }: { params: { name: string } }) => {
   const { data: session } = useSession()
-  const { data: project, isLoading } = useSWR<
+  const { data: project } = useSWR<
     Project & {
       tasks: Task[]
       users: (ProjectUser & { user: User })[]
@@ -50,11 +51,6 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
   // Since we match all names in the URL, if the project does not exist we do not want
   // The user to have access to any nonintentional data
   useEffect(() => {
-    // TODO: If project is loaded but session.user is not assigned to it, redirect.
-    if (!isLoading && !project) {
-      redirect('/app')
-    }
-
     if (
       project &&
       !isTeamAdminOrOwner(session) &&
@@ -62,7 +58,7 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
     ) {
       redirect('/app')
     }
-  }, [isLoading, project, session])
+  }, [project, session])
 
   const projectTabs: {
     roles: Role[]
@@ -70,24 +66,6 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
     component: JSX.Element
     headerComponent: JSX.Element
   }[] = [
-    {
-      id: 'personal',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: (
-        <PersonalTab
-          tasks={
-            project?.tasks.filter(
-              (task) => task.assignedToId === session?.user.id,
-            ) ?? []
-          }
-        />
-      ),
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <BookOpen width={15} /> Personal
-        </div>
-      ),
-    },
     {
       id: 'list',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
@@ -159,7 +137,7 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
   const searchParams = useSearchParams()
   const currentTab = searchParams.get('tab')
 
-  const [tab, setTab] = useState(currentTab ?? 'personal')
+  const [tab, setTab] = useState(currentTab ?? 'list')
 
   useEffect(() => {
     if (currentTab !== tab) {

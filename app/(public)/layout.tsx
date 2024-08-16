@@ -1,21 +1,27 @@
 'use server'
 import InfoFooter from '@src/components/Footer/InfoFooter'
-import TestFooter from '@src/components/Footer/TestFooter'
 import PublicHeader from '@src/components/Header/PublicHeader'
 import { auth } from '@auth'
 import React, { type FC, type PropsWithChildren } from 'react'
 import Footer from '@src/components/Footer/Footer'
+import dynamic from 'next/dynamic'
+
+const LenisProvider = dynamic(
+  () => import('@src/components/Wrappers/LenisWrapper'),
+  { ssr: false },
+)
 
 const Layout: FC<PropsWithChildren> = async ({ children }) => {
   const session = await auth()
   return (
-    <>
-      <PublicHeader session={session} />
-      {children}
-      {/* <TestFooter />
-      <InfoFooter /> */}
-      <Footer />
-    </>
+    <div className="bg-light-gradient dark:bg-dark-gradient">
+      <LenisProvider>
+        <PublicHeader session={session} />
+        {children}
+        <InfoFooter />
+        <Footer />
+      </LenisProvider>
+    </div>
   )
 }
 
