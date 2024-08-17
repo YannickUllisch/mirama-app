@@ -11,7 +11,7 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await db.task.findFirst({
+    const response = await db.task.findMany({
       where: {
         assignedToId: session?.user.id,
         teamId: session?.user.teamId ?? 'undefined',

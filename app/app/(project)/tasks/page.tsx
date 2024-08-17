@@ -1,5 +1,6 @@
 'use client'
 import type { Task } from '@prisma/client'
+import TaskListItem from '@src/components/task/TaskListItem'
 import { ClipboardCheck } from 'lucide-react'
 import React from 'react'
 import useSWR from 'swr'
@@ -13,9 +14,21 @@ const TasksPage = () => {
         <ClipboardCheck width={20} />
         <span style={{ fontSize: 20 }}>Your Tasks</span>
       </div>
-      {tasks && tasks.length > 1
-        ? tasks.map((task) => <div key={task.id}>{task.taskCode}</div>)
-        : null}
+      <div className="w-full h-full gap-5">
+        {tasks
+          ? tasks.map((task) => (
+              <div className="gap-5 m-5">
+                <TaskListItem
+                  taskId={task.id}
+                  taskCode={task.taskCode}
+                  taskTitle={task.title}
+                  projectName={task.projectId}
+                  dueDate={new Date(task.dueDate ?? '')}
+                />
+              </div>
+            ))
+          : null}
+      </div>
     </>
   )
 }

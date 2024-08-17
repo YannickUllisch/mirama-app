@@ -109,15 +109,27 @@ const ProjectsPage = () => {
             )
             .map((u) => u.name as string) ?? []
 
-        return managerNames ? (
-          <AvatarGroup
-            usernames={managerNames ?? []}
-            avatarSize={7}
-            previewAmount={2}
-            fontSize={10}
-          />
-        ) : (
-          ''
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            managerNames && (
+              <AvatarGroup
+                usernames={managerNames ?? []}
+                avatarSize={7}
+                previewAmount={2}
+                fontSize={10}
+              />
+            )
+          )
+        }
+        return (
+          managerNames && (
+            <AvatarGroup
+              usernames={managerNames ?? []}
+              avatarSize={7}
+              previewAmount={2}
+              fontSize={10}
+            />
+          )
         )
       },
     },
@@ -226,15 +238,9 @@ const ProjectsPage = () => {
               mutate={updateProjects}
               initialValue={capitalize((getValue() as PriorityType).toString())}
             >
-              <SelectItem value={PriorityType.LOW}>
-                {capitalize(PriorityType.LOW.toString())}
-              </SelectItem>
-              <SelectItem value={PriorityType.MEDIUM}>
-                {capitalize(PriorityType.MEDIUM.toString())}
-              </SelectItem>
-              <SelectItem value={PriorityType.HIGH}>
-                {capitalize(PriorityType.HIGH.toString())}
-              </SelectItem>
+              {Object.keys(PriorityType).map((type) => (
+                <SelectItem value={type}>{capitalize(type)}</SelectItem>
+              ))}
             </GeneralTableSelect>
           )
         }
@@ -258,10 +264,9 @@ const ProjectsPage = () => {
               apiRoute="projekt"
               paramToUpdate="status"
             >
-              <SelectItem value={StatusType.NOTSTARTED}>Not Started</SelectItem>
-              <SelectItem value={StatusType.ONHOLD}>On Hold</SelectItem>
-              <SelectItem value={StatusType.ONGOING}>Ongoing</SelectItem>
-              <SelectItem value={StatusType.FINISHED}>Finished</SelectItem>
+              {Object.keys(StatusType).map((type) => (
+                <SelectItem value={type}>{capitalize(type)}</SelectItem>
+              ))}
             </GeneralTableSelect>
           )
         }

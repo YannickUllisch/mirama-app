@@ -13,22 +13,29 @@ export const GET = auth(async (req) => {
 
     // Extracting name from dynamic route
     // TODO: find better way to do this
-    const projectId = req.nextUrl.pathname.split('/').pop()
+    const id = req.nextUrl.pathname.split('/').pop()
 
-    if (!projectId) {
+    if (!id) {
       return Response.json(
         { ok: false, message: 'Project ID needs to be defined in request' },
         { status: 400 },
       )
     }
 
-    const response = await db.task.findMany({
+    const response = await db.project.findFirst({
       where: {
-        id: projectId,
-        assignedToId: session?.user.id,
-        teamId: session?.user.teamId ?? 'undefined',
+        id,
+      },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+        tasks: true,
       },
     })
+
     return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(

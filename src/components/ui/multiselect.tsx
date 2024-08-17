@@ -181,7 +181,7 @@ const MultiSelectorTrigger = forwardRef<
             'px-1 rounded-xl flex items-center gap-1',
             activeIndex === index && 'ring-2 ring-muted-foreground ',
           )}
-          variant={'secondary'}
+          variant={'destructive'}
         >
           <span className="text-xs">{item}</span>
           <button
@@ -219,7 +219,7 @@ const MultiSelectorInput = forwardRef<
       onFocus={() => setOpen(true)}
       onClick={() => setActiveIndex(-1)}
       className={cn(
-        'ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1 w-full',
+        'ml-2 bg-transparent outline-none placeholder:text-muted-foreground text-wrap ewew-full',
         className,
         activeIndex !== -1 && 'caret-transparent',
       )}

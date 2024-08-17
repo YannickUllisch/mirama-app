@@ -212,7 +212,7 @@ const ArchivePage = () => {
     <>
       <div className="flex items-center gap-4 dark:text-white mb-5">
         <Archive width={20} />
-        <span style={{ fontSize: 20 }}>Project Archive</span>
+        <span style={{ fontSize: 20 }}>Archive</span>
       </div>
       <DataTable
         pagination

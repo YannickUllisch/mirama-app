@@ -41,6 +41,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
+import { Accordion } from '@src/components/ui/accordion'
+import GeneralAccordion from '@src/components/GeneralAccordion'
 
 const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
   const router = useRouter()
@@ -50,7 +52,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
     Project & {
       users: (ProjectUser & { user: User })[]
     }
-  >(`/api/db/projekt/${params.projectId}`)
+  >(`/api/db/projekt/single/${params.projectId}`)
 
   const [isPending, startTransition] = useTransition()
   const form = useForm<z.infer<typeof TaskSchema>>({
@@ -113,7 +115,6 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                   Create
                 </Button>
               </div>
-              <Trash width={15} aria-label="Delete Task" className="ml-2" />
             </div>
           </div>
           <Separator className="mt-2 mb-5" />
@@ -141,17 +142,20 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
             <div className="flex justify-between mt-2">
               <FormField
                 control={form.control}
-                name="priority"
+                name="assignedToId"
                 render={({ field }) => (
                   <FormItem className="col-span-3">
-                    <FormLabel>Priority</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={'Unassigned'}
-                    >
+                    <Select onValueChange={field.onChange} value={undefined}>
                       <FormControl>
                         <SelectTrigger className="border dark:border-neutral-800 min-w-[15%]">
-                          <SelectValue placeholder="" />
+                          {field.value ? (
+                            <SelectValue defaultValue={field.value} />
+                          ) : (
+                            <div className="flex items-center m-4 gap-3">
+                              <UserIcon className="w-[18px] h-[18px]" />
+                              <span>No one selected</span>
+                            </div>
+                          )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -175,12 +179,21 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               />
             </div>
           </div>
+
           <div className="flex justify-between m-2">
-            <Textarea
-              className="w-[25%] px-10"
-              {...form.register('description')}
-              placeholder="Add task description here."
-            />
+            <GeneralAccordion
+              styling={{ accordionClassname: 'w-[40%]' }}
+              trigger={'Description'}
+              defaultOpen
+            >
+              <div className="p-1">
+                <Textarea
+                  className="min-h-[150px]"
+                  {...form.register('description')}
+                  placeholder="Add task description here."
+                />
+              </div>
+            </GeneralAccordion>
 
             <FormField
               control={form.control}

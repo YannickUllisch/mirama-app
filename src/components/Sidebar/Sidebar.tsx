@@ -1,13 +1,5 @@
 'use client'
-import {
-  Calendar,
-  ChevronsLeft,
-  ChevronsUpDown,
-  Home,
-  LayoutGrid,
-  Leaf,
-  Users,
-} from 'lucide-react'
+import { Calendar, ChevronsLeft, Home, LayoutGrid, Users } from 'lucide-react'
 import Link from 'next/link'
 import { Command, CommandGroup, CommandList } from '@src/components/ui/command'
 import { usePathname } from 'next/navigation'
@@ -17,7 +9,6 @@ import { useState } from 'react'
 
 const Sidebar = () => {
   const currPath = usePathname()
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
   const menuList: iMenuList[] = [
     {
@@ -71,30 +62,19 @@ const Sidebar = () => {
         <Command>
           <CommandList>
             {menuList.map((group) => (
-              <CommandGroup
-                key={group.group}
-                heading={!isCollapsed ? group.group : ''}
-              >
+              <CommandGroup key={group.group} heading={group.group}>
                 {group.items.map((menu) => (
                   <SidebarItem
                     key={menu.label}
                     currentPath={currPath}
                     item={menu}
-                    isCollapsed={isCollapsed}
+                    isCollapsed={false}
                   />
                 ))}
               </CommandGroup>
             ))}
           </CommandList>
         </Command>
-      </div>
-
-      <div
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        onKeyDown={() => setIsCollapsed(!isCollapsed)}
-        className="flex p-3 gap-3 cursor-pointer justify-center hover:bg-neutral-50 dark:hover:bg-neutral-900"
-      >
-        <ChevronsLeft width={30} />
       </div>
     </aside>
   )

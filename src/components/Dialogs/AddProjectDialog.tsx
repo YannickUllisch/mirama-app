@@ -1,3 +1,4 @@
+'use client'
 import type React from 'react'
 import { type FC, useEffect, useState } from 'react'
 import {
@@ -65,7 +66,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   // States
   const [project, setProject] = useState<
     Project & {
-      users: ProjectUser[]
+      users: (ProjectUser & { user: User })[]
     }
   >({
     id: v4(),
@@ -78,7 +79,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
     startDate: new Date(),
     teamId: session?.user.teamId,
     users: [],
-  } as Project & { users: ProjectUser[] })
+  } as Project & { users: (ProjectUser & { user: User })[] })
 
   // Fetching Data
   const { data: users } = useSWR<User[]>('/api/db/team/member')
@@ -101,13 +102,13 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
       startDate: new Date(),
       teamId: session?.user.teamId,
       users: [],
-    } as Project & { users: ProjectUser[] })
+    } as Project & { users: (ProjectUser & { user: User })[] })
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{props.button}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
           <DialogDescription>
@@ -135,7 +136,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
                 <Button
                   variant={'outline'}
                   className={cn(
-                    'w-[240px] justify-start text-left font-normal',
+                    'col-span-3 justify-start text-left font-normal',
                     !project.startDate && 'text-muted-foreground',
                   )}
                 >
@@ -167,7 +168,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
                 <Button
                   variant={'outline'}
                   className={cn(
-                    'w-[240px] justify-start text-left font-normal',
+                    'col-span-3 justify-start text-left font-normal',
                     !project.endDate && 'text-muted-foreground',
                   )}
                 >
@@ -201,15 +202,9 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
                 <SelectValue placeholder="Select Priority" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={PriorityType.LOW}>
-                  {capitalize(PriorityType.LOW.toString())}
-                </SelectItem>
-                <SelectItem value={PriorityType.MEDIUM}>
-                  {capitalize(PriorityType.MEDIUM.toString())}
-                </SelectItem>
-                <SelectItem value={PriorityType.HIGH}>
-                  {capitalize(PriorityType.HIGH.toString())}
-                </SelectItem>
+                {Object.keys(PriorityType).map((type) => (
+                  <SelectItem value={type}>{capitalize(type)}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -230,35 +225,50 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
             <Label className="text-right">Managed By</Label>
             <MultiSelector
               className="col-span-3 flex-grow"
-              values={project.users.map((p) => p.userId)}
-              onValuesChange={(userIds) =>
+              values={project.users.map((p) => p.user.name)}
+              onValuesChange={(usernames) =>
                 setProject((prevProject) => ({
                   ...prevProject,
-                  users: userIds.map((id) => {
-                    const existingProjectUser = prevProject.users.find(
-                      (pu) => pu.userId === id,
-                    )
-                    return (
-                      existingProjectUser || {
-                        id: v4(),
-                        isManager: true, // Adjust as needed
-                        projectId: prevProject.id,
-                        userId: id,
-                      }
-                    )
-                  }),
+                  users: usernames
+                    .map((name) => {
+                      const existingUser = users?.find(
+                        (user) => user.name === name,
+                      )
+                      if (!existingUser) return null
+
+                      const existingProjectUser = prevProject.users.find(
+                        (pu) => pu.user.name === name,
+                      )
+
+                      return (
+                        existingProjectUser || {
+                          id: v4(),
+                          isManager: true, // Adjust as needed
+                          projectId: prevProject.id,
+                          userId: existingUser.id,
+                          user: existingUser,
+                        }
+                      )
+                    })
+                    .filter((u) => u !== null) as (ProjectUser & {
+                    user: User
+                  })[],
                 }))
               }
               loop
             >
               <MultiSelectorTrigger>
-                <MultiSelectorInput placeholder="Select Project Managers" />
+                <MultiSelectorInput placeholder="Select Users" />
               </MultiSelectorTrigger>
               <MultiSelectorContent>
                 <MultiSelectorList>
                   {users?.map((user) => (
-                    <MultiSelectorItem value={user.id} key={user.id}>
-                      <div className="flex items-center gap-1">
+                    <MultiSelectorItem
+                      value={user.name}
+                      className="hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                      key={`multiselect-item-${user.name}`}
+                    >
+                      <div className="flex items-center gap-1 text-text">
                         <UserAvatar
                           avatarSize={6}
                           fontSize={10}
