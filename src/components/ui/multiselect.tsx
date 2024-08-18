@@ -142,7 +142,7 @@ const MultiSelector = ({
       <Command
         onKeyDown={handleKeyDown}
         className={cn(
-          'overflow-visible bg-transparent flex flex-col w-full space-y-2',
+          'overflow-visible bg-transparent flex flex-col w-full',
           className,
         )}
         dir={dir}
@@ -153,11 +153,12 @@ const MultiSelector = ({
     </MultiSelectContext.Provider>
   )
 }
-
 const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & {
+    renderValue?: (item: string) => React.ReactNode
+  }
+>(({ className, children, renderValue, ...props }, ref) => {
   const { value, onValueChange, activeIndex } = useMultiSelect()
 
   const mousePreventDefault = useCallback((e: React.MouseEvent) => {
@@ -169,7 +170,7 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'flex flex-wrap gap-1 p-1 py-2 border border-muted rounded-lg bg-background',
+        'flex flex-wrap gap-1 p-1 py-1.5 border border-muted rounded-lg bg-transparent',
         className,
       )}
       {...props}
@@ -178,12 +179,14 @@ const MultiSelectorTrigger = forwardRef<
         <Badge
           key={item}
           className={cn(
-            'px-1 rounded-xl flex items-center gap-1',
+            'px-1 rounded-sm flex items-center gap-1',
             activeIndex === index && 'ring-2 ring-muted-foreground ',
           )}
           variant={'destructive'}
         >
-          <span className="text-xs">{item}</span>
+          <span className="text-xs">
+            {renderValue ? renderValue(item) : item}
+          </span>
           <button
             aria-label={`Remove ${item} option`}
             aria-roledescription="button to remove option"
@@ -251,7 +254,7 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-background shadow-md z-10 border border-muted top-0',
+        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-background dark:bg-neutral-900 text-text shadow-md z-10 border border-muted top-0 ',
         className,
       )}
     >
@@ -288,7 +291,7 @@ const MultiSelectorItem = forwardRef<
         setInputValue('')
       }}
       className={cn(
-        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between ',
+        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between hover:bg-neutral-200 dark:hover:bg-neutral-800',
         className,
         isIncluded && 'opacity-50 cursor-default',
         props.disabled && 'opacity-50 cursor-not-allowed',

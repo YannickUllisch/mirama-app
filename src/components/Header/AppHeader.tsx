@@ -43,7 +43,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
           ? pathSegments.map((segment, index) => {
               accumulatedPath += `/${segment}`
               return (
-                <Breadcrumb key={segment}>
+                <Breadcrumb key={segment} className="md:block hidden">
                   <BreadcrumbList>
                     {index < pathSegments.length - 1 ? (
                       <>

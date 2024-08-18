@@ -203,7 +203,9 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(PriorityType).map((type) => (
-                  <SelectItem value={type}>{capitalize(type)}</SelectItem>
+                  <SelectItem key={`priority-item-${type}`} value={type}>
+                    {capitalize(type)}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

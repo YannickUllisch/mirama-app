@@ -138,11 +138,11 @@ const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={Role.USER}>{Role.USER}</SelectItem>
-                        <SelectItem value={Role.FREELANCE}>
-                          {Role.FREELANCE}
-                        </SelectItem>
-                        <SelectItem value={Role.ADMIN}>{Role.ADMIN}</SelectItem>
+                        {Object.keys(Role).map((role) => (
+                          <SelectItem key={`role-item-${role}`} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

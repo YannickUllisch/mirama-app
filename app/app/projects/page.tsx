@@ -239,7 +239,9 @@ const ProjectsPage = () => {
               initialValue={capitalize((getValue() as PriorityType).toString())}
             >
               {Object.keys(PriorityType).map((type) => (
-                <SelectItem value={type}>{capitalize(type)}</SelectItem>
+                <SelectItem key={`priority-item-${type}`} value={type}>
+                  {capitalize(type)}
+                </SelectItem>
               ))}
             </GeneralTableSelect>
           )
@@ -265,7 +267,9 @@ const ProjectsPage = () => {
               paramToUpdate="status"
             >
               {Object.keys(StatusType).map((type) => (
-                <SelectItem value={type}>{capitalize(type)}</SelectItem>
+                <SelectItem key={`status-item-${type}`} value={type}>
+                  {capitalize(type)}
+                </SelectItem>
               ))}
             </GeneralTableSelect>
           )

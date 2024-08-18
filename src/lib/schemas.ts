@@ -54,4 +54,5 @@ export const TaskSchema = z.object({
   priority: PriorityType.default('LOW'),
   status: TaskStatusType.default('TODO'),
   projectId: z.string(),
+  tags: z.string().array().optional(),
 })

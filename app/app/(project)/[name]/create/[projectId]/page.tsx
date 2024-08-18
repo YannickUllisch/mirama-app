@@ -17,19 +17,22 @@ import {
   PriorityType,
   type Project,
   type ProjectUser,
+  type Tag,
   TaskStatusType,
   type User,
 } from '@prisma/client'
 import {
   BookCheck,
+  CalendarIcon,
   Delete,
+  MessageCircleWarning,
   Save,
   Trash,
   Undo,
   User as UserIcon,
 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useTransition } from 'react'
+import React, { useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
@@ -41,18 +44,36 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
-import { Accordion } from '@src/components/ui/accordion'
 import GeneralAccordion from '@src/components/GeneralAccordion'
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '@src/components/ui/multiselect'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@src/components/ui/popover'
+import { Calendar } from '@src/components/ui/calendar'
+import { format } from 'date-fns'
 
 const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
   const router = useRouter()
 
-  // TODO: Replace this with only Users added to the project later
+  const [datePopup, setDatePopup] = useState<boolean>(false)
+
+  // Fetching Data
   const { data: project } = useSWR<
     Project & {
       users: (ProjectUser & { user: User })[]
     }
   >(`/api/db/projekt/single/${params.projectId}`)
+
+  const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
   const [isPending, startTransition] = useTransition()
   const form = useForm<z.infer<typeof TaskSchema>>({
@@ -62,14 +83,17 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
       description: '',
       title: '',
       dueDate: new Date(),
-      priority: 'LOW',
+      priority: PriorityType.LOW,
       projectId: params.projectId as string,
-      status: 'DOING',
+      status: TaskStatusType.TODO,
+      tags: [],
     },
   })
 
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
+      // To make returning to unassigned state possible, we have to reset the undefined string
+      if (vals.assignedToId === 'undefined') vals.assignedToId = null
       postResource('task', vals).then(() => {
         router.back()
       })
@@ -88,6 +112,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                 <Undo width={10} className="ml-2" />
                 <Button
+                  type="button"
                   style={{ textDecoration: 'none', fontSize: 12 }}
                   variant={'link'}
                   onClick={() => router.back()}
@@ -99,16 +124,24 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
 
             <div className="flex items-center gap-3">
               <div
-                className="flex items-center text-white hover:bg-blue-500 dark:hover:bg-blue-700 rounded-sm cursor-pointer bg-blue-600"
+                className={`flex items-center text-text rounded-sm cursor-pointer ${
+                  form.watch().title.length < 1
+                    ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
+                    : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
+                }`}
                 aria-label="Save Task Button"
               >
                 <Save width={15} className="ml-2" />
                 <Button
                   type="submit"
+                  className={`${
+                    form.watch().title.length < 1
+                      ? 'text-text dark:text-accent'
+                      : 'text-white'
+                  }`}
                   style={{
                     fontSize: 11,
                     textDecoration: 'none',
-                    color: 'white',
                   }}
                   variant="link"
                 >
@@ -117,15 +150,24 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               </div>
             </div>
           </div>
-          <Separator className="mt-2 mb-5" />
+          <Separator className="mt-2 mb-2" />
 
           <div className="form-group">
+            <div className="min-h-[30px] text-sm flex items-center gap-3">
+              {form.watch().title.length < 1 ? (
+                <div className="flex items-center gap-2 text-red-500 ">
+                  <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
+                  {'Field "Title" cannot be empty.'}{' '}
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormMessage />
                   <FormControl>
                     <Input
                       {...field}
@@ -139,29 +181,34 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               )}
             />
 
-            <div className="flex justify-between mt-2">
+            <div className="flex justify-start gap-2 mt-2">
               <FormField
                 control={form.control}
                 name="assignedToId"
                 render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <Select onValueChange={field.onChange} value={undefined}>
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? 'undefined'}
+                    >
                       <FormControl>
-                        <SelectTrigger className="border dark:border-neutral-800 min-w-[15%]">
-                          {field.value ? (
-                            <SelectValue defaultValue={field.value} />
-                          ) : (
-                            <div className="flex items-center m-4 gap-3">
-                              <UserIcon className="w-[18px] h-[18px]" />
-                              <span>No one selected</span>
-                            </div>
-                          )}
+                        <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                          <SelectValue className="m-4 flex items-center" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        <SelectItem value={'undefined'} key={'reset-item'}>
+                          <div className="flex items-center gap-4 ml-1">
+                            <UserIcon className="w-[18px]" />
+                            <span>Unassigned</span>
+                          </div>
+                        </SelectItem>
                         {project?.users.map((user) => (
-                          <SelectItem value={user.userId} key={user.userId}>
-                            <div className="flex items-center gap-1">
+                          <SelectItem
+                            value={user.userId}
+                            key={`user-item-${user.userId}`}
+                          >
+                            <div className="flex items-center gap-4">
                               <UserAvatar
                                 avatarSize={6}
                                 fontSize={10}
@@ -177,12 +224,54 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                   </FormItem>
                 )}
               />
+
+              <div className="flex items-center gap-1 pl-5">
+                Tags:
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <MultiSelector
+                        {...form.register('tags')}
+                        values={field.value ?? []}
+                        onValuesChange={field.onChange}
+                        loop
+                      >
+                        <FormControl>
+                          <MultiSelectorTrigger
+                            renderValue={(item) => {
+                              const tag = tags?.find((tag) => tag.id === item)
+                              return tag ? tag.title : item
+                            }}
+                          >
+                            <MultiSelectorInput placeholder="Add Tag" />
+                          </MultiSelectorTrigger>
+                        </FormControl>
+                        <MultiSelectorContent>
+                          <MultiSelectorList>
+                            {tags?.map((tag) => (
+                              <MultiSelectorItem
+                                value={tag.id}
+                                key={`tag${tag.id}`}
+                              >
+                                {tag.title}
+                              </MultiSelectorItem>
+                            ))}
+                          </MultiSelectorList>
+                        </MultiSelectorContent>
+                      </MultiSelector>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-between m-2">
+          <div className="flex justify-between m-2 gap-5">
             <GeneralAccordion
-              styling={{ accordionClassname: 'w-[40%]' }}
+              styling={{ accordionClassname: 'w-[50%]' }}
               trigger={'Description'}
               defaultOpen
             >
@@ -195,57 +284,108 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               </div>
             </GeneralAccordion>
 
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem className="col-span-3">
-                  <FormLabel>Priority</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={PriorityType.LOW}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Task Priority" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.keys(PriorityType).map((type) => (
-                        <SelectItem value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <GeneralAccordion
+              styling={{ accordionClassname: 'w-[50%]' }}
+              trigger={'Planning'}
+              defaultOpen
+            >
+              <div className="p-1 ">
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Priority</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Task Priority" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.keys(PriorityType).map((type) => (
+                            <SelectItem
+                              key={`priority-item-${type}`}
+                              value={type}
+                            >
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="mt-5">
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.keys(TaskStatusType).map((type) => (
+                            <SelectItem
+                              key={`status-item-${type}`}
+                              value={type}
+                            >
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem className="col-span-3">
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={PriorityType.LOW}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.keys(TaskStatusType).map((type) => (
-                        <SelectItem value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="dueDate"
+                  render={({ field }) => (
+                    <FormItem className="mt-5 flex flex-col">
+                      <FormLabel>Due Date</FormLabel>
+                      <Popover
+                        open={datePopup}
+                        onOpenChange={() => setDatePopup((curr) => !curr)}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={'outline'}
+                            className={'justify-start text-left bg-transparent'}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, 'PPP') : ''}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ?? new Date()}
+                            onSelect={field.onChange}
+                            initialFocus
+                            className="dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </GeneralAccordion>
           </div>
         </form>
       </FormProvider>
