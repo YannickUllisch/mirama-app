@@ -25,6 +25,7 @@ export const GET = auth(async (req) => {
         },
         include: {
           assignedTo: true,
+          tags: true,
         },
       })
 
@@ -179,16 +180,26 @@ export const PUT = auth(async (req) => {
       )
     }
 
-    await db.task.update({
-      where: {
-        id,
-        teamId: session?.user.teamId,
-      },
-      data: {
-        ...task,
-        tags: undefined,
-      },
-    })
+    try {
+      await db.task.update({
+        where: {
+          id,
+          teamId: session?.user.teamId,
+        },
+        data: {
+          ...task,
+          tags: {
+            connect: task.tags
+              ? task.tags?.map((tagId) => ({ id: tagId }))
+              : undefined,
+          },
+          lastUpdated: new Date(),
+        },
+      })
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
 
     return Response.json({ ok: true, message: 'Task Updated' }, { status: 200 })
   } catch (err) {

@@ -1,8 +1,10 @@
 'use client'
 import { capitalize } from '@src/lib/utils'
 import {
+  PriorityType,
   type Project,
   type ProjectUser,
+  type Tag,
   type Task,
   TaskStatusType,
   type User,
@@ -83,6 +85,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
         <DataTableColumnHeader column={column} title="Title" />
       ),
       id: 'Title',
+      size: 170,
       cell: ({ getValue, row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
 
@@ -91,6 +94,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             <Link
               href={`${pathname}/edit/${row.original.id}`}
               className="hover:underline"
+              onClick={(e) => e.stopPropagation()}
             >
               {getValue() as string}
             </Link>
@@ -126,11 +130,29 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       },
     },
     {
-      accessorKey: 'description',
+      accessorKey: 'priority',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Description" />
+        <DataTableColumnHeader column={column} title="Priority" />
       ),
       id: 'Description',
+      cell: ({ row, getValue }) => {
+        return (
+          <GeneralTableSelect
+            key={`priority-${row.id}`}
+            id={row.original.id}
+            mutate={updateTasks}
+            initialValue={getValue() as string}
+            apiRoute="task"
+            paramToUpdate="priority"
+          >
+            {Object.keys(PriorityType).map((priority) => (
+              <SelectItem key={`priority-item-${priority}`} value={priority}>
+                {priority}
+              </SelectItem>
+            ))}
+          </GeneralTableSelect>
+        )
+      },
     },
     {
       accessorKey: 'status',
@@ -144,16 +166,15 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             key={`status${row.id}`}
             id={row.original.id}
             mutate={updateTasks}
-            initialValue={capitalize(
-              (getValue() as TaskStatusType).toString().toLowerCase(),
-            )}
+            initialValue={getValue() as string}
             apiRoute="task"
             paramToUpdate="status"
           >
-            <SelectItem value={TaskStatusType.TODO}>To Do</SelectItem>
-            <SelectItem value={TaskStatusType.DOING}>Doing</SelectItem>
-            <SelectItem value={TaskStatusType.INREVIEW}>In Review</SelectItem>
-            <SelectItem value={TaskStatusType.DONE}>Done</SelectItem>
+            {Object.keys(TaskStatusType).map((status) => (
+              <SelectItem key={`status-item-${status}`} value={status}>
+                {status}
+              </SelectItem>
+            ))}
           </GeneralTableSelect>
         )
       },
@@ -211,16 +232,36 @@ const ListTab: FC<TaskProps> = ({ project }) => {
         <DataTableColumnHeader column={column} title="Due Date" />
       ),
       id: 'Due Date',
-      enableResizing: false,
       cell: (row) => {
         return (
           <div
             className="flex items-center cursor-default justify-left mr-8 gap-1"
-            key={`calendarEnd_${row.row.index}`}
+            key={`calendar-end-${row.row.index}`}
           >
             {DateTime.fromISO(
               new Date(row.getValue() as Date).toISOString(),
             ).toFormat('dd.MM.yyyy')}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: 'tags',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tags" />
+      ),
+      id: 'tags',
+      size: 50,
+      enableResizing: false,
+      cell: ({ row, getValue }) => {
+        return (
+          <div
+            className="flex items-center cursor-default justify-left mr-8 gap-1"
+            key={`tag-${row.index}`}
+          >
+            {(getValue() as Tag[]).map((tag) => (
+              <div className="bg-destructive p-1 rounded-lg">{tag.title}</div>
+            ))}
           </div>
         )
       },

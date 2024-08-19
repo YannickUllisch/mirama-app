@@ -78,7 +78,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
-      assignedToId: null,
+      assignedToId: 'undefined',
       description: '',
       title: '',
       dueDate: new Date(),
@@ -92,22 +92,26 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (task) {
       form.reset({
-        assignedToId: task.assignedToId,
+        assignedToId: task.assignedToId ?? 'undefined',
         description: task.description,
         title: task.title,
         dueDate: new Date(task.dueDate ?? ''),
-        priority: task.priority,
+        priority: task.priority as PriorityType,
         projectId: task.projectId,
-        status: task.status,
+        status: task.status as TaskStatusType,
         tags: task.tags.map((tag) => tag.id),
       })
+      console.log(form.getValues())
     }
   }, [task, form])
 
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
+      console.log('here')
+
       // To make returning to unassigned state possible, we have to reset the undefined string
-      if (vals.assignedToId === 'undefined') vals.assignedToId = null
+      if (vals.assignedToId === 'undefined' || vals.assignedToId === '')
+        vals.assignedToId = null
       updateResourceById('task', task?.id ?? '', vals).then(() => {
         router.back()
       })
@@ -152,7 +156,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                 <Save width={15} className="ml-2" />
                 <Button
                   type="submit"
-                  className={`${
+                  className={`disabled:bg-red-500 ${
                     form.watch().title.length < 1
                       ? 'text-text dark:text-accent'
                       : 'text-white'
@@ -162,8 +166,9 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                     textDecoration: 'none',
                   }}
                   variant="link"
+                  disabled={isPending}
                 >
-                  Create
+                  Save
                 </Button>
               </div>
             </div>
@@ -248,6 +253,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                 <FormField
                   control={form.control}
                   name="tags"
+                  disabled={isPending}
                   render={({ field }) => (
                     <FormItem>
                       <MultiSelector
@@ -295,6 +301,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
             >
               <div className="p-1">
                 <Textarea
+                  disabled={isPending}
                   className="min-h-[150px]"
                   {...form.register('description')}
                   placeholder="Add task description here."
@@ -311,12 +318,13 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                 <FormField
                   control={form.control}
                   name="priority"
+                  disabled={isPending}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Priority</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -346,7 +354,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                       <FormLabel>Status</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
