@@ -116,6 +116,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
     })
   }
 
+  // We do not want to render the page before task is loaded to prevent issues of user changing inputs before form has been updated
   if (!task)
     return (
       <div className="w-full flex justify-center align-center min-h-[500px]">

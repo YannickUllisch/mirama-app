@@ -41,12 +41,15 @@ interface DataTableProps<TData extends TableData, TValue> {
   data: TData[]
   dataLoading?: boolean
   pagination?: boolean
+  sortingState?: SortingState
+  setSortingState?: React.Dispatch<React.SetStateAction<SortingState>>
   enableRowSelection?: boolean
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
   rowSelection?: RowSelectionState
   footer?: React.JSX.Element
   columnvisibility?: boolean
-  tableHeader?: React.ReactNode
+  toolbarLeft?: React.ReactNode
+  toolbarRight?: React.ReactNode
   expandedContent?: React.ReactNode
 }
 
@@ -55,18 +58,23 @@ export function DataTable<TData extends TableData, TValue>({
   data,
   dataLoading,
   pagination,
+  sortingState,
+  setSortingState,
   enableRowSelection,
   rowSelection,
   onRowSelectionChange,
   footer,
   expandedContent,
   columnvisibility,
-  tableHeader,
+  toolbarLeft,
+  toolbarRight,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'id', desc: true },
+  ])
   const [colSizing, setColSizing] = useState<ColumnSizingState>({})
-
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
   const table = useReactTable({
     data,
     columns,
@@ -74,7 +82,7 @@ export function DataTable<TData extends TableData, TValue>({
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: setSortingState ? setSortingState : setSorting,
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection,
     onRowSelectionChange,
@@ -84,14 +92,14 @@ export function DataTable<TData extends TableData, TValue>({
     onColumnSizingChange: setColSizing,
     columnResizeMode: 'onChange',
     state: {
-      sorting,
+      sorting: sortingState ? sortingState : sorting,
       rowSelection,
       columnVisibility,
       columnSizing: colSizing,
     },
     initialState: {
       pagination: { pageSize: 10 },
-      sorting: [{ id: 'id', desc: true }],
+      sorting: sortingState ? sortingState : sorting,
     },
     defaultColumn: {
       size: 25,
@@ -102,48 +110,53 @@ export function DataTable<TData extends TableData, TValue>({
   return (
     <div>
       <div>
-        <div className="flex items-center m-1 outline-none ">
-          {tableHeader}
-          {columnvisibility && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
-                  <Wrench width={15} className="ml-2" />
-                  <Button
-                    style={{
-                      fontSize: 11,
-                      textDecoration: 'none',
-                      padding: 10,
-                    }}
-                    variant="link"
-                  >
-                    Column Options
-                  </Button>
-                  <ChevronDown width={15} className="mr-2" />
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    )
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+        <div className="flex items-center m-1 outline-none justify-between ">
+          <div className="flex">
+            {toolbarLeft}
+            {columnvisibility && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
+                    <Wrench width={15} className="ml-2" />
+                    <Button
+                      style={{
+                        fontSize: 11,
+                        textDecoration: 'none',
+                        padding: 10,
+                      }}
+                      variant="link"
+                    >
+                      Column Options
+                    </Button>
+                    <ChevronDown width={15} className="mr-2" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          className="capitalize"
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) =>
+                            column.toggleVisibility(!!value)
+                          }
+                        >
+                          {column.id}
+                        </DropdownMenuCheckboxItem>
+                      )
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+
+          <div className="flex gap-3">{toolbarRight}</div>
         </div>
+
         <Table className="border dark:border-neutral-800 overflow-scroll">
           <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
             {table.getHeaderGroups().map((headerGroup) => (

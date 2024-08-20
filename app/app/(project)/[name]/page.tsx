@@ -116,7 +116,7 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
     },
     {
       id: 'settings',
-      roles: [Role.ADMIN, Role.OWNER],
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
       component: (
         <SettingsTab
           project={

@@ -18,10 +18,9 @@ import {
   type User,
 } from '@prisma/client'
 import useSWR from 'swr'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { SelectItem } from '@src/components/ui/tableSelect'
-import CalendarSelect from '@src/components/Select/CalendarTableSelect'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
@@ -34,11 +33,15 @@ import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import { useEffect, useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import CalendarTableSelect from '@src/components/Select/CalendarTableSelect'
 
 const ProjectsPage = () => {
   // States
   const { data: session } = useSession()
+  const [sortingState, setSortingState] = useState<SortingState>([
+    { id: 'Name', desc: true },
+  ])
 
   const {
     data: projects,
@@ -142,7 +145,7 @@ const ProjectsPage = () => {
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <CalendarSelect
+            <CalendarTableSelect
               startingDate={row.getValue() as Date}
               project={row.row.original}
               dateType="start"
@@ -168,7 +171,7 @@ const ProjectsPage = () => {
       cell: (row) => {
         if (isTeamAdminOrOwner(session)) {
           return (
-            <CalendarSelect
+            <CalendarTableSelect
               key={`endcalendar_${row.row.index}`}
               startingDate={row.getValue() as Date}
               project={row.row.original}
@@ -379,22 +382,26 @@ const ProjectsPage = () => {
         dataLoading={projectsLoading || usersLoading}
         pagination
         columnvisibility
-        tableHeader={
-          <AddProjectDialog
-            key={'Project Dialog'}
-            mutate={updateProjects}
-            button={
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Plus width={15} className="ml-2" />
-                <Button
-                  style={{ fontSize: 11, textDecoration: 'none' }}
-                  variant="link"
-                >
-                  New Project
-                </Button>
-              </div>
-            }
-          />
+        sortingState={sortingState}
+        setSortingState={setSortingState}
+        toolbarLeft={
+          isTeamAdminOrOwner(session) && (
+            <AddProjectDialog
+              key={'Project Dialog'}
+              mutate={updateProjects}
+              button={
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Plus width={15} className="ml-2" />
+                  <Button
+                    style={{ fontSize: 11, textDecoration: 'none' }}
+                    variant="link"
+                  >
+                    New Project
+                  </Button>
+                </div>
+              }
+            />
+          )
         }
         footer={
           <TableFooter>
