@@ -23,16 +23,13 @@ import {
 } from '@prisma/client'
 import {
   BookCheck,
-  CalendarIcon,
-  Delete,
   MessageCircleWarning,
   Save,
-  Trash,
   Undo,
   User as UserIcon,
 } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
-import React, { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
@@ -53,18 +50,12 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '@src/components/ui/multiselect'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@src/components/ui/popover'
-import { Calendar } from '@src/components/ui/calendar'
-import { format } from 'date-fns'
+import CalendarSelect from '@src/components/Select/CalendarSelect'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 
 const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
+  // Routing used to return to previous page.
   const router = useRouter()
-
-  const [datePopup, setDatePopup] = useState<boolean>(false)
 
   // Fetching Data
   const { data: project } = useSWR<
@@ -75,7 +66,10 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
+  // States
   const [isPending, startTransition] = useTransition()
+
+  // Form Logic and Functions
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
@@ -90,6 +84,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
     },
   })
 
+  form.formState.isDirty
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
       // To make returning to unassigned state possible, we have to reset the undefined string
@@ -109,45 +104,67 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
               <BookCheck width={20} />
               <span style={{ fontSize: 20 }}>Create Task</span>
               <div>|</div>
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Undo width={10} className="ml-2" />
-                <Button
-                  type="button"
-                  style={{ textDecoration: 'none', fontSize: 12 }}
-                  variant={'link'}
-                  onClick={() => router.back()}
-                >
-                  Return to Overview
-                </Button>
-              </div>
+              {form.formState.isDirty ? (
+                <ConfirmationDialog
+                  dialogTitle={'Are you sure?'}
+                  dialogDesc={'All progress will be lost'}
+                  submitButtonText={'Return'}
+                  dialogTrigger={
+                    <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                      <Undo width={10} className="ml-2" />
+
+                      <Button
+                        type="button"
+                        style={{ textDecoration: 'none', fontSize: 12 }}
+                        variant={'link'}
+                      >
+                        Return to Overview
+                      </Button>
+                    </div>
+                  }
+                  onConfirmation={() => router.back()}
+                />
+              ) : (
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Undo width={10} className="ml-2" />
+                  <Button
+                    type="button"
+                    style={{ textDecoration: 'none', fontSize: 12 }}
+                    variant={'link'}
+                    onClick={() => router.back()}
+                  >
+                    Return to Overview
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
-              <div
-                className={`flex items-center text-text rounded-sm cursor-pointer ${
+              <Button
+                type="submit"
+                className={`flex items-cente text-text rounded-sm cursor-pointer gap-2 ${
                   form.watch().title.length < 1
                     ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
                     : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
                 }`}
                 aria-label="Save Task Button"
+                style={{
+                  fontSize: 11,
+                  textDecoration: 'none',
+                }}
+                disabled={isPending}
               >
-                <Save width={15} className="ml-2" />
-                <Button
-                  type="submit"
-                  className={`${
+                <Save width={15} />
+                <span
+                  className={`disabled:bg-red-500 ${
                     form.watch().title.length < 1
                       ? 'text-text dark:text-accent'
                       : 'text-white'
                   }`}
-                  style={{
-                    fontSize: 11,
-                    textDecoration: 'none',
-                  }}
-                  variant="link"
                 >
-                  Create
-                </Button>
-              </div>
+                  Save
+                </span>
+              </Button>
             </div>
           </div>
           <Separator className="mt-2 mb-2" />
@@ -190,6 +207,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                     <Select
                       onValueChange={field.onChange}
                       value={field.value ?? 'undefined'}
+                      key={`assignedTo-select-${field.value}`}
                     >
                       <FormControl>
                         <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
@@ -299,6 +317,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        key={`priority-select-${field.value}`}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -329,6 +348,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        key={`status-select-${field.value}`}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -357,29 +377,10 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                   render={({ field }) => (
                     <FormItem className="mt-5 flex flex-col">
                       <FormLabel>Due Date</FormLabel>
-                      <Popover
-                        open={datePopup}
-                        onOpenChange={() => setDatePopup((curr) => !curr)}
-                      >
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={'outline'}
-                            className={'justify-start text-left bg-transparent'}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, 'PPP') : ''}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ?? new Date()}
-                            onSelect={field.onChange}
-                            initialFocus
-                            className="dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <CalendarSelect
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

@@ -37,6 +37,7 @@ const TeamPage = () => {
               username={getValue() as string}
               avatarSize={6}
               fontSize={10}
+              toolTip
             />
             {getValue() as string}
           </div>

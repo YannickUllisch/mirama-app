@@ -1,5 +1,4 @@
 'use client'
-import { capitalize } from '@src/lib/utils'
 import {
   PriorityType,
   type Project,
@@ -28,11 +27,9 @@ import {
 import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { toast } from 'sonner'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '../Tables/ColumnHeader'
-import TaskDialog from '../Dialogs/TaskDialog'
 
 interface TaskProps {
   project: Project & {
@@ -50,10 +47,12 @@ const ListTab: FC<TaskProps> = ({ project }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(project ? `/api/db/task?projectName=${project.name}` : '')
+  >(project ? `/api/db/task?projectName=${project.name}` : '', {
+    revalidateIfStale: true,
+  })
 
+  // States & functions
   const pathname = usePathname()
-
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const columns: ColumnDef<Task>[] = [
@@ -211,7 +210,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
           >
             {/* We iterate over project.users to only allow members connected to the current project */}
             {project.users?.map((user) => (
-              <SelectItem value={user.userId} key={user.userId}>
+              <SelectItem value={user.userId} key={`user-item-${user.id}`}>
                 <div className="flex items-center gap-1">
                   <UserAvatar
                     avatarSize={6}
@@ -252,15 +251,19 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       ),
       id: 'tags',
       size: 50,
-      enableResizing: false,
       cell: ({ row, getValue }) => {
         return (
           <div
-            className="flex items-center cursor-default justify-left mr-8 gap-1"
+            className="flex items-center cursor-default justify-left mr-8 gap-1 flex-wrap"
             key={`tag-${row.index}`}
           >
             {(getValue() as Tag[]).map((tag) => (
-              <div className="bg-destructive p-1 rounded-lg">{tag.title}</div>
+              <span
+                key={`status-item-${tag.title}`}
+                className="bg-destructive p-1 rounded-lg"
+              >
+                {tag.title}
+              </span>
             ))}
           </div>
         )

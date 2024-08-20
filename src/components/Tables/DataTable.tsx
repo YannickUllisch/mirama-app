@@ -28,13 +28,7 @@ import {
 import React from 'react'
 import { useState } from 'react'
 import { Button } from '@src/components/ui/button'
-import {
-  ArrowDown,
-  ChevronDown,
-  GripVertical,
-  Loader2,
-  Wrench,
-} from 'lucide-react'
+import { ChevronDown, GripVertical, Loader2, Wrench } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { DataTablePagination } from './Pagination'
 
@@ -110,7 +104,7 @@ export function DataTable<TData extends TableData, TValue>({
       <div>
         <div className="flex items-center m-1 outline-none ">
           {tableHeader}
-          {columnvisibility ? (
+          {columnvisibility && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
@@ -148,12 +142,9 @@ export function DataTable<TData extends TableData, TValue>({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : null}
+          )}
         </div>
-        <Table
-          className="border dark:border-neutral-800 overflow-scroll"
-          // style={{ width: table.getTotalSize() }}
-        >
+        <Table className="border dark:border-neutral-800 overflow-scroll">
           <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="headerGroup group">

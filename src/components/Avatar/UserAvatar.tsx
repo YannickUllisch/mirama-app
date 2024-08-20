@@ -8,30 +8,49 @@ interface UserAvatarProps {
   username: string | null
   avatarSize: number
   fontSize?: number
+  toolTip?: boolean
 }
 
 const UserAvatar: FC<UserAvatarProps> = ({
   username,
   avatarSize,
   fontSize,
+  toolTip,
 }) => {
   const userColor = username ? getColorByName(username) : 'bg-neutral-400/20'
 
   return (
-    <GeneralTooltip tipText={username ?? 'Unassigned'}>
-      <Avatar className={`cursor-pointer h-${avatarSize} w-${avatarSize} flex`}>
-        <AvatarFallback
-          className={username ? userColor : ''}
-          style={fontSize ? { fontSize: fontSize } : {}}
-        >
-          {username ? (
-            extractFirstLetters(username)
-          ) : (
-            <CircleUserRound strokeWidth={0.8} />
-          )}
-        </AvatarFallback>
-      </Avatar>
-    </GeneralTooltip>
+    <>
+      {toolTip ? (
+        <GeneralTooltip tipText={username ?? 'Unassigned'}>
+          <Avatar className={` h-${avatarSize} w-${avatarSize} flex`}>
+            <AvatarFallback
+              className={username ? userColor : ''}
+              style={fontSize ? { fontSize: fontSize } : {}}
+            >
+              {username ? (
+                extractFirstLetters(username)
+              ) : (
+                <CircleUserRound strokeWidth={0.8} />
+              )}
+            </AvatarFallback>
+          </Avatar>
+        </GeneralTooltip>
+      ) : (
+        <Avatar className={` h-${avatarSize} w-${avatarSize} flex`}>
+          <AvatarFallback
+            className={username ? userColor : ''}
+            style={fontSize ? { fontSize: fontSize } : {}}
+          >
+            {username ? (
+              extractFirstLetters(username)
+            ) : (
+              <CircleUserRound strokeWidth={0.8} />
+            )}
+          </AvatarFallback>
+        </Avatar>
+      )}
+    </>
   )
 }
 

@@ -50,11 +50,13 @@ const AddTagDialog: FC<AddProjectDialogProps> = (props) => {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add Tag</DialogTitle>
-          <DialogDescription>Name new Tag</DialogDescription>
+          <DialogDescription>
+            Tags can be applied to both Projects and Tasks.
+          </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Title</Label>
+        <div className="gap-4 py-4">
+          <div className="flex items-center gap-4">
+            <Label>Title</Label>
             <Input
               id="title"
               className="col-span-3"

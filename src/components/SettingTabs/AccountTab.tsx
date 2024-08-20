@@ -15,7 +15,11 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
     <>
       <Separator />
       <div className="p-4 flex ">
-        <UserAvatar username={session?.user.name ?? ''} avatarSize={10} />
+        <UserAvatar
+          username={session?.user.name ?? ''}
+          avatarSize={10}
+          toolTip
+        />
 
         <Label>Email</Label>
       </div>

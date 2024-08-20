@@ -11,7 +11,7 @@ import {
 } from '@prisma/client'
 import {
   BookCheck,
-  CalendarIcon,
+  Loader2,
   MessageCircleWarning,
   Save,
   Undo,
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useTransition } from 'react'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -52,15 +52,17 @@ import {
 } from '@src/components/ui/multiselect'
 import GeneralAccordion from '@src/components/GeneralAccordion'
 import { Textarea } from '@src/components/ui/textarea'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@src/components/ui/popover'
-import { format } from 'date-fns'
-import { Calendar } from '@src/components/ui/calendar'
+import CalendarSelect from '@src/components/Select/CalendarSelect'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 
 const EditTaskPage = ({ params }: { params: { id: string } }) => {
+  // States
+  const [isPending, startTransition] = useTransition()
+
+  // Routing - needed to return to previous URL
+  const router = useRouter()
+
+  // Fetching Data
   const { data: task } = useSWR<
     Task & {
       assignedTo: User
@@ -69,12 +71,9 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
     }
   >(`/api/db/task/${params.id}`)
 
-  const router = useRouter()
-
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
-  const [datePopup, setDatePopup] = useState<boolean>(false)
-  const [isPending, startTransition] = useTransition()
+  // Form Logic
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
@@ -101,26 +100,28 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
         status: task.status as TaskStatusType,
         tags: task.tags.map((tag) => tag.id),
       })
-      console.log(form.getValues())
     }
   }, [task, form])
 
+  // Functions
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
-      console.log('here')
-
       // To make returning to unassigned state possible, we have to reset the undefined string
       if (vals.assignedToId === 'undefined' || vals.assignedToId === '')
         vals.assignedToId = null
       updateResourceById('task', task?.id ?? '', vals).then(() => {
+        mutate('/api/db/task')
         router.back()
       })
     })
   }
 
-  if (!task) return null
-
-  if (!form) return null
+  if (!task)
+    return (
+      <div className="w-full flex justify-center align-center min-h-[500px]">
+        <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
+      </div>
+    )
 
   return (
     <main className="flex flex-col">
@@ -131,46 +132,66 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
               <BookCheck width={20} />
               <span style={{ fontSize: 20 }}>Edit Task</span>
               <div>|</div>
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Undo width={10} className="ml-2" />
-                <Button
-                  type="button"
-                  style={{ textDecoration: 'none', fontSize: 12 }}
-                  variant={'link'}
-                  onClick={() => router.back()}
-                >
-                  Return to Overview
-                </Button>
-              </div>
+              {form.formState.isDirty ? (
+                <ConfirmationDialog
+                  dialogTitle={'Are you sure?'}
+                  dialogDesc={'All progress will be lost'}
+                  submitButtonText={'Return'}
+                  dialogTrigger={
+                    <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                      <Undo width={10} className="ml-2" />
+                      <Button
+                        type="button"
+                        style={{ textDecoration: 'none', fontSize: 12 }}
+                        variant={'link'}
+                      >
+                        Return to Overview
+                      </Button>
+                    </div>
+                  }
+                  onConfirmation={() => router.back()}
+                />
+              ) : (
+                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                  <Undo width={10} className="ml-2" />
+                  <Button
+                    type="button"
+                    style={{ textDecoration: 'none', fontSize: 12 }}
+                    variant={'link'}
+                    onClick={() => router.back()}
+                  >
+                    Return to Overview
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
-              <div
-                className={`flex items-center text-text rounded-sm cursor-pointer ${
+              <Button
+                type="submit"
+                className={`flex items-cente text-text rounded-sm cursor-pointer gap-2 ${
                   form.watch().title.length < 1
                     ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
                     : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
                 }`}
                 aria-label="Save Task Button"
+                style={{
+                  fontSize: 11,
+                  textDecoration: 'none',
+                }}
+                disabled={isPending}
               >
-                <Save width={15} className="ml-2" />
-                <Button
-                  type="submit"
+                <Save width={15} />
+                <span
                   className={`disabled:bg-red-500 ${
                     form.watch().title.length < 1
                       ? 'text-text dark:text-accent'
                       : 'text-white'
                   }`}
-                  style={{
-                    fontSize: 11,
-                    textDecoration: 'none',
-                  }}
-                  variant="link"
-                  disabled={isPending}
                 >
                   Save
-                </Button>
-              </div>
+                </span>
+              </Button>
             </div>
           </div>
           <Separator className="mt-2 mb-2" />
@@ -211,6 +232,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                 render={({ field }) => (
                   <FormItem>
                     <Select
+                      key={`assignedTo-select-${field.value ?? 'undefined'}`}
                       onValueChange={field.onChange}
                       value={field.value ?? 'undefined'}
                     >
@@ -257,6 +279,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                   render={({ field }) => (
                     <FormItem>
                       <MultiSelector
+                        id="tag-multi-select"
                         {...form.register('tags')}
                         values={field.value ?? []}
                         onValuesChange={field.onChange}
@@ -277,7 +300,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                             {tags?.map((tag) => (
                               <MultiSelectorItem
                                 value={tag.id}
-                                key={`tag${tag.id}`}
+                                key={`tag-${tag.id}`}
                               >
                                 {tag.title}
                               </MultiSelectorItem>
@@ -323,6 +346,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                     <FormItem>
                       <FormLabel>Priority</FormLabel>
                       <Select
+                        key={`priority-select-${field.value ?? 'undefined'}`}
                         onValueChange={field.onChange}
                         value={field.value}
                       >
@@ -353,6 +377,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                     <FormItem className="mt-5">
                       <FormLabel>Status</FormLabel>
                       <Select
+                        key={`status-select-${field.value ?? 'undefined'}`}
                         onValueChange={field.onChange}
                         value={field.value}
                       >
@@ -383,28 +408,10 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                   render={({ field }) => (
                     <FormItem className="mt-5 flex flex-col">
                       <FormLabel>Due Date</FormLabel>
-                      <Popover
-                        open={datePopup}
-                        onOpenChange={() => setDatePopup((curr) => !curr)}
-                      >
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={'outline'}
-                            className={'justify-start text-left bg-transparent'}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, 'PPP') : ''}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            onSelect={field.onChange}
-                            selected={field.value ?? new Date()}
-                            className="dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <CalendarSelect
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

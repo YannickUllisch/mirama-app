@@ -1,74 +1,61 @@
 'use client'
-import { api } from '@api'
 import { Calendar } from '@src/components/ui/calendar'
-import { CalendarDays } from 'lucide-react'
+import { CalendarIcon } from 'lucide-react'
 import { type FC, useState } from 'react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@src/components/ui/popover'
-import type { Project } from '@prisma/client'
-import { toast } from 'sonner'
-import { DateTime } from 'luxon'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { Button } from '../ui/button'
+import { format } from 'date-fns'
+import { cn } from '@src/lib/utils'
 
 interface CalendarSelectProps {
-  startingDate: Date
-  project: Project
-  dateType?: string
-  mutate?: () => any
+  value: Date | undefined | null
+  onChange: () => void
+  styling?: {
+    triggerClassname: string
+    calendarClassname: string
+  }
 }
 
 export const CalendarSelect: FC<CalendarSelectProps> = ({
-  startingDate,
-  project,
-  dateType,
-  mutate,
+  value,
+  onChange,
+  styling,
 }) => {
-  const [date, setDate] = useState<Date | undefined>(startingDate)
-  const [popupOpen, setPopupOpen] = useState(false)
-
-  const handleSelect = (date: Date) => {
-    setPopupOpen(false)
-    try {
-      updateResourceById(
-        'projekt',
-        project.id,
-        {
-          [dateType === 'start' ? 'startDate' : 'endDate']: date,
-        },
-        { mutate: mutate },
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
+  const [popupOpen, setPopupOpen] = useState<boolean>(false)
 
   return (
-    <div className="flex items-center cursor-default justify-center mr-8">
-      {date
-        ? DateTime.fromISO(new Date(date).toISOString()).toFormat('dd.MM.yyyy')
-        : ''}
-      <Popover
-        open={popupOpen}
-        onOpenChange={() => setPopupOpen((curr) => !curr)}
-      >
-        <PopoverTrigger>
-          <CalendarDays className="h-4 w-4 ml-1 cursor-pointer" />
-        </PopoverTrigger>
-        <PopoverContent>
-          <Calendar
-            mode="single"
-            selected={date}
-            defaultMonth={date}
-            onSelect={setDate}
-            onDayFocus={handleSelect}
-            className="rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+    <Popover
+      open={popupOpen}
+      onOpenChange={() => setPopupOpen((curr) => !curr)}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          variant={'outline'}
+          className={cn(
+            'justify-start text-left bg-transparent',
+            styling?.triggerClassname,
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {value ? format(value, 'PPP') : ''}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          onSelect={onChange}
+          selected={value ?? new Date()}
+          className={cn(
+            'dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800',
+            styling?.calendarClassname,
+          )}
+        />
+      </PopoverContent>
+    </Popover>
   )
 }
 

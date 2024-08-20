@@ -10,7 +10,6 @@ import AvatarGroup from '../Avatar/AvatarGroup'
 import UserAvatar from '../Avatar/UserAvatar'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { useSession } from 'next-auth/react'
-import { Plus } from 'lucide-react'
 
 interface SettingsTabProps {
   project: Project & { users: (ProjectUser & { user: User })[] }

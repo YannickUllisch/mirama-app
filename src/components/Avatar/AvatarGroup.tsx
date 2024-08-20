@@ -28,6 +28,7 @@ const AvatarGroup: FC<AvatarGroupProps> = ({
             username={username}
             avatarSize={avatarSize}
             fontSize={fontSize}
+            toolTip
           />
         </div>
       ))}
@@ -44,6 +45,7 @@ const AvatarGroup: FC<AvatarGroupProps> = ({
           username={null}
           avatarSize={avatarSize}
           fontSize={fontSize}
+          toolTip
         />
       )}
     </div>
