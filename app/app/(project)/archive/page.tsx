@@ -176,15 +176,14 @@ const ArchivePage = () => {
                     'Deleting a project is final and cannot be undone.'
                   }
                   submitButtonText={'Delete'}
-                  dialogTrigger={
-                    <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
-                  }
                   onConfirmation={() =>
                     deleteResources('projekt', [row.original.id], {
                       mutate: updateProjects,
                     })
                   }
-                />
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
+                </ConfirmationDialog>
               </GeneralTooltip>
               <GeneralTooltip key={`unarchive${row.id}`} tipText={'Unarchive'}>
                 <ArchiveRestore

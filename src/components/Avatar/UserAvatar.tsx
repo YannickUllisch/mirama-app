@@ -23,9 +23,9 @@ const UserAvatar: FC<UserAvatarProps> = ({
     <>
       {toolTip ? (
         <GeneralTooltip tipText={username ?? 'Unassigned'}>
-          <Avatar className={` h-${avatarSize} w-${avatarSize} flex`}>
+          <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
             <AvatarFallback
-              className={username ? userColor : ''}
+              className={`${username ? userColor : ''}`}
               style={fontSize ? { fontSize: fontSize } : {}}
             >
               {username ? (
@@ -37,7 +37,7 @@ const UserAvatar: FC<UserAvatarProps> = ({
           </Avatar>
         </GeneralTooltip>
       ) : (
-        <Avatar className={` h-${avatarSize} w-${avatarSize} flex`}>
+        <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
           <AvatarFallback
             className={username ? userColor : ''}
             style={fontSize ? { fontSize: fontSize } : {}}

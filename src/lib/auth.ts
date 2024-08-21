@@ -35,6 +35,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.teamId = token.teamId as string
       }
 
+      if (token.name && session.user) {
+        session.user.name = token.name
+      }
+
       return session
     },
 
@@ -46,6 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       token.teamId = existingUser.teamId
       token.role = existingUser.role
+      token.name = existingUser.name
 
       return token
     },

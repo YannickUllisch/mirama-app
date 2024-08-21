@@ -2,6 +2,7 @@ import { auth } from '@src/lib/auth'
 import { db } from '@src/lib/db'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
+import { isRoleHigher } from '@src/lib/utils'
 
 export const GET = auth(async (req) => {
   try {
@@ -15,6 +16,9 @@ export const GET = auth(async (req) => {
     const response = await db.user.findMany({
       where: {
         teamId: session?.user.teamId,
+      },
+      orderBy: {
+        id: 'asc',
       },
     })
 
@@ -31,8 +35,11 @@ export const DELETE = auth(async (req) => {
   try {
     // Checking Permissions
     const session = req.auth
-    // So far only owners can delete members. TODO: Only let Admins remove users with rank lower than themselves
-    const validatedRequest = await validateRequest(session, [Role.OWNER])
+    // We let both Owners and Admins remove users.
+    const validatedRequest = await validateRequest(session, [
+      Role.OWNER,
+      Role.ADMIN,
+    ])
     if (validatedRequest) {
       return validatedRequest
     }
@@ -44,6 +51,25 @@ export const DELETE = auth(async (req) => {
         { ok: false, message: 'Invalid request body' },
         { status: 400 },
       )
+    }
+
+    const usersToDelete = await db.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    })
+
+    for (const user of usersToDelete) {
+      // For each user to delete we check if their role is higher than the one requesting deletion.
+      // If not we forbid the entire request. If Session is not defined we assume the lowest role for the request maker.
+      if (isRoleHigher(user.role, session?.user.role ?? Role.USER)) {
+        return Response.json(
+          { ok: false, message: 'Missing permission' },
+          { status: 403 },
+        )
+      }
     }
 
     await db.user.deleteMany({
@@ -68,7 +94,7 @@ export const DELETE = auth(async (req) => {
 })
 
 /**
- * If permitted, updates Team member Roles for a user with given id.
+ * If permitted, updates team member
  */
 export const PUT = auth(async (req) => {
   try {
@@ -91,14 +117,46 @@ export const PUT = auth(async (req) => {
       )
     }
 
-    const member = (await req.json()) as {
-      role?: Role
+    // Doing Permission Checks. Admins should not be able to Update Owner Information
+    const userToUpdate = await db.user.findFirst({
+      where: {
+        id,
+      },
+    })
+
+    if (!userToUpdate) {
+      return Response.json(
+        { ok: false, message: 'User to change cannot be found.' },
+        { status: 400 },
+      )
     }
 
-    if (!id) {
+    // If the user to update has higher role han the requestee, deny request.
+    if (isRoleHigher(userToUpdate.role, session?.user.role ?? Role.USER)) {
       return Response.json(
-        { ok: false, message: 'User attrivutes need to be defined in request' },
+        { ok: false, message: 'Request denied, missing permission' },
+        { status: 403 },
+      )
+    }
+
+    const member = (await req.json()) as Partial<Omit<User, 'id'>>
+
+    // If no update data has been sent, deny request.
+    if (!member) {
+      return Response.json(
+        { ok: false, message: 'User attributes need to be defined in request' },
         { status: 400 },
+      )
+    }
+
+    // Users should not be able to assign a higher rank than their own.
+    if (
+      member.role &&
+      isRoleHigher(member.role, session?.user.role ?? Role.USER)
+    ) {
+      return Response.json(
+        { ok: false, message: 'Request denied, missing permission' },
+        { status: 403 },
       )
     }
 
@@ -108,11 +166,9 @@ export const PUT = auth(async (req) => {
         teamId: session?.user.teamId ?? 'undefined',
       },
       data: {
-        role: member.role,
+        ...member,
       },
     })
-
-    // Need to Update/Mutate Session here, to make role change work immediately.
 
     return Response.json(
       { ok: true, message: 'User Successfully Updated' },
@@ -144,6 +200,14 @@ export const POST = auth(async (req) => {
       return Response.json(
         { ok: false, message: 'User attributes need to be defined in request' },
         { status: 400 },
+      )
+    }
+
+    // Users should not be able to assign a higher rank than their own.
+    if (user.role && isRoleHigher(user.role, session?.user.role ?? Role.USER)) {
+      return Response.json(
+        { ok: false, message: 'Request denied, missing permission' },
+        { status: 403 },
       )
     }
 

@@ -316,15 +316,14 @@ const ProjectsPage = () => {
                   dialogTitle={'Are you sure?'}
                   dialogDesc={'Deleting a project can not be undone!'}
                   submitButtonText={'Delete'}
-                  dialogTrigger={
-                    <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
-                  }
                   onConfirmation={() =>
                     deleteResources('projekt', [row.original.id], {
                       mutate: updateProjects,
                     })
                   }
-                />
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
+                </ConfirmationDialog>
               </GeneralTooltip>
               <GeneralTooltip
                 key={`archive_${row.id}`}

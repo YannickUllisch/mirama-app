@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import {
   Dialog,
   DialogClose,
@@ -13,23 +13,26 @@ import {
 import { Button } from '@src/components/ui/button'
 
 interface ConfirmationDialogProps {
+  open?: boolean
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
   dialogTitle: string
   dialogDesc: string
   submitButtonText: string
-  dialogTrigger: React.ReactNode
   onConfirmation: (id?: string) => void
 }
 
-const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
+const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> = ({
   dialogTitle,
   dialogDesc,
-  dialogTrigger,
-  onConfirmation,
   submitButtonText,
+  children,
+  onConfirmation,
+  open,
+  setOpen,
 }) => {
   return (
-    <Dialog>
-      <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{dialogTitle}</DialogTitle>

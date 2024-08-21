@@ -32,7 +32,10 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
           </Avatar>
           <div className="flex flex-col">
             <span style={{ fontSize: 12 }}>{session?.user.name}</span>
-            <span style={{ fontSize: 9 }}>
+            <span
+              key={`session-role-${session?.user.role}`}
+              style={{ fontSize: 9 }}
+            >
               {capitalize(session?.user.role.toLowerCase() ?? 'No role')}
             </span>
           </div>

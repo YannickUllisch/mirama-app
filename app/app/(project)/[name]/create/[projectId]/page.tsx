@@ -84,7 +84,6 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
     },
   })
 
-  form.formState.isDirty
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
       // To make returning to unassigned state possible, we have to reset the undefined string
@@ -109,21 +108,20 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                   dialogTitle={'Are you sure?'}
                   dialogDesc={'All progress will be lost'}
                   submitButtonText={'Return'}
-                  dialogTrigger={
-                    <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                      <Undo width={10} className="ml-2" />
-
-                      <Button
-                        type="button"
-                        style={{ textDecoration: 'none', fontSize: 12 }}
-                        variant={'link'}
-                      >
-                        Return to Overview
-                      </Button>
-                    </div>
-                  }
                   onConfirmation={() => router.back()}
-                />
+                >
+                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                    <Undo width={10} className="ml-2" />
+
+                    <Button
+                      type="button"
+                      style={{ textDecoration: 'none', fontSize: 12 }}
+                      variant={'link'}
+                    >
+                      Return to Overview
+                    </Button>
+                  </div>
+                </ConfirmationDialog>
               ) : (
                 <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                   <Undo width={10} className="ml-2" />

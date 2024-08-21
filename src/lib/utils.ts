@@ -54,6 +54,24 @@ export const isTeamAdminOrOwner = (session: Session | null) => {
   return false
 }
 
+// Change this hierarchy when adding new Roles.
+const roleHierarchy = [Role.USER, Role.FREELANCE, Role.ADMIN, Role.OWNER]
+
+/**
+ * This function returns boolean signifying if Role1 is higher than Role2.
+ * @param role1 Role to compare "is higher than" to role 2.
+ * @param role2 Role to compare against
+ * @returns Boolean if role1 is higher than role2.
+ */
+export const isRoleHigher = (role1: Role, role2: Role): boolean => {
+  return roleHierarchy.indexOf(role1) > roleHierarchy.indexOf(role2)
+}
+
+/**
+ * This function capitalizes a string or every string in a string[]
+ * @param input string | string[] which need to be capitalized
+ * @returns capitalized string or string[]
+ */
 export const capitalize = (input: string | string[]): string | string[] => {
   const capitalizeWord = (str: string) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase())

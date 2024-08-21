@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import type { Tag } from '@prisma/client'
+import { Role, type Tag } from '@prisma/client'
 import { db } from '@src/lib/db'
 
 export const GET = auth(async (req) => {
@@ -31,7 +31,10 @@ export const POST = auth(async (req) => {
   try {
     // Checking Permissions
     const session = req.auth
-    const validatedRequest = await validateRequest(session)
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
     if (validatedRequest) {
       return validatedRequest
     }
@@ -71,7 +74,10 @@ export const POST = auth(async (req) => {
 export const DELETE = auth(async (req) => {
   try {
     const session = req.auth
-    const validatedRequest = await validateRequest(session)
+    const validatedRequest = await validateRequest(session, [
+      Role.ADMIN,
+      Role.OWNER,
+    ])
 
     if (validatedRequest) {
       return validatedRequest

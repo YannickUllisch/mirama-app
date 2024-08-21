@@ -218,7 +218,7 @@ export const PUT = auth(async (req) => {
       )
     }
     const project = (await req.json()) as Partial<
-      Omit<Project, 'id' | 'teamId'>
+      Omit<Project & { users: ProjectUser[] }, 'id' | 'teamId'>
     >
     if (!project) {
       return Response.json(
@@ -249,8 +249,17 @@ export const PUT = auth(async (req) => {
       },
       data: {
         ...project,
+        users: undefined,
       },
     })
+
+    try {
+      if (project.users) {
+      }
+    } catch (err) {
+      console.error('Error in creating ProjectUser Records', err)
+      throw err
+    }
 
     return Response.json(
       { ok: true, message: 'Project Successfully updated' },
