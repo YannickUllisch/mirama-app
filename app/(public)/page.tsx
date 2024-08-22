@@ -6,7 +6,7 @@ import HoverBox from '@src/components/LandingPage/HoverCard'
 import { Button } from '@src/components/ui/button'
 import SectionHeading from '@src/components/LandingPage/SectionHeading'
 
-export const LandingPage: FC = () => {
+const LandingPage: FC = () => {
   return (
     <>
       <div className="mb-[-15rem] flex flex-col">
