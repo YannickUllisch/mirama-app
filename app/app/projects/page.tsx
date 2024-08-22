@@ -6,7 +6,12 @@ import {
   CalendarDays,
   ChevronUp,
   Folder,
+  ListFilter,
+  Pencil,
+  PencilLine,
   Plus,
+  RefreshCcw,
+  SlidersHorizontal,
   Trash2,
 } from 'lucide-react'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
@@ -35,6 +40,7 @@ import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import { useMemo, useState } from 'react'
 import CalendarTableSelect from '@src/components/Select/CalendarTableSelect'
+import Link from 'next/link'
 
 const ProjectsPage = () => {
   // States
@@ -82,19 +88,56 @@ const ProjectsPage = () => {
       ),
       size: 150,
       cell: ({ row, getValue }) => {
-        if (isTeamAdminOrOwner(session)) {
+        const [isEditing, setIsEditing] = useState(false)
+
+        if (isEditing && isTeamAdminOrOwner(session)) {
           return (
-            <EditableCell
-              key={`name${row.id}`}
-              apiRoute="projekt"
-              id={row.original.id}
-              mutate={updateProjects}
-              initialValue={getValue() as string}
-              paramToUpdate="name"
-            />
+            <div className="flex gap-2 items-center">
+              <EditableCell
+                key={`name${row.id}`}
+                apiRoute="projekt"
+                id={row.original.id}
+                mutate={updateProjects}
+                initialValue={getValue() as string}
+                paramToUpdate="name"
+                autofocus
+                onBlueNoChange={() => setIsEditing(false)}
+              />
+              <GeneralTooltip tipText="Stop Edit">
+                <Pencil
+                  aria-label="Stop Title Edit"
+                  onClick={() => setIsEditing(false)}
+                  className="w-[12px] h-[12px]"
+                />
+              </GeneralTooltip>
+            </div>
           )
         }
-        return getValue()
+
+        if (isTeamAdminOrOwner(session)) {
+          return (
+            <div className="flex gap-2 items-center">
+              <Link
+                href={`/app/${row.original.name}`}
+                className="hover:underline"
+              >
+                {getValue() as string}
+              </Link>
+              <GeneralTooltip tipText="Start Edit">
+                <PencilLine
+                  aria-label="Start Title Edit"
+                  onClick={() => setIsEditing(true)}
+                  className="w-[12px] h-[12px]"
+                />
+              </GeneralTooltip>
+            </div>
+          )
+        }
+        return (
+          <Link href={`/app/${row.original.name}`} className="hover:underline">
+            {getValue() as string}
+          </Link>
+        )
       },
     },
     {
@@ -415,6 +458,18 @@ const ProjectsPage = () => {
               </TableCell>
             </TableRow>
           </TableFooter>
+        }
+        toolbarRight={
+          <>
+            <SlidersHorizontal className="w-[17px] h-[17px] cursor-pointer" />
+            <ListFilter className="w-[17px] h-[17px] cursor-pointer" />
+            <GeneralTooltip tipText={'Refresh'}>
+              <RefreshCcw
+                onClick={() => updateProjects()}
+                className="w-[17px] h-[17px] cursor-pointer hover:-rotate-90 duration-500 transition-all ease-in-out"
+              />
+            </GeneralTooltip>
+          </>
         }
       />
     </>

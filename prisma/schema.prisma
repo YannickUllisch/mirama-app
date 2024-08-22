@@ -88,25 +88,54 @@ model Project {
   users       ProjectUser[]
   tasks       Task[]
   tag         Tag[]
+
+  // Task categories are defined at project level. 
+  taskCategories  TaskCategory[]
 }
 
 model Task {
   id           String         @id @default(cuid())
   taskCode     String
-  assignedToId String?
-  dueDate      DateTime?
+
   title        String
   description  String?
   priority     PriorityType   @default(LOW)
   status       TaskStatusType
-  projectId    String
-  teamId       String
+  dueDate      DateTime?
+
+  // We allow tasks to be of optional category type.
+  categoryId    String?
+  category      TaskCategory? @relation(fields: [categoryId], references: [id])
+ 
   dateCreated  DateTime       @default(now())
   lastUpdated  DateTime       @default(now())
+
+  assignedToId String?
   assignedTo   User?          @relation(fields: [assignedToId], references: [id])
+  
+  projectId    String
   project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  teamId       String
   team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
   tags          Tag[]
+}
+
+model TaskCategory {
+  id    String    @id @default(cuid())
+  title String
+  icon  String // Storing the identifier/name of the Lucide icon
+
+  projectId   String
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  task Task[]
+}
+
+model Status {
+  id          String    @id @default(cuid())
+  statusType  String
 }
 
 enum Role {
@@ -162,3 +191,4 @@ model Tag {
   taskId   String?
   task     Task?           @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
+

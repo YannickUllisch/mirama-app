@@ -1,8 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import React, { type FC } from 'react'
+import React, { useMemo, type FC } from 'react'
 import { Button } from '@src/components/ui/button'
-import type { Project, ProjectUser, User } from '@prisma/client'
+import type { Project, ProjectUser, TaskCategory, User } from '@prisma/client'
 import ConfirmationDialog from '../Dialogs/ConfirmationDialog'
 import AvatarGroup from '../Avatar/AvatarGroup'
 import UserAvatar from '../Avatar/UserAvatar'
@@ -13,6 +13,8 @@ import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import useSWR from 'swr'
 import { Separator } from '../ui/separator'
+import AddTaskCategoryDialog from '../Dialogs/AddTaskCategoryDialog'
+import TaskCategoryItem from '../task/TaskCategoryItem'
 
 interface SettingsTabProps {
   project: Project & { users: (ProjectUser & { user: User })[] }
@@ -20,12 +22,20 @@ interface SettingsTabProps {
 
 const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
   // Fetching data
-  const { data: users, isLoading: usersLoading } = useSWR<User[]>(
+  const { data: _users, isLoading: _usersLoading } = useSWR<User[]>(
     '/api/db/team/member',
   )
 
+  const { data: taskCategories, mutate: updateCategories } = useSWR<
+    TaskCategory[]
+  >(project ? `/api/db/projekt/taskCategories?projectId=${project.id}` : '')
+
   const router = useRouter()
   const { data: session } = useSession()
+
+  const isSessionProjectManager = useMemo(() => {
+    return project.users.find((user) => user.id === session?.user.id)?.isManager
+  }, [project, session])
 
   return (
     <>
@@ -34,25 +44,27 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
           <span className="font-bold" style={{ fontSize: 25 }}>
             Project managers
           </span>
-          {project?.users?.map((u) =>
-            u.isManager ? (
-              <div className="flex items-center gap-2 p-2">
-                <UserAvatar
-                  avatarSize={10}
-                  username={u.user.name}
-                  fontSize={15}
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm">{u.user.name}</span>
-                  <span className="text-xs text-text-secondary">
-                    {u.user.email}
-                  </span>
+          <div className="grid grid-cols-3 md:grid-cols-5">
+            {project?.users?.map((u) =>
+              u.isManager ? (
+                <div className="flex items-center gap-2 p-2">
+                  <UserAvatar
+                    avatarSize={10}
+                    username={u.user.name}
+                    fontSize={15}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-sm">{u.user.name}</span>
+                    <span className="text-xs text-text-secondary">
+                      {u.user.email}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : null,
-          )}
+              ) : null,
+            )}
+          </div>
         </div>
-        {isTeamAdminOrOwner(session) && (
+        {(isTeamAdminOrOwner(session) || isSessionProjectManager) && (
           <div className="flex items-center max-h-[40px] border hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
             <Button
               style={{ fontSize: 11, textDecoration: 'none' }}
@@ -127,6 +139,28 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
       ) : (
         <div className="w-full h-[50px]" />
       )}
+
+      <AddTaskCategoryDialog
+        mutate={updateCategories}
+        projectId={project?.id}
+        key={'task-category-dialog'}
+      >
+        <div className="flex items-center max-h-[40px] border hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+          <Button
+            style={{ fontSize: 11, textDecoration: 'none' }}
+            variant="link"
+          >
+            Add Task Category
+          </Button>
+        </div>
+      </AddTaskCategoryDialog>
+      {taskCategories?.map((category) => (
+        <TaskCategoryItem
+          iconName={'map-pin'}
+          key={`category-item-${category.title}`}
+          title={category.title}
+        />
+      ))}
     </>
   )
 }

@@ -18,7 +18,7 @@ export const GET = auth(async (req) => {
         teamId: session?.user.teamId,
       },
       orderBy: {
-        id: 'asc',
+        role: 'asc',
       },
     })
 

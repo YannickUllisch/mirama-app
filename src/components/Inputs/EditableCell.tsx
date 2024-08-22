@@ -8,8 +8,10 @@ interface EditableCellProps {
   id: string
   initialValue: string | number
   mutate(): any
+  autofocus?: boolean
   apiRoute: string
   paramToUpdate: string
+  onBlueNoChange?(): any
 }
 
 // This Input can handle both string and number inputs.
@@ -19,6 +21,8 @@ const EditableCell: FC<EditableCellProps> = ({
   initialValue,
   apiRoute,
   paramToUpdate,
+  autofocus,
+  onBlueNoChange,
 }) => {
   const [value, setValue] = useState<string | number>(initialValue)
 
@@ -33,6 +37,7 @@ const EditableCell: FC<EditableCellProps> = ({
   const onBlur = () => {
     // If the value hasn't been changed we do not want to run this function
     if (initialValue === value) {
+      if (onBlueNoChange) onBlueNoChange()
       return
     }
 
@@ -64,12 +69,13 @@ const EditableCell: FC<EditableCellProps> = ({
   }
   return (
     <Input
-      className="overflow-hidden text-ellipsis whitespace-nowrap w-[85%]"
+      className="overflow-hidden text-ellipsis whitespace-nowrap w-[85%] flex-wrap"
       defaultValue={value}
       // For both int and string, this will set the Value to type string on change.
       onChangeCapture={(e) => setValue(e.currentTarget.value)}
       type="text"
       onBlur={onBlur}
+      autoFocus={autofocus}
     />
   )
 }

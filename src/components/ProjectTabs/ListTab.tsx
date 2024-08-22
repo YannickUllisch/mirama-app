@@ -21,7 +21,6 @@ import { SelectItem } from '@src/components/ui/tableSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
 import {
-  ChevronDown,
   Ellipsis,
   ListFilter,
   Plus,
@@ -127,7 +126,9 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link href={`${pathname}/edit/${row.original.id}`}>Edit</Link>
+                  <Link href={`${pathname}/edit/${row.original.id}`}>
+                    Edit Task
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() =>
@@ -305,7 +306,9 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
               {project && (
                 <Link
-                  href={`${pathname}/create/${project ? project.id : ''}`}
+                  href={`${pathname}/create/${
+                    project ? project.id : ''
+                  }?category=test`}
                   legacyBehavior
                   passHref
                 >

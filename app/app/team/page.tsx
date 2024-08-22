@@ -41,7 +41,7 @@ const TeamPage = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-y-6">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6">
         {teamMembers?.map((member) => (
           <UserCard
             session={session}
