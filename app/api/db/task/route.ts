@@ -193,7 +193,6 @@ export const PUT = auth(async (req) => {
               ? task.tags?.map((tagId) => ({ id: tagId }))
               : undefined,
           },
-          lastUpdated: new Date(),
         },
       })
     } catch (err) {

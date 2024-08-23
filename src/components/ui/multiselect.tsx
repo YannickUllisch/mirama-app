@@ -47,112 +47,115 @@ const useMultiSelect = () => {
   return context
 }
 
-const MultiSelector = ({
-  values: value,
-  onValuesChange: onValueChange,
-  loop = false,
-  className,
-  children,
-  dir,
-  ...props
-}: MultiSelectorProps) => {
-  const [inputValue, setInputValue] = useState('')
-  const [open, setOpen] = useState<boolean>(false)
-  const [activeIndex, setActiveIndex] = useState<number>(-1)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-  const onValueChangeHandler = useCallback(
-    (val: string) => {
-      if (value.includes(val)) {
-        onValueChange(value.filter((item) => item !== val))
-      } else {
-        onValueChange([...value, val])
-      }
+const MultiSelector = forwardRef<HTMLDivElement, MultiSelectorProps>(
+  (
+    {
+      values: value,
+      onValuesChange: onValueChange,
+      loop = false,
+      className,
+      children,
+      dir,
+      ...props
     },
-    [value],
-  )
+    ref,
+  ) => {
+    const [inputValue, setInputValue] = useState('')
+    const [open, setOpen] = useState<boolean>(false)
+    const [activeIndex, setActiveIndex] = useState<number>(-1)
 
-  // TODO : change from else if use to switch case statement
+    const onValueChangeHandler = useCallback(
+      (val: string) => {
+        if (value.includes(val)) {
+          onValueChange(value.filter((item) => item !== val))
+        } else {
+          onValueChange([...value, val])
+        }
+      },
+      [value, onValueChange],
+    )
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      const moveNext = () => {
-        const nextIndex = activeIndex + 1
-        setActiveIndex(
-          nextIndex > value.length - 1 ? (loop ? 0 : -1) : nextIndex,
-        )
-      }
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLDivElement>) => {
+        const moveNext = () => {
+          const nextIndex = activeIndex + 1
+          setActiveIndex(
+            nextIndex > value.length - 1 ? (loop ? 0 : -1) : nextIndex,
+          )
+        }
 
-      const movePrev = () => {
-        const prevIndex = activeIndex - 1
-        setActiveIndex(prevIndex < 0 ? value.length - 1 : prevIndex)
-      }
+        const movePrev = () => {
+          const prevIndex = activeIndex - 1
+          setActiveIndex(prevIndex < 0 ? value.length - 1 : prevIndex)
+        }
 
-      if ((e.key === 'Backspace' || e.key === 'Delete') && value.length > 0) {
-        if (inputValue.length === 0) {
-          if (activeIndex !== -1 && activeIndex < value.length) {
-            onValueChange(value.filter((item) => item !== value[activeIndex]))
-            const newIndex = activeIndex - 1 < 0 ? 0 : activeIndex - 1
-            setActiveIndex(newIndex)
+        if ((e.key === 'Backspace' || e.key === 'Delete') && value.length > 0) {
+          if (inputValue.length === 0) {
+            if (activeIndex !== -1 && activeIndex < value.length) {
+              onValueChange(value.filter((item) => item !== value[activeIndex]))
+              const newIndex = activeIndex - 1 < 0 ? 0 : activeIndex - 1
+              setActiveIndex(newIndex)
+            } else {
+              onValueChange(
+                value.filter((item) => item !== value[value.length - 1]),
+              )
+            }
+          }
+        } else if (e.key === 'Enter') {
+          setOpen(true)
+        } else if (e.key === 'Escape') {
+          if (activeIndex !== -1) {
+            setActiveIndex(-1)
           } else {
-            onValueChange(
-              value.filter((item) => item !== value[value.length - 1]),
-            )
+            setOpen(false)
+          }
+        } else if (dir === 'rtl') {
+          if (e.key === 'ArrowRight') {
+            movePrev()
+          } else if (e.key === 'ArrowLeft' && (activeIndex !== -1 || loop)) {
+            moveNext()
+          }
+        } else {
+          if (e.key === 'ArrowLeft') {
+            movePrev()
+          } else if (e.key === 'ArrowRight' && (activeIndex !== -1 || loop)) {
+            moveNext()
           }
         }
-      } else if (e.key === 'Enter') {
-        setOpen(true)
-      } else if (e.key === 'Escape') {
-        if (activeIndex !== -1) {
-          setActiveIndex(-1)
-        } else {
-          setOpen(false)
-        }
-      } else if (dir === 'rtl') {
-        if (e.key === 'ArrowRight') {
-          movePrev()
-        } else if (e.key === 'ArrowLeft' && (activeIndex !== -1 || loop)) {
-          moveNext()
-        }
-      } else {
-        if (e.key === 'ArrowLeft') {
-          movePrev()
-        } else if (e.key === 'ArrowRight' && (activeIndex !== -1 || loop)) {
-          moveNext()
-        }
-      }
-    },
-    [value, inputValue, activeIndex, loop],
-  )
+      },
+      [value, inputValue, activeIndex, loop, dir, onValueChange],
+    )
 
-  return (
-    <MultiSelectContext.Provider
-      value={{
-        value,
-        onValueChange: onValueChangeHandler,
-        open,
-        setOpen,
-        inputValue,
-        setInputValue,
-        activeIndex,
-        setActiveIndex,
-      }}
-    >
-      <Command
-        onKeyDown={handleKeyDown}
-        className={cn(
-          'overflow-visible bg-transparent flex flex-col w-full',
-          className,
-        )}
-        dir={dir}
-        {...props}
+    return (
+      <MultiSelectContext.Provider
+        value={{
+          value,
+          onValueChange: onValueChangeHandler,
+          open,
+          setOpen,
+          inputValue,
+          setInputValue,
+          activeIndex,
+          setActiveIndex,
+        }}
       >
-        {children}
-      </Command>
-    </MultiSelectContext.Provider>
-  )
-}
+        <Command
+          ref={ref} // Pass ref to the main wrapper
+          onKeyDown={handleKeyDown}
+          className={cn(
+            'overflow-visible bg-transparent flex flex-col w-full',
+            className,
+          )}
+          dir={dir}
+          {...props}
+        >
+          {children}
+        </Command>
+      </MultiSelectContext.Provider>
+    )
+  },
+)
+
 const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {

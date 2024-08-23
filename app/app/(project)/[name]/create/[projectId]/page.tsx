@@ -246,13 +246,14 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                 <FormField
                   control={form.control}
                   name="tags"
-                  render={({ field }) => (
+                  render={({ field: { ref, ...field } }) => (
                     <FormItem>
                       <MultiSelector
                         {...form.register('tags')}
                         values={field.value ?? []}
                         onValuesChange={field.onChange}
                         loop
+                        onBlur={field.onBlur}
                       >
                         <FormControl>
                           <MultiSelectorTrigger

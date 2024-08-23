@@ -1,28 +1,27 @@
-import React from "react";
-import styles from "./task-list-header.module.css";
+import type React from 'react'
 
 export const TaskListHeaderDefault: React.FC<{
-  headerHeight: number;
-  rowWidth: string;
-  fontFamily: string;
-  fontSize: string;
+  headerHeight: number
+  rowWidth: string
+  fontFamily: string
+  fontSize: string
 }> = ({ headerHeight, fontFamily, fontSize, rowWidth }) => {
   return (
     <div
-      className={styles.ganttTable}
+      className="table border-b-2 border-t-2 border-l-2"
       style={{
         fontFamily: fontFamily,
         fontSize: fontSize,
       }}
     >
       <div
-        className={styles.ganttTable_Header}
+        className="table-row list-none"
         style={{
           height: headerHeight - 2,
         }}
       >
         <div
-          className={styles.ganttTable_HeaderItem}
+          className="table-cell align-middle"
           style={{
             minWidth: rowWidth,
           }}
@@ -30,14 +29,14 @@ export const TaskListHeaderDefault: React.FC<{
           &nbsp;Name
         </div>
         <div
-          className={styles.ganttTable_HeaderSeparator}
+          className="border-r-2 -ml-2"
           style={{
             height: headerHeight * 0.5,
             marginTop: headerHeight * 0.2,
           }}
         />
         <div
-          className={styles.ganttTable_HeaderItem}
+          className="table-cell align-middle"
           style={{
             minWidth: rowWidth,
           }}
@@ -45,14 +44,14 @@ export const TaskListHeaderDefault: React.FC<{
           &nbsp;From
         </div>
         <div
-          className={styles.ganttTable_HeaderSeparator}
+          className="border-r-2 -ml-2"
           style={{
             height: headerHeight * 0.5,
             marginTop: headerHeight * 0.25,
           }}
         />
         <div
-          className={styles.ganttTable_HeaderItem}
+          className="table-cell align-middle"
           style={{
             minWidth: rowWidth,
           }}
@@ -61,5 +60,5 @@ export const TaskListHeaderDefault: React.FC<{
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

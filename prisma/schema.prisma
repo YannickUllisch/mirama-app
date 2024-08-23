@@ -88,6 +88,7 @@ model Project {
   users       ProjectUser[]
   tasks       Task[]
   tag         Tag[]
+  expenses    Expense[]
 
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
@@ -108,7 +109,7 @@ model Task {
   category      TaskCategory? @relation(fields: [categoryId], references: [id])
  
   dateCreated  DateTime       @default(now())
-  lastUpdated  DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 
   assignedToId String?
   assignedTo   User?          @relation(fields: [assignedToId], references: [id])
@@ -192,3 +193,24 @@ model Tag {
   task     Task?           @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
+model Expense {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String?
+  date        DateTime  @default(now())
+  
+  // Discriminated union type (used for polymorphic relationships)
+  expenseType ExpenseType
+  
+  // Relationships
+  projectId   String?     // Nullable - expense may or may not be linked to a project
+  project     Project? @relation(fields: [projectId], references: [id])
+
+  updatedAt   DateTime @updatedAt
+}
+
+enum ExpenseType {
+  PROJECT
+  GENERAL
+  // Future types could be added here
+}
