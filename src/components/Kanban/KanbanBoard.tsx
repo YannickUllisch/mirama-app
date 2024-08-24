@@ -55,7 +55,7 @@ interface KanbanBoardProps {
     assignedTo: User
   })[]
 }
-
+// KanBan Tutorial link: https://www.youtube.com/watch?v=IZ3w2PNh-hE
 const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
   const [containers, setContainers] = useState<DndType[]>(defaultCols)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)

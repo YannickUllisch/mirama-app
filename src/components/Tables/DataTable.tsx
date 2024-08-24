@@ -10,6 +10,10 @@ import {
   type VisibilityState,
   type RowSelectionState,
   type ColumnSizingState,
+  type ColumnFiltersState,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
 } from '@tanstack/react-table'
 import {
   DropdownMenu,
@@ -31,6 +35,7 @@ import { Button } from '@src/components/ui/button'
 import { ChevronDown, GripVertical, Loader2, Wrench } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { DataTablePagination } from './Pagination'
+import { DataTableToolbar } from './TableToolbar'
 
 interface TableData {
   id: string
@@ -74,6 +79,9 @@ export function DataTable<TData extends TableData, TValue>({
   ])
   const [colSizing, setColSizing] = useState<ColumnSizingState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  )
 
   const table = useReactTable({
     data,
@@ -85,17 +93,22 @@ export function DataTable<TData extends TableData, TValue>({
     onSortingChange: setSortingState ? setSortingState : setSorting,
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection,
+    getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange,
     onColumnVisibilityChange: setColumnVisibility,
     getRowCanExpand: () => true,
     enableColumnResizing: true,
     onColumnSizingChange: setColSizing,
     columnResizeMode: 'onChange',
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    onColumnFiltersChange: setColumnFilters,
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
       columnVisibility,
       columnSizing: colSizing,
+      columnFilters,
     },
     initialState: {
       pagination: { pageSize: 10 },
@@ -112,6 +125,7 @@ export function DataTable<TData extends TableData, TValue>({
       <div>
         <div className="flex items-center m-1 outline-none justify-between ">
           <div className="flex">
+            <DataTableToolbar table={table} />
             {toolbarLeft}
             {columnvisibility && (
               <DropdownMenu>

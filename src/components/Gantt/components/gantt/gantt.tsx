@@ -448,7 +448,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     headerHeight,
     scrollY,
     ganttHeight,
-    horizontalContainerClass: styles.horizontalContainer,
+    horizontalContainerClass: 'p-0 m-0 overflow-hidden',
     selectedTask,
     taskListRef,
     setSelectedTask: handleSelectedTask,

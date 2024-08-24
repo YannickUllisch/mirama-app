@@ -99,7 +99,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Title" />
       ),
-      id: 'Title',
+      id: 'title',
       size: 170,
       cell: ({ getValue, row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
@@ -150,7 +150,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Priority" />
       ),
-      id: 'Description',
+      id: 'priority',
       cell: ({ row, getValue }) => {
         return (
           <GeneralTableSelect
@@ -169,13 +169,16 @@ const ListTab: FC<TaskProps> = ({ project }) => {
           </GeneralTableSelect>
         )
       },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      },
     },
     {
       accessorKey: 'status',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
-      id: 'Status',
+      id: 'status',
       cell: ({ row, getValue }) => {
         return (
           <GeneralTableSelect
@@ -193,6 +196,9 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             ))}
           </GeneralTableSelect>
         )
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
       },
     },
     {
