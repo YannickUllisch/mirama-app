@@ -131,7 +131,7 @@ const ArchivePage = () => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
-      id: 'Status',
+      id: 'status',
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -139,18 +139,24 @@ const ArchivePage = () => {
               key={`status${row.id}`}
               id={row.original.id}
               mutate={updateProjects}
-              initialValue={capitalize((getValue() as StatusType).toString())}
+              initialValue={capitalize(
+                (getValue() as string).replace('_', ' '),
+              )}
               apiRoute="projekt"
               paramToUpdate="status"
             >
-              <SelectItem value={StatusType.NOTSTARTED}>Not Started</SelectItem>
-              <SelectItem value={StatusType.ONHOLD}>On Hold</SelectItem>
-              <SelectItem value={StatusType.ONGOING}>Ongoing</SelectItem>
-              <SelectItem value={StatusType.FINISHED}>Finished</SelectItem>
+              {Object.keys(StatusType).map((type) => (
+                <SelectItem key={`status-item-${type}`} value={type}>
+                  {capitalize(type.replace('_', ' '))}
+                </SelectItem>
+              ))}
             </GeneralTableSelect>
           )
         }
-        return capitalize(getValue() as string)
+        return capitalize((getValue() as string).replace('_', ' '))
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
       },
     },
     {
@@ -214,8 +220,12 @@ const ArchivePage = () => {
         <span style={{ fontSize: 20 }}>Archive</span>
       </div>
       <DataTable
-        pagination
-        columnvisibility
+        toolbarOptions={{
+          showViewOptionsicon: true,
+          showFilterOption: true,
+          filterOptionType: 'PROJECT',
+        }}
+        footerOptions={{ showPagination: true }}
         expandedContent
         columns={columns}
         data={projects ?? []}

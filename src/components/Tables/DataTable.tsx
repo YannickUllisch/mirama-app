@@ -25,9 +25,14 @@ import {
 } from '@src/components/ui/table'
 import React from 'react'
 import { useState } from 'react'
-import { GripVertical, Loader2, SlidersHorizontal } from 'lucide-react'
+import {
+  ChevronDown,
+  GripVertical,
+  Loader2,
+  SlidersHorizontal,
+} from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
-import { DataTablePagination } from './Pagination'
+import { DataTablePagination } from './TablePagination'
 import { Button } from '../ui/button'
 import { ToolbarViewOptions } from './ToolbarViewOptions'
 import ToolbarRefresh from './ToolbarRefresh'
@@ -145,6 +150,11 @@ export function DataTable<TData extends TableData, TValue>({
                 >
                   Show Filters
                 </Button>
+                <ChevronDown
+                  className={`${
+                    showFilters ? 'rotate-180' : ''
+                  } ease-in-out transition w-3 h-3 mr-2`}
+                />
               </div>
             )}
           </div>

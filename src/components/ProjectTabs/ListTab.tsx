@@ -41,6 +41,7 @@ import { deleteResources } from '@src/lib/api/deleteResource'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '../Tables/ColumnHeader'
 import GeneralTooltip from '../GeneralTooltip'
+import { capitalize } from '@src/lib/utils'
 
 interface TaskProps {
   project: Project & {
@@ -157,13 +158,13 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             key={`priority-${row.id}`}
             id={row.original.id}
             mutate={updateTasks}
-            initialValue={getValue() as string}
+            initialValue={capitalize((getValue() as string).replace('_', ' '))}
             apiRoute="task"
             paramToUpdate="priority"
           >
             {Object.keys(PriorityType).map((priority) => (
               <SelectItem key={`priority-item-${priority}`} value={priority}>
-                {priority}
+                {capitalize(priority.replace('_', ' '))}
               </SelectItem>
             ))}
           </GeneralTableSelect>
@@ -185,13 +186,13 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             key={`status${row.id}`}
             id={row.original.id}
             mutate={updateTasks}
-            initialValue={getValue() as string}
+            initialValue={capitalize((getValue() as string).replace('_', ' '))}
             apiRoute="task"
             paramToUpdate="status"
           >
             {Object.keys(TaskStatusType).map((status) => (
               <SelectItem key={`status-item-${status}`} value={status}>
-                {status}
+                {capitalize(status.replace('_', ' '))}
               </SelectItem>
             ))}
           </GeneralTableSelect>

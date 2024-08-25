@@ -5,6 +5,7 @@ import { DataTableFacetedFilter } from './FacetedFilter'
 import { Button } from '@src/components/ui/button'
 import { ArrowDown, CircleIcon } from 'lucide-react'
 import { PriorityType, TaskStatusType } from '@prisma/client'
+import { capitalize } from '@src/lib/utils'
 
 interface TaskFilterModelProps<TData> {
   table: Table<TData>
@@ -29,7 +30,10 @@ export function TaskFilterModel<TData>({ table }: TaskFilterModelProps<TData>) {
             column={table.getColumn('status')}
             title="Status"
             options={Object.keys(TaskStatusType).map((status) => {
-              return { label: status, value: status, icon: ArrowDown }
+              return {
+                label: capitalize(status.replace('_', ' ')) as string,
+                value: status,
+              }
             })}
           />
         )}
@@ -38,7 +42,10 @@ export function TaskFilterModel<TData>({ table }: TaskFilterModelProps<TData>) {
             column={table.getColumn('priority')}
             title="Priority"
             options={Object.keys(PriorityType).map((priority) => {
-              return { label: priority, value: priority, icon: CircleIcon }
+              return {
+                label: capitalize(priority.replace('_', ' ')) as string,
+                value: priority,
+              }
             })}
           />
         )}

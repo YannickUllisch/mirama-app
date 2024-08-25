@@ -74,7 +74,7 @@ export const isRoleHigher = (role1: Role, role2: Role): boolean => {
  */
 export const capitalize = (input: string | string[]): string | string[] => {
   const capitalizeWord = (str: string) =>
-    str.replace(/\b\w/g, (char) => char.toUpperCase())
+    str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
 
   if (Array.isArray(input)) {
     return input.map(capitalizeWord)

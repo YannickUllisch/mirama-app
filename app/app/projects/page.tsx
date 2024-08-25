@@ -282,17 +282,19 @@ const ProjectsPage = () => {
               paramToUpdate="priority"
               id={row.original.id}
               mutate={updateProjects}
-              initialValue={capitalize((getValue() as PriorityType).toString())}
+              initialValue={capitalize(
+                (getValue() as string).replace('_', ' '),
+              )}
             >
               {Object.keys(PriorityType).map((type) => (
                 <SelectItem key={`priority-item-${type}`} value={type}>
-                  {capitalize(type)}
+                  {capitalize(type.replace('_', ' '))}
                 </SelectItem>
               ))}
             </GeneralTableSelect>
           )
         }
-        return capitalize(getValue() as string)
+        return capitalize((getValue() as string).replace('_', ' '))
       },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id))
@@ -311,19 +313,21 @@ const ProjectsPage = () => {
               key={`status${row.id}`}
               id={row.original.id}
               mutate={updateProjects}
-              initialValue={capitalize((getValue() as StatusType).toString())}
+              initialValue={capitalize(
+                (getValue() as string).replace('_', ' '),
+              )}
               apiRoute="projekt"
               paramToUpdate="status"
             >
               {Object.keys(StatusType).map((type) => (
                 <SelectItem key={`status-item-${type}`} value={type}>
-                  {capitalize(type)}
+                  {capitalize(type.replace('_', ' '))}
                 </SelectItem>
               ))}
             </GeneralTableSelect>
           )
         }
-        return capitalize(getValue() as string)
+        return capitalize((getValue() as string).replace('_', ' '))
       },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id))

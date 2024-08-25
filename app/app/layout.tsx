@@ -6,7 +6,6 @@ import AppHeader from '@src/components/Header/AppHeader'
 import type { Metadata } from 'next'
 import SwrProvider from '@src/components/SwrProvider'
 import Footer from '@src/components/Footer/Footer'
-import { headers } from 'next/headers'
 import { auth } from '@src/lib/auth'
 
 export const metadata: Metadata = {

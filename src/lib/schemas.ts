@@ -1,3 +1,4 @@
+import { PriorityTypeSchema, TaskStatusTypeSchema } from '@/prisma/zod'
 import { Role } from '@prisma/client'
 import * as z from 'zod'
 
@@ -43,16 +44,13 @@ export const ProjectSchema = z.object({
   endDate: z.date(),
 })
 
-const PriorityType = z.enum(['LOW', 'MEDIUM', 'HIGH'])
-const TaskStatusType = z.enum(['TODO', 'DOING', 'INREVIEW', 'DONE'])
-
 export const TaskSchema = z.object({
   assignedToId: z.string().nullable().optional(),
   dueDate: z.date().nullable().optional(),
   title: z.string().min(1, { message: 'Title cannot be empty.' }),
   description: z.string().nullable().optional(),
-  priority: PriorityType.default('LOW'),
-  status: TaskStatusType.default('TODO'),
+  priority: PriorityTypeSchema.default('LOW'),
+  status: TaskStatusTypeSchema.default('NOT_STARTED'),
   projectId: z.string(),
   tags: z.string().array().optional(),
 })

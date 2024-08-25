@@ -25,17 +25,17 @@ import KanbanItem from './KanbanItem'
 const defaultCols: DndType[] = [
   {
     id: `container-${v4()}`,
-    title: TaskStatusType.TODO,
+    title: TaskStatusType.NOT_STARTED,
     items: [],
   },
   {
     id: `container-${v4()}`,
-    title: TaskStatusType.DOING,
+    title: TaskStatusType.IN_PROGRESS,
     items: [],
   },
   {
     id: `container-${v4()}`,
-    title: TaskStatusType.DONE,
+    title: TaskStatusType.COMPLETE,
     items: [],
   },
 ]
@@ -337,7 +337,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
             {containers.map((container) => (
               <KanbanContainer
                 key={container.id}
-                title={container.title}
+                title={container.title.replace('_', ' ')}
                 id={container.id}
                 onAddItem={() => {
                   setCurrentContainerId(container.id)

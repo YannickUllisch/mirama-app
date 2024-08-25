@@ -134,10 +134,6 @@ model TaskCategory {
   task Task[]
 }
 
-model Status {
-  id          String    @id @default(cuid())
-  statusType  String
-}
 
 enum Role {
   OWNER
@@ -153,18 +149,18 @@ enum PriorityType {
 }
 
 enum StatusType {
-  NOTSTARTED
-  ONHOLD
-  ONGOING
+  ACTIVE
+  CANCELLED
+  ON_HOLD
   FINISHED
 }
 
 enum TaskStatusType {
-  TODO
-  DOING
-  INREVIEW
-  DONE
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETE
 }
+
 
 // Join table to represent many-to-many relationship between Project and User
 model ProjectUser {

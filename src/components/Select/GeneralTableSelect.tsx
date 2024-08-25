@@ -47,7 +47,7 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
       <SelectTrigger className={stylingProps?.triggerStyle}>
         <SelectValue placeholder={initialValue} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent align="center">
         <SelectGroup>{children}</SelectGroup>
       </SelectContent>
     </Select>

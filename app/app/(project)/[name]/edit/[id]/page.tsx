@@ -54,6 +54,7 @@ import GeneralAccordion from '@src/components/GeneralAccordion'
 import { Textarea } from '@src/components/ui/textarea'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { capitalize } from '@src/lib/utils'
 
 const EditTaskPage = ({ params }: { params: { id: string } }) => {
   // States
@@ -83,7 +84,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
       dueDate: new Date(),
       priority: PriorityType.LOW,
       projectId: '',
-      status: TaskStatusType.TODO,
+      status: TaskStatusType.NOT_STARTED,
       tags: [],
     },
   })
@@ -352,7 +353,11 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Task Priority" />
+                            <SelectValue
+                              placeholder={capitalize(
+                                field.value.replace('_', ' '),
+                              )}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -361,7 +366,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                               key={`priority-item-${type}`}
                               value={type}
                             >
-                              {type}
+                              {capitalize(type.replace('_', ' '))}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -383,7 +388,11 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Status" />
+                            <SelectValue
+                              placeholder={capitalize(
+                                field.value.replace('_', ' '),
+                              )}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -392,7 +401,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                               key={`status-item-${type}`}
                               value={type}
                             >
-                              {type}
+                              {capitalize(type.replace('_', ' '))}
                             </SelectItem>
                           ))}
                         </SelectContent>
