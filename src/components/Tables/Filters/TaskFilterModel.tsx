@@ -2,33 +2,22 @@
 import type { Table } from '@tanstack/react-table'
 import { Input } from '@src/components/ui/input'
 import { DataTableFacetedFilter } from './FacetedFilter'
-import { Button } from '../ui/button'
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  CheckCircle,
-  CircleIcon,
-  Cross,
-  CrossIcon,
-  StopCircle,
-} from 'lucide-react'
+import { Button } from '@src/components/ui/button'
+import { ArrowDown, CircleIcon } from 'lucide-react'
 import { PriorityType, TaskStatusType } from '@prisma/client'
 
-interface DataTableToolbarProps<TData> {
+interface TaskFilterModelProps<TData> {
   table: Table<TData>
 }
 
-export function DataTableToolbar<TData>({
-  table,
-}: DataTableToolbarProps<TData>) {
+export function TaskFilterModel<TData>({ table }: TaskFilterModelProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
+          placeholder="Filter task..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('title')?.setFilterValue(event.target.value)
@@ -60,7 +49,6 @@ export function DataTableToolbar<TData>({
             className="h-8 px-2 lg:px-3"
           >
             Reset
-            <CrossIcon className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>

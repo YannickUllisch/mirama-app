@@ -82,7 +82,7 @@ const ProjectsPage = () => {
     },
     {
       accessorKey: 'name',
-      id: 'Name',
+      id: 'name',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
       ),
@@ -272,7 +272,7 @@ const ProjectsPage = () => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Priority" />
       ),
-      id: 'Priority',
+      id: 'priority',
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -294,13 +294,16 @@ const ProjectsPage = () => {
         }
         return capitalize(getValue() as string)
       },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      },
     },
     {
       accessorKey: 'status',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
-      id: 'Status',
+      id: 'status',
       cell: ({ row, getValue }) => {
         if (isTeamAdminOrOwner(session)) {
           return (
@@ -321,6 +324,9 @@ const ProjectsPage = () => {
           )
         }
         return capitalize(getValue() as string)
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
       },
     },
     {
@@ -422,12 +428,13 @@ const ProjectsPage = () => {
         columns={columns}
         data={projects ?? []}
         dataLoading={projectsLoading || usersLoading}
-        pagination
-        columnvisibility
         sortingState={sortingState}
         setSortingState={setSortingState}
-        toolbarLeft={
-          isTeamAdminOrOwner(session) && (
+        toolbarOptions={{
+          showViewOptionsicon: true,
+          showFilterOption: true,
+          filterOptionType: 'PROJECT',
+          addToolbarleft: isTeamAdminOrOwner(session) && (
             <AddProjectDialog
               key={'Project Dialog'}
               mutate={updateProjects}
@@ -443,34 +450,34 @@ const ProjectsPage = () => {
                 </div>
               }
             />
-          )
-        }
-        footer={
-          <TableFooter>
-            <TableRow className="dark:bg-neutral-900 bg-neutral-50">
-              <TableCell className="dark:text-white cursor-default" colSpan={8}>
-                Total
-              </TableCell>
-              <TableCell className="dark:text-white cursor-default" colSpan={2}>
-                Total:{' '}
-                {projects?.reduce((acc, curr) => acc + (curr.budget || 0), 0) ??
-                  0}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        }
-        toolbarRight={
-          <>
-            <SlidersHorizontal className="w-[17px] h-[17px] cursor-pointer" />
-            <ListFilter className="w-[17px] h-[17px] cursor-pointer" />
-            <GeneralTooltip tipText={'Refresh'}>
-              <RefreshCcw
-                onClick={() => updateProjects()}
-                className="w-[17px] h-[17px] cursor-pointer hover:-rotate-90 duration-500 transition-all ease-in-out"
-              />
-            </GeneralTooltip>
-          </>
-        }
+          ),
+          refresh: { mutate: updateProjects },
+        }}
+        footerOptions={{
+          addFooterRow: (
+            <TableFooter>
+              <TableRow className="dark:bg-neutral-900 bg-neutral-50">
+                <TableCell
+                  className="dark:text-white cursor-default"
+                  colSpan={8}
+                >
+                  Total
+                </TableCell>
+                <TableCell
+                  className="dark:text-white cursor-default"
+                  colSpan={2}
+                >
+                  Total:{' '}
+                  {projects?.reduce(
+                    (acc, curr) => acc + (curr.budget || 0),
+                    0,
+                  ) ?? 0}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          ),
+          showPagination: true,
+        }}
       />
     </>
   )

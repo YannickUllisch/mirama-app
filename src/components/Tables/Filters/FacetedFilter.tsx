@@ -19,6 +19,7 @@ import { Separator } from '@src/components/ui/separator'
 import type { Column } from '@tanstack/react-table'
 import { Check, PlusCircle } from 'lucide-react'
 import { cn } from '@src/lib/utils'
+import { Checkbox } from '@src/components/ui/checkbox'
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
@@ -41,7 +42,11 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 border-dashed">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 border-dashed bg-inherit"
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           {title}
           {selectedValues?.size > 0 && (
@@ -102,20 +107,10 @@ export function DataTableFacetedFilter<TData, TValue>({
                       )
                     }}
                   >
-                    <div
-                      className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible',
-                      )}
-                    >
-                      <Check className={cn('h-4 w-4')} />
+                    <div className="gap-2 flex items-center">
+                      <Checkbox checked={isSelected} />
+                      <span>{option.label}</span>
                     </div>
-                    {option.icon && (
-                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span>{option.label}</span>
                     {facets?.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}
@@ -131,7 +126,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandGroup>
                   <CommandItem
                     onSelect={() => column?.setFilterValue(undefined)}
-                    className="justify-center text-center"
+                    className="justify-center text-center border"
                   >
                     Clear filters
                   </CommandItem>

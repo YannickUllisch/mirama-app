@@ -299,51 +299,44 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       <DataTable
         columns={columns}
         data={tasks ?? []}
-        columnvisibility
-        pagination
         enableRowSelection
         dataLoading={tasksLoading}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         sortingState={sortingState}
         setSortingState={setSortingState}
-        toolbarLeft={
-          <>
-            <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-              {project && (
-                <Link
-                  href={`${pathname}/create/${
-                    project ? project.id : ''
-                  }?category=test`}
-                  legacyBehavior
-                  passHref
-                >
-                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                    <Plus width={15} className="ml-2" />
-                    <Button
-                      style={{ fontSize: 11, textDecoration: 'none' }}
-                      variant="link"
-                    >
-                      New Task
-                    </Button>
-                  </div>
-                </Link>
-              )}
-            </div>
-          </>
-        }
-        toolbarRight={
-          <>
-            <SlidersHorizontal className="w-[17px] h-[17px] cursor-pointer" />
-            <ListFilter className="w-[17px] h-[17px] cursor-pointer" />
-            <GeneralTooltip tipText={'Refresh'}>
-              <RefreshCcw
-                onClick={() => updateTasks()}
-                className="w-[17px] h-[17px] cursor-pointer hover:-rotate-90 duration-500 transition-all ease-in-out"
-              />
-            </GeneralTooltip>
-          </>
-        }
+        toolbarOptions={{
+          refresh: { mutate: updateTasks },
+          showViewOptionsicon: true,
+          showFilterOption: true,
+          filterOptionType: 'TASK',
+          addToolbarleft: (
+            <>
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                {project && (
+                  <Link
+                    href={`${pathname}/create/${
+                      project ? project.id : ''
+                    }?category=test`}
+                    legacyBehavior
+                    passHref
+                  >
+                    <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                      <Plus width={15} className="ml-2" />
+                      <Button
+                        style={{ fontSize: 11, textDecoration: 'none' }}
+                        variant="link"
+                      >
+                        New Task
+                      </Button>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </>
+          ),
+        }}
+        footerOptions={{ showPagination: true }}
       />
     </div>
   )

@@ -16,12 +16,6 @@ import {
   getFilteredRowModel,
 } from '@tanstack/react-table'
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@src/components/ui/dropdown-menu'
-import {
   Table,
   TableBody,
   TableCell,
@@ -31,11 +25,14 @@ import {
 } from '@src/components/ui/table'
 import React from 'react'
 import { useState } from 'react'
-import { Button } from '@src/components/ui/button'
-import { ChevronDown, GripVertical, Loader2, Wrench } from 'lucide-react'
+import { GripVertical, Loader2, SlidersHorizontal } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { DataTablePagination } from './Pagination'
-import { DataTableToolbar } from './TableToolbar'
+import { Button } from '../ui/button'
+import { ToolbarViewOptions } from './ToolbarViewOptions'
+import ToolbarRefresh from './ToolbarRefresh'
+import { TaskFilterModel } from './Filters/TaskFilterModel'
+import { ProjectFilterModel } from './Filters/ProjectFilterModel'
 
 interface TableData {
   id: string
@@ -45,43 +42,52 @@ interface DataTableProps<TData extends TableData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   dataLoading?: boolean
-  pagination?: boolean
   sortingState?: SortingState
   setSortingState?: React.Dispatch<React.SetStateAction<SortingState>>
   enableRowSelection?: boolean
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
   rowSelection?: RowSelectionState
-  footer?: React.JSX.Element
-  columnvisibility?: boolean
-  toolbarLeft?: React.ReactNode
-  toolbarRight?: React.ReactNode
+
   expandedContent?: React.ReactNode
+
+  toolbarOptions?: {
+    refresh?: {
+      mutate?: () => any
+    }
+    showViewOptionsicon?: boolean
+    addToolbarleft?: React.ReactNode
+    addToolbarright?: React.ReactNode
+    showFilterOption?: boolean
+    filterOptionType?: 'TASK' | 'PROJECT'
+  }
+
+  footerOptions?: {
+    showPagination?: boolean
+    addFooterRow?: React.JSX.Element
+  }
 }
 
 export function DataTable<TData extends TableData, TValue>({
   columns,
   data,
   dataLoading,
-  pagination,
   sortingState,
   setSortingState,
   enableRowSelection,
   rowSelection,
   onRowSelectionChange,
-  footer,
   expandedContent,
-  columnvisibility,
-  toolbarLeft,
-  toolbarRight,
+  toolbarOptions,
+  footerOptions,
 }: DataTableProps<TData, TValue>) {
+  // States
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
   ])
   const [colSizing, setColSizing] = useState<ColumnSizingState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [showFilters, setShowFilters] = useState<boolean>(false)
 
   const table = useReactTable({
     data,
@@ -125,51 +131,46 @@ export function DataTable<TData extends TableData, TValue>({
       <div>
         <div className="flex items-center m-1 outline-none justify-between ">
           <div className="flex">
-            <DataTableToolbar table={table} />
-            {toolbarLeft}
-            {columnvisibility && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="flex items-center hover:bg-neutral-100 rounded-sm dark:hover:bg-neutral-800">
-                    <Wrench width={15} className="ml-2" />
-                    <Button
-                      style={{
-                        fontSize: 11,
-                        textDecoration: 'none',
-                        padding: 10,
-                      }}
-                      variant="link"
-                    >
-                      Column Options
-                    </Button>
-                    <ChevronDown width={15} className="mr-2" />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  {table
-                    .getAllColumns()
-                    .filter((column) => column.getCanHide())
-                    .map((column) => {
-                      return (
-                        <DropdownMenuCheckboxItem
-                          key={column.id}
-                          className="capitalize"
-                          checked={column.getIsVisible()}
-                          onCheckedChange={(value) =>
-                            column.toggleVisibility(!!value)
-                          }
-                        >
-                          {column.id}
-                        </DropdownMenuCheckboxItem>
-                      )
-                    })}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            {toolbarOptions?.addToolbarleft}
+            {toolbarOptions?.showFilterOption && (
+              <div
+                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+                onClick={() => setShowFilters((checked) => !checked)}
+                onKeyDown={() => setShowFilters((checked) => !checked)}
+              >
+                <SlidersHorizontal width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  Show Filters
+                </Button>
+              </div>
             )}
           </div>
-
-          <div className="flex gap-3">{toolbarRight}</div>
+          <div className="flex gap-3 items-center">
+            <>
+              {toolbarOptions?.addToolbarright}
+              {toolbarOptions?.showViewOptionsicon && (
+                <ToolbarViewOptions table={table} />
+              )}
+              {toolbarOptions?.refresh && (
+                <ToolbarRefresh mutate={toolbarOptions.refresh.mutate} />
+              )}
+            </>
+          </div>
         </div>
+
+        {showFilters && (
+          <div className="m-2">
+            {toolbarOptions?.filterOptionType === 'TASK' && (
+              <TaskFilterModel table={table} />
+            )}
+            {toolbarOptions?.filterOptionType === 'PROJECT' && (
+              <ProjectFilterModel table={table} />
+            )}
+          </div>
+        )}
 
         <Table className="border dark:border-neutral-800 overflow-scroll">
           <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
@@ -298,13 +299,13 @@ export function DataTable<TData extends TableData, TValue>({
               </TableRow>
             )}
           </TableBody>
-          {footer}
+          {footerOptions?.addFooterRow}
         </Table>
       </div>
       <DataTablePagination
         table={table}
         enableRowSelection={enableRowSelection}
-        pagination={pagination ?? false}
+        pagination={footerOptions?.showPagination ?? false}
       />
     </div>
   )

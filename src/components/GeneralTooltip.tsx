@@ -15,7 +15,7 @@ const GeneralTooltip: FC<PropsWithChildren<ToolTipProps>> = (obj) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{obj.children}</TooltipTrigger>
+        {<TooltipTrigger>{obj.children}</TooltipTrigger>}
         <TooltipContent side="bottom">{obj.tipText}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
