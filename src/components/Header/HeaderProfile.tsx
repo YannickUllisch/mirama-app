@@ -24,7 +24,7 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="w-8 h-8 cursor-pointer">
+        <Avatar className="w-9 h-9 cursor-pointer">
           <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
             {extractFirstLetters(session?.user.name ?? '')}
           </AvatarFallback>

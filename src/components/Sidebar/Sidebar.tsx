@@ -66,7 +66,7 @@ const Sidebar = () => {
     <aside className="fixed flex flex-col w-[210px] h-full">
       <div className="flex justify-evenly items-center relative">
         <Link href={'/'} className="p-4 flex gap-2 items-center justify-center">
-          <span className="font-semibold" style={{ fontSize: 20 }}>
+          <span className="font-semibold" style={{ fontSize: 22.5 }}>
             MIRAGE.
           </span>
         </Link>

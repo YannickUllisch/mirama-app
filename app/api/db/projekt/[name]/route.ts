@@ -1,7 +1,6 @@
 import { db } from '@src/lib/db'
 import { auth } from '@src/lib/auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { redirect } from 'next/navigation'
 
 export const GET = auth(async (req) => {
   try {
