@@ -63,6 +63,9 @@ const config = {
           secondary: 'hsl(var(--text-secondary))',
           inverted: 'hsl(var(--text-inverted))',
         },
+        hover: {
+          DEFAULT: 'hsl(var(--hover))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

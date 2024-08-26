@@ -4,7 +4,7 @@ import UserAvatar from './UserAvatar'
 import type { User } from '@prisma/client'
 import { capitalize, isRoleHigher, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '../ui/button'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Delete, Pencil, PencilLine, Trash2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,7 +60,10 @@ const UserCard: FC<UserCardProps> = ({
                     setDropDownOpen(false)
                   }}
                 >
-                  Edit User
+                  <div className="flex items-center gap-2">
+                    <PencilLine className="w-4 h-4" />
+                    Edit User
+                  </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
@@ -68,7 +71,10 @@ const UserCard: FC<UserCardProps> = ({
                     setDropDownOpen(false)
                   }}
                 >
-                  {user.id === session?.user.id ? 'Leave' : 'Remove'}
+                  <div className="flex items-center gap-2">
+                    <Trash2 className="w-4 h-4" />
+                    {user.id === session?.user.id ? 'Leave' : 'Remove'}
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

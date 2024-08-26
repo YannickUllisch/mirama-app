@@ -24,25 +24,13 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-3 cursor-pointer p-1 rounded-md hover:bg-neutral-50 hover:dark:bg-neutral-900">
-          <Avatar className="w-8 h-8">
-            <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
-              {extractFirstLetters(session?.user.name ?? '')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span style={{ fontSize: 12 }}>{session?.user.name}</span>
-            <span
-              key={`session-role-${session?.user.role}`}
-              style={{ fontSize: 9 }}
-            >
-              {capitalize(session?.user.role.toLowerCase() ?? 'No role')}
-            </span>
-          </div>
-          <ChevronsUpDown width={15} />
-        </div>
+        <Avatar className="w-8 h-8 cursor-pointer">
+          <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
+            {extractFirstLetters(session?.user.name ?? '')}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="md:w-[200px]">
+      <DropdownMenuContent className="md:w-[200px]" align="end">
         <DropdownMenuLabel>
           <div className="flex flex-col">
             <span className="font-normal" style={{ fontSize: 11 }}>
