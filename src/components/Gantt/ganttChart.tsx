@@ -159,7 +159,7 @@ const GanttChart = () => {
         onViewListChange={setIsChecked}
         isChecked={isChecked}
       />
-      <div className="w-[100%] max-w-[1100px] overflow-x-auto overflow-y-hidden m-auto border">
+      <div className="w-[100%] max-w-[1100px] overflow-x-auto overflow-y-hidden m-auto">
         <div className="flex items-center gap-1">
           <Checkbox
             defaultChecked={isChecked}
@@ -174,9 +174,8 @@ const GanttChart = () => {
           onDelete={handleTaskDelete}
           onProgressChange={handleProgressChange}
           onExpanderClick={handleExpanderClick}
-          listCellWidth={isChecked ? '120px' : ''}
+          listCellWidth={isChecked ? '150px' : ''}
           columnWidth={columnWidth}
-          projectBackgroundColor="red"
         />
       </div>
     </div>

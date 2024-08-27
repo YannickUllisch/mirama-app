@@ -26,7 +26,7 @@ export const TaskListHeaderDefault: React.FC<{
             minWidth: rowWidth,
           }}
         >
-          &nbsp;Name
+          Name
         </div>
         <div
           className="border-r-2 -ml-2"
@@ -41,7 +41,7 @@ export const TaskListHeaderDefault: React.FC<{
             minWidth: rowWidth,
           }}
         >
-          &nbsp;From
+          From
         </div>
         <div
           className="border-r-2 -ml-2"
@@ -56,7 +56,7 @@ export const TaskListHeaderDefault: React.FC<{
             minWidth: rowWidth,
           }}
         >
-          &nbsp;To
+          To
         </div>
       </div>
     </div>

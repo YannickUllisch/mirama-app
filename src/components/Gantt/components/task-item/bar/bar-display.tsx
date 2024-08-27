@@ -1,24 +1,24 @@
-import React from "react";
-import style from "./bar.module.css";
+import type React from 'react'
+import style from './bar.module.css'
 
 type BarDisplayProps = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  isSelected: boolean;
+  x: number
+  y: number
+  width: number
+  height: number
+  isSelected: boolean
   /* progress start point */
-  progressX: number;
-  progressWidth: number;
-  barCornerRadius: number;
+  progressX: number
+  progressWidth: number
+  barCornerRadius: number
   styles: {
-    backgroundColor: string;
-    backgroundSelectedColor: string;
-    progressColor: string;
-    progressSelectedColor: string;
-  };
-  onMouseDown: (event: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void;
-};
+    backgroundColor: string
+    backgroundSelectedColor: string
+    progressColor: string
+    progressSelectedColor: string
+  }
+  onMouseDown: (event: React.MouseEvent<SVGPolygonElement, MouseEvent>) => void
+}
 export const BarDisplay: React.FC<BarDisplayProps> = ({
   x,
   y,
@@ -32,12 +32,12 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   onMouseDown,
 }) => {
   const getProcessColor = () => {
-    return isSelected ? styles.progressSelectedColor : styles.progressColor;
-  };
+    return isSelected ? styles.progressSelectedColor : styles.progressColor
+  }
 
   const getBarColor = () => {
-    return isSelected ? styles.backgroundSelectedColor : styles.backgroundColor;
-  };
+    return isSelected ? styles.backgroundSelectedColor : styles.backgroundColor
+  }
 
   return (
     <g onMouseDown={onMouseDown}>
@@ -61,5 +61,5 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
         fill={getProcessColor()}
       />
     </g>
-  );
-};
+  )
+}

@@ -8,10 +8,11 @@ import {
   TabsTrigger,
 } from '@src/components/ui/tabs'
 import { useSession } from 'next-auth/react'
-import { Tags, User } from 'lucide-react'
+import { Settings, Tags, User } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import AccountTab from '@src/components/SettingTabs/AccountTab'
 import TagsTab from '@src/components/SettingTabs/TagsTab'
+import { Separator } from '@src/components/ui/separator'
 
 const ProjectPage = () => {
   const { data: session } = useSession()
@@ -60,14 +61,18 @@ const ProjectPage = () => {
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <div className="mt2">
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
+    <Tabs value={tab} onValueChange={setTab} className="w-full">
+      <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">
+        <Settings strokeWidth={1.5} width={20} />
+        <span style={{ fontSize: 20 }}>Settings</span>
+        <span>|</span>
         <TabsList className="justify-start flex">
           {settingsTabs.map(
             (tabHeader) =>
               session &&
               tabHeader.roles.includes(session.user.role) && (
                 <TabsTrigger
+                  // className="bg-neutral-700"
                   style={{ fontSize: 12 }}
                   value={tabHeader.id}
                   key={tabHeader.id}
@@ -77,17 +82,18 @@ const ProjectPage = () => {
               ),
           )}
         </TabsList>
-        {settingsTabs.map(
-          (tab) =>
-            session &&
-            tab.roles.includes(session.user.role) && (
-              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                {tab.component}
-              </TabsContent>
-            ),
-        )}
-      </Tabs>
-    </div>
+      </div>
+      <Separator className="m-4" />
+      {settingsTabs.map(
+        (tab) =>
+          session &&
+          tab.roles.includes(session.user.role) && (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ),
+      )}
+    </Tabs>
   )
 }
 

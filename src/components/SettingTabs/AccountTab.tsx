@@ -12,18 +12,11 @@ interface AccountTabProps {
 
 const AccountTab: FC<AccountTabProps> = ({ session }) => {
   return (
-    <>
-      <Separator />
-      <div className="p-4 flex ">
-        <UserAvatar
-          username={session?.user.name ?? ''}
-          avatarSize={10}
-          toolTip
-        />
+    <div className="p-4 flex ">
+      <UserAvatar username={session?.user.name ?? ''} avatarSize={10} toolTip />
 
-        <Label>Email</Label>
-      </div>
-    </>
+      <Label>Email</Label>
+    </div>
   )
 }
 

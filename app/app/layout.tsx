@@ -14,17 +14,16 @@ export const metadata: Metadata = {
 }
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await auth()
   return (
     <SessionWrapper>
       <SwrProvider>
         <div className="grid md:grid-cols-[auto_1fr] min-h-screen">
-          <div className="relative hidden md:block border-r-2 min-w-[210px] border-neutral-100 dark:border-neutral-800">
+          <div className="relative hidden md:block min-w-[200px] border-neutral-100 dark:border-neutral-800">
             <Sidebar />
           </div>
-          <div className="flex flex-col">
-            <AppHeader session={session} />
-            <div className="flex-1 p-8  min-h-[700px]">
+          <div className="m-2 flex flex-col p-1 rounded-lg shadow-lg dark:shadow-neutral-900 bg-white dark:bg-neutral-900">
+            <AppHeader />
+            <div className="flex-1 p-6 min-h-[700px]">
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </div>
             <Footer />

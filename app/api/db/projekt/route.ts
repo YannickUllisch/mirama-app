@@ -32,6 +32,7 @@ export const GET = auth(async (req) => {
               user: true,
             },
           },
+          expenses: true,
         },
       })
 

@@ -9,7 +9,7 @@ import SectionHeading from '@src/components/LandingPage/SectionHeading'
 const LandingPage: FC = () => {
   return (
     <>
-      <div className="mb-[-15rem] flex flex-col">
+      <div className="h-[600px] flex flex-col">
         <div className="pt-40 flex flex-col items-center overflow-hidden">
           <SectionHeading classname="h-[30px]">
             <Leaf className="w-5 h-5" />
@@ -27,7 +27,7 @@ const LandingPage: FC = () => {
             </p>
             <div className="flex justify-center mt-3 gap-3">
               <Link
-                href={''}
+                href={'/auth/register'}
                 className="bg-primary text-white px-4 py-2 hover:bg-primary-dark rounded-lg"
               >
                 Get started
@@ -35,25 +35,7 @@ const LandingPage: FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="md:mx-[20%] mx-[10%] mt-5 ">
-          <HoverBox>
-            <div className="flex flex-col items-center p-3">
-              <Button className="min-w-[80px] h-[20px] bg-text-inverted hover:text-text px-4 py-2 rounded-xl " />
-            </div>
-            <div className="flex flex-col items-center pt-20">
-              <div className="flex text-white">
-                <Leaf className="w-20 h-20" />
-                <Leaf className="w-24 h-24 mx-4" />
-                <Leaf className="w-20 h-20" />
-              </div>
-              <h3 className="text-white text-7xl font-extrabold">MIRAGE.</h3>
-            </div>
-          </HoverBox>
-        </div>
       </div>
-
-      <div className="h-[300px] bg-primary dark:bg-neutral-950/70" />
 
       <div className="bg-neutral-100 dark:bg-neutral-950/70 h-[500px]">
         <div className="py-8 px-2 mx-10 flex flex-col justify-center items-center gap-5 text-center">

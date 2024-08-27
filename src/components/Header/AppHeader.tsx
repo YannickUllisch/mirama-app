@@ -12,11 +12,9 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { AlignLeft, ChevronLeft, ChevronRight } from 'lucide-react'
-import HeaderProfile from '@src/components/Header/HeaderProfile'
-import type { Session } from 'next-auth'
+import { AlignLeft, ArrowLeft, FolderOpen } from 'lucide-react'
 
-const AppHeader = ({ session }: { session: Session | null }) => {
+const AppHeader = () => {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -38,16 +36,13 @@ const AppHeader = ({ session }: { session: Session | null }) => {
   }, [pathname])
 
   return (
-    <header className="flex gap-2 p-4 justify-between w-full bg-inherit border-b-2 dark:border-neutral-800 border-neutral-100">
-      <div className="flex items-center justify-start gap-5">
-        <ChevronLeft
-          className="w-5 h-7 -mr-4 cursor-pointer md:block hidden hover:bg-hover rounded-md"
+    <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
+      <div className="flex items-center justify-start gap-6">
+        <ArrowLeft
+          className="w-5 h-5 cursor-pointer md:block hidden hover:bg-hover rounded-md"
           onClick={() => router.back()}
         />
-        <ChevronRight
-          className="w-5 h-7 cursor-pointer md:block hidden hover:bg-hover rounded-md"
-          onClick={() => router.forward()}
-        />
+        <div className="text-hover">|</div>
         <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
           <AlignLeft strokeWidth={1.3} className="transition-all" />
         </Button>
@@ -58,13 +53,18 @@ const AppHeader = ({ session }: { session: Session | null }) => {
               {index < pathSegments.length - 1 ? (
                 <>
                   <BreadcrumbItem>
+                    <FolderOpen className="w-4 h-4" />
                     <Link
                       href={accumulatedPaths[index]}
                       passHref
                       legacyBehavior
                     >
                       <BreadcrumbLink>
-                        {capitalize(segment.replace(/-/g, ' '))}
+                        {capitalize(
+                          segment
+                            .replace(/-/g, ' ')
+                            .replace('app', 'Dashboard'),
+                        )}
                       </BreadcrumbLink>
                     </Link>
                   </BreadcrumbItem>
@@ -73,17 +73,15 @@ const AppHeader = ({ session }: { session: Session | null }) => {
               ) : (
                 <BreadcrumbItem>
                   <BreadcrumbPage>
-                    {capitalize(segment.replace(/-/g, ' '))}
+                    {capitalize(
+                      segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
+                    )}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               )}
             </BreadcrumbList>
           </Breadcrumb>
         ))}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <HeaderProfile session={session} />
       </div>
     </header>
   )

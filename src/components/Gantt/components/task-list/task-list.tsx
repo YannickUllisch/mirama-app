@@ -9,12 +9,10 @@ export type TaskListProps = {
   fontFamily: string
   fontSize: string
   rowHeight: number
-  ganttHeight: number
   scrollY: number
   locale: string
   tasks: Task[]
   taskListRef: React.RefObject<HTMLDivElement>
-  horizontalContainerClass?: string
   selectedTask: BarTask | undefined
   setSelectedTask: (task: string) => void
   onExpanderClick: (task: Task) => void
@@ -49,9 +47,6 @@ export const TaskList: React.FC<TaskListProps> = ({
   setSelectedTask,
   onExpanderClick,
   locale,
-  ganttHeight,
-  taskListRef,
-  horizontalContainerClass,
   TaskListHeader,
   TaskListTable,
 }) => {
@@ -83,18 +78,11 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div
-      ref={taskListRef}
-      className="z-10 stroke-yellow-50 border-r-2 border-black"
-      style={{ boxShadow: '10px 0px 10px 0px rgba(0, 0, 0, 0.1)' }}
+      className="z-10 stroke-yellow-500 border-r-2 overflow-x-scroll w-full"
+      style={{ boxShadow: '10px 0px 10px 0px rgba(0, 0, 0, 0.05)' }}
     >
       <TaskListHeader {...headerProps} />
-      <div
-        ref={horizontalContainerRef}
-        className={horizontalContainerClass}
-        style={ganttHeight ? { height: ganttHeight } : {}}
-      >
-        <TaskListTable {...tableProps} />
-      </div>
+      <TaskListTable {...tableProps} />
     </div>
   )
 }

@@ -189,13 +189,14 @@ model Tag {
   task     Task?           @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
+// Expense modelling
 model Expense {
-  id          Int      @id @default(autoincrement())
+  id          String      @id @default(cuid())
   amount      Float
+  title       String
   description String?
   date        DateTime  @default(now())
   
-  // Discriminated union type (used for polymorphic relationships)
   expenseType ExpenseType
   
   // Relationships
@@ -206,7 +207,12 @@ model Expense {
 }
 
 enum ExpenseType {
-  PROJECT
-  GENERAL
-  // Future types could be added here
+  LABOR       
+  MATERIALS   
+  SOFTWARE   
+  TRAVEL       
+  SERVICES  
+  LICENSING 
+  ADMINISTRATIVE
+  MISC
 }

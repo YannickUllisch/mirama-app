@@ -22,6 +22,7 @@ import {
   Folder,
   GanttChart,
   LayoutList,
+  NotepadText,
   Settings,
   Undo,
 } from 'lucide-react'
@@ -38,6 +39,7 @@ import GanttTab from '@src/components/ProjectTabs/GanttTab'
 import ListTab from '@src/components/ProjectTabs/ListTab'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@src/components/ui/button'
+import { Separator } from '@src/components/ui/separator'
 
 const ProjectPage = ({ params }: { params: { name: string } }) => {
   const { data: session } = useSession()
@@ -148,9 +150,13 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <div className="mt2">
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="justify-center flex">
+    <Tabs value={tab} onValueChange={setTab} className="w-full">
+      <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">
+        <NotepadText strokeWidth={1.5} width={20} />
+        <span style={{ fontSize: 20 }}>{project?.name}</span>
+        <span>|</span>
+
+        <TabsList className="justify-center">
           {projectTabs.map(
             (tabHeader) =>
               session &&
@@ -165,17 +171,18 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
               ),
           )}
         </TabsList>
-        {projectTabs.map(
-          (tab) =>
-            session &&
-            tab.roles.includes(session.user.role) && (
-              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                {tab.component}
-              </TabsContent>
-            ),
-        )}
-      </Tabs>
-    </div>
+      </div>
+      <Separator className="m-4" />
+      {projectTabs.map(
+        (tab) =>
+          session &&
+          tab.roles.includes(session.user.role) && (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ),
+      )}
+    </Tabs>
   )
 }
 
