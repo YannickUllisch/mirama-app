@@ -256,7 +256,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                           >
                             <div className="flex items-center gap-4">
                               <UserAvatar
-                                avatarSize={6}
+                                avatarSize={25}
                                 fontSize={10}
                                 username={user.user.name}
                               />

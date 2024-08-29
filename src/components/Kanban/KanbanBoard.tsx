@@ -21,6 +21,7 @@ import {
 } from '@dnd-kit/sortable'
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
+import { updateResourceById } from '@src/lib/api/updateResource'
 
 const defaultCols: DndType[] = [
   {
@@ -319,6 +320,13 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
       )
       newItems[overContainerIndex].items.push(removeditem)
       setContainers(newItems)
+
+      const taskId = removeditem.id.toString().substring(5) // remove 'item-' prefix to get the task ID
+      console.log(taskId)
+      const newStatus = newItems[overContainerIndex].title
+      console.log(newStatus)
+
+      updateResourceById('/task', taskId, { status: newStatus })
     }
     setActiveId(null)
   }

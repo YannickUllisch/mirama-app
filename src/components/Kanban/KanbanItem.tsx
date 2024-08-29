@@ -51,7 +51,7 @@ const KanbanItem: FC<ItemsType> = ({ id, title, assignedTo }) => {
 
       <div className="flex items-center gap-1">
         <UserAvatar
-          avatarSize={6}
+          avatarSize={20}
           username={assignedTo?.name ?? null}
           fontSize={8}
         />

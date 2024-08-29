@@ -37,11 +37,15 @@ const UserAvatar: FC<UserAvatarProps> = ({
           </Avatar>
         </GeneralTooltip>
       ) : (
-        <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
-          <AvatarFallback
-            className={username ? userColor : ''}
-            style={fontSize ? { fontSize: fontSize } : {}}
-          >
+        <Avatar
+          style={{
+            height: `${avatarSize}px`,
+            width: `${avatarSize}px`,
+            fontSize: `${fontSize}px`,
+            color: 'white',
+          }}
+        >
+          <AvatarFallback className={username ? userColor : ''}>
             {username ? (
               extractFirstLetters(username)
             ) : (

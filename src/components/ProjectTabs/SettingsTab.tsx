@@ -34,7 +34,8 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
   const { data: session } = useSession()
 
   const isSessionProjectManager = useMemo(() => {
-    return project.users.find((user) => user.id === session?.user.id)?.isManager
+    return project?.users?.find((user) => user.id === session?.user.id)
+      ?.isManager
   }, [project, session])
 
   return (
@@ -49,7 +50,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
               u.isManager ? (
                 <div className="flex items-center gap-2 p-2">
                   <UserAvatar
-                    avatarSize={10}
+                    avatarSize={40}
                     username={u.user.name}
                     fontSize={15}
                   />

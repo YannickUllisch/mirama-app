@@ -2,7 +2,7 @@
 import type { iMenuItem } from '@src/lib/constants'
 import React, { useState, type FC } from 'react'
 import { CommandItem } from '../ui/command'
-import { ChevronDown } from 'lucide-react'
+import { AlertCircle, ChevronDown, StretchHorizontal } from 'lucide-react'
 import Link from 'next/link'
 
 interface SidebarItemProps {
@@ -27,9 +27,9 @@ const SidebarItem: FC<SidebarItemProps> = ({
           <div onClick={toggleSubMenu} onKeyDown={toggleSubMenu}>
             <CommandItem
               style={{ fontSize: 15 }}
-              className={`flex gap-3 cursor-pointer justify-between relative hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
+              className={`flex gap-3 cursor-pointer justify-between relative hover:bg-neutral-100 dark:hover:bg-neutral-900 ${
                 item.href === currentPath
-                  ? 'bg-neutral-100 dark:bg-neutral-800'
+                  ? 'bg-neutral-200 dark:bg-neutral-800'
                   : ''
               }`}
             >
@@ -70,9 +70,9 @@ const SidebarItem: FC<SidebarItemProps> = ({
         <Link href={item.href} key={item.label}>
           <CommandItem
             style={{ fontSize: 15 }}
-            className={`flex gap-3 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-900 ${
+            className={`flex gap-3 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 ${
               item.href === currentPath
-                ? 'bg-neutral-100 dark:bg-neutral-800'
+                ? 'bg-neutral-200 dark:bg-neutral-800'
                 : ''
             }`}
           >

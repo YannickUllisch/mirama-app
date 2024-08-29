@@ -222,7 +222,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
                 <div className="flex items-center gap-1">
                   <UserAvatar
                     username={assignedTo.name}
-                    avatarSize={6}
+                    avatarSize={25}
                     fontSize={10}
                   />
                   {assignedTo.name}
@@ -237,7 +237,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               <SelectItem value={user.userId} key={`user-item-${user.id}`}>
                 <div className="flex items-center gap-1">
                   <UserAvatar
-                    avatarSize={6}
+                    avatarSize={25}
                     fontSize={10}
                     username={user.user.name}
                   />

@@ -12,11 +12,16 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { AlignLeft, ArrowLeft, FolderOpen } from 'lucide-react'
+import { AlignLeft, ArrowLeft, Ellipsis, FolderOpen } from 'lucide-react'
+import { Separator } from '../ui/separator'
+import GeneralTooltip from '../GeneralTooltip'
+import HeaderProfile from './HeaderProfile'
+import { useSession } from 'next-auth/react'
 
 const AppHeader = () => {
   const pathname = usePathname()
   const router = useRouter()
+  const { data: session } = useSession()
 
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
@@ -37,14 +42,18 @@ const AppHeader = () => {
 
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
-      <div className="flex items-center justify-start gap-6">
+      <div className="flex items-center justify-start gap-4">
         <ArrowLeft
-          className="w-5 h-5 cursor-pointer md:block hidden hover:bg-hover rounded-md"
+          className="w-5 h-5 cursor-pointer md:block hidden hover:text-text-secondary"
           onClick={() => router.back()}
         />
-        <div className="text-hover">|</div>
+
+        <Separator
+          orientation="vertical"
+          className="h-4 bg-neutral-300 dark:bg-neutral-500 md:block hidden"
+        />
         <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
-          <AlignLeft strokeWidth={1.3} className="transition-all" />
+          <Ellipsis strokeWidth={1.3} className="transition-all" />
         </Button>
 
         {pathSegments.map((segment, index) => (
@@ -82,6 +91,16 @@ const AppHeader = () => {
             </BreadcrumbList>
           </Breadcrumb>
         ))}
+      </div>
+      <div className="justify-evenly items-center block md:hidden">
+        <Link href={'/app'} className="flex gap-2 items-center justify-center">
+          <span className="font-semibold" style={{ fontSize: 30 }}>
+            MIRAGE.
+          </span>
+        </Link>
+      </div>
+      <div className="block md:hidden">
+        <HeaderProfile session={session} onlyAvatar />
       </div>
     </header>
   )

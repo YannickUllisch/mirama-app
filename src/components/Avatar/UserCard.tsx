@@ -36,7 +36,7 @@ const UserCard: FC<UserCardProps> = ({
 
   return (
     <div className="flex items-left gap-2 p-2 flex-col">
-      <UserAvatar avatarSize={20} username={user.name} fontSize={25} />
+      <UserAvatar avatarSize={80} username={user.name} fontSize={25} />
       <div className="flex flex-col">
         <span className="text-lg font-bold">{user.name}</span>
         <span className="text-xs text-text-secondary">{user.email}</span>

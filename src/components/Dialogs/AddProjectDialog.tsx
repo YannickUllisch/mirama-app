@@ -272,7 +272,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
                     >
                       <div className="flex items-center gap-1 text-text">
                         <UserAvatar
-                          avatarSize={6}
+                          avatarSize={25}
                           fontSize={10}
                           username={user.name}
                         />
