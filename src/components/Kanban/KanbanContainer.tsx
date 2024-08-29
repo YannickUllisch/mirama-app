@@ -1,27 +1,25 @@
 import { useSortable } from '@dnd-kit/sortable'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import clsx from 'clsx'
 import { capitalize } from '@src/lib/utils'
 import { TaskStatusType } from '@prisma/client'
-import { Button } from '@src/components/ui/button'
-import { SquarePlus } from 'lucide-react'
+import { Ellipsis, Plus, SquarePlus } from 'lucide-react'
 
-interface ContainerProps {
+export interface KanbanContainerProps {
   id: UniqueIdentifier
-  children: React.ReactNode
-  title?: string
-  description?: string
+  title: string
+  itemAmount: number
   onAddItem?: () => void
 }
 
-const KanbanContainer: FC<ContainerProps> = ({
+const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   id,
   children,
   title,
-  description,
   onAddItem,
+  itemAmount,
 }) => {
   const { attributes, setNodeRef, transform, transition, isDragging } =
     useSortable({
@@ -44,20 +42,21 @@ const KanbanContainer: FC<ContainerProps> = ({
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-y-1">
+        <div className="flex items-center gap-2">
           <h1 className="text-gray-800 text-xl dark:text-white">
             {capitalize(title ?? '')}
           </h1>
-          <p className="text-gray-400 text-sm">{description}</p>
+          <span>{itemAmount}</span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <Plus
+            className="cursor-pointer text-emerald-800 w-5 h-5"
+            onClick={onAddItem}
+          />
+          <Ellipsis className="cursor-pointer w-4 h-4" />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">{children}</div>
-      {title === TaskStatusType.TODO && (
-        <SquarePlus
-          className="cursor-pointer text-emerald-800"
-          onClick={onAddItem}
-        />
-      )}
     </div>
   )
 }

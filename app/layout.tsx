@@ -12,7 +12,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en">
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <body className="bg-neutral-50 dark:bg-neutral-900/30">
+      <body className="bg-neutral-50 dark:bg-neutral-900/40">
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}

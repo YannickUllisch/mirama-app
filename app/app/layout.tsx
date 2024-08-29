@@ -21,7 +21,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           <div className="relative hidden md:block min-w-[200px] border-neutral-100 dark:border-neutral-800">
             <Sidebar />
           </div>
-          <div className="m-2 flex flex-col p-1 rounded-lg shadow-lg dark:shadow-neutral-900 bg-white dark:bg-neutral-900">
+          <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900">
             <AppHeader />
             <div className="flex-1 p-6 min-h-[700px]">
               <Suspense fallback={<Loading />}>{children}</Suspense>

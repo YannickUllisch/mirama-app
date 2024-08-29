@@ -38,7 +38,6 @@ import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
 import GanttTab from '@src/components/ProjectTabs/GanttTab'
 import ListTab from '@src/components/ProjectTabs/ListTab'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
-import { Button } from '@src/components/ui/button'
 import { Separator } from '@src/components/ui/separator'
 
 const ProjectPage = ({ params }: { params: { name: string } }) => {
@@ -87,9 +86,19 @@ const ProjectPage = ({ params }: { params: { name: string } }) => {
       ),
     },
     {
-      id: 'tasks',
+      id: 'kanban',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <BoardTab projectName={params.name as string} />,
+      component: (
+        <BoardTab
+          project={
+            project as Project & {
+              users: (ProjectUser & { user: User })[]
+              tasks: Task[]
+            }
+          }
+          session={session}
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <ClipboardList width={15} /> Board

@@ -1,20 +1,29 @@
 'use client'
 import type { FC } from 'react'
-import type { Task, User } from '@prisma/client'
+import type { Project, ProjectUser, Task, User } from '@prisma/client'
 import useSWR from 'swr'
 import KanbanBoard from '../Kanban/KanbanBoard'
+import { useSession } from 'next-auth/react'
+import type { Session } from 'next-auth'
 
 interface TabProps {
-  projectName: string
+  session: Session | null
+  project: Project & { users: (ProjectUser & { user: User })[] }
 }
 
-const BoardTab: FC<TabProps> = ({ projectName }) => {
+const BoardTab: FC<TabProps> = ({ project, session }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectName=${projectName}`)
+  >(`/api/db/task?projectName=${project?.name}`)
 
-  return <KanbanBoard tasks={tasks ?? []} />
+  return (
+    <KanbanBoard
+      tasks={tasks ?? []}
+      projectId={project?.id}
+      session={session}
+    />
+  )
 }
 export default BoardTab

@@ -22,82 +22,35 @@ import {
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
-
-const defaultCols: DndType[] = [
-  {
-    id: `container-${v4()}`,
-    title: TaskStatusType.NOT_STARTED,
-    items: [],
-  },
-  {
-    id: `container-${v4()}`,
-    title: TaskStatusType.IN_PROGRESS,
-    items: [],
-  },
-  {
-    id: `container-${v4()}`,
-    title: TaskStatusType.COMPLETE,
-    items: [],
-  },
-]
-
-interface DndType {
-  id: UniqueIdentifier
-  title: string
-  items: {
-    id: UniqueIdentifier
-    title: string
-    assignedTo: User | null
-  }[]
-}
+import type { DndType } from '@src/lib/constants'
+import type { Session } from 'next-auth'
 
 interface KanbanBoardProps {
+  session: Session | null
+  projectId: string
   tasks: (Task & {
     assignedTo: User
   })[]
 }
 // KanBan Tutorial link: https://www.youtube.com/watch?v=IZ3w2PNh-hE
-const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
-  const [containers, setContainers] = useState<DndType[]>(defaultCols)
+const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
+  const initCols = useMemo(() => {
+    return Object.values(TaskStatusType).map((status) => ({
+      id: `container-${v4()}`,
+      title: status,
+      items: tasks
+        .filter((task) => task.status === status)
+        .map((task) => ({
+          id: `item-${task.id}`,
+          task: task,
+        })),
+    }))
+  }, [tasks])
+
+  const [containers, setContainers] = useState<DndType[]>(initCols)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [_currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier | null>()
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <Container updates on every event change>
-  useEffect(() => {
-    if (tasks) {
-      for (const task of tasks) {
-        const container = containers.find(
-          (container) => container.title === task.status,
-        )
-        if (!container) continue
-        const existingItem = container?.items.find(
-          (item) => item.id === `item-${task.id}`,
-        )
-        if (existingItem) continue
-        container.items.push({
-          id: `item-${task.id}`,
-          title: task.title,
-          assignedTo: task.assignedTo,
-        })
-        setContainers([...containers])
-      }
-    }
-  }, [tasks])
-
-  const onAddItem = (containerId: UniqueIdentifier) => {
-    const id = `item-${v4()}`
-    const container = containers.find((item) => item.id === containerId)
-    if (!container) return
-    container.items.push({
-      id,
-      title: 'TMPADD',
-      assignedTo: null,
-    })
-    setContainers([...containers])
-    //setItemName('')
-    //setShowAddItemModal(false)
-  }
 
   // DnD Handlers
   const sensors = useSensors(
@@ -106,6 +59,43 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   )
+
+  const onAddItem = (containerId: UniqueIdentifier) => {
+    const id = `item-${v4()}`
+    const container = containers.find((item) => item.id === containerId)
+    if (!container) return
+    container.items.push({
+      id,
+      task: {
+        id: v4(),
+        status: 'NOT_STARTED',
+        priority: 'LOW',
+        title: 'New Task',
+        projectId: projectId,
+        dateCreated: new Date(),
+        teamId: session?.user.teamId ?? 'undefined',
+        taskCode: '',
+        dueDate: null,
+        updatedAt: new Date(),
+        description: null,
+        categoryId: null,
+        assignedToId: null,
+        assignedTo: {
+          preferredDateType: '',
+          email: '',
+          emailVerified: null,
+          id: v4(),
+          name: '',
+          password: '',
+          role: 'USER',
+          teamId: session?.user.teamId ?? 'undefined',
+        },
+      },
+    })
+    setContainers([...containers])
+    //setItemName('')
+    //setShowAddItemModal(false)
+  }
 
   // Find the value of the items
   const findValueOfItems = (id: UniqueIdentifier | undefined, type: string) => {
@@ -118,21 +108,12 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
       )
     }
   }
-
-  const findItemUser = (id: UniqueIdentifier | undefined) => {
+  const findItemTask = (id: UniqueIdentifier | undefined) => {
     const container = findValueOfItems(id, 'item')
-    if (!container) return null
+    if (!container) return
     const item = container.items.find((item) => item.id === id)
-    if (!item) return null
-    return item.assignedTo
-  }
-
-  const findItemTitle = (id: UniqueIdentifier | undefined) => {
-    const container = findValueOfItems(id, 'item')
-    if (!container) return ''
-    const item = container.items.find((item) => item.id === id)
-    if (!item) return ''
-    return item.title
+    if (!item) return
+    return item.task
   }
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -322,9 +303,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
       setContainers(newItems)
 
       const taskId = removeditem.id.toString().substring(5) // remove 'item-' prefix to get the task ID
-      console.log(taskId)
       const newStatus = newItems[overContainerIndex].title
-      console.log(newStatus)
 
       updateResourceById('/task', taskId, { status: newStatus })
     }
@@ -346,6 +325,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
               <KanbanContainer
                 key={container.id}
                 title={container.title.replace('_', ' ')}
+                itemAmount={container.items.length}
                 id={container.id}
                 onAddItem={() => {
                   setCurrentContainerId(container.id)
@@ -356,10 +336,9 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
                   {container.items.map((item) => (
                     <div key={item.id}>
                       <KanbanItem
-                        key={item.id}
+                        key={`kanban-item-${item.id}`}
                         id={item.id}
-                        title={item.title}
-                        assignedTo={item.assignedTo}
+                        task={item.task}
                       />
                     </div>
                   ))}
@@ -370,11 +349,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks }) => {
           <DragOverlay adjustScale={false}>
             {activeId?.toString().includes('item') && (
               <div className="opacity-70">
-                <KanbanItem
-                  id={activeId}
-                  title={findItemTitle(activeId)}
-                  assignedTo={findItemUser(activeId)}
-                />
+                <KanbanItem id={activeId} task={findItemTask(activeId)} />
               </div>
             )}
           </DragOverlay>

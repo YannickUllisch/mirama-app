@@ -1,18 +1,11 @@
-import type { UniqueIdentifier } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { User } from '@prisma/client'
 import type { FC } from 'react'
 import UserAvatar from '../Avatar/UserAvatar'
 import { ClipboardCheck } from 'lucide-react'
+import type { KanbanItemType } from '@src/lib/constants'
 
-type ItemsType = {
-  id: UniqueIdentifier
-  title: string
-  assignedTo: User | null
-}
-
-const KanbanItem: FC<ItemsType> = ({ id, title, assignedTo }) => {
+const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
   const {
     attributes,
     listeners,
@@ -45,17 +38,19 @@ const KanbanItem: FC<ItemsType> = ({ id, title, assignedTo }) => {
           style={{ fontSize: 11 }}
           className="flex items-center justify-between"
         >
-          {title}
+          {task?.title}
         </div>
       </div>
 
       <div className="flex items-center gap-1">
         <UserAvatar
           avatarSize={20}
-          username={assignedTo?.name ?? null}
+          username={task?.assignedTo?.name ?? null}
           fontSize={8}
         />
-        <div style={{ fontSize: 10 }}>{assignedTo?.name ?? 'Unassigned'}</div>
+        <div style={{ fontSize: 10 }}>
+          {task?.assignedTo?.name ?? 'Unassigned'}
+        </div>
       </div>
     </div>
   )
