@@ -69,7 +69,7 @@ const AppHomePage = () => {
           ? projects.map((project) => (
               <Card
                 key={`${project.id}-card`}
-                className={`w-[50px] z-50 h-[100%] shadow-none border-none ${getColorByName(
+                className={`w-[50px] z-10 h-[100%] shadow-none border-none ${getColorByName(
                   project.name,
                 )}`}
               >

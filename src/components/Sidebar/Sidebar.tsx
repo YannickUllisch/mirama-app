@@ -1,37 +1,29 @@
 'use client'
 import {
-  BadgeHelp,
   Bell,
   Calculator,
   Calendar,
   ChevronsLeft,
   CircleHelp,
-  Coins,
-  CreditCard,
   Home,
   LayoutGrid,
-  Search,
   Users,
 } from 'lucide-react'
 import Link from 'next/link'
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from '@src/components/ui/command'
+import { Command, CommandGroup, CommandList } from '@src/components/ui/command'
 import { usePathname } from 'next/navigation'
 import type { iMenuList } from '@src/lib/constants'
 import SidebarItem from './SidebarItem'
 import { useState } from 'react'
 import HeaderProfile from '../Header/HeaderProfile'
-import { useSession } from 'next-auth/react'
 import { Button } from '../ui/button'
 import { Separator } from '../ui/separator'
+import type { Session } from 'next-auth'
+import GeneralTooltip from '../GeneralTooltip'
 
-const Sidebar = () => {
+const Sidebar = ({ session }: { session: Session | null }) => {
   const currPath = usePathname()
-  const { data: session } = useSession()
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
   const menuList: iMenuList[] = [
     {
@@ -77,47 +69,109 @@ const Sidebar = () => {
   ]
 
   return (
-    <aside className="fixed flex flex-col w-[210px] h-full">
-      <div className="flex justify-evenly items-center relative">
-        <Link href={'/'} className="p-3 flex gap-2 items-center justify-center">
-          <span className="font-semibold" style={{ fontSize: 30 }}>
-            MIRAGE.
-          </span>
-        </Link>
-      </div>
+    <aside
+      className={`${
+        isCollapsed ? 'min-w-[60px]' : 'min-w-[200px]'
+      } transition-all duration-300 ease-in-out relative hidden md:block  border-neutral-100 dark:border-neutral-800`}
+    >
+      <div
+        className={`fixed flex flex-col ${
+          isCollapsed ? 'w-[65px]' : 'w-[210px]'
+        } h-full`}
+      >
+        <div className="flex justify-center relative">
+          <Link href={'/'} className="p-3 flex gap-2">
+            <span className="font-semibold" style={{ fontSize: 30 }}>
+              {isCollapsed ? 'M.' : 'MIRAGE.'}
+            </span>
+          </Link>
+        </div>
 
-      <div className="p-2 flex-grow mt-0.5">
-        <Command className="bg-transparent">
-          <CommandList className="h-full">
-            {menuList.map((group) => (
-              <CommandGroup key={group.group} heading={group.group}>
-                {group.items.map((menu) => (
-                  <SidebarItem
-                    key={menu.label}
-                    currentPath={currPath}
-                    item={menu}
-                    isCollapsed={false}
-                  />
-                ))}
-              </CommandGroup>
-            ))}
-          </CommandList>
-        </Command>
-      </div>
-      <div className="flex items-start justify-start flex-col p-2">
-        <Button variant={'ghost'} className="gap-3 w-full flex justify-start">
-          <Bell className="w-5 h-5" />
-          <span>Notifications</span>
-        </Button>
-        <Button variant={'ghost'} className="gap-3 w-full flex justify-start">
-          <CircleHelp className="w-5 h-5" />
-          <span>Help</span>
-        </Button>
-      </div>
+        <div className="p-2 flex-grow mt-0.5">
+          <Command className="bg-transparent">
+            <CommandList className="h-full">
+              {menuList.map((group, index) => (
+                <CommandGroup
+                  key={`command-group-${group.group} ${index}`}
+                  heading={!isCollapsed ? group.group : ''}
+                >
+                  {group.items.map((menu) => (
+                    <>
+                      {!isCollapsed ? (
+                        <SidebarItem
+                          key={menu.label}
+                          currentPath={currPath}
+                          item={menu}
+                          isCollapsed={isCollapsed}
+                        />
+                      ) : (
+                        <div className="flex flex-col z-20">
+                          <GeneralTooltip
+                            key={menu.label}
+                            tipText={menu.label}
+                            side="right"
+                          >
+                            <SidebarItem
+                              currentPath={currPath}
+                              item={menu}
+                              isCollapsed={isCollapsed}
+                            />
+                          </GeneralTooltip>
+                        </div>
+                      )}
+                    </>
+                  ))}
+                </CommandGroup>
+              ))}
+            </CommandList>
+          </Command>
+        </div>
+        <div className="flex items-start justify-start flex-col p-2 w-full">
+          <Button
+            variant={'ghost'}
+            className={`${
+              isCollapsed ? 'w-[50px]' : 'w-full'
+            } gap-3 flex justify-start `}
+          >
+            <Bell className="w-5 h-5" />
+            {!isCollapsed && <span>Notifications</span>}
+          </Button>
 
-      <div className="p-4">
-        <Separator className="mb-4" />
-        <HeaderProfile session={session} />
+          <Button
+            variant={'ghost'}
+            className={`${
+              isCollapsed ? 'w-[50px]' : 'w-full'
+            } gap-3 flex justify-start `}
+          >
+            <CircleHelp className="w-5 h-5" />
+            {!isCollapsed && <span>Help</span>}
+          </Button>
+
+          <Button
+            variant={'ghost'}
+            onClick={() => setIsCollapsed((curr) => !curr)}
+            className={`${
+              isCollapsed ? 'w-[50px]' : 'w-full'
+            } gap-3 flex justify-start `}
+          >
+            <ChevronsLeft
+              className={`${
+                isCollapsed ? 'rotate-180' : ''
+              } transition ease-in-out duration-400 w-5 h-5`}
+            />
+            {!isCollapsed && <span>Collapse</span>}
+          </Button>
+        </div>
+
+        <div className="p-3">
+          <Separator
+            className={`mb-4 ${
+              isCollapsed ? 'w-[40px]' : 'w-full'
+            } transition-all duration-500 ease-in-out `}
+          />
+
+          <HeaderProfile session={session} onlyAvatar={isCollapsed} />
+        </div>
       </div>
     </aside>
   )

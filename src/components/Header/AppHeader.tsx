@@ -12,9 +12,8 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { AlignLeft, ArrowLeft, Ellipsis, FolderOpen } from 'lucide-react'
+import { ArrowLeft, Ellipsis, FolderOpen } from 'lucide-react'
 import { Separator } from '../ui/separator'
-import GeneralTooltip from '../GeneralTooltip'
 import HeaderProfile from './HeaderProfile'
 import { useSession } from 'next-auth/react'
 

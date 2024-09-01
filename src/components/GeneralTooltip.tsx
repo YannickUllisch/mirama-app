@@ -9,14 +9,22 @@ import {
 
 interface ToolTipProps {
   tipText: string
+  side?: 'bottom' | 'top' | 'left' | 'right'
+  showToolTip?: boolean
 }
 
-const GeneralTooltip: FC<PropsWithChildren<ToolTipProps>> = (obj) => {
+const GeneralTooltip: FC<PropsWithChildren<ToolTipProps>> = ({
+  tipText,
+  side,
+  children,
+}) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        {<TooltipTrigger>{obj.children}</TooltipTrigger>}
-        <TooltipContent side="bottom">{obj.tipText}</TooltipContent>
+        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipContent className="z-50" side={side ? side : 'bottom'}>
+          {tipText}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )
