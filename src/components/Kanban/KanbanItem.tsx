@@ -4,8 +4,11 @@ import type { FC } from 'react'
 import UserAvatar from '../Avatar/UserAvatar'
 import { ClipboardCheck } from 'lucide-react'
 import type { KanbanItemType } from '@src/lib/constants'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
+  const path = usePathname()
   const {
     attributes,
     listeners,
@@ -34,12 +37,14 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
     >
       <div className="flex gap-1 mb-1 hover:underline">
         <ClipboardCheck width={15} />{' '}
-        <div
-          style={{ fontSize: 11 }}
-          className="flex items-center justify-between"
-        >
-          {task?.title}
-        </div>
+        <Link href={`${path}/edit/${task?.id}`} legacyBehavior>
+          <div
+            style={{ fontSize: 11 }}
+            className="flex items-center justify-between"
+          >
+            {task?.title}
+          </div>
+        </Link>
       </div>
 
       <div className="flex items-center gap-1">

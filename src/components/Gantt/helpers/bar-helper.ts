@@ -296,18 +296,17 @@ export const progressByProgressWidth = (
   const barWidth = barTask.x2 - barTask.x1
   const progressPercent = Math.round((progressWidth * 100) / barWidth)
   if (progressPercent >= 100) return 100
-  else if (progressPercent <= 0) return 0
-  else return progressPercent
+  if (progressPercent <= 0) return 0
+  return progressPercent
 }
 
 const progressByX = (x: number, task: BarTask) => {
   if (x >= task.x2) return 100
   if (x <= task.x1) return 0
-  else {
-    const barWidth = task.x2 - task.x1
-    const progressPercent = Math.round(((x - task.x1) * 100) / barWidth)
-    return progressPercent
-  }
+
+  const barWidth = task.x2 - task.x1
+  const progressPercent = Math.round(((x - task.x1) * 100) / barWidth)
+  return progressPercent
 }
 const progressByXRTL = (x: number, task: BarTask) => {
   if (x >= task.x2) return 0
@@ -335,8 +334,9 @@ export const getProgressPoint = (
 }
 
 const startByX = (x: number, xStep: number, task: BarTask) => {
-  if (x >= task.x2 - task.handleWidth * 2) {
-    x = task.x2 - task.handleWidth * 2
+  let adjustedX = x
+  if (adjustedX >= task.x2 - task.handleWidth * 2) {
+    adjustedX = task.x2 - task.handleWidth * 2
   }
   const steps = Math.round((x - task.x1) / xStep)
   const additionalXValue = steps * xStep
@@ -345,8 +345,9 @@ const startByX = (x: number, xStep: number, task: BarTask) => {
 }
 
 const endByX = (x: number, xStep: number, task: BarTask) => {
-  if (x <= task.x1 + task.handleWidth * 2) {
-    x = task.x1 + task.handleWidth * 2
+  let adjustedX = x
+  if (adjustedX <= task.x1 + task.handleWidth * 2) {
+    adjustedX = task.x1 + task.handleWidth * 2
   }
   const steps = Math.round((x - task.x2) / xStep)
   const additionalXValue = steps * xStep

@@ -52,9 +52,17 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
   const [_currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier | null>()
 
+  useEffect(() => {
+    setContainers(initCols)
+  }, [initCols])
+
   // DnD Handlers
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 0.01,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

@@ -1,9 +1,9 @@
-import React from "react";
-import { getProgressPoint } from "../../../helpers/bar-helper";
-import { BarDisplay } from "./bar-display";
-import { BarProgressHandle } from "./bar-progress-handle";
-import { TaskItemProps } from "../task-item";
-import styles from "./bar.module.css";
+import type React from 'react'
+import { getProgressPoint } from '../../../helpers/bar-helper'
+import { BarDisplay } from './bar-display'
+import { BarProgressHandle } from './bar-progress-handle'
+import type { TaskItemProps } from '../task-item'
+import styles from './bar.module.css'
 
 export const BarSmall: React.FC<TaskItemProps> = ({
   task,
@@ -15,8 +15,8 @@ export const BarSmall: React.FC<TaskItemProps> = ({
   const progressPoint = getProgressPoint(
     task.progressWidth + task.x1,
     task.y,
-    task.height
-  );
+    task.height,
+  )
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
@@ -29,20 +29,20 @@ export const BarSmall: React.FC<TaskItemProps> = ({
         barCornerRadius={task.barCornerRadius}
         styles={task.styles}
         isSelected={isSelected}
-        onMouseDown={e => {
-          isDateChangeable && onEventStart("move", task, e);
+        onMouseDown={(e) => {
+          isDateChangeable && onEventStart('move', task, e)
         }}
       />
       <g className="handleGroup">
         {isProgressChangeable && (
           <BarProgressHandle
             progressPoint={progressPoint}
-            onMouseDown={e => {
-              onEventStart("progress", task, e);
+            onMouseDown={(e) => {
+              onEventStart('progress', task, e)
             }}
           />
         )}
       </g>
     </g>
-  );
-};
+  )
+}
