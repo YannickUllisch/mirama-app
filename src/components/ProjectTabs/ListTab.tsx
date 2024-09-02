@@ -23,9 +23,11 @@ import { DateTime } from 'luxon'
 import {
   Ellipsis,
   ListFilter,
+  Pencil,
   Plus,
   RefreshCcw,
   SlidersHorizontal,
+  Trash,
 } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
@@ -72,7 +74,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
     { id: 'taskCode', desc: true },
   ])
 
-  const columns: ColumnDef<Task>[] = [
+  const columns: ColumnDef<Task & { assignedTo: User }>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -127,17 +129,23 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link href={`${pathname}/edit/${row.original.id}`}>
+                  <Link
+                    href={`${pathname}/edit/${row.original.id}`}
+                    className="gap-3"
+                  >
+                    <Pencil className="h-4 w-4 " />
                     Edit Task
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  className="gap-3"
                   onClick={() =>
                     deleteResources('task', [row.original.id], {
                       mutate: updateTasks,
                     })
                   }
                 >
+                  <Trash className="h-4 w-4 text-red-500" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -204,16 +212,17 @@ const ListTab: FC<TaskProps> = ({ project }) => {
     },
     {
       accessorKey: 'assignedTo',
+      accessorFn: (val) => val.assignedTo.name,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Assignee" />
       ),
       id: 'Assignee',
-      cell: (row) => {
-        const assignedTo = row.cell.getValue() as User | undefined
+      cell: ({ row }) => {
+        const assignedTo = row.original.assignedTo as User | undefined
         return (
           <GeneralTableSelect
-            key={row.cell.id}
-            id={row.row.original.id}
+            key={row.id}
+            id={row.original.id}
             mutate={updateTasks}
             apiRoute="task"
             paramToUpdate="assignedToId"
@@ -255,18 +264,19 @@ const ListTab: FC<TaskProps> = ({ project }) => {
         <DataTableColumnHeader column={column} title="Due Date" />
       ),
       id: 'Due Date',
-      cell: (row) => {
+      cell: ({ row }) => {
         return (
           <div
             className="flex items-center cursor-default justify-left mr-8 gap-1"
-            key={`calendar-end-${row.row.index}`}
+            key={`calendar-end-${row.index}`}
           >
             {DateTime.fromISO(
-              new Date(row.getValue() as Date).toISOString(),
+              new Date(row.original.dueDate as Date).toISOString(),
             ).toFormat('dd.MM.yyyy')}
           </div>
         )
       },
+      filterFn: 'equalsString',
     },
     {
       accessorKey: 'tags',

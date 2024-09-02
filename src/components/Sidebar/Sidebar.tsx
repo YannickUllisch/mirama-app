@@ -96,7 +96,7 @@ const Sidebar = ({ session }: { session: Session | null }) => {
                   heading={!isCollapsed ? group.group : ''}
                 >
                   {group.items.map((menu) => (
-                    <>
+                    <div key={menu.label}>
                       {!isCollapsed ? (
                         <SidebarItem
                           key={menu.label}
@@ -119,7 +119,7 @@ const Sidebar = ({ session }: { session: Session | null }) => {
                           </GeneralTooltip>
                         </div>
                       )}
-                    </>
+                    </div>
                   ))}
                 </CommandGroup>
               ))}

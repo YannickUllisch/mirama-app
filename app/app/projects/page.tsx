@@ -2,17 +2,16 @@
 import { Button } from '@src/components/ui/button'
 import {
   Archive,
+  Calendar,
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
+  Ellipsis,
   Folder,
-  ListFilter,
   Pencil,
   PencilLine,
   Plus,
-  RefreshCcw,
-  SlidersHorizontal,
-  Trash2,
+  Trash,
 } from 'lucide-react'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import {
@@ -41,6 +40,13 @@ import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import { useMemo, useState } from 'react'
 import CalendarTableSelect from '@src/components/Select/CalendarTableSelect'
 import Link from 'next/link'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@src/components/ui/dropdown-menu'
+import { GoogleBinaryIcon, GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
 
 const ProjectsPage = () => {
   // States
@@ -361,28 +367,54 @@ const ProjectsPage = () => {
       header: 'Actions',
       enableResizing: false,
       cell: ({ row }) => {
+        const [menuOpen, setMenuOpen] = useState(false)
         if (isTeamAdminOrOwner(session)) {
           return (
-            <div className="flex items-center gap-1.5">
-              <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
-                <ConfirmationDialog
-                  dialogTitle={'Are you sure?'}
-                  dialogDesc={'Deleting a project can not be undone!'}
-                  submitButtonText={'Delete'}
-                  onConfirmation={() =>
-                    deleteResources('projekt', [row.original.id], {
-                      mutate: updateProjects,
-                    })
-                  }
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-600 cursor-pointer" />
-                </ConfirmationDialog>
-              </GeneralTooltip>
-              <GeneralTooltip
-                key={`archive_${row.id}`}
-                tipText={row.original.archived ? 'Unarchive' : 'Archive'}
-              >
-                <Archive
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis className="cursor-pointer h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <>
+                  {isTeamAdminOrOwner(session) && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          updateResourceById(
+                            'projekt',
+                            row.original.id,
+                            {
+                              archived: !row.original.archived,
+                            },
+                            { mutate: updateProjects },
+                          )
+                        }
+                        className="gap-3"
+                      >
+                        <Archive className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                        Archive
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-3">
+                        <ConfirmationDialog
+                          dialogTitle={'Are you sure?'}
+                          dialogDesc={'Deleting a project can not be undone!'}
+                          submitButtonText={'Delete'}
+                          onConfirmation={() =>
+                            deleteResources('projekt', [row.original.id], {
+                              mutate: updateProjects,
+                            })
+                          }
+                        >
+                          <>
+                            <Trash className="h-4 w-4 text-red-500" />
+                            Delete
+                          </>
+                        </ConfirmationDialog>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </>
+                <DropdownMenuItem
                   onClick={() =>
                     updateResourceById(
                       'projekt',
@@ -393,18 +425,13 @@ const ProjectsPage = () => {
                       { mutate: updateProjects },
                     )
                   }
-                  className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer "
-                />
-              </GeneralTooltip>
-              {row.original.archived ? undefined : (
-                <GeneralTooltip
-                  key={`gcalendar_${row.id}`}
-                  tipText="Add to Google Calendar"
+                  className="gap-3"
                 >
-                  <CalendarCheck2 className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
-                </GeneralTooltip>
-              )}
-            </div>
+                  <GoogleColoredIcon color="#fff" height="18" width="18" />
+                  Add to Calendar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )
         }
 

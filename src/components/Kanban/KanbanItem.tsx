@@ -32,7 +32,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`px-2 py-4 bg-white dark:bg-neutral-800 shadow-sm rounded-none w-full border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 cursor-pointer'
+      className={`px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer'
       ${isDragging && 'opacity-50'}`}
     >
       <div className="flex gap-1 mb-1 hover:underline">

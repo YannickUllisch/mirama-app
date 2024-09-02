@@ -36,8 +36,7 @@ import { DataTablePagination } from './TablePagination'
 import { Button } from '../ui/button'
 import { ToolbarViewOptions } from './ToolbarViewOptions'
 import ToolbarRefresh from './ToolbarRefresh'
-import { TaskFilterModel } from './Filters/TaskFilterModel'
-import { ProjectFilterModel } from './Filters/ProjectFilterModel'
+import { BasicFilterModel } from '@src/components/Tables/Filters/BasicFilterModel'
 
 interface TableData {
   id: string
@@ -52,7 +51,6 @@ interface DataTableProps<TData extends TableData, TValue> {
   enableRowSelection?: boolean
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
   rowSelection?: RowSelectionState
-
   expandedContent?: React.ReactNode
 
   toolbarOptions?: {
@@ -89,6 +87,7 @@ export function DataTable<TData extends TableData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
   ])
+  const [globalFilter, setGlobalFilter] = useState('')
   const [colSizing, setColSizing] = useState<ColumnSizingState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -114,12 +113,15 @@ export function DataTable<TData extends TableData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    enableGlobalFilter: true,
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
       columnVisibility,
       columnSizing: colSizing,
       columnFilters,
+      globalFilter,
     },
     initialState: {
       pagination: { pageSize: 10 },
@@ -173,12 +175,11 @@ export function DataTable<TData extends TableData, TValue>({
 
         {showFilters && (
           <div className="m-2">
-            {toolbarOptions?.filterOptionType === 'TASK' && (
-              <TaskFilterModel table={table} />
-            )}
-            {toolbarOptions?.filterOptionType === 'PROJECT' && (
-              <ProjectFilterModel table={table} />
-            )}
+            <BasicFilterModel
+              table={table}
+              globalFilter={{ value: globalFilter, setValue: setGlobalFilter }}
+              filterModelType={toolbarOptions?.filterOptionType}
+            />
           </div>
         )}
 
@@ -299,8 +300,7 @@ export function DataTable<TData extends TableData, TValue>({
                 >
                   {dataLoading ? (
                     <div className="flex w-full align-center justify-center">
-                      {' '}
-                      <Loader2 className="h-6 w-6 animate-spin dark:text-white " />{' '}
+                      <Loader2 className="h-6 w-6 animate-spin dark:text-white" />
                     </div>
                   ) : (
                     'No results.'
