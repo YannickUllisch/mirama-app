@@ -26,16 +26,9 @@ export const GET = auth(async (req) => {
       },
       include: {
         assignedTo: true,
-        project: {
-          include: {
-            users: {
-              include: {
-                user: true,
-              },
-            },
-          },
-        },
         tags: true,
+        parent: true,
+        subtasks: true,
       },
     })
     return Response.json(response, { status: 200 })

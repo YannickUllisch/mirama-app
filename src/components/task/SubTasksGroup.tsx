@@ -1,0 +1,55 @@
+import type { Task } from '@prisma/client'
+import React from 'react'
+import { Label } from '../ui/label'
+import { CornerDownRight, X } from 'lucide-react'
+import Link from 'next/link'
+import { capitalize } from '@src/lib/utils'
+import { updateResourceById } from '@src/lib/api/updateResource'
+
+const SubTasksGroup = ({
+  tasks,
+  pathname,
+  mutate,
+}: { tasks: Task[]; pathname: string; mutate?: () => any }) => {
+  return (
+    <>
+      <Label>Subtasks</Label>
+      {tasks.map((task) => (
+        <div className="m-2 p-2 outline-hover outline-dashed hover:bg-hover relative group">
+          <div className="flex justify-between mr-5">
+            <div className="flex gap-2">
+              <CornerDownRight className="w-4 h-4 flex-shrink-0" />
+              <Link
+                href={`${pathname.split('/edit')[0]}/edit/${task.id}`}
+                legacyBehavior
+              >
+                <span className="text-primary font-bold hover:underline cursor-pointer underline-offset-2">
+                  {task.taskCode}
+                </span>
+              </Link>
+              {task.title}
+            </div>
+            <X
+              className="flex-shrink-0 cursor-pointer h-4 w-4 absolute top-1 right-1 invisible group-hover:visible"
+              onClick={() =>
+                updateResourceById(
+                  'task',
+                  task.id,
+                  {
+                    parentId: null,
+                  },
+                  { mutate: mutate },
+                )
+              }
+            />
+          </div>
+          <div className="ml-7 gap-2">
+            {capitalize(task.status.replace('_', ' '))}
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+
+export default SubTasksGroup

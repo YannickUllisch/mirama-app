@@ -10,7 +10,6 @@ import {
 interface ToolTipProps {
   tipText: string
   side?: 'bottom' | 'top' | 'left' | 'right'
-  showToolTip?: boolean
 }
 
 const GeneralTooltip: FC<PropsWithChildren<ToolTipProps>> = ({

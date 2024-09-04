@@ -1,9 +1,7 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { db } from '@src/lib/db'
-import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
-import { v4 } from 'uuid'
-import type { Task } from '@prisma/client'
+import type { Comment } from '@prisma/client'
 
 export const GET = auth(async (req) => {
   try {
@@ -14,28 +12,26 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const name = req.nextUrl.searchParams.get('projectName') as string
-    // If specific ID is given in query, we return only project corresponding to that ID
-    if (name) {
-      const response = await db.task.findMany({
-        where: {
-          project: {
-            name,
-          },
-        },
-        include: {
-          assignedTo: true,
-          tags: true,
-        },
-      })
+    const taskId = req.nextUrl.searchParams.get('taskId') as string
 
-      return Response.json(response, { status: 200 })
+    // If specific ID is given in query, we return only project corresponding to that ID
+    if (!taskId) {
+      return Response.json(
+        { ok: false, message: 'Task ID needs to be defined in request' },
+        { status: 400 },
+      )
     }
 
-    return Response.json(
-      { ok: false, message: 'Project ID needs to be defined in request' },
-      { status: 400 },
-    )
+    const response = await db.comment.findMany({
+      where: {
+        taskId,
+      },
+      include: {
+        user: true,
+      },
+    })
+
+    return Response.json(response, { status: 200 })
   } catch (err: any) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },
@@ -55,54 +51,38 @@ export const POST = auth(async (req) => {
 
     // We will derive a new unique ID and find the teamId based on session server side.
     // This is done for security purposes.
-    const task = (await req.json()) as Omit<Task, 'id'> & {
-      tags?: string[]
-    }
+    const comment = (await req.json()) as Omit<
+      Comment,
+      'id' | 'createdAt' | 'userId'
+    >
 
-    if (!task) {
+    if (!comment) {
       return Response.json(
-        { ok: false, message: 'Task attributes need to be defined in request' },
-        { status: 400 },
-      )
-    }
-
-    // Gathering required information to generate Task Code
-    const project = await db.project.findFirst({
-      where: {
-        id: task.projectId,
-      },
-    })
-    const newId = v4()
-    if (!project) {
-      return Response.json(
-        { ok: false, message: 'Task must be linked to a Project.' },
+        {
+          ok: false,
+          message: 'Comment attributes need to be defined in request',
+        },
         { status: 400 },
       )
     }
 
     // Creating Task
     try {
-      await db.task.create({
+      await db.comment.create({
         data: {
-          ...task,
-          id: newId,
-          teamId: session?.user.teamId ?? 'undefined',
-          parentId: task.parentId ? task.parentId : undefined,
-          taskCode: await generateTaskId(project.name, newId),
-          tags: {
-            connect: task.tags
-              ? task.tags?.map((tagId) => ({ id: tagId }))
-              : undefined,
-          },
+          ...comment,
+          id: undefined,
+          parentId: comment.parentId ? comment.parentId : undefined,
+          userId: session?.user.id ?? 'undefined',
         },
       })
     } catch (err) {
-      console.error('Error in creating Task', err)
+      console.error('Error in creating Comment', err)
       throw err
     }
 
     return Response.json(
-      { ok: true, message: 'Task Successfully created' },
+      { ok: true, message: 'Comment Successfully created' },
       { status: 200 },
     )
   } catch (err: any) {
@@ -131,12 +111,11 @@ export const DELETE = auth(async (req) => {
       )
     }
 
-    await db.task.deleteMany({
+    await db.comment.deleteMany({
       where: {
         id: {
           in: ids,
         },
-        teamId: session?.user.teamId ?? 'undefined',
       },
     })
 
@@ -169,31 +148,25 @@ export const PUT = auth(async (req) => {
       )
     }
 
-    const task = (await req.json()) as Partial<
-      Omit<Task, 'id' | 'teamId'> & {
-        tags?: string[]
-      }
+    const comment = (await req.json()) as Partial<
+      Omit<Comment, 'id' | 'createdAt' | 'useId'>
     >
-    if (!task) {
+    if (!comment) {
       return Response.json(
-        { ok: false, message: 'Task attributes must be defined in request' },
+        { ok: false, message: 'Comment attributes must be defined in request' },
         { status: 400 },
       )
     }
 
     try {
-      await db.task.update({
+      await db.comment.update({
         where: {
           id,
-          teamId: session?.user.teamId,
+          // Users should only be able to edit their own comments, no matter what role.
+          userId: session?.user.id,
         },
         data: {
-          ...task,
-          tags: {
-            connect: task.tags
-              ? task.tags?.map((tagId) => ({ id: tagId }))
-              : undefined,
-          },
+          ...comment,
         },
       })
     } catch (err) {
@@ -201,7 +174,10 @@ export const PUT = auth(async (req) => {
       throw err
     }
 
-    return Response.json({ ok: true, message: 'Task Updated' }, { status: 200 })
+    return Response.json(
+      { ok: true, message: 'Comment Updated' },
+      { status: 200 },
+    )
   } catch (err) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },

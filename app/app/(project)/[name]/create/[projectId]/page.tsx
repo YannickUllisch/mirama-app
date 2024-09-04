@@ -18,6 +18,7 @@ import {
   type Project,
   type ProjectUser,
   type Tag,
+  type Task,
   TaskStatusType,
   type User,
 } from '@prisma/client'
@@ -53,6 +54,7 @@ import {
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import { capitalize } from '@src/lib/utils'
+import { Label } from '@src/components/ui/label'
 
 const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
   // Routing used to return to previous page.
@@ -62,6 +64,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
   const { data: project } = useSWR<
     Project & {
       users: (ProjectUser & { user: User })[]
+      tasks: Task[]
     }
   >(`/api/db/projekt/single/${params.projectId}`)
 
@@ -82,6 +85,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
       projectId: params.projectId as string,
       status: TaskStatusType.NOT_STARTED,
       tags: [],
+      parentId: undefined,
     },
   })
 
@@ -289,7 +293,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
 
           <div className="flex justify-between m-2 gap-5">
             <GeneralAccordion
-              styling={{ accordionClassname: 'w-[50%]' }}
+              styling={{ accordionClassname: 'w-full' }}
               trigger={'Description'}
               defaultOpen
             >
@@ -303,7 +307,7 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
             </GeneralAccordion>
 
             <GeneralAccordion
-              styling={{ accordionClassname: 'w-[50%]' }}
+              styling={{ accordionClassname: 'w-full' }}
               trigger={'Planning'}
               defaultOpen
             >
@@ -394,6 +398,43 @@ const CreateTaskPage = ({ params }: { params: { projectId: string } }) => {
                   )}
                 />
               </div>
+            </GeneralAccordion>
+            <GeneralAccordion
+              trigger={'Related work'}
+              defaultOpen
+              styling={{ accordionClassname: 'w-[80%]' }}
+            >
+              <FormField
+                control={form.control}
+                name="parentId"
+                render={({ field }) => (
+                  <FormItem className="p-1">
+                    <Label>Link to Parent</Label>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      key={`parent-select-${field.value}`}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                          <SelectValue className="m-4 flex items-center" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {project?.tasks.map((task) => (
+                          <SelectItem
+                            value={task.id}
+                            key={`task-item-${task.id}}`}
+                          >
+                            {task.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </GeneralAccordion>
           </div>
         </form>

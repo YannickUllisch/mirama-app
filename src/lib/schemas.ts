@@ -53,4 +53,5 @@ export const TaskSchema = z.object({
   status: TaskStatusTypeSchema.default('NOT_STARTED'),
   projectId: z.string(),
   tags: z.string().array().optional(),
+  parentId: z.string().optional(),
 })

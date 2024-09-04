@@ -56,10 +56,12 @@ model User {
   accounts          Account[]
   // These are needed for overview of personal projets and tasks a user is assigned to.
   tasks             Task[]
+
   team              Team?     @relation(fields: [teamId], references: [id])
   preferredDateType String @default("dd-MM-yyyy")
 
   projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
+  comments      Comment[]
 }
 
 model VerificationToken {
@@ -104,6 +106,11 @@ model Task {
   status       TaskStatusType
   dueDate      DateTime?
 
+  // Allow for recursive subtasks
+  parentId      String? // This field is null for top-level comments
+  parent        Task? @relation("SubTasks", fields: [parentId], references: [id])
+  subtasks      Task[] @relation("SubTasks")
+
   // We allow tasks to be of optional category type.
   categoryId    String?
   category      TaskCategory? @relation(fields: [categoryId], references: [id])
@@ -113,14 +120,13 @@ model Task {
 
   assignedToId String?
   assignedTo   User?          @relation(fields: [assignedToId], references: [id])
-  
   projectId    String
   project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
   teamId       String
   team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-
   tags          Tag[]
+  comments      Comment[]
+  
 }
 
 model TaskCategory {
@@ -215,4 +221,22 @@ enum ExpenseType {
   LICENSING 
   ADMINISTRATIVE
   MISC
+}
+
+model Comment {
+  id        String      @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  taskId    String?
+  task      Task?     @relation(fields: [taskId], references: [id])
+
+  parentId  String? // This field is null for top-level comments
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+
+  // Author of the comment
+  userId  String
+  user    User      @relation(fields: [userId], references: [id])
 }

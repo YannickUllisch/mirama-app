@@ -11,14 +11,16 @@ import {
 } from '@prisma/client'
 import {
   BookCheck,
+  BookOpenCheck,
+  CornerDownRight,
   Loader2,
   MessageCircleWarning,
   Save,
   Undo,
   UserIcon,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import React, { useEffect, useState, useTransition } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { useEffect, useTransition } from 'react'
 import useSWR, { mutate } from 'swr'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -55,6 +57,9 @@ import { Textarea } from '@src/components/ui/textarea'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import { capitalize } from '@src/lib/utils'
+import { Label } from '@src/components/ui/label'
+import Link from 'next/link'
+import SubTasksGroup from '@src/components/task/SubTasksGroup'
 
 const EditTaskPage = ({ params }: { params: { id: string } }) => {
   // States
@@ -62,15 +67,24 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
 
   // Routing - needed to return to previous URL
   const router = useRouter()
+  const pathname = usePathname()
 
   // Fetching Data
-  const { data: task } = useSWR<
+  const { data: task, mutate: updateTasks } = useSWR<
     Task & {
       assignedTo: User
       tags: Tag[]
-      project: Project & { users: ProjectUser & { user: User }[] }
+      parent: Task
+      subtasks: Task[]
     }
   >(`/api/db/task/${params.id}`)
+
+  const { data: project } = useSWR<
+    Project & {
+      users: (ProjectUser & { user: User })[]
+      tasks: Task[]
+    }
+  >(task ? `/api/db/projekt/single/${task.projectId}` : null)
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
@@ -86,6 +100,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
       projectId: '',
       status: TaskStatusType.NOT_STARTED,
       tags: [],
+      parentId: undefined,
     },
   })
 
@@ -100,6 +115,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
         projectId: task.projectId,
         status: task.status as TaskStatusType,
         tags: task.tags.map((tag) => tag.id),
+        parentId: task.parentId ?? undefined,
       })
     }
   }, [task, form])
@@ -249,7 +265,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                             <span>Unassigned</span>
                           </div>
                         </SelectItem>
-                        {task?.project?.users.map((user) => (
+                        {project?.users.map((user) => (
                           <SelectItem
                             value={user.user.id}
                             key={`user-item-${user.user.id}`}
@@ -319,7 +335,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
 
           <div className="flex justify-between m-2 gap-5">
             <GeneralAccordion
-              styling={{ accordionClassname: 'w-[50%]' }}
+              styling={{ accordionClassname: 'w-full' }}
               trigger={'Description'}
               defaultOpen
             >
@@ -334,7 +350,7 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
             </GeneralAccordion>
 
             <GeneralAccordion
-              styling={{ accordionClassname: 'w-[50%]' }}
+              styling={{ accordionClassname: 'w-full' }}
               trigger={'Planning'}
               defaultOpen
             >
@@ -425,6 +441,55 @@ const EditTaskPage = ({ params }: { params: { id: string } }) => {
                     </FormItem>
                   )}
                 />
+              </div>
+            </GeneralAccordion>
+            <GeneralAccordion
+              trigger={'Related work'}
+              defaultOpen
+              styling={{ accordionClassname: 'w-[80%]' }}
+            >
+              <div className="p-1">
+                <FormField
+                  control={form.control}
+                  name="parentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label>Link to Parent</Label>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        key={`parent-select-${field.value}`}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                            <SelectValue className="m-4 flex items-center" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {project?.tasks.map((task) => (
+                            <SelectItem
+                              value={task.id}
+                              key={`task-item-${task.id}}`}
+                            >
+                              <div className="flex gap-2">
+                                <BookOpenCheck className="w-4 h-4" />
+                                {task.title}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="p-1 mt-2">
+                  <SubTasksGroup
+                    pathname={pathname}
+                    tasks={task?.subtasks}
+                    mutate={updateTasks}
+                  />
+                </div>
               </div>
             </GeneralAccordion>
           </div>

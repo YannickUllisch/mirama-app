@@ -88,6 +88,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         description: null,
         categoryId: null,
         assignedToId: null,
+        parentId: null,
         assignedTo: {
           preferredDateType: '',
           email: '',
