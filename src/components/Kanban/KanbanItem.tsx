@@ -36,7 +36,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
       ${isDragging && 'opacity-50'}`}
     >
       <div className="flex gap-1 mb-1 hover:underline">
-        <ClipboardCheck width={15} />{' '}
+        <ClipboardCheck width={15} className="flex-shrink-0" />{' '}
         <Link href={`${path}/edit/${task?.id}`} legacyBehavior>
           <div
             style={{ fontSize: 11 }}

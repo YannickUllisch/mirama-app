@@ -1,6 +1,6 @@
 'use client'
 import React, { useMemo } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -12,15 +12,12 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { ArrowLeft, Ellipsis, FolderOpen } from 'lucide-react'
-import { Separator } from '../ui/separator'
+import { Ellipsis, FolderOpen, Home } from 'lucide-react'
 import HeaderProfile from './HeaderProfile'
-import { useSession } from 'next-auth/react'
+import type { Session } from 'next-auth'
 
-const AppHeader = () => {
+const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
-  const router = useRouter()
-  const { data: session } = useSession()
 
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
@@ -42,15 +39,6 @@ const AppHeader = () => {
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start gap-4">
-        <ArrowLeft
-          className="w-5 h-5 cursor-pointer md:block hidden hover:text-text-secondary"
-          onClick={() => router.back()}
-        />
-
-        <Separator
-          orientation="vertical"
-          className="h-4 bg-neutral-300 dark:bg-neutral-500 md:block hidden"
-        />
         <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
           <Ellipsis strokeWidth={1.3} className="transition-all" />
         </Button>
@@ -61,7 +49,12 @@ const AppHeader = () => {
               {index < pathSegments.length - 1 ? (
                 <>
                   <BreadcrumbItem>
-                    <FolderOpen className="w-4 h-4" />
+                    {segment === 'app' ? (
+                      <Home className="w-4 h-4" />
+                    ) : (
+                      <FolderOpen className="w-4 h-4" />
+                    )}
+
                     <Link
                       href={accumulatedPaths[index]}
                       passHref
@@ -81,9 +74,12 @@ const AppHeader = () => {
               ) : (
                 <BreadcrumbItem>
                   <BreadcrumbPage>
-                    {capitalize(
-                      segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
-                    )}
+                    <div className="flex gap-2 items-center">
+                      {segment === 'app' ? <Home className="w-4 h-4 " /> : null}
+                      {capitalize(
+                        segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
+                      )}
+                    </div>
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               )}

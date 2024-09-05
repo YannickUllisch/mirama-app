@@ -8,9 +8,9 @@ import { updateResourceById } from '@src/lib/api/updateResource'
 
 const SubTasksGroup = ({
   tasks,
-  pathname,
+  projectName,
   mutate,
-}: { tasks: Task[]; pathname: string; mutate?: () => any }) => {
+}: { tasks: Task[]; projectName: string; mutate?: () => any }) => {
   return (
     <>
       <Label>Subtasks</Label>
@@ -19,10 +19,7 @@ const SubTasksGroup = ({
           <div className="flex justify-between mr-5">
             <div className="flex gap-2">
               <CornerDownRight className="w-4 h-4 flex-shrink-0" />
-              <Link
-                href={`${pathname.split('/edit')[0]}/edit/${task.id}`}
-                legacyBehavior
-              >
+              <Link href={`/app/${projectName}/edit/${task.id}`} legacyBehavior>
                 <span className="text-primary font-bold hover:underline cursor-pointer underline-offset-2">
                   {task.taskCode}
                 </span>

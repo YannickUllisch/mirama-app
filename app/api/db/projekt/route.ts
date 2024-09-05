@@ -20,33 +20,14 @@ export const GET = auth(async (req) => {
       req.nextUrl.searchParams.get('archived') as string,
     )
     // If Team Owner or Admin, all projects should be returned.
-    if (isTeamAdminOrOwner(session)) {
-      const adminResponse = await db.project.findMany({
-        where: {
-          teamId: session?.user.teamId,
-          archived: archivedStatus ? archivedStatus : false,
-        },
-        include: {
-          users: {
-            include: {
-              user: true,
-            },
-          },
-          expenses: true,
-        },
-      })
 
-      return Response.json(adminResponse, { status: 200 })
-    }
-
-    // If not Admin or Owner Role, only projects the User is linked to should be returned.
-    const response = await db.project.findMany({
+    const adminResponse = await db.project.findMany({
       where: {
         teamId: session?.user.teamId,
         archived: archivedStatus ? archivedStatus : false,
         users: {
           some: {
-            userId: session?.user.id,
+            userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
           },
         },
       },
@@ -60,7 +41,7 @@ export const GET = auth(async (req) => {
       },
     })
 
-    return Response.json(response, { status: 200 })
+    return Response.json(adminResponse, { status: 200 })
   } catch (err) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },

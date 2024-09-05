@@ -8,7 +8,10 @@ import type { Session } from 'next-auth'
 
 interface TabProps {
   session: Session | null
-  project: Project & { users: (ProjectUser & { user: User })[] }
+  project: Project & {
+    users: (ProjectUser & { user: User })[]
+    tasks: (Task & { assignedTo: User | null })[]
+  }
 }
 
 const BoardTab: FC<TabProps> = ({ project, session }) => {

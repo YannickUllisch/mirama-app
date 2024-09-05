@@ -21,7 +21,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
         <div className="grid md:grid-cols-[auto_1fr] min-h-screen">
           <Sidebar session={session} />
           <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
-            <AppHeader />
+            <AppHeader session={session} />
             <div className="flex-1 p-6 min-h-[700px]">
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </div>
