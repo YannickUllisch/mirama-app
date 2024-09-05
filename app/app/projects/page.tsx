@@ -2,7 +2,6 @@
 import { Button } from '@src/components/ui/button'
 import {
   Archive,
-  Calendar,
   CalendarCheck2,
   CalendarDays,
   ChevronUp,
@@ -46,7 +45,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { GoogleBinaryIcon, GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
+import { GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
 
 const ProjectsPage = () => {
   // States
@@ -372,7 +371,7 @@ const ProjectsPage = () => {
           return (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <Ellipsis className="cursor-pointer h-4 w-4" />
+                <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <>

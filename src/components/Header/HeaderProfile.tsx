@@ -32,7 +32,7 @@ const HeaderProfile = ({
             onlyAvatar ? '' : 'hover:bg-neutral-50 hover:dark:bg-neutral-900'
           } `}
         >
-          <Avatar className="w-8 h-8">
+          <Avatar className="w-10 h-10">
             <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
               {extractFirstLetters(session?.user.name ?? '')}
             </AvatarFallback>
