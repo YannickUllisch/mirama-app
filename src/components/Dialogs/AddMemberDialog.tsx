@@ -40,14 +40,7 @@ import {
   SelectValue,
 } from '../ui/select'
 
-interface AddMemberDialogProps {
-  mutate: KeyedMutator<User[]>
-}
-
-const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
-  children,
-  mutate,
-}) => {
+const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const form = useForm<z.infer<typeof InvitationSchema>>({
@@ -61,7 +54,7 @@ const AddMemberDialog: FC<PropsWithChildren<AddMemberDialogProps>> = ({
 
   const onSubmit = (vals: z.infer<typeof InvitationSchema>) => {
     startTransition(() => {
-      postResource('team/member', vals, { mutate })
+      postResource('team/member', vals)
         .then(() => {
           form.reset()
           setIsOpen(false)
