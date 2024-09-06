@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const envURL = {
   dev: 'http://localhost:3000',
-  prod: 'https://mirage-management.vercel.app',
+  prod: 'https://mirama.vercel.app',
 }
 
 export const api = axios.create({
