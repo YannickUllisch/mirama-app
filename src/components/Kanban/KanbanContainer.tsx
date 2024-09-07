@@ -21,13 +21,12 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   onAddItem,
   itemAmount,
 }) => {
-  const { attributes, setNodeRef, transform, transition, isDragging } =
-    useSortable({
-      id: id,
-      data: {
-        type: 'container',
-      },
-    })
+  const { attributes, setNodeRef, transform, transition } = useSortable({
+    id: id,
+    data: {
+      type: 'container',
+    },
+  })
   return (
     <div
       {...attributes}
@@ -37,8 +36,7 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'w-full h-full p-4 bg-neutral-100 dark:bg-neutral-900 dark:border-neutral-800 border rounded-xl flex flex-col gap-y-4 cursor-default',
-        isDragging && 'opacity-50',
+        'w-full h-screen  p-4 bg-neutral-100 dark:bg-neutral-900 dark:border-neutral-800 border rounded-xl flex flex-col gap-y-4 cursor-default',
       )}
     >
       <div className="flex items-center justify-between">

@@ -300,9 +300,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         (item) => item.id === active.id,
       )
 
-      // Updating status for moved item in database
-      //api.put(`task?id=${active.id.toString().substring(5)}`)
-
       const newItems = [...containers]
       const [removeditem] = newItems[activeContainerIndex].items.splice(
         activeitemIndex,
@@ -313,8 +310,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
 
       const taskId = removeditem.id.toString().substring(5) // remove 'item-' prefix to get the task ID
       const newStatus = newItems[overContainerIndex].title
-
-      updateResourceById('/task', taskId, { status: newStatus })
+      updateResourceById('task', taskId, { status: newStatus })
     }
     setActiveId(null)
   }

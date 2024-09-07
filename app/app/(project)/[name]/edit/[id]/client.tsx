@@ -58,6 +58,7 @@ import { capitalize } from '@src/lib/utils'
 import { Label } from '@src/components/ui/label'
 import SubTasksGroup from '@src/components/task/SubTasksGroup'
 import { updateResourceById } from '@src/lib/api/updateResource'
+import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
 
 const EditTaskForm = ({
   project,
@@ -81,11 +82,18 @@ const EditTaskForm = ({
   // Routing used to return to previous page.
   const router = useRouter()
 
-  const { data: clientSideTask, mutate: updateTasks } = useSWR<
+  const { data: clientSideTask, mutate: updateTask } = useSWR<
     Task & {
       subtasks: Task[]
     }
   >(`/api/db/task/${task.id}`)
+
+  const { data: clientProject, mutate: updateProject } = useSWR<
+    Project & {
+      users: (ProjectUser & { user: User })[]
+      tasks: Task[]
+    }
+  >(`/api/db/projekt/${project.id}`)
 
   // States
   const [isPending, startTransition] = useTransition()
@@ -439,17 +447,19 @@ const EditTaskForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {project?.tasks.map((task) => (
-                          <SelectItem
-                            value={task.id}
-                            key={`task-item-${task.id}}`}
-                          >
-                            <div className="flex gap-2">
-                              <BookOpenCheck className="w-4 h-4" />
-                              {task.title}
-                            </div>
-                          </SelectItem>
-                        ))}
+                        {project?.tasks
+                          .filter((t) => t.id !== task.id)
+                          .map((task) => (
+                            <SelectItem
+                              value={task.id}
+                              key={`task-item-${task.id}}`}
+                            >
+                              <div className="flex gap-2">
+                                <BookOpenCheck className="w-4 h-4" />
+                                {task.title}
+                              </div>
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -460,9 +470,25 @@ const EditTaskForm = ({
                 <SubTasksGroup
                   projectName={project.name}
                   tasks={clientSideTask?.subtasks ?? task.subtasks}
-                  mutate={updateTasks}
+                  mutate={updateTask}
                 />
               </div>
+              <AddSubtaskDialog
+                key={'link-subtask-dialog'}
+                parentId={task.id}
+                subTasks={
+                  clientProject?.tasks.filter((t) => t.parentId !== task.id) ??
+                  []
+                }
+                mutate={() => {
+                  updateProject()
+                  updateTask()
+                }}
+              >
+                <Button className="mt-5" size={'sm'} variant={'default'}>
+                  Link Subtask
+                </Button>
+              </AddSubtaskDialog>
             </div>
           </GeneralAccordion>
         </div>

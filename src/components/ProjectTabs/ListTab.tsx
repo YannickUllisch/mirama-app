@@ -214,8 +214,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
         },
       },
       {
-        accessorKey: 'assignedTo',
-        accessorFn: (val) => val.assignedTo?.name,
+        accessorFn: (val) => val.assignedTo?.name ?? '',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Assignee" />
         ),

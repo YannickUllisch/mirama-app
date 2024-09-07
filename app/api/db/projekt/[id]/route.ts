@@ -13,9 +13,9 @@ export const GET = auth(async (req) => {
 
     // Extracting name from dynamic route
     // TODO: find better way to do this
-    const name = req.nextUrl.pathname.split('/').pop()
+    const id = req.nextUrl.pathname.split('/').pop()
 
-    if (!name) {
+    if (!id) {
       return Response.json(
         { ok: false, message: 'Project ID needs to be defined in request' },
         { status: 400 },
@@ -24,7 +24,7 @@ export const GET = auth(async (req) => {
 
     const response = await db.project.findFirst({
       where: {
-        name,
+        id,
       },
       include: {
         users: {
