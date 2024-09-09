@@ -367,6 +367,8 @@ const ProjectsPage = () => {
       enableResizing: false,
       cell: ({ row }) => {
         const [menuOpen, setMenuOpen] = useState(false)
+        const [delDialogOpen, setDelDialogOpen] = useState(false)
+
         if (isTeamAdminOrOwner(session)) {
           return (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
@@ -393,8 +395,13 @@ const ProjectsPage = () => {
                         <Archive className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
                         Archive
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-3">
+                      <DropdownMenuItem
+                        className="gap-3"
+                        onClick={() => setDelDialogOpen(true)}
+                      >
                         <ConfirmationDialog
+                          open={delDialogOpen}
+                          setOpen={setDelDialogOpen}
                           dialogTitle={'Are you sure?'}
                           dialogDesc={'Deleting a project can not be undone!'}
                           submitButtonText={'Delete'}

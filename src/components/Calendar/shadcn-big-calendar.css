@@ -6,7 +6,6 @@
 button.rbc-btn {
   overflow: visible;
   text-transform: none;
-  -webkit-appearance: button;
   cursor: pointer;
 }
 button[disabled].rbc-btn {
@@ -98,6 +97,7 @@ button.rbc-input::-moz-focus-inner {
 .rbc-today {
   background-color: hsl(var(--accent));
 }
+
 .rbc-toolbar {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -156,7 +156,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-event {
   background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  color: white;
   padding: 5px;
   border-radius: var(--radius);
   cursor: pointer;
@@ -267,6 +267,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-month-row + .rbc-month-row {
   border-top: 1px solid hsl(var(--border));
+
 }
 .rbc-date-cell {
   -webkit-flex: 1 1 0;
@@ -276,9 +277,11 @@ button.rbc-input::-moz-focus-inner {
   padding-right: 5px;
   text-align: right;
 }
-.rbc-date-cell.rbc-now {
-  font-weight: bold;
+
+.rbc-day-bg.rbc-today {
+  background-color: hsl(var(--border)) !important;
 }
+
 .rbc-date-cell > a,
 .rbc-date-cell > a:active,
 .rbc-date-cell > a:visited {
@@ -595,7 +598,7 @@ button.rbc-input::-moz-focus-inner {
   pointer-events: none;
 }
 .rbc-calendar {
-  background-color: hsl(var(--background));
+  background-color: transparent;
   border-radius: var(--radius);
   color: hsl(var(--foreground));
   border: solid 1px hsl(var(--border));
@@ -644,7 +647,7 @@ button.rbc-input::-moz-focus-inner {
   background-color: hsl(var(--card));
 }
 .rbc-day-bg {
-  background-color: hsl(var(--card));
+  background-color: transparent;
   border-right: 1px solid hsl(var(--border));
 }
 .rbc-month-view {

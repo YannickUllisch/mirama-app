@@ -296,7 +296,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               {(getValue() as Tag[]).map((tag) => (
                 <span
                   key={`status-item-${tag.title}`}
-                  className="bg-destructive p-1 rounded-lg"
+                  className="bg-destructive text-white p-1 rounded-lg"
                 >
                   {tag.title}
                 </span>

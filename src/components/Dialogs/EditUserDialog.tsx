@@ -131,7 +131,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
               </div>
             </div>
 
-            <Button disabled={isPending} type="submit">
+            <Button disabled={isPending} type="submit" variant={'success'}>
               Save changes
             </Button>
           </form>

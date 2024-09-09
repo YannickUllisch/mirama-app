@@ -48,7 +48,7 @@ const UserCard: FC<UserCardProps> = ({
           <div>
             <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen}>
               <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent text-xs gap-2 border dark:border-neutral-800 dark:hover:bg-neutral-800">
+                <Button className="bg-transparent text-text text-xs gap-2 border dark:border-neutral-800 hover:bg-hover dark:hover:bg-neutral-700">
                   Edit
                   <Pencil className="w-[10px] h-[10px]" />
                 </Button>

@@ -150,11 +150,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                   Close
                 </Button>
               </DialogClose>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white"
-              >
+              <Button type="submit" disabled={isPending} variant={'success'}>
                 Add
               </Button>
             </DialogFooter>
