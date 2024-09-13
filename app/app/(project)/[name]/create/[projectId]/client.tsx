@@ -25,6 +25,7 @@ import {
 } from '@prisma/client'
 import {
   BookCheck,
+  BookOpenCheck,
   MessageCircleWarning,
   Save,
   Undo,
@@ -56,6 +57,7 @@ import CalendarSelect from '@src/components/Select/CalendarSelect'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import { capitalize } from '@src/lib/utils'
 import { Label } from '@src/components/ui/label'
+import ClearButton from '@src/components/Buttons/ClearButton'
 
 const CreateTaskForm = ({
   project,
@@ -212,7 +214,7 @@ const CreateTaskForm = ({
                 <FormItem>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value ?? ''}
+                    value={field.value ?? undefined}
                     key={`assignedTo-select-${field.value}`}
                   >
                     <FormControl>
@@ -229,12 +231,6 @@ const CreateTaskForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={'undefined'} key={'reset-item'}>
-                        <div className="flex items-center gap-4 ml-1">
-                          <UserIcon className="w-[18px]" />
-                          <span>Unassigned</span>
-                        </div>
-                      </SelectItem>
                       {project?.users.map((user) => (
                         <SelectItem
                           value={user.userId}
@@ -250,6 +246,7 @@ const CreateTaskForm = ({
                           </div>
                         </SelectItem>
                       ))}
+                      <ClearButton onClick={() => field.onChange(undefined)} />
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -287,6 +284,7 @@ const CreateTaskForm = ({
                           {category.title}
                         </SelectItem>
                       ))}
+                      <ClearButton onClick={() => field.onChange(undefined)} />
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -389,6 +387,9 @@ const CreateTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
+                        <ClearButton
+                          onClick={() => field.onChange(undefined)}
+                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -421,6 +422,9 @@ const CreateTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
+                        <ClearButton
+                          onClick={() => field.onChange(undefined)}
+                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -478,9 +482,13 @@ const CreateTaskForm = ({
                           value={task.id}
                           key={`task-item-${task.id}}`}
                         >
-                          {task.title}
+                          <div className="flex gap-2">
+                            <BookOpenCheck className="w-4 h-4" />
+                            {task.title}
+                          </div>
                         </SelectItem>
                       ))}
+                      <ClearButton onClick={() => field.onChange(undefined)} />
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -59,6 +59,7 @@ import { Label } from '@src/components/ui/label'
 import SubTasksGroup from '@src/components/task/SubTasksGroup'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
+import ClearButton from '@src/components/Buttons/ClearButton'
 
 const EditTaskForm = ({
   project,
@@ -103,26 +104,35 @@ const EditTaskForm = ({
   // Form Logic and Functions
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
-    defaultValues: {
-      assignedToId: task.assignedToId ?? 'undefined',
+    values: {
+      assignedToId: task.assignedToId,
       description: task.description,
       title: task.title,
       dueDate: new Date(task.dueDate ?? ''),
-      priority: task.priority as PriorityType,
+      priority: task.priority,
       projectId: task.projectId,
-      status: task.status as TaskStatusType,
+      status: task.status,
       tags: task.tags.map((tag) => tag.id),
       parentId: task.parentId ?? undefined,
       categoryId: task.categoryId ?? undefined,
+    },
+    defaultValues: {
+      assignedToId: undefined,
+      description: '',
+      title: '',
+      dueDate: undefined,
+      priority: PriorityType.LOW,
+      projectId: task.projectId,
+      status: TaskStatusType.NOT_STARTED,
+      tags: [],
+      parentId: undefined,
+      categoryId: undefined,
     },
   })
 
   // Functions
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
-      // To make returning to unassigned state possible, we have to reset the undefined string
-      if (vals.assignedToId === 'undefined' || vals.assignedToId === '')
-        vals.assignedToId = null
       updateResourceById('task', task?.id ?? '', vals).then(() => {
         router.back()
       })
@@ -236,9 +246,9 @@ const EditTaskForm = ({
               render={({ field }) => (
                 <FormItem>
                   <Select
-                    key={`assignedTo-select-${field.value ?? 'undefined'}`}
+                    key={`assignedTo-select-${field.value}`}
                     onValueChange={field.onChange}
-                    value={field.value ?? 'undefined'}
+                    value={field.value ?? undefined}
                   >
                     <FormControl>
                       <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
@@ -254,12 +264,6 @@ const EditTaskForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={'undefined'} key={'reset-item'}>
-                        <div className="flex items-center gap-4 ml-1">
-                          <UserIcon className="w-[18px]" />
-                          <span>Unassigned</span>
-                        </div>
-                      </SelectItem>
                       {project?.users.map((user) => (
                         <SelectItem
                           value={user.user.id}
@@ -275,6 +279,7 @@ const EditTaskForm = ({
                           </div>
                         </SelectItem>
                       ))}
+                      <ClearButton onClick={() => field.onChange(undefined)} />
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -312,14 +317,7 @@ const EditTaskForm = ({
                           {category.title}
                         </SelectItem>
                       ))}
-                      <Button
-                        className="w-full px-2"
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => form.setValue('categoryId', undefined)}
-                      >
-                        Clear
-                      </Button>
+                      <ClearButton onClick={() => field.onChange(undefined)} />
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -425,6 +423,9 @@ const EditTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
+                        <ClearButton
+                          onClick={() => field.onChange(undefined)}
+                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -457,6 +458,9 @@ const EditTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
+                        <ClearButton
+                          onClick={() => field.onChange(undefined)}
+                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -523,6 +527,9 @@ const EditTaskForm = ({
                               </div>
                             </SelectItem>
                           ))}
+                        <ClearButton
+                          onClick={() => field.onChange(undefined)}
+                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
