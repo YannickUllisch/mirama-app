@@ -640,11 +640,11 @@ button.rbc-input::-moz-focus-inner {
   border: none;
 }
 .rbc-time-header {
-  background-color: hsl(var(--card));
+  background-color: transparent;
   border-bottom: 1px solid hsl(var(--border));
 }
 .rbc-time-gutter {
-  background-color: hsl(var(--card));
+  background-color: transparent
 }
 .rbc-day-bg {
   background-color: transparent;

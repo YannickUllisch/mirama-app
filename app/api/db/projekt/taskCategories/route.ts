@@ -64,7 +64,6 @@ export const POST = auth(async (req) => {
       await db.taskCategory.create({
         data: {
           ...category,
-          id: undefined,
         },
       })
     } catch (err) {

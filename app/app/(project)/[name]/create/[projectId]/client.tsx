@@ -19,6 +19,7 @@ import {
   type ProjectUser,
   type Tag,
   type Task,
+  type TaskCategory,
   TaskStatusType,
   type User,
 } from '@prisma/client'
@@ -64,6 +65,7 @@ const CreateTaskForm = ({
   project: Project & {
     users: (ProjectUser & { user: User })[]
     tasks: (Task & { assignedTo: User | null })[]
+    taskCategories: TaskCategory[]
   }
   tags: Tag[]
   projName: string
@@ -87,13 +89,15 @@ const CreateTaskForm = ({
       status: TaskStatusType.NOT_STARTED,
       tags: [],
       parentId: undefined,
+      categoryId: undefined,
     },
   })
 
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
+      if (vals.assignedToId === 'undefined' || vals.assignedToId === '')
+        vals.assignedToId = null
       // To make returning to unassigned state possible, we have to reset the undefined string
-      if (vals.assignedToId === 'undefined') vals.assignedToId = null
       postResource('task', vals).then(() => {
         router.back()
       })
@@ -208,12 +212,20 @@ const CreateTaskForm = ({
                 <FormItem>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value ?? 'undefined'}
+                    value={field.value ?? ''}
                     key={`assignedTo-select-${field.value}`}
                   >
                     <FormControl>
                       <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
-                        <SelectValue className="m-4 flex items-center" />
+                        <SelectValue
+                          className="m-4 flex items-center"
+                          placeholder={
+                            <div className="flex items-center gap-4 ml-1">
+                              <UserIcon className="w-[18px]" />
+                              <span>Unassigned</span>
+                            </div>
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -245,8 +257,45 @@ const CreateTaskForm = ({
               )}
             />
 
-            <div className="flex items-center gap-1 pl-5">
-              Tags:
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    key={`category-select-${field.value}`}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                        <SelectValue
+                          placeholder={
+                            <span className="text-text-secondary">
+                              Select Category
+                            </span>
+                          }
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {project.taskCategories.map((category) => (
+                        <SelectItem
+                          key={`category-item-${category}`}
+                          value={category.id}
+                        >
+                          {category.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex items-center pl-2 gap-2">
+              <span>Tags: </span>
               <FormField
                 control={form.control}
                 name="tags"
@@ -413,7 +462,14 @@ const CreateTaskForm = ({
                   >
                     <FormControl>
                       <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
-                        <SelectValue className="m-4 flex items-center" />
+                        <SelectValue
+                          className="m-4 flex items-center"
+                          placeholder={
+                            <span className="text-text-secondary">
+                              Select Parent
+                            </span>
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

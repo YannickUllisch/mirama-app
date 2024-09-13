@@ -30,7 +30,7 @@ interface MultiSelectContextProps {
   value: string[]
   onValueChange: (value: any) => void
   open: boolean
-  setOpen: (value: boolean) => void
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
   inputValue: string
   setInputValue: React.Dispatch<React.SetStateAction<string>>
   activeIndex: number
@@ -222,8 +222,10 @@ const MultiSelectorInput = forwardRef<
       value={inputValue}
       onValueChange={activeIndex === -1 ? setInputValue : undefined}
       onBlur={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
-      onClick={() => setActiveIndex(-1)}
+      onClick={() => {
+        setOpen((prev) => !prev)
+        setActiveIndex(-1)
+      }}
       className={cn(
         'ml-2 bg-transparent outline-none placeholder:text-muted-foreground text-wrap ewew-full',
         className,

@@ -15,13 +15,10 @@ import { usePathname } from 'next/navigation'
 import type { iMenuList } from '@src/lib/constants'
 import SidebarItem from './SidebarItem'
 import { useState } from 'react'
-import HeaderProfile from '../Header/HeaderProfile'
 import { Button } from '../ui/button'
-import { Separator } from '../ui/separator'
-import type { Session } from 'next-auth'
 import GeneralTooltip from '../GeneralTooltip'
 
-const Sidebar = ({ session }: { session: Session | null }) => {
+const Sidebar = () => {
   const currPath = usePathname()
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
@@ -77,7 +74,7 @@ const Sidebar = ({ session }: { session: Session | null }) => {
       <div
         className={`fixed flex flex-col ${
           isCollapsed ? 'w-[65px]' : 'w-[210px]'
-        } h-full`}
+        } h-full pb-5`}
       >
         <div className="flex justify-center relative">
           <Link href={'/'} className="p-3 flex gap-2">
@@ -161,16 +158,6 @@ const Sidebar = ({ session }: { session: Session | null }) => {
             />
             {!isCollapsed && <span>Collapse</span>}
           </Button>
-        </div>
-
-        <div className="p-3">
-          <Separator
-            className={`mb-4 ${
-              isCollapsed ? 'w-[40px]' : 'w-full'
-            } transition-all duration-500 ease-in-out `}
-          />
-
-          <HeaderProfile session={session} onlyAvatar={isCollapsed} />
         </div>
       </div>
     </aside>

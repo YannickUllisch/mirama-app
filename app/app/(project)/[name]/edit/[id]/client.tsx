@@ -19,6 +19,7 @@ import {
   type ProjectUser,
   type Tag,
   type Task,
+  type TaskCategory,
   TaskStatusType,
   type User,
 } from '@prisma/client'
@@ -35,7 +36,6 @@ import React, { useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
-import { postResource } from '@src/lib/api/postResource'
 import {
   FormControl,
   FormField,
@@ -69,6 +69,7 @@ const EditTaskForm = ({
   project: Project & {
     users: (ProjectUser & { user: User })[]
     tasks: Task[]
+    taskCategories: TaskCategory[]
   }
   tags: Tag[]
   task: Task & {
@@ -76,6 +77,7 @@ const EditTaskForm = ({
     tags: Tag[]
     parent: Task | null
     subtasks: Task[]
+    category: TaskCategory | null
   }
   projName: string
 }) => {
@@ -111,6 +113,7 @@ const EditTaskForm = ({
       status: task.status as TaskStatusType,
       tags: task.tags.map((tag) => tag.id),
       parentId: task.parentId ?? undefined,
+      categoryId: task.categoryId ?? undefined,
     },
   })
 
@@ -239,7 +242,15 @@ const EditTaskForm = ({
                   >
                     <FormControl>
                       <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
-                        <SelectValue className="m-4 flex items-center" />
+                        <SelectValue
+                          className="m-4 flex items-center"
+                          placeholder={
+                            <div className="flex items-center gap-4 ml-1">
+                              <UserIcon className="w-[18px]" />
+                              <span>Unassigned</span>
+                            </div>
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -271,8 +282,53 @@ const EditTaskForm = ({
               )}
             />
 
-            <div className="flex items-center gap-1 pl-5">
-              Tags:
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    key={`category-select-${field.value}`}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                        <SelectValue
+                          placeholder={
+                            <span className="text-text-secondary">
+                              Select Category
+                            </span>
+                          }
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {project.taskCategories.map((category) => (
+                        <SelectItem
+                          key={`category-item-${category}`}
+                          value={category.id}
+                        >
+                          {category.title}
+                        </SelectItem>
+                      ))}
+                      <Button
+                        className="w-full px-2"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => form.setValue('categoryId', undefined)}
+                      >
+                        Clear
+                      </Button>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex items-center pl-2 gap-2">
+              <span>Tags: </span>
               <FormField
                 control={form.control}
                 name="tags"
@@ -443,7 +499,14 @@ const EditTaskForm = ({
                     >
                       <FormControl>
                         <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
-                          <SelectValue className="m-4 flex items-center" />
+                          <SelectValue
+                            className="m-4 flex items-center"
+                            placeholder={
+                              <span className="text-text-secondary">
+                                Select Parent
+                              </span>
+                            }
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

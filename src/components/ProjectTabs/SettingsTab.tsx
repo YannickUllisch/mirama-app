@@ -15,6 +15,7 @@ import useSWR from 'swr'
 import { Separator } from '../ui/separator'
 import AddTaskCategoryDialog from '../Dialogs/AddTaskCategoryDialog'
 import TaskCategoryItem from '../task/TaskCategoryItem'
+import UserMultiSelect from '../Select/UserMultiSelect'
 
 interface SettingsTabProps {
   project: Project & { users: (ProjectUser & { user: User })[] }
@@ -22,7 +23,7 @@ interface SettingsTabProps {
 
 const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
   // Fetching data
-  const { data: _users, isLoading: _usersLoading } = useSWR<User[]>(
+  const { data: users, isLoading: _usersLoading } = useSWR<User[]>(
     '/api/db/team/member',
   )
 
@@ -40,15 +41,66 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
 
   return (
     <>
-      <div className="flex justify-between mb-5">
-        <div>
-          <span className="font-bold" style={{ fontSize: 25 }}>
-            Project managers
-          </span>
-          <div className="grid grid-cols-3 md:grid-cols-5">
+      <div className="flex justify-between mb-5 flex-col">
+        <div className="flex justify-between pb-10">
+          <div className="flex flex-col">
+            <span className="font-medium text-3xl">General</span>
+            <span>{project.name}</span>
+            <span>{project.priority}</span>
+            <span>{project.status}</span>
+          </div>
+
+          {isTeamAdminOrOwner(session) || isSessionProjectManager ? (
+            <div className="flex justify-start gap-2">
+              <Button
+                onClick={() =>
+                  updateResourceById('projekt', project.id, {
+                    archived: !project.archived,
+                  })
+                }
+                className="gap-2 hover:text-orange-500 hover:no-underline hover:bg-hover"
+                variant={'link'}
+              >
+                <Archive className="w-3.5 h-3.5 cursor-pointer" />
+                <span key={'archive-button'}>
+                  {project?.archived ? 'Unarchive' : 'Archive'}
+                </span>
+              </Button>
+
+              <ConfirmationDialog
+                dialogTitle={'Are you sure?'}
+                dialogDesc={'Deleting a project can not be undone!'}
+                submitButtonText={'Delete'}
+                onConfirmation={() =>
+                  deleteResources('projekt', [project.id]).then(() =>
+                    router.push('/app'),
+                  )
+                }
+              >
+                <Button
+                  className="gap-2 hover:text-red-500 hover:no-underline hover:bg-hover"
+                  variant={'link'}
+                >
+                  <Trash2 className="w-3.5 h-3.5 cursor-pointer" />
+                  <span>Delete</span>
+                </Button>
+              </ConfirmationDialog>
+            </div>
+          ) : (
+            <div className="w-full h-[50px]" />
+          )}
+        </div>
+        <Separator className="mb-4" />
+
+        <>
+          <span className="text-xl">Project managers</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 pb-5">
             {project?.users?.map((u) =>
               u.isManager ? (
-                <div className="flex items-center gap-2 p-2">
+                <div
+                  className="flex items-center gap-2 p-2"
+                  key={`manager-${u.userId}`}
+                >
                   <UserAvatar
                     avatarSize={40}
                     username={u.user.name}
@@ -64,26 +116,28 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
               ) : null,
             )}
           </div>
-        </div>
-        {(isTeamAdminOrOwner(session) || isSessionProjectManager) && (
-          <div className="flex items-center max-h-[40px] border hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
-            >
-              Add manager
-            </Button>
-          </div>
-        )}
-      </div>
+          {isTeamAdminOrOwner(session) && (
+            <div className="flex items-center">
+              <UserMultiSelect
+                assignedUsers={project.users.filter((u) => u.isManager) ?? []}
+                users={users ?? []}
+                projectId={project.id}
+              >
+                <Button
+                  variant="link"
+                  className="hover:bg-hover hover:no-underline hover:outline"
+                >
+                  Assign Managers
+                </Button>
+              </UserMultiSelect>
+            </div>
+          )}
+        </>
 
-      <Separator className="mb-4" />
+        <Separator className="mb-4 mt-4" />
 
-      <div className="flex justify-between mb-5">
-        <div>
-          <span className="font-bold" style={{ fontSize: 18 }}>
-            Assigned to project
-          </span>
+        <>
+          <span className="text-xl flex flex-col">Assigned to project</span>
           <div className="p-4">
             <AvatarGroup
               usernames={project?.users?.map((u) => u.user.name ?? '') ?? []}
@@ -92,76 +146,51 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
               fontSize={12}
             />
           </div>
-        </div>
-        {isTeamAdminOrOwner(session) && (
-          <div className="flex max-h-[40px] items-center border hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
+          {isTeamAdminOrOwner(session) && (
+            <div className="flex items-center">
+              <UserMultiSelect
+                assignedUsers={project.users ?? []}
+                users={users ?? []}
+                projectId={project.id}
+              >
+                <Button
+                  variant="link"
+                  className="hover:bg-hover hover:no-underline hover:outline"
+                >
+                  Assign Users
+                </Button>
+              </UserMultiSelect>
+            </div>
+          )}
+        </>
+
+        <Separator className="mb-4 mt-4" />
+        <div className="flex flex-col">
+          <div className="flex justify-between">
+            <span className="text-xl">Task Categories</span>
+            <AddTaskCategoryDialog
+              mutate={updateCategories}
+              projectId={project?.id}
+              key={'task-category-dialog'}
             >
-              Assign Users
-            </Button>
+              <Button
+                variant="link"
+                className="hover:bg-hover hover:no-underline hover:outline outline-none"
+              >
+                Add Task Category
+              </Button>
+            </AddTaskCategoryDialog>
           </div>
-        )}
+          <div className="flex gap-2">
+            {taskCategories?.map((category) => (
+              <TaskCategoryItem
+                key={`category-item-${category.title}`}
+                title={category.title}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-
-      {isTeamAdminOrOwner(session) ? (
-        <div className="flex justify-end gap-2">
-          <Button
-            onClick={() =>
-              updateResourceById('projekt', project.id, {
-                archived: !project.archived,
-              })
-            }
-            className="gap-2"
-          >
-            <Archive className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
-            <span key={'archive-button'}>
-              {project?.archived ? 'Unarchive' : 'Archive'}
-            </span>
-          </Button>
-
-          <ConfirmationDialog
-            dialogTitle={'Are you sure?'}
-            dialogDesc={'Deleting a project can not be undone!'}
-            submitButtonText={'Delete'}
-            onConfirmation={() =>
-              deleteResources('projekt', [project.id]).then(() =>
-                router.push('/app'),
-              )
-            }
-          >
-            <Button className="gap-2">
-              <Trash2 className="w-3.5 h-3.5 cursor-pointer" />
-              <span>Delete</span>
-            </Button>
-          </ConfirmationDialog>
-        </div>
-      ) : (
-        <div className="w-full h-[50px]" />
-      )}
-
-      <AddTaskCategoryDialog
-        mutate={updateCategories}
-        projectId={project?.id}
-        key={'task-category-dialog'}
-      >
-        <div className="flex items-center max-h-[40px] border hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-          <Button
-            style={{ fontSize: 11, textDecoration: 'none' }}
-            variant="link"
-          >
-            Add Task Category
-          </Button>
-        </div>
-      </AddTaskCategoryDialog>
-      {taskCategories?.map((category) => (
-        <TaskCategoryItem
-          iconName={'map-pin'}
-          key={`category-item-${category.title}`}
-          title={category.title}
-        />
-      ))}
     </>
   )
 }

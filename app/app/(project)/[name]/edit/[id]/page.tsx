@@ -20,6 +20,7 @@ const EditTaskPage = async ({
         tags: true,
         parent: true,
         subtasks: true,
+        category: true,
       },
     }),
     db.project.findFirst({
@@ -34,6 +35,7 @@ const EditTaskPage = async ({
           },
         },
         tasks: true,
+        taskCategories: true,
       },
     }),
     db.tag.findMany({

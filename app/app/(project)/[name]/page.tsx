@@ -19,6 +19,7 @@ const ProjectPage = async ({ params }: { params: { name: string } }) => {
         include: {
           assignedTo: true,
           tags: true,
+          category: true,
         },
       },
       users: {

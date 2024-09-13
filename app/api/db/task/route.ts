@@ -26,6 +26,7 @@ export const GET = auth(async (req) => {
         include: {
           assignedTo: true,
           tags: true,
+          category: true,
         },
       })
 

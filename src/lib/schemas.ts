@@ -54,4 +54,10 @@ export const TaskSchema = z.object({
   projectId: z.string(),
   tags: z.string().array().optional(),
   parentId: z.string().optional(),
+  categoryId: z.string().optional(),
+})
+
+export const TaskCategorySchema = z.object({
+  title: z.string(),
+  projectId: z.string(),
 })

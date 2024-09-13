@@ -5,6 +5,7 @@ import {
   type ProjectUser,
   type Tag,
   type Task,
+  type TaskCategory,
   TaskStatusType,
   type User,
 } from '@prisma/client'
@@ -43,10 +44,15 @@ import { deleteResources } from '@src/lib/api/deleteResource'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '../Tables/ColumnHeader'
 import { capitalize } from '@src/lib/utils'
+import { Badge } from '../ui/badge'
 
 interface TaskProps {
   project: Project & {
-    tasks: (Task & { assignedTo: User | null; tags: Tag[] })[]
+    tasks: (Task & {
+      assignedTo: User | null
+      tags: Tag[]
+      category: TaskCategory | null
+    })[]
     users: (ProjectUser & { user: User })[]
   }
 }
@@ -61,6 +67,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
     (Task & {
       assignedTo: User
       tags: Tag[]
+      category: TaskCategory | null
     })[]
   >(`/api/db/task?projectName=${project.name}`)
 
@@ -70,44 +77,52 @@ const ListTab: FC<TaskProps> = ({ project }) => {
     { id: 'taskCode', desc: true },
   ])
 
-  const columns: ColumnDef<Task & { assignedTo: User | null; tags: Tag[] }>[] =
-    [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        size: 30,
-        enableHiding: false,
-        enableSorting: false,
-      },
-      {
-        accessorKey: 'taskCode',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Code" />
-        ),
-      },
-      {
-        accessorKey: 'title',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Title" />
-        ),
-        id: 'title',
-        size: 170,
-        cell: ({ getValue, row }) => {
-          const [menuOpen, setMenuOpen] = useState(false)
+  const columns: ColumnDef<
+    Task & {
+      assignedTo: User | null
+      tags: Tag[]
+      category: TaskCategory | null
+    }
+  >[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      size: 30,
+      enableHiding: false,
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'taskCode',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Code" />
+      ),
+    },
+    {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Title" />
+      ),
+      id: 'title',
+      size: 170,
+      cell: ({ getValue, row }) => {
+        const [menuOpen, setMenuOpen] = useState(false)
 
-          return (
-            <div className="flex items-center justify-between group gap-2 w-full">
+        return (
+          <div className="flex justify-between group w-full">
+            <div className="flex items-center gap-2">
+              {row.original.category && (
+                <Badge variant={'outline'}>{row.original.category.title}</Badge>
+              )}
+
               <Link
                 href={`/app/${project.name}/edit/${row.original.id}`}
                 className="hover:underline"
@@ -115,197 +130,194 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               >
                 {getValue() as string}
               </Link>
+            </div>
 
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis
-                    className={`cursor-pointer flex-shrink-0 ${
-                      !menuOpen && !row.getIsSelected()
-                        ? 'invisible group-hover:visible'
-                        : 'visible'
-                    } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50 w-[25px] h-[25px]`}
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/app/${project.name}/edit/${row.original.id}`}
-                      className="gap-3"
-                    >
-                      <Pencil className="h-4 w-4 " />
-                      Edit Task
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis
+                  className={`cursor-pointer flex-shrink-0 ${
+                    !menuOpen && !row.getIsSelected()
+                      ? 'invisible group-hover:visible'
+                      : 'visible'
+                  } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50 w-[25px] h-[25px]`}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/app/${project.name}/edit/${row.original.id}`}
                     className="gap-3"
-                    onClick={() =>
-                      deleteResources('task', [row.original.id], {
-                        mutate: updateTasks,
-                      })
-                    }
                   >
-                    <Trash className="h-4 w-4 text-red-500" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )
-        },
-      },
-      {
-        accessorKey: 'priority',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Priority" />
-        ),
-        id: 'priority',
-        cell: ({ row, getValue }) => {
-          return (
-            <GeneralTableSelect
-              key={`priority-${row.id}`}
-              id={row.original.id}
-              mutate={updateTasks}
-              initialValue={capitalize(
-                (getValue() as string).replace('_', ' '),
-              )}
-              apiRoute="task"
-              paramToUpdate="priority"
-            >
-              {Object.keys(PriorityType).map((priority) => (
-                <SelectItem key={`priority-item-${priority}`} value={priority}>
-                  {capitalize(priority.replace('_', ' '))}
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        },
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorKey: 'status',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Status" />
-        ),
-        id: 'status',
-        cell: ({ row, getValue }) => {
-          return (
-            <GeneralTableSelect
-              key={`status${row.id}`}
-              id={row.original.id}
-              mutate={updateTasks}
-              initialValue={capitalize(
-                (getValue() as string).replace('_', ' '),
-              )}
-              apiRoute="task"
-              paramToUpdate="status"
-            >
-              {Object.keys(TaskStatusType).map((status) => (
-                <SelectItem key={`status-item-${status}`} value={status}>
-                  {capitalize(status.replace('_', ' '))}
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        },
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorFn: (val) => val.assignedTo?.name ?? '',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Assignee" />
-        ),
-        id: 'Assignee',
-        cell: ({ row }) => {
-          const assignedTo = row.original.assignedTo as User | undefined
-          return (
-            <GeneralTableSelect
-              key={row.id}
-              id={row.original.id}
-              mutate={updateTasks}
-              apiRoute="task"
-              paramToUpdate="assignedToId"
-              initialValue={
-                assignedTo ? (
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      username={assignedTo.name}
-                      avatarSize={25}
-                      fontSize={10}
-                    />
-                    {assignedTo.name}
-                  </div>
-                ) : (
-                  ''
-                )
-              }
-            >
-              {/* We iterate over project.users to only allow members connected to the current project */}
-              {project.users?.map((user) => (
-                <SelectItem value={user.userId} key={`user-item-${user.id}`}>
-                  <div className="flex items-center gap-1">
-                    <UserAvatar
-                      avatarSize={25}
-                      fontSize={10}
-                      username={user.user.name}
-                    />
-                    {user.user.name}
-                  </div>
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        },
-      },
-      {
-        accessorKey: 'dueDate',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Due Date" />
-        ),
-        id: 'Due Date',
-        cell: ({ row }) => {
-          return (
-            <div
-              className="flex items-center cursor-default justify-left mr-8 gap-1"
-              key={`calendar-end-${row.index}`}
-            >
-              {DateTime.fromISO(
-                new Date(row.original.dueDate as Date).toISOString(),
-              ).toFormat('dd.MM.yyyy')}
-            </div>
-          )
-        },
-        filterFn: 'equalsString',
-      },
-      {
-        accessorKey: 'tags',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Tags" />
-        ),
-        id: 'tags',
-        size: 50,
-        cell: ({ row, getValue }) => {
-          return (
-            <div
-              className="flex items-center cursor-default justify-left mr-8 gap-1 flex-wrap"
-              key={`tag-${row.index}`}
-            >
-              {(getValue() as Tag[]).map((tag) => (
-                <span
-                  key={`status-item-${tag.title}`}
-                  className="bg-destructive text-white p-1 rounded-lg"
+                    <Pencil className="h-4 w-4 " />
+                    Edit Task
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="gap-3"
+                  onClick={() =>
+                    deleteResources('task', [row.original.id], {
+                      mutate: updateTasks,
+                    })
+                  }
                 >
-                  {tag.title}
-                </span>
-              ))}
-            </div>
-          )
-        },
+                  <Trash className="h-4 w-4 text-red-500" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )
       },
-    ]
+    },
+    {
+      accessorKey: 'priority',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Priority" />
+      ),
+      id: 'priority',
+      cell: ({ row, getValue }) => {
+        return (
+          <GeneralTableSelect
+            key={`priority-${row.id}`}
+            id={row.original.id}
+            mutate={updateTasks}
+            initialValue={capitalize((getValue() as string).replace('_', ' '))}
+            apiRoute="task"
+            paramToUpdate="priority"
+          >
+            {Object.keys(PriorityType).map((priority) => (
+              <SelectItem key={`priority-item-${priority}`} value={priority}>
+                {capitalize(priority.replace('_', ' '))}
+              </SelectItem>
+            ))}
+          </GeneralTableSelect>
+        )
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      id: 'status',
+      cell: ({ row, getValue }) => {
+        return (
+          <GeneralTableSelect
+            key={`status${row.id}`}
+            id={row.original.id}
+            mutate={updateTasks}
+            initialValue={capitalize((getValue() as string).replace('_', ' '))}
+            apiRoute="task"
+            paramToUpdate="status"
+          >
+            {Object.keys(TaskStatusType).map((status) => (
+              <SelectItem key={`status-item-${status}`} value={status}>
+                {capitalize(status.replace('_', ' '))}
+              </SelectItem>
+            ))}
+          </GeneralTableSelect>
+        )
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorFn: (val) => val.assignedTo?.name ?? '',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Assignee" />
+      ),
+      id: 'Assignee',
+      cell: ({ row }) => {
+        const assignedTo = row.original.assignedTo as User | undefined
+        return (
+          <GeneralTableSelect
+            key={row.id}
+            id={row.original.id}
+            mutate={updateTasks}
+            apiRoute="task"
+            paramToUpdate="assignedToId"
+            initialValue={
+              assignedTo ? (
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    username={assignedTo.name}
+                    avatarSize={25}
+                    fontSize={10}
+                  />
+                  {assignedTo.name}
+                </div>
+              ) : (
+                ''
+              )
+            }
+          >
+            {/* We iterate over project.users to only allow members connected to the current project */}
+            {project.users?.map((user) => (
+              <SelectItem value={user.userId} key={`user-item-${user.id}`}>
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    avatarSize={25}
+                    fontSize={10}
+                    username={user.user.name}
+                  />
+                  {user.user.name}
+                </div>
+              </SelectItem>
+            ))}
+          </GeneralTableSelect>
+        )
+      },
+    },
+    {
+      accessorKey: 'dueDate',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Due Date" />
+      ),
+      id: 'Due Date',
+      cell: ({ row }) => {
+        return (
+          <div
+            className="flex items-center cursor-default justify-left mr-8 gap-1"
+            key={`calendar-end-${row.index}`}
+          >
+            {DateTime.fromISO(
+              new Date(row.original.dueDate as Date).toISOString(),
+            ).toFormat('dd.MM.yyyy')}
+          </div>
+        )
+      },
+      filterFn: 'equalsString',
+    },
+    {
+      accessorKey: 'tags',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tags" />
+      ),
+      id: 'tags',
+      size: 50,
+      cell: ({ row, getValue }) => {
+        return (
+          <div
+            className="flex items-center cursor-default justify-left mr-8 gap-1 flex-wrap"
+            key={`tag-${row.index}`}
+          >
+            {(getValue() as Tag[]).map((tag) => (
+              <span
+                key={`status-item-${tag.title}`}
+                className="bg-destructive text-white p-1 rounded-lg"
+              >
+                {tag.title}
+              </span>
+            ))}
+          </div>
+        )
+      },
+    },
+  ]
 
   return (
     <div className="rounded-sm outline-none">

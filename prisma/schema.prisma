@@ -132,7 +132,6 @@ model Task {
 model TaskCategory {
   id    String    @id @default(cuid())
   title String
-  icon  String // Storing the identifier/name of the Lucide icon
 
   projectId   String
   project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)

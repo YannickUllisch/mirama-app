@@ -26,6 +26,7 @@ const CreateTaskPage = async ({
           assignedTo: true,
         },
       },
+      taskCategories: true,
     },
   })
 

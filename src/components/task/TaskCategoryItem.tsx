@@ -1,19 +1,12 @@
-import React, { type FC, lazy, Suspense } from 'react'
-import { LucideProps } from 'lucide-react'
-import dynamicIconImports from 'lucide-react/dynamicIconImports'
+import React, { type FC } from 'react'
+import { Badge } from '../ui/badge'
 
 interface TaskCategoryItemProps {
   title: string
-  iconName: string
 }
 
-const TaskCategoryItem: FC<TaskCategoryItemProps> = ({ title, iconName }) => {
-  return (
-    <div className="flex gap-2">
-      <span>{iconName}</span>
-      <span>{title}</span>
-    </div>
-  )
+const TaskCategoryItem: FC<TaskCategoryItemProps> = ({ title }) => {
+  return <Badge variant={'outline'}>{title}</Badge>
 }
 
 export default TaskCategoryItem

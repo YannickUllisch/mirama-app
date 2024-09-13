@@ -12,9 +12,10 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { Ellipsis, FolderOpen, Home } from 'lucide-react'
+import { AlignJustify, Ellipsis, FolderOpen, Home, Search } from 'lucide-react'
 import HeaderProfile from './HeaderProfile'
 import type { Session } from 'next-auth'
+import { Input } from '../ui/input'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
@@ -38,9 +39,9 @@ const AppHeader = ({ session }: { session: Session | null }) => {
 
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
-      <div className="flex items-center justify-start gap-4">
+      <div className="flex items-center justify-start gap-4 pl-2">
         <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
-          <Ellipsis strokeWidth={1.3} className="transition-all" />
+          <AlignJustify strokeWidth={1.3} className="transition-all" />
         </Button>
 
         {pathSegments.map((segment, index) => (
@@ -94,7 +95,17 @@ const AppHeader = ({ session }: { session: Session | null }) => {
           </span>
         </Link>
       </div>
-      <div className="block md:hidden">
+      <div className="flex items-center gap-2">
+        <div className="md:block hidden">
+          <div className="flex gap-1 rounded-md px-2 py-1 items-center border border-hover">
+            <Search className="w-5 h-5 text-gray-500" />
+            <Input
+              placeholder="Search..."
+              className="focus-visible:ring-0 flex-1 border-none focus:ring-0 shadow-none focus:outline-none bg-transparent"
+            />
+          </div>
+        </div>
+
         <HeaderProfile session={session} onlyAvatar />
       </div>
     </header>

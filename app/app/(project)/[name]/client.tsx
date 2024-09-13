@@ -5,6 +5,7 @@ import {
   Role,
   type Tag,
   type Task,
+  type TaskCategory,
   type User,
 } from '@prisma/client'
 import React, { useEffect, useState } from 'react'
@@ -36,7 +37,11 @@ const ClientProjectPage = ({
   session,
 }: {
   project: Project & {
-    tasks: (Task & { assignedTo: User | null; tags: Tag[] })[]
+    tasks: (Task & {
+      assignedTo: User | null
+      tags: Tag[]
+      category: TaskCategory | null
+    })[]
     users: (ProjectUser & { user: User })[]
   }
   session: Session

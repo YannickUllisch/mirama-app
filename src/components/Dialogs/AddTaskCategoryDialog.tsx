@@ -1,6 +1,5 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { InvitationSchema } from '@src/lib/schemas'
 import React, {
   type FC,
   type PropsWithChildren,
@@ -12,10 +11,8 @@ import type { z } from 'zod'
 import { Input } from '@src/components/ui/input'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -23,7 +20,7 @@ import {
 import { Button } from '@src/components/ui/button'
 import { postResource } from '@src/lib/api/postResource'
 import type { KeyedMutator } from 'swr'
-import { Role, type TaskCategory, type User } from '@prisma/client'
+import type { TaskCategory } from '@prisma/client'
 import {
   FormControl,
   FormField,
@@ -38,9 +35,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
-import { TaskCategorySchema } from '@/prisma/zod'
-import { v4 } from 'uuid'
 import { Book, MapPin } from 'lucide-react'
+import { TaskCategorySchema } from '@src/lib/schemas'
 
 interface AddTaskCategoryProps {
   mutate: KeyedMutator<TaskCategory[]>
@@ -57,7 +53,6 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
   const form = useForm<z.infer<typeof TaskCategorySchema>>({
     resolver: zodResolver(TaskCategorySchema),
     defaultValues: {
-      icon: '',
       projectId: projectId,
       title: '',
     },
@@ -112,7 +107,7 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
                   </FormItem>
                 )}
               />
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <FormField
                   control={form.control}
                   name="icon"
@@ -142,7 +137,7 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
                     </FormItem>
                   )}
                 />
-              </div>
+              </div> */}
             </div>
 
             <Button disabled={isPending} type="submit">
