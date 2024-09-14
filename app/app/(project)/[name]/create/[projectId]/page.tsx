@@ -1,5 +1,5 @@
 'use server'
-import { redirect } from 'next/navigation'
+import { redirect, useSearchParams } from 'next/navigation'
 import React from 'react'
 import CreateTaskForm from './client'
 import { db } from '@src/lib/db'

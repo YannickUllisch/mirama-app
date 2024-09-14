@@ -31,7 +31,7 @@ import {
   Undo,
   User as UserIcon,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
@@ -74,7 +74,8 @@ const CreateTaskForm = ({
 }) => {
   // Routing used to return to previous page.
   const router = useRouter()
-
+  const searchParams = useSearchParams()
+  const defaultParentId = searchParams.get('parentId')
   // States
   const [isPending, startTransition] = useTransition()
 
@@ -90,7 +91,7 @@ const CreateTaskForm = ({
       projectId: project.id,
       status: TaskStatusType.NOT_STARTED,
       tags: [],
-      parentId: undefined,
+      parentId: defaultParentId ? defaultParentId : undefined,
       categoryId: undefined,
     },
   })

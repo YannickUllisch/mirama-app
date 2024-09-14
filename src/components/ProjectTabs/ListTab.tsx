@@ -152,6 +152,15 @@ const ListTab: FC<TaskProps> = ({ project }) => {
                     Edit Task
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/app/${project.name}/create/${row.original.projectId}?parentId=${row.original.id}`}
+                    className="gap-3"
+                  >
+                    <Pencil className="h-4 w-4 " />
+                    Add Subtask
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="gap-3"
                   onClick={() =>
