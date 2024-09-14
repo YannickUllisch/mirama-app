@@ -13,10 +13,11 @@ import {
 } from '@src/components/ui/form'
 import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
-import { login } from '@src/lib/login'
+
 import { useState, useTransition } from 'react'
 import { LoginSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
+import { login } from '@src/lib/auth/login'
 
 const LoginForm = () => {
   const [error, setError] = useState<string | undefined>('')

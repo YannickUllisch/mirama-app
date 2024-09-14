@@ -29,10 +29,6 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
               avatarSize={80}
               fontSize={30}
             />
-            <div className="flex gap-2">
-              <Button variant={'outline'}>Change Picture</Button>
-              <Button variant={'destructive'}>Delete Picture</Button>
-            </div>
           </div>
 
           <div className="grid grid-cols-2">
@@ -62,7 +58,7 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
           <div className="pb-5 flex flex-col gap-y-3 max-w-[200px]">
             <Label>Password</Label>
             <ChangePasswordDialog>
-              <Button variant={'default'}>Change Password</Button>
+              <Button variant={'secondary'}>Change Password</Button>
             </ChangePasswordDialog>
           </div>
         </div>

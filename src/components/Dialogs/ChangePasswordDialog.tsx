@@ -55,7 +55,6 @@ const ChangePasswordDialog: FC<PropsWithChildren> = ({ children }) => {
           toast.error(res.error)
         }
       })
-      // Server component to Check PWs
     })
   }
 
@@ -66,9 +65,10 @@ const ChangePasswordDialog: FC<PropsWithChildren> = ({ children }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Member to Team</DialogTitle>
+          <DialogTitle>Change you password</DialogTitle>
           <DialogDescription>
-            Input all required attributes to add Member.
+            Please input your current password as well as your new desired
+            password.
           </DialogDescription>
         </DialogHeader>
         <FormProvider {...form}>
@@ -79,7 +79,7 @@ const ChangePasswordDialog: FC<PropsWithChildren> = ({ children }) => {
                 name="old"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Old Password</FormLabel>
+                    <FormLabel>Current Password</FormLabel>
                     <FormControl>
                       <Input {...field} disabled={isPending} type="password" />
                     </FormControl>
