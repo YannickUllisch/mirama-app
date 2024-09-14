@@ -18,11 +18,13 @@
       }
     ],
     "paths": {
+      "@auth": ["./src/lib/auth/auth.ts"],
+      "@db": ["./src/lib/db.ts"],
+      "@api": ["./src/lib/api/api.ts"],
+      "@ui": ["./src/components/ui"],
       "@public/*": ["./public/*"],
       "@src/*": ["./src/*"],
-      "@auth": ["./src/lib/auth.ts"],
-      "@/*": ["./*"],
-      "@api": ["./src/lib/api/api.ts"]
+      "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,4 +1,4 @@
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import { db } from '@src/lib/db'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'

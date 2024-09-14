@@ -21,15 +21,7 @@ import useSWR from 'swr'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
-import {
-  Ellipsis,
-  ListFilter,
-  Pencil,
-  Plus,
-  RefreshCcw,
-  SlidersHorizontal,
-  Trash,
-} from 'lucide-react'
+import { Ellipsis, Pencil, Plus, Trash } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
   DropdownMenu,
@@ -39,7 +31,6 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '../Tables/ColumnHeader'

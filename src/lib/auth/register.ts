@@ -3,7 +3,7 @@ import type * as z from 'zod'
 import { RegisterSchema } from '@src/lib/schemas'
 import bcryptjs from 'bcryptjs'
 import { db } from '@src/lib/db'
-import { signIn } from '@src/lib/auth'
+import { signIn } from '@auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {

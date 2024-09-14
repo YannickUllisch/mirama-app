@@ -1,6 +1,6 @@
 'use server'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import { db } from '@src/lib/db'
 import ClientAppPage from './client'
 import { redirect } from 'next/navigation'

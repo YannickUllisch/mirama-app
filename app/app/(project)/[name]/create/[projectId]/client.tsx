@@ -34,7 +34,6 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import useSWR from 'swr'
 import type { z } from 'zod'
 import { postResource } from '@src/lib/api/postResource'
 import {

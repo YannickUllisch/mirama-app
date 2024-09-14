@@ -13,7 +13,7 @@ import {
 } from '@src/components/ui/form'
 import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
-import { register } from '@src/lib/register'
+import { register } from '@src/lib/auth/register'
 import { useState, useTransition } from 'react'
 import { RegisterSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'

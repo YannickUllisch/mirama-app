@@ -10,6 +10,7 @@ import { Button } from '../ui/button'
 import { ExitFullScreenIcon } from '@radix-ui/react-icons'
 import { LogOut } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import ChangePasswordDialog from '../Dialogs/ChangePasswordDialog'
 
 interface AccountTabProps {
   session: Session | null
@@ -60,7 +61,9 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
 
           <div className="pb-5 flex flex-col gap-y-3 max-w-[200px]">
             <Label>Password</Label>
-            <Button variant={'default'}>Change Password</Button>
+            <ChangePasswordDialog>
+              <Button variant={'default'}>Change Password</Button>
+            </ChangePasswordDialog>
           </div>
         </div>
       </div>

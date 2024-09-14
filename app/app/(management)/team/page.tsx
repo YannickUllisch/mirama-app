@@ -1,5 +1,5 @@
 'use server'
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import { db } from '@src/lib/db'
 import ClientTeamPage from './client'
 import { redirect } from 'next/navigation'

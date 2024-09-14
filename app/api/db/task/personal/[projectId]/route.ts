@@ -1,5 +1,5 @@
 import { db } from '@src/lib/db'
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {

@@ -5,7 +5,7 @@ import AppHeader from '@src/components/Header/AppHeader'
 import type { Metadata } from 'next'
 import SwrProvider from '@src/components/SwrProvider'
 import Footer from '@src/components/Footer/Footer'
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import Sidebar from '@src/components/Sidebar/Sidebar'
 
 export const metadata: Metadata = {

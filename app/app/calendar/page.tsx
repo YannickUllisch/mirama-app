@@ -1,7 +1,7 @@
 'use server'
 import { db } from '@src/lib/db'
 import CalendarClientPage from './client'
-import { auth } from '@src/lib/auth'
+import { auth } from '@auth'
 import { redirect } from 'next/navigation'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 

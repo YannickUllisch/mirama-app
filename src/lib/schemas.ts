@@ -61,3 +61,20 @@ export const TaskCategorySchema = z.object({
   title: z.string(),
   projectId: z.string(),
 })
+
+export const ChangePasswordSchema = z
+  .object({
+    old: z.string(),
+    new: z
+      .string()
+      .min(6, { message: 'Password needs to include at least 6 characters' }),
+    newValidated: z.string(),
+  })
+  .refine((data) => data.new === data.newValidated, {
+    message: 'New Password does not match',
+    path: ['newValidated'],
+  })
+  .refine((data) => data.old !== data.new, {
+    message: 'Please choose a different password',
+    path: ['new'],
+  })

@@ -5,7 +5,7 @@ import {
   authRoutes,
   publicRoutes,
 } from '@/routes'
-import authConfig from '@src/lib/auth.config'
+import authConfig from '@src/lib/auth/auth.config'
 
 const { auth } = NextAuth(authConfig)
 
