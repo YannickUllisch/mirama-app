@@ -387,9 +387,6 @@ const CreateTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
-                        <ClearButton
-                          onClick={() => field.onChange(undefined)}
-                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -422,9 +419,6 @@ const CreateTaskForm = ({
                             {capitalize(type.replace('_', ' '))}
                           </SelectItem>
                         ))}
-                        <ClearButton
-                          onClick={() => field.onChange(undefined)}
-                        />
                       </SelectContent>
                     </Select>
                     <FormMessage />

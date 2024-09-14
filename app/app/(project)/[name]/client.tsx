@@ -43,6 +43,7 @@ const ClientProjectPage = ({
       category: TaskCategory | null
     })[]
     users: (ProjectUser & { user: User })[]
+    taskCategories: TaskCategory[]
   }
   session: Session
 }) => {
@@ -96,13 +97,7 @@ const ClientProjectPage = ({
     {
       id: 'settings',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: (
-        <SettingsTab
-          project={
-            project as Project & { users: (ProjectUser & { user: User })[] }
-          }
-        />
-      ),
+      component: <SettingsTab project={project} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <Settings width={15} /> Settings

@@ -240,6 +240,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             mutate={updateTasks}
             apiRoute="task"
             paramToUpdate="assignedToId"
+            clearable
             initialValue={
               assignedTo ? (
                 <div className="flex items-center gap-1">

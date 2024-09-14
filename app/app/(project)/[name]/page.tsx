@@ -27,6 +27,7 @@ const ProjectPage = async ({ params }: { params: { name: string } }) => {
           user: true,
         },
       },
+      taskCategories: true,
     },
   })
 

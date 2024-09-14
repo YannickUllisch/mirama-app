@@ -72,7 +72,6 @@ const ProjectPage = () => {
               session &&
               tabHeader.roles.includes(session.user.role) && (
                 <TabsTrigger
-                  // className="bg-neutral-700"
                   style={{ fontSize: 12 }}
                   value={tabHeader.id}
                   key={tabHeader.id}

@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { FC, PropsWithChildren } from 'react'
+import { useState, type FC, type PropsWithChildren } from 'react'
 import {
   Select,
   SelectContent,
@@ -8,6 +8,8 @@ import {
   SelectValue,
 } from '@src/components/ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
+import ClearButton from '../Buttons/ClearButton'
+import { SelectItem } from '../ui/select'
 
 interface GeneralTableSelectProps {
   initialValue: string | React.ReactNode
@@ -19,6 +21,7 @@ interface GeneralTableSelectProps {
   stylingProps?: {
     triggerStyle?: string
   }
+  clearable?: boolean
 }
 
 const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
@@ -30,13 +33,14 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
   paramToUpdate,
   onSuccess,
   stylingProps,
+  clearable,
 }) => {
   const onValueChange = async (val: string) => {
     updateResourceById(
       apiRoute,
       id,
       {
-        [paramToUpdate]: val,
+        [paramToUpdate]: val === 'undefined' ? undefined : val,
       },
       { mutate: mutate, onSuccess: onSuccess },
     )
@@ -48,7 +52,14 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
         <SelectValue placeholder={initialValue} />
       </SelectTrigger>
       <SelectContent align="center">
-        <SelectGroup>{children}</SelectGroup>
+        <SelectGroup>
+          {children}
+          {clearable && (
+            <SelectItem value={'undefined'}>
+              <div />
+            </SelectItem>
+          )}
+        </SelectGroup>
       </SelectContent>
     </Select>
   )
