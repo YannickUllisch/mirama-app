@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@src/components/ui/table'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import {
   ChevronDown,
@@ -43,6 +43,7 @@ interface TableData {
 }
 
 interface DataTableProps<TData extends TableData, TValue> {
+  tableIdentifier: string
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   dataLoading?: boolean
@@ -73,6 +74,7 @@ interface DataTableProps<TData extends TableData, TValue> {
 export function DataTable<TData extends TableData, TValue>({
   columns,
   data,
+  tableIdentifier,
   dataLoading,
   sortingState,
   setSortingState,
@@ -83,15 +85,72 @@ export function DataTable<TData extends TableData, TValue>({
   toolbarOptions,
   footerOptions,
 }: DataTableProps<TData, TValue>) {
+  // Persistance, fetching states from Local Storage
+  const getLocalStorageItem = ({ item }: { item: string }) => {
+    if (typeof window === 'undefined') return null // SSR or non-browser environments
+    const savedFilters = localStorage.getItem(item)
+    return savedFilters ? JSON.parse(savedFilters) : null
+  }
+
+  const _setLocalStorageItem = ({
+    item,
+    value,
+  }: { item: string; value: any }) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(item, JSON.stringify(value))
+    }
+  }
+
   // States
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'id', desc: true },
-  ])
+  const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
   const [colSizing, setColSizing] = useState<ColumnSizingState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [showFilters, setShowFilters] = useState<boolean>(false)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    // Check if we're running in the browser environment (not SSR)
+    if (typeof window !== 'undefined') {
+      const savedSizing = getLocalStorageItem({
+        item: `${tableIdentifier}-table-sizing`,
+      })
+      const savedVisibility = getLocalStorageItem({
+        item: `${tableIdentifier}-table-visibility`,
+      })
+      const savedFilters = getLocalStorageItem({
+        item: `${tableIdentifier}-table-filter`,
+      })
+
+      if (savedSizing) setColSizing(savedSizing)
+      if (savedVisibility) setColumnVisibility(savedVisibility)
+      if (savedFilters) setColumnFilters(savedFilters)
+    }
+    // The empty dependency array ensures this effect only runs once
+  }, [tableIdentifier])
+
+  // Saving States in Local Storage
+  useEffect(() => {
+    localStorage.setItem(
+      `${tableIdentifier}-table-filter`,
+      JSON.stringify(columnFilters),
+    )
+  }, [columnFilters, tableIdentifier])
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${tableIdentifier}-table-visibility`,
+      JSON.stringify(columnVisibility),
+    )
+  }, [columnVisibility, tableIdentifier])
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${tableIdentifier}-table-sizing`,
+      JSON.stringify(colSizing),
+    )
+  }, [colSizing, tableIdentifier])
 
   const table = useReactTable({
     data,
@@ -141,10 +200,16 @@ export function DataTable<TData extends TableData, TValue>({
             {toolbarOptions?.addToolbarleft}
             {toolbarOptions?.showFilterOption && (
               <div
-                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+                className="relative flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
                 onClick={() => setShowFilters((checked) => !checked)}
                 onKeyDown={() => setShowFilters((checked) => !checked)}
               >
+                {columnFilters.length > 0 || globalFilter !== '' ? (
+                  <span className="absolute top-0 right-0 h-2 w-2 bg-rose-500 rounded-full">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                  </span>
+                ) : null}
+
                 <SlidersHorizontal width={15} className="ml-2" />
                 <Button
                   style={{ fontSize: 11, textDecoration: 'none' }}

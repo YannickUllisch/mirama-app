@@ -68,6 +68,7 @@ const BudgetPage = () => {
           defaultOpen={false}
         >
           <DataTable
+            tableIdentifier={`${project.name}-budget-table`}
             columns={columns}
             data={project.expenses ?? []}
             dataLoading={isLoading}

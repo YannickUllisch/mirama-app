@@ -220,6 +220,7 @@ const ArchivePage = () => {
         <span style={{ fontSize: 20 }}>Archive</span>
       </div>
       <DataTable
+        tableIdentifier="archivedTable"
         toolbarOptions={{
           showViewOptionsicon: true,
           showFilterOption: true,

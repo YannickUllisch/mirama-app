@@ -21,7 +21,13 @@ import useSWR from 'swr'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { DateTime } from 'luxon'
-import { Ellipsis, Pencil, Plus, Trash } from 'lucide-react'
+import {
+  BetweenHorizonalStart,
+  Ellipsis,
+  Pencil,
+  Plus,
+  Trash,
+} from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
   DropdownMenu,
@@ -90,6 +96,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       size: 30,
       enableHiding: false,
       enableSorting: false,
+      enableResizing: false,
     },
     {
       accessorKey: 'taskCode',
@@ -148,7 +155,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
                     href={`/app/${project.name}/create/${row.original.projectId}?parentId=${row.original.id}`}
                     className="gap-3"
                   >
-                    <Pencil className="h-4 w-4 " />
+                    <BetweenHorizonalStart className="h-4 w-4 " />
                     Add Subtask
                   </Link>
                 </DropdownMenuItem>
@@ -300,6 +307,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       ),
       id: 'tags',
       size: 50,
+      enableResizing: false,
       cell: ({ row, getValue }) => {
         return (
           <div
@@ -323,6 +331,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
   return (
     <div className="rounded-sm outline-none">
       <DataTable
+        tableIdentifier="taskTabTable"
         columns={columns}
         data={tasks ?? project.tasks}
         enableRowSelection

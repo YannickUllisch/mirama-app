@@ -100,6 +100,7 @@ const TagsTab = () => {
         }
       />
       <DataTable
+        tableIdentifier="tagsTable"
         enableRowSelection
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
