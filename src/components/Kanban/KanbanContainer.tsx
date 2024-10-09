@@ -36,7 +36,7 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'w-full h-screen  p-4 bg-neutral-100 dark:bg-neutral-900 dark:border-neutral-800 border rounded-xl flex flex-col gap-y-4 cursor-default',
+        'w-full h-screen p-4 bg-neutral-100 dark:bg-neutral-900 dark:border-neutral-800 border rounded-xl flex flex-col gap-y-4 cursor-default',
       )}
     >
       <div className="flex items-center justify-between">
@@ -54,7 +54,7 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
           <Ellipsis className="cursor-pointer w-4 h-4" />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">{children}</div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">{children}</div>
     </div>
   )
 }

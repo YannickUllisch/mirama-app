@@ -53,7 +53,7 @@ export const CalendarTableSelect: FC<CalendarTableSelectProps> = ({
         open={popupOpen}
         onOpenChange={() => setPopupOpen((curr) => !curr)}
       >
-        <PopoverTrigger>
+        <PopoverTrigger className="bg-black">
           <CalendarDays className="h-4 w-4 ml-1 cursor-pointer" />
         </PopoverTrigger>
         <PopoverContent>

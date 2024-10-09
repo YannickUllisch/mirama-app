@@ -124,7 +124,7 @@ const Sidebar = () => {
           </Command>
         </div>
         <div className="flex items-start justify-start flex-col p-2 w-full">
-          <Button
+          {/* <Button
             variant={'ghost'}
             className={`${
               isCollapsed ? 'w-[50px]' : 'w-full'
@@ -142,7 +142,7 @@ const Sidebar = () => {
           >
             <CircleHelp className="w-5 h-5" />
             {!isCollapsed && <span>Help</span>}
-          </Button>
+          </Button> */}
 
           <Button
             variant={'ghost'}
