@@ -21,11 +21,10 @@ import {
   type User,
 } from '@prisma/client'
 import useSWR from 'swr'
-import type { ColumnDef, SortingState } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
-import { useSession } from 'next-auth/react'
 import { DateTime } from 'luxon'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'

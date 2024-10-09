@@ -14,6 +14,7 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  type Updater,
 } from '@tanstack/react-table'
 import {
   Table,
@@ -23,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@src/components/ui/table'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useState } from 'react'
 import {
   ChevronDown,
@@ -40,6 +41,13 @@ import { BasicFilterModel } from '@src/components/Tables/Filters/BasicFilterMode
 
 interface TableData {
   id: string
+}
+
+// Persistance, fetching states from Local Storage
+const getLocalStorageItem = ({ item }: { item: string }) => {
+  if (typeof window === 'undefined') return null
+  const savedFilters = localStorage.getItem(item)
+  return savedFilters ? JSON.parse(savedFilters) : null
 }
 
 interface DataTableProps<TData extends TableData, TValue> {
@@ -85,72 +93,99 @@ export function DataTable<TData extends TableData, TValue>({
   toolbarOptions,
   footerOptions,
 }: DataTableProps<TData, TValue>) {
-  // Persistance, fetching states from Local Storage
-  const getLocalStorageItem = ({ item }: { item: string }) => {
-    if (typeof window === 'undefined') return null // SSR or non-browser environments
-    const savedFilters = localStorage.getItem(item)
-    return savedFilters ? JSON.parse(savedFilters) : null
-  }
-
-  const _setLocalStorageItem = ({
-    item,
-    value,
-  }: { item: string; value: any }) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(item, JSON.stringify(value))
-    }
-  }
-
   // States
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-  const [colSizing, setColSizing] = useState<ColumnSizingState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [showFilters, setShowFilters] = useState<boolean>(false)
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
+    // Check the localStorage if a filterModel is defined
+    const localStorageItem = getLocalStorageItem({
+      item: `${tableIdentifier}-table-sizing`,
+    })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    // Check if we're running in the browser environment (not SSR)
-    if (typeof window !== 'undefined') {
-      const savedSizing = getLocalStorageItem({
-        item: `${tableIdentifier}-table-sizing`,
-      })
-      const savedVisibility = getLocalStorageItem({
+    if (localStorageItem) return localStorageItem
+
+    return { items: [] }
+  })
+
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      // Check the localStorage if a filterModel is defined
+      const localStorageItem = getLocalStorageItem({
         item: `${tableIdentifier}-table-visibility`,
       })
-      const savedFilters = getLocalStorageItem({
-        item: `${tableIdentifier}-table-filter`,
-      })
 
-      if (savedSizing) setColSizing(savedSizing)
-      if (savedVisibility) setColumnVisibility(savedVisibility)
-      if (savedFilters) setColumnFilters(savedFilters)
-    }
-    // The empty dependency array ensures this effect only runs once
-  }, [tableIdentifier])
+      if (localStorageItem) return localStorageItem
 
-  // Saving States in Local Storage
-  useEffect(() => {
+      return { items: [] }
+    },
+  )
+
+  const [showFilters, setShowFilters] = useState<boolean>(() => {
+    // We ensure the filters menu is open, when filters are selected
+    const localStorageItem = getLocalStorageItem({
+      item: `${tableIdentifier}-table-filter`,
+    }) as ColumnFiltersState
+
+    if (localStorageItem) return localStorageItem.length > 0
+
+    return false
+  })
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
+    // Local storage needs to be defined
+    const localStorageItem = getLocalStorageItem({
+      item: `${tableIdentifier}-table-filter`,
+    })
+
+    if (localStorageItem) return localStorageItem
+
+    return { items: [] }
+  })
+
+  const onColumnFiltersChange = (filterModel: Updater<ColumnFiltersState>) => {
+    // Convert to columnfiltersstate
+    const newFilters =
+      typeof filterModel === 'function'
+        ? filterModel(columnFilters)
+        : filterModel
+
+    // Save new filter in localStorage
     localStorage.setItem(
       `${tableIdentifier}-table-filter`,
-      JSON.stringify(columnFilters),
+      JSON.stringify(newFilters),
     )
-  }, [columnFilters, tableIdentifier])
+    setColumnFilters(newFilters)
+  }
 
-  useEffect(() => {
+  const onColumnVisibilityChange = (
+    visibilityModel: Updater<VisibilityState>,
+  ) => {
+    const newVisibilityState =
+      typeof visibilityModel === 'function'
+        ? visibilityModel(columnVisibility)
+        : visibilityModel
+
     localStorage.setItem(
       `${tableIdentifier}-table-visibility`,
-      JSON.stringify(columnVisibility),
+      JSON.stringify(newVisibilityState),
     )
-  }, [columnVisibility, tableIdentifier])
+    setColumnVisibility(newVisibilityState)
+  }
 
-  useEffect(() => {
+  const onColumnSizingChange = (
+    columnSizeModel: Updater<ColumnSizingState>,
+  ) => {
+    const newColSizeState =
+      typeof columnSizeModel === 'function'
+        ? columnSizeModel(columnSizing)
+        : columnSizeModel
+
     localStorage.setItem(
       `${tableIdentifier}-table-sizing`,
-      JSON.stringify(colSizing),
+      JSON.stringify(newColSizeState),
     )
-  }, [colSizing, tableIdentifier])
+    setColumnSizing(newColSizeState)
+  }
 
   const table = useReactTable({
     data,
@@ -164,21 +199,21 @@ export function DataTable<TData extends TableData, TValue>({
     enableRowSelection,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange,
     getRowCanExpand: () => true,
     enableColumnResizing: true,
-    onColumnSizingChange: setColSizing,
+    onColumnSizingChange,
     columnResizeMode: 'onChange',
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange,
     onGlobalFilterChange: setGlobalFilter,
     enableGlobalFilter: true,
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
       columnVisibility,
-      columnSizing: colSizing,
+      columnSizing,
       columnFilters,
       globalFilter,
     },
