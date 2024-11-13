@@ -12,10 +12,12 @@ import {
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
-import { AlignJustify, Ellipsis, FolderOpen, Home, Search } from 'lucide-react'
+import { AlignJustify, FolderOpen, Home, Search } from 'lucide-react'
 import HeaderProfile from './HeaderProfile'
 import type { Session } from 'next-auth'
 import { Input } from '../ui/input'
+import { SidebarTrigger } from '../ui/sidebar'
+import { Separator } from '../ui/separator'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
@@ -40,6 +42,8 @@ const AppHeader = ({ session }: { session: Session | null }) => {
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start gap-4 pl-2">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
         <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
           <AlignJustify strokeWidth={1.3} className="transition-all" />
         </Button>

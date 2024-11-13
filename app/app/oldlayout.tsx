@@ -6,8 +6,7 @@ import type { Metadata } from 'next'
 import SwrProvider from '@src/components/SwrProvider'
 import Footer from '@src/components/Footer/Footer'
 import { auth } from '@auth'
-import { SidebarInset, SidebarProvider } from '@src/components/ui/sidebar'
-import { AppSidebar } from '@src/components/Sidebar/ShadSidebar'
+import Sidebar from '@src/components/Sidebar/Sidebar'
 
 export const metadata: Metadata = {
   title: 'Projects | Mirama',
@@ -19,16 +18,16 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <SessionWrapper>
       <SwrProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
+        <div className="grid md:grid-cols-[auto_1fr] min-h-screen">
+          <Sidebar />
+          <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
             <AppHeader session={session} />
             <div className="flex-1 p-6 min-h-[700px]">
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </div>
             <Footer />
-          </SidebarInset>
-        </SidebarProvider>
+          </div>
+        </div>
       </SwrProvider>
     </SessionWrapper>
   )
