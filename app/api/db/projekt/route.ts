@@ -5,6 +5,7 @@ import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const GET = auth(async (req) => {
   try {
@@ -21,27 +22,9 @@ export const GET = auth(async (req) => {
     )
     // If Team Owner or Admin, all projects should be returned.
 
-    const adminResponse = await db.project.findMany({
-      where: {
-        teamId: session?.user.teamId,
-        archived: archivedStatus ? archivedStatus : false,
-        users: {
-          some: {
-            userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
-          },
-        },
-      },
-      include: {
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        expenses: true,
-      },
-    })
+    const response = await fetchAllAssignedProjects(archivedStatus)
 
-    return Response.json(adminResponse, { status: 200 })
+    return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },

@@ -1,9 +1,8 @@
 'use server'
-import { db } from '@src/lib/db'
 import CalendarClientPage from './client'
 import { auth } from '@auth'
 import { redirect } from 'next/navigation'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 const CalendarPage = async () => {
   const session = await auth()
@@ -11,17 +10,9 @@ const CalendarPage = async () => {
   if (!session) {
     redirect('/auth/login')
   }
-  const projects = await db.project.findMany({
-    where: {
-      teamId: session?.user.teamId,
-      archived: false,
-      users: {
-        some: {
-          userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
-        },
-      },
-    },
-  })
+
+  const projects = await fetchAllAssignedProjects(false)
+
   return <CalendarClientPage key={'client-calendar-page'} projects={projects} />
 }
 

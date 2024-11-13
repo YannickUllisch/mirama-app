@@ -2,7 +2,7 @@
 import type * as z from 'zod'
 import { auth } from '@auth'
 import { ChangePasswordSchema } from '@src/lib/schemas'
-import { getUserById } from '../api/queries/user'
+import { getUserById } from '../api/queries/User/UserQueries'
 import bcryptjs from 'bcryptjs'
 import { db } from '@db'
 

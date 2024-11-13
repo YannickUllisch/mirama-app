@@ -66,7 +66,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       tags: Tag[]
       category: TaskCategory | null
     })[]
-  >(`/api/db/task?projectName=${project.name}`)
+  >(`/api/db/task?id=${project.id}`)
 
   // Table states
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})

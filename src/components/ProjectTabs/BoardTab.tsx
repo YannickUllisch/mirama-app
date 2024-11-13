@@ -19,7 +19,7 @@ const BoardTab: FC<TabProps> = ({ project, session }) => {
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?projectName=${project?.name}`)
+  >(`/api/db/task?id=${project?.id}`)
 
   return (
     <KanbanBoard

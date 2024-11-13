@@ -3,6 +3,7 @@ import { db } from '@src/lib/db'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
 import { isRoleHigher } from '@src/lib/utils'
+import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -13,14 +14,7 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await db.user.findMany({
-      where: {
-        teamId: session?.user.teamId,
-      },
-      orderBy: {
-        role: 'asc',
-      },
-    })
+    const response = await fetchAllTeamMembers(session)
 
     return Response.json(response, { status: 200 })
   } catch (err) {

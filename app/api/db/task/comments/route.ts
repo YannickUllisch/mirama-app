@@ -2,6 +2,7 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { db } from '@src/lib/db'
 import type { Comment } from '@prisma/client'
+import { fetchCommentsByTaskId } from '@src/lib/api/queries/Tasks/CommentQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -22,14 +23,7 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await db.comment.findMany({
-      where: {
-        taskId,
-      },
-      include: {
-        user: true,
-      },
-    })
+    const response = fetchCommentsByTaskId(taskId)
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

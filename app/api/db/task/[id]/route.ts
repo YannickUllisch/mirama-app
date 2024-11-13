@@ -1,7 +1,6 @@
-import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { redirect } from 'next/navigation'
+import { fetchTaskById } from '@src/lib/api/queries/Tasks/TaskQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -20,17 +19,8 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await db.task.findFirst({
-      where: {
-        id,
-      },
-      include: {
-        assignedTo: true,
-        tags: true,
-        parent: true,
-        subtasks: true,
-      },
-    })
+    const response = fetchTaskById(id)
+
     return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(

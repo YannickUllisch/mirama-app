@@ -3,47 +3,18 @@ import { auth } from '@auth'
 import { db } from '@src/lib/db'
 import { redirect } from 'next/navigation'
 import EditTaskForm from './client'
+import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'
+import { fetchSingleProjectByName } from '@src/lib/api/queries/Project/ProjectQuerys'
+import { fetchTaskById } from '@src/lib/api/queries/Tasks/TaskQueries'
 
 const EditTaskPage = async ({
   params,
 }: { params: { name: string; id: string } }) => {
   const session = await auth()
 
-  // Fetching in parallel
-  const [task, project, tags] = await Promise.all([
-    db.task.findFirst({
-      where: {
-        id: params.id,
-      },
-      include: {
-        assignedTo: true,
-        tags: true,
-        parent: true,
-        subtasks: true,
-        category: true,
-      },
-    }),
-    db.project.findFirst({
-      where: {
-        name: params.name,
-        teamId: session?.user.teamId,
-      },
-      include: {
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        tasks: true,
-        taskCategories: true,
-      },
-    }),
-    db.tag.findMany({
-      where: {
-        teamId: session?.user.teamId,
-      },
-    }),
-  ])
+  const tags = await fetchAllTeamTags(session)
+  const project = await fetchSingleProjectByName(params.name)
+  const task = await fetchTaskById(params.id)
 
   if (!task) {
     redirect(`/app/${params.name}`)

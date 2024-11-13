@@ -1,6 +1,7 @@
 import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
+import { fetchAllPersonalTasks } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -11,12 +12,8 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await db.task.findMany({
-      where: {
-        assignedToId: session?.user.id,
-        teamId: session?.user.teamId ?? 'undefined',
-      },
-    })
+    const response = await fetchAllPersonalTasks(session)
+
     return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(

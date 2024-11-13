@@ -4,6 +4,7 @@ import { db } from '@src/lib/db'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { v4 } from 'uuid'
 import type { Task } from '@prisma/client'
+import { fetchTasksByProjectId } from '@src/lib/api/queries/Tasks/TaskQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -14,29 +15,18 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const name = req.nextUrl.searchParams.get('projectName') as string
-    // If specific ID is given in query, we return only project corresponding to that ID
-    if (name) {
-      const response = await db.task.findMany({
-        where: {
-          project: {
-            name,
-          },
-        },
-        include: {
-          assignedTo: true,
-          tags: true,
-          category: true,
-        },
-      })
+    const id = req.nextUrl.searchParams.get('id') as string
 
-      return Response.json(response, { status: 200 })
+    if (!id) {
+      return Response.json(
+        { ok: false, message: 'ProjectId needs to be defined in request' },
+        { status: 400 },
+      )
     }
 
-    return Response.json(
-      { ok: false, message: 'Project ID needs to be defined in request' },
-      { status: 400 },
-    )
+    const response = await fetchTasksByProjectId(id)
+
+    return Response.json(response, { status: 200 })
   } catch (err: any) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },

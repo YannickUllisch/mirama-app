@@ -1,0 +1,79 @@
+import { auth } from '@auth'
+import { db } from '@db'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+
+export const fetchSingleProjectByName = async (name: string) => {
+  const session = await auth()
+
+  const project = await db.project.findFirst({
+    where: {
+      name,
+      teamId: session?.user.teamId,
+    },
+    include: {
+      tasks: {
+        include: {
+          assignedTo: true,
+          tags: true,
+          category: true,
+        },
+      },
+      users: {
+        include: {
+          user: true,
+        },
+      },
+      taskCategories: true,
+    },
+  })
+
+  return project
+}
+
+export const fetchSingleProjectById = async (id: string) => {
+  const project = await db.project.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      users: {
+        include: {
+          user: true,
+        },
+      },
+      tasks: {
+        include: {
+          assignedTo: true,
+        },
+      },
+      taskCategories: true,
+    },
+  })
+
+  return project
+}
+
+export const fetchAllAssignedProjects = async (archivedStatus?: boolean) => {
+  const session = await auth()
+  const response = await db.project.findMany({
+    where: {
+      teamId: session?.user.teamId,
+      archived: archivedStatus ? archivedStatus : false,
+      users: {
+        some: {
+          userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
+        },
+      },
+    },
+    include: {
+      users: {
+        include: {
+          user: true,
+        },
+      },
+      expenses: true,
+    },
+  })
+
+  return response
+}

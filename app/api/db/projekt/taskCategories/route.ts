@@ -2,6 +2,7 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { db } from '@src/lib/db'
 import { Role, type TaskCategory } from '@prisma/client'
+import { fetchTaskCategoriesByProject } from '@src/lib/api/queries/TaskCategory/TaskCategoryQuerys'
 
 export const GET = auth(async (req) => {
   try {
@@ -21,11 +22,7 @@ export const GET = auth(async (req) => {
     }
 
     // If specific ID is given in query, we return only project corresponding to that ID
-    const response = await db.taskCategory.findMany({
-      where: {
-        projectId,
-      },
-    })
+    const response = await fetchTaskCategoriesByProject(projectId)
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

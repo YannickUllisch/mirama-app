@@ -118,6 +118,7 @@ const ClientProjectPage = ({
       router.replace(`${pathname}?${newParams.toString()}`)
     }
   }, [tab, currentTab, pathname, searchParams, router])
+
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
       <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">

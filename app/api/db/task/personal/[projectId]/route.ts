@@ -1,6 +1,7 @@
 import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
+import { fetchPersonalTasksByProjectId } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -12,7 +13,6 @@ export const GET = auth(async (req) => {
     }
 
     // Extracting name from dynamic route
-    // TODO: find better way to do this
     const projectId = req.nextUrl.pathname.split('/').pop()
 
     if (!projectId) {
@@ -22,13 +22,8 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await db.task.findMany({
-      where: {
-        id: projectId,
-        assignedToId: session?.user.id,
-        teamId: session?.user.teamId ?? 'undefined',
-      },
-    })
+    const response = await fetchPersonalTasksByProjectId(projectId, session)
+
     return Response.json(response, { status: 200 })
   } catch (err) {
     return Response.json(

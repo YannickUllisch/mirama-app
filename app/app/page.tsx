@@ -1,9 +1,8 @@
 'use server'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { auth } from '@auth'
-import { db } from '@src/lib/db'
 import ClientAppPage from './client'
 import { redirect } from 'next/navigation'
+import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 const AppHomePage = async () => {
   const session = await auth()
@@ -12,24 +11,7 @@ const AppHomePage = async () => {
     return redirect('/auth/signin?callbackUrl=/app')
   }
 
-  const projects = await db.project.findMany({
-    where: {
-      teamId: session?.user.teamId,
-      archived: false,
-      users: {
-        some: {
-          userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
-        },
-      },
-    },
-    include: {
-      users: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  })
+  const projects = await fetchAllAssignedProjects()
 
   return <ClientAppPage session={session} projects={projects} />
 }

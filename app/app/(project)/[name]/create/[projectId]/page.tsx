@@ -2,39 +2,17 @@
 import { redirect } from 'next/navigation'
 import React from 'react'
 import CreateTaskForm from './client'
-import { db } from '@src/lib/db'
 import { auth } from '@auth'
+import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
+import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'
 
 const CreateTaskPage = async ({
   params,
 }: { params: { name: string; projectId: string } }) => {
   const session = await auth()
 
-  const project = await db.project.findFirst({
-    where: {
-      id: params.projectId,
-      teamId: session?.user.teamId,
-    },
-    include: {
-      users: {
-        include: {
-          user: true,
-        },
-      },
-      tasks: {
-        include: {
-          assignedTo: true,
-        },
-      },
-      taskCategories: true,
-    },
-  })
-
-  const tags = await db.tag.findMany({
-    where: {
-      teamId: session?.user.teamId,
-    },
-  })
+  const project = await fetchSingleProjectById(params.projectId)
+  const tags = await fetchAllTeamTags(session)
 
   if (!project) {
     redirect(`/app/${params.name}`)

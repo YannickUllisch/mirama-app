@@ -1,6 +1,6 @@
-import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
+import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const GET = auth(async (req) => {
   try {
@@ -22,19 +22,7 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await db.project.findFirst({
-      where: {
-        id,
-      },
-      include: {
-        users: {
-          include: {
-            user: true,
-          },
-        },
-        tasks: true,
-      },
-    })
+    const response = fetchSingleProjectById(id)
 
     return Response.json(response, { status: 200 })
   } catch (err) {
