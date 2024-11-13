@@ -541,7 +541,7 @@ const EditTaskForm = ({
                 key={'link-subtask-dialog'}
                 parentId={task.id}
                 subTasks={
-                  clientProject?.tasks.filter((t) => t.parentId !== task.id) ??
+                  clientProject?.tasks?.filter((t) => t.parentId !== task.id) ??
                   []
                 }
                 mutate={() => {

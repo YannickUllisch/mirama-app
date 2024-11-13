@@ -22,7 +22,7 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = fetchSingleProjectById(id)
+    const response = await fetchSingleProjectById(id)
 
     return Response.json(response, { status: 200 })
   } catch (err) {
