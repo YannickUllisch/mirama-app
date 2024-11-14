@@ -1,5 +1,4 @@
 'use client'
-
 import type * as React from 'react'
 import {
   AudioWaveform,
@@ -11,6 +10,12 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Book,
+  LayoutGrid,
+  Home,
+  BookAIcon,
+  Bell,
+  HelpCircleIcon,
 } from 'lucide-react'
 
 import {
@@ -21,17 +26,73 @@ import {
   SidebarRail,
 } from '@src/components/ui/sidebar'
 import { TeamSwitcher } from './ShadSidebar/team-switcher'
-import { NavMain } from './ShadSidebar/nav-main'
-import { NavProjects } from './ShadSidebar/nav-projects'
-import { NavUser } from './ShadSidebar/nav-user'
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+import { NavUser } from './ShadSidebar/nav-user'
+import type { Project, User } from '@prisma/client'
+import type { AppMenuItem, SecondaryAppMenuItem } from '@src/lib/constants'
+import SidebarMainNav from './ShadSidebar/MainNav'
+import SidebarProjectsNav from './ShadSidebar/ProjectsNav'
+import SidebarSecondaryNav from './ShadSidebar/SecondaryNav'
+
+const AppMenu: AppMenuItem[] = [
+  {
+    title: 'Home',
+    icon: Home,
+    href: '/app',
+    isCollapsible: false,
   },
+  {
+    title: 'Personal',
+    icon: LayoutGrid,
+    isCollapsible: true,
+    isActive: true,
+    items: [
+      {
+        title: 'Projects',
+        href: '/app/projects',
+      },
+      {
+        title: 'Tasks',
+        href: '/app/tasks',
+      },
+      {
+        title: 'Archive',
+        href: '/app/archive',
+      },
+    ],
+  },
+  {
+    title: 'Management',
+    icon: BookAIcon,
+    isCollapsible: true,
+    isActive: true,
+    items: [
+      {
+        title: 'Team',
+        href: '/app/team',
+      },
+      {
+        title: 'Budgets',
+        href: '/app/budget',
+      },
+    ],
+  },
+]
+
+const SecondaryAppMenu: SecondaryAppMenuItem[] = [
+  {
+    href: '/app',
+    title: 'Notifications',
+    icon: Bell,
+  },
+  {
+    href: '/app',
+    title: 'Support',
+    icon: HelpCircleIcon,
+  },
+]
+
+const data = {
   teams: [
     {
       name: 'Acme Inc',
@@ -51,7 +112,7 @@ const data = {
   ],
   navMain: [
     {
-      title: 'Playground',
+      title: 'Personal',
       url: '#',
       icon: SquareTerminal,
       isActive: true,
@@ -150,25 +211,43 @@ const data = {
     {
       name: 'Travel',
       url: '#',
-      icon: Map,
+      icon: Book,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'props'> {
+  user: User
+  projects: Project[]
+}
+
+const AppSidebar: React.FC<AppSidebarProps> = ({
+  projects,
+  user,
+  ...props
+}) => {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
+      <SidebarContent className="flex flex-col h-full">
+        <SidebarMainNav items={AppMenu} />
+        <SidebarProjectsNav
+          projects={projects.map((p) => ({
+            href: `/app/${p.name}`,
+            name: p.name,
+          }))}
+        />
+        <SidebarSecondaryNav items={SecondaryAppMenu} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
 }
+
+export default AppSidebar

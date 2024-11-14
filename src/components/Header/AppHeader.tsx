@@ -54,12 +54,6 @@ const AppHeader = ({ session }: { session: Session | null }) => {
               {index < pathSegments.length - 1 ? (
                 <>
                   <BreadcrumbItem>
-                    {segment === 'app' ? (
-                      <Home className="w-4 h-4" />
-                    ) : (
-                      <FolderOpen className="w-4 h-4" />
-                    )}
-
                     <Link
                       href={accumulatedPaths[index]}
                       passHref
@@ -80,7 +74,6 @@ const AppHeader = ({ session }: { session: Session | null }) => {
                 <BreadcrumbItem>
                   <BreadcrumbPage>
                     <div className="flex gap-2 items-center">
-                      {segment === 'app' ? <Home className="w-4 h-4 " /> : null}
                       {capitalize(
                         segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
                       )}

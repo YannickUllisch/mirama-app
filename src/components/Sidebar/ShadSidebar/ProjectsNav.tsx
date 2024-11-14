@@ -7,7 +7,6 @@ import {
   Trash2,
   type LucideIcon,
 } from 'lucide-react'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,18 +23,17 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@src/components/ui/sidebar'
+import Link from 'next/link'
 
-export function NavProjects({
+const SidebarProjectsNav = ({
   projects,
 }: {
   projects: {
     name: string
-    url: string
-    icon: LucideIcon
+    href: string
   }[]
-}) {
+}) => {
   const { isMobile } = useSidebar()
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
@@ -43,10 +41,9 @@ export function NavProjects({
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
+              <Link href={item.href}>
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -77,13 +74,15 @@ export function NavProjects({
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontal className="text-sidebar-foreground/70" />
             <span>More</span>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>
   )
 }
+
+export default SidebarProjectsNav

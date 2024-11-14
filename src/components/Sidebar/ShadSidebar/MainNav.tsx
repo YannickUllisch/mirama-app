@@ -1,7 +1,5 @@
 'use client'
-
-import { ChevronRight, type LucideIcon } from 'lucide-react'
-
+import { ChevronRight } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,24 +15,19 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@src/components/ui/sidebar'
+import Link from 'next/link'
+import type { AppMenuItem } from '@src/lib/constants'
+import type { FC } from 'react'
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}) {
+interface MainNavProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {
+  items: AppMenuItem[]
+}
+
+const SidebarMainNav: FC<MainNavProps> = ({ items, ...props }) => {
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+    <SidebarGroup {...props}>
+      <SidebarGroupLabel>App</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -44,21 +37,31 @@ export function NavMain({
             className="group/collapsible"
           >
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
+              {!item.isCollapsible && item.href ? (
                 <SidebarMenuButton tooltip={item.title}>
                   {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <Link href={item.href}>
+                    <span>{item.title}</span>
+                  </Link>
                 </SidebarMenuButton>
-              </CollapsibleTrigger>
+              ) : (
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              )}
+
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                        <Link href={subItem.href}>
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
@@ -71,3 +74,5 @@ export function NavMain({
     </SidebarGroup>
   )
 }
+
+export default SidebarMainNav
