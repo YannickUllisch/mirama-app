@@ -1,15 +1,11 @@
 'use client'
-
-import * as React from 'react'
-import { ChevronsUpDown, Plus } from 'lucide-react'
-
+import type * as React from 'react'
+import { ChevronsUpDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import {
@@ -19,17 +15,15 @@ import {
   useSidebar,
 } from '@src/components/ui/sidebar'
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}) {
+interface SidebarTeamProps {
+  name: string
+  logo: React.ElementType
+  plan: string
+}
+
+const SidebarTeamSwitcher = ({ team }: { team: SidebarTeamProps }) => {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  // const [activeTeam, setActiveTeam] = React.useState(teams[0])
 
   return (
     <SidebarMenu>
@@ -41,13 +35,21 @@ export function TeamSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
+                <team.logo className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam.name}
+                <span
+                  className="truncate font-semibold"
+                  style={{ fontSize: 20 }}
+                >
+                  {`${team.name.toUpperCase()}.`}
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span
+                  className="truncate text-text-secondary"
+                  style={{ fontSize: 12 }}
+                >
+                  {team.plan}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -61,7 +63,10 @@ export function TeamSwitcher({
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            <DropdownMenuItem className="text-text-secondary">
+              Coming Soon..
+            </DropdownMenuItem>
+            {/* {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
                 onClick={() => setActiveTeam(team)}
@@ -80,10 +85,12 @@ export function TeamSwitcher({
                 <Plus className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">Add team</div>
-            </DropdownMenuItem>
+            </DropdownMenuItem>*/}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
   )
 }
+
+export default SidebarTeamSwitcher

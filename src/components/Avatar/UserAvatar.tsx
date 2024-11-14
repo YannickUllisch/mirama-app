@@ -45,7 +45,7 @@ const UserAvatar: FC<UserAvatarProps> = ({
             color: 'white',
           }}
         >
-          <AvatarFallback className={username ? userColor : ''}>
+          <AvatarFallback className={`${username ? userColor : ''} `}>
             {username ? (
               extractFirstLetters(username)
             ) : (

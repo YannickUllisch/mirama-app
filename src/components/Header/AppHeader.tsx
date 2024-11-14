@@ -19,7 +19,7 @@ import { Input } from '../ui/input'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 
-const AppHeader = ({ session }: { session: Session | null }) => {
+const AppHeader = () => {
   const pathname = usePathname()
 
   // We extract all segments from the URL for breadcrumbs.
@@ -43,10 +43,10 @@ const AppHeader = ({ session }: { session: Session | null }) => {
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <Button variant="ghost" className="p-1 rounded-lg w-8 h-8 md:hidden ">
-          <AlignJustify strokeWidth={1.3} className="transition-all" />
-        </Button>
+        <Separator
+          orientation="vertical"
+          className="mr-2 h-4 md:block hidden"
+        />
 
         {pathSegments.map((segment, index) => (
           <Breadcrumb key={segment} className="md:block hidden">
@@ -102,8 +102,6 @@ const AppHeader = ({ session }: { session: Session | null }) => {
             />
           </div>
         </div>
-
-        <HeaderProfile session={session} onlyAvatar />
       </div>
     </header>
   )

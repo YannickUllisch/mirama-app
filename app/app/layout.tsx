@@ -11,6 +11,7 @@ import AppSidebar from '@src/components/Sidebar/AppSidebar'
 import { redirect } from 'next/navigation'
 import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { getUserById } from '@src/lib/api/queries/User/UserQueries'
+import { fetchSessionTeam } from '@src/lib/api/queries/Team/TeamQueries'
 
 export const metadata: Metadata = {
   title: 'Projects | Mirama',
@@ -20,27 +21,39 @@ export const metadata: Metadata = {
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
   const user = await getUserById(session?.user.id ?? 'undefined')
+
   if (!session || !user) {
     redirect('/')
   }
-  const projects = await fetchAllAssignedProjects()
+  const team = await fetchSessionTeam(session)
+  if (!team) {
+    // TODO: Extend Team, such that new Teams can be created and users can have multiple teams
+    redirect('/')
+  }
+  const projects = await fetchAllAssignedProjects(false)
 
   return (
     <SessionWrapper>
       <SwrProvider>
         <SidebarProvider>
-          <AppSidebar projects={projects} user={user} />
+          <AppSidebar
+            projects={projects}
+            user={user}
+            className="bg-neutral-950"
+            team={team}
+          />
           <SidebarInset>
-            <AppHeader session={session} />
-            <div className="flex-1 p-6 min-h-[700px]">
-              <Suspense fallback={<Loading />}>{children}</Suspense>
+            <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
+              <AppHeader />
+              <div className="flex-1 p-6 min-h-[700px]">
+                <Suspense fallback={<Loading />}>{children}</Suspense>
+              </div>
+              <Footer />
             </div>
-            <Footer />
           </SidebarInset>
         </SidebarProvider>
       </SwrProvider>
     </SessionWrapper>
   )
 }
-
 export default AppLayout

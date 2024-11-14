@@ -29,6 +29,7 @@ const SidebarSecondaryNav: FC<SecondaryNavProps> = ({ items, ...props }) => {
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
+              {item.menuAction}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

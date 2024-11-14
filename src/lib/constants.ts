@@ -1,6 +1,7 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import type { Task, User } from '@prisma/client'
 import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 // Sidebar Interfaces
 export interface AppMenuItem {
@@ -19,6 +20,7 @@ export interface SecondaryAppMenuItem {
   title: string
   href: string
   icon: LucideIcon
+  menuAction?: ReactNode
 }
 
 // Kanban Board
