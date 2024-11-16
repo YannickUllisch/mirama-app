@@ -1,25 +1,18 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchTaskById } from '@src/lib/api/queries/Tasks/TaskQueries'
+import { fetchProjectUsersJoinedByProjectId } from '@src/lib/api/queries/Project/ProjectUserJoinQuerys'
 
 export const GET = auth(async (req) => {
   try {
-    // Checking Permissions
     const session = req.auth
     const validatedRequest = await validateRequest(session)
     if (validatedRequest) {
       return validatedRequest
     }
 
-    const id = req.nextUrl.pathname.split('/').pop()
-    if (!id) {
-      return Response.json(
-        { ok: false, message: 'Task ID needs to be defined in request' },
-        { status: 400 },
-      )
-    }
+    const projectId = req.nextUrl.searchParams.get('projectId') as string
 
-    const response = await fetchTaskById(id)
+    const response = await fetchProjectUsersJoinedByProjectId(projectId)
 
     return Response.json(response, { status: 200 })
   } catch (err) {

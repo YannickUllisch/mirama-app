@@ -24,18 +24,18 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserById(session?.user.id ?? 'undefined')
 
   if (!session || !user) {
-    return redirect('/auth/signin?callbackUrl=/app')
+    return redirect('/auth/login?callbackUrl=/app')
   }
 
   const team = await fetchSessionTeam(session)
   if (!team) {
     // TODO: Extend Team, such that new Teams can be created and users can have multiple teams
-    redirect('/auth/signin?callbackUrl=/app')
+    redirect('/')
   }
   const projects = await fetchAllAssignedProjects(false)
 
   const fallbackData = {
-    '/api/db/projekt': projects,
+    '/api/db/project': projects,
   }
 
   return (

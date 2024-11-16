@@ -38,7 +38,7 @@ const ArchivePage = () => {
     (Project & {
       users: (ProjectUser & { user: User })[]
     })[]
-  >('/api/db/projekt?archived=true')
+  >('/api/db/project?archived=true')
 
   const columns: ColumnDef<
     Project & { users: (ProjectUser & { user: User })[] }
@@ -142,7 +142,7 @@ const ArchivePage = () => {
               initialValue={capitalize(
                 (getValue() as string).replace('_', ' '),
               )}
-              apiRoute="projekt"
+              apiRoute="project"
               paramToUpdate="status"
             >
               {Object.keys(StatusType).map((type) => (
@@ -183,7 +183,7 @@ const ArchivePage = () => {
                   }
                   submitButtonText={'Delete'}
                   onConfirmation={() =>
-                    deleteResources('projekt', [row.original.id], {
+                    deleteResources('project', [row.original.id], {
                       mutate: updateProjects,
                     })
                   }
@@ -195,7 +195,7 @@ const ArchivePage = () => {
                 <ArchiveRestore
                   onClick={() =>
                     updateResourceById(
-                      'projekt',
+                      'project',
                       row.original.id,
                       {
                         archived: !row.original.archived,

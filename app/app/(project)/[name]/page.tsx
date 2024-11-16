@@ -31,7 +31,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
 
   // Fetching Project by name
   const { data: project } = useSWR<Project>(
-    `/api/db/projekt/name/${params.name}`,
+    `/api/db/project/name/${params.name}`,
   )
   // Tab definitions
   const projectTabs: {

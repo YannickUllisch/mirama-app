@@ -60,7 +60,7 @@ const ClientProjectsPage = () => {
     (Project & {
       users: ProjectUser[]
     })[]
-  >('/api/db/projekt?archived=false')
+  >('/api/db/project?archived=false')
 
   const { data: clientUsers, isLoading: usersLoading } = useSWR<User[]>(
     '/api/db/team/member',
@@ -98,7 +98,7 @@ const ClientProjectsPage = () => {
             <div className="flex gap-2 items-center">
               <EditableCell
                 key={`name${row.id}`}
-                apiRoute="projekt"
+                apiRoute="project"
                 id={row.original.id}
                 mutate={updateProjects}
                 initialValue={getValue() as string}
@@ -281,7 +281,7 @@ const ClientProjectsPage = () => {
           return (
             <GeneralTableSelect
               key={`priority${row.id}`}
-              apiRoute="projekt"
+              apiRoute="project"
               paramToUpdate="priority"
               id={row.original.id}
               mutate={updateProjects}
@@ -319,7 +319,7 @@ const ClientProjectsPage = () => {
               initialValue={capitalize(
                 (getValue() as string).replace('_', ' '),
               )}
-              apiRoute="projekt"
+              apiRoute="project"
               paramToUpdate="status"
             >
               {Object.keys(StatusType).map((type) => (
@@ -351,7 +351,7 @@ const ClientProjectsPage = () => {
               initialValue={getValue() as number}
               id={row.original.id}
               mutate={updateProjects}
-              apiRoute="projekt"
+              apiRoute="project"
               paramToUpdate="budget"
             />
           )
@@ -380,7 +380,7 @@ const ClientProjectsPage = () => {
                       <DropdownMenuItem
                         onClick={() =>
                           updateResourceById(
-                            'projekt',
+                            'project',
                             row.original.id,
                             {
                               archived: !row.original.archived,
@@ -404,7 +404,7 @@ const ClientProjectsPage = () => {
                           dialogDesc={'Deleting a project can not be undone!'}
                           submitButtonText={'Delete'}
                           onConfirmation={() =>
-                            deleteResources('projekt', [row.original.id], {
+                            deleteResources('project', [row.original.id], {
                               mutate: updateProjects,
                             })
                           }
@@ -421,7 +421,7 @@ const ClientProjectsPage = () => {
                 <DropdownMenuItem
                   onClick={() =>
                     updateResourceById(
-                      'projekt',
+                      'project',
                       row.original.id,
                       {
                         archived: !row.original.archived,

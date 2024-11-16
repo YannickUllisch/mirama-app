@@ -32,7 +32,7 @@ export const CalendarTableSelect: FC<CalendarTableSelectProps> = ({
     setPopupOpen(false)
     try {
       updateResourceById(
-        'projekt',
+        'project',
         project.id,
         {
           [dateType === 'start' ? 'startDate' : 'endDate']: date,

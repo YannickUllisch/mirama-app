@@ -1,28 +1,27 @@
 import type { Metadata } from 'next'
-import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { auth } from '@auth'
-import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
 import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
+import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const metadata: Metadata = {
-  title: 'Projects Table | Mirama',
-  description: 'Overview of all personal Projects',
+  title: 'Calendar | Mirama',
+  description: 'Calendar view of your projects',
 }
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
 
+  const projects = await fetchAllAssignedProjects(false)
+
   if (!session?.user) {
-    return redirect('/auth/login?callbackUrl=/app/projects')
+    return redirect('/auth/login?callbackUrl=/app/calendar')
   }
 
-  const projects = await fetchAllAssignedProjects(false)
-  const users = await fetchAllTeamMembers(session)
   const fallbackData = {
     '/api/db/project?archived=false': projects,
-    '/api/db/team/member': users,
   }
+
   return (
     <SWRFallbackWrapper fallback={fallbackData}>{children}</SWRFallbackWrapper>
   )

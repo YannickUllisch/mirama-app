@@ -4,7 +4,7 @@ import { SWRConfig } from 'swr'
 
 const SWRFallbackWrapper: FC<
   PropsWithChildren<{ fallback: Record<string, unknown> }>
-> = async ({ children, fallback }) => {
+> = ({ children, fallback }) => {
   return <SWRConfig value={{ fallback: fallback }}>{children}</SWRConfig>
 }
 

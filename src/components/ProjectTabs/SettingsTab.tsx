@@ -27,18 +27,22 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
     '/api/db/team/member',
   )
 
-  const { data: project } = useSWR<Project>(`/api/db/projekt/${projectId}`)
+  const { data: project } = useSWR<Project>(`/api/db/project/${projectId}`)
 
   const { data: taskCategories, mutate: updateCategories } = useSWR<
     TaskCategory[]
-  >(`/api/db/projekt/taskCategories?projectId=${projectId}`)
+  >(`/api/db/project/taskCategories?projectId=${projectId}`)
+
+  const { data: projectUsers } = useSWR<(ProjectUser & { user: User })[]>(
+    `/api/db/projectuser?projectId=${projectId}`,
+  )
 
   const router = useRouter()
   const { data: session } = useSession({ required: true })
 
   const isSessionProjectManager = useMemo(() => {
-    return users?.find((user) => user.id === session?.user.id)?.isManager
-  }, [project, session])
+    return projectUsers?.find((user) => user.id === session?.user.id)?.isManager
+  }, [projectUsers, session])
 
   return (
     <div className="flex justify-between mb-5 flex-col">
@@ -54,7 +58,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
           <div className="flex justify-start gap-2">
             <Button
               onClick={() =>
-                updateResourceById('projekt', project?.id ?? '', {
+                updateResourceById('project', project?.id ?? '', {
                   archived: !project?.archived,
                 })
               }
@@ -72,7 +76,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
               dialogDesc={'Deleting a project can not be undone!'}
               submitButtonText={'Delete'}
               onConfirmation={() =>
-                deleteResources('projekt', [project?.id ?? '']).then(() =>
+                deleteResources('project', [project?.id ?? '']).then(() =>
                   router.push('/app'),
                 )
               }
@@ -95,7 +99,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
       <>
         <span className="text-xl">Project managers</span>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 pb-5">
-          {project?.users?.map((u) =>
+          {projectUsers?.map((u) =>
             u.isManager ? (
               <div
                 className="flex items-center gap-2 p-2"
@@ -119,9 +123,9 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         {isTeamAdminOrOwner(session) && (
           <div className="flex items-center">
             <UserMultiSelect
-              assignedUsers={project.users.filter((u) => u.isManager) ?? []}
+              assignedUsers={projectUsers?.filter((u) => u.isManager) ?? []}
               users={users ?? []}
-              projectId={project.id}
+              projectId={projectId}
             >
               <Button
                 variant="link"
@@ -140,7 +144,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         <span className="text-xl flex flex-col">Assigned to project</span>
         <div className="p-4">
           <AvatarGroup
-            usernames={project?.users?.map((u) => u.user.name ?? '') ?? []}
+            usernames={projectUsers?.map((u) => u.user.name ?? '') ?? []}
             avatarSize={9}
             previewAmount={4}
             fontSize={12}
@@ -149,9 +153,9 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         {isTeamAdminOrOwner(session) && (
           <div className="flex items-center">
             <UserMultiSelect
-              assignedUsers={project.users ?? []}
+              assignedUsers={projectUsers ?? []}
               users={users ?? []}
-              projectId={project.id}
+              projectId={projectId}
             >
               <Button
                 variant="link"

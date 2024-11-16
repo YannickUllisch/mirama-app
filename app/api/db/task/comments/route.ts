@@ -23,7 +23,7 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = fetchCommentsByTaskId(taskId)
+    const response = await fetchCommentsByTaskId(taskId)
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

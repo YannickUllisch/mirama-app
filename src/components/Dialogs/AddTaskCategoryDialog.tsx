@@ -60,7 +60,7 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
 
   const onSubmit = (vals: z.infer<typeof TaskCategorySchema>) => {
     startTransition(() => {
-      postResource('projekt/taskCategories', vals, { mutate })
+      postResource('project/taskCategories', vals, { mutate })
         .then(() => {
           form.reset()
           setIsOpen(false)

@@ -3,23 +3,24 @@ import { auth } from '@auth'
 import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
 import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
+import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const metadata: Metadata = {
-  title: 'Team | Mirama',
-  description: 'Overview of Team',
+  title: 'Budget | Mirama',
+  description: 'Management of Project Budgets',
 }
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
 
-  const members = await fetchAllTeamMembers(session)
+  const projects = await fetchAllAssignedProjects()
 
   if (!session?.user) {
-    return redirect('/auth/login?callbackUrl=/app/team')
+    return redirect('/auth/login?callbackUrl=/app/budget')
   }
 
   const fallbackData = {
-    '/api/db/team/member': members,
+    '/api/db/project': projects,
   }
 
   return (

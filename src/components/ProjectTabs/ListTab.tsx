@@ -63,7 +63,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   >(`/api/db/task?id=${projectId}`)
 
   const { data: users } = useSWR<User[]>(
-    `/api/db/projekt/users?id=${projectId}`,
+    `/api/db/project/users?id=${projectId}`,
   )
 
   // Table states

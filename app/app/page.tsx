@@ -24,7 +24,7 @@ const ClientAppPage = () => {
       (Project & {
         users: (ProjectUser & { user: User })[]
       })[]
-    >('/api/db/projekt')
+    >('/api/db/project')
 
   return (
     <div className="flex flex-col">

@@ -1,7 +1,6 @@
 'use client'
 import type { Expense, Project } from '@prisma/client'
 import GeneralAccordion from '@src/components/GeneralAccordion'
-import EditableCell from '@src/components/Inputs/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -15,7 +14,7 @@ const BudgetPage = () => {
       (Project & {
         expenses: Expense[]
       })[]
-    >('/api/db/projekt')
+    >('/api/db/project')
 
   const columns: ColumnDef<Expense>[] = [
     {

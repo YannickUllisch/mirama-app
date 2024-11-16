@@ -38,12 +38,13 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, ...props }) => {
           >
             <SidebarMenuItem>
               {!item.isCollapsible && item.href ? (
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <Link href={item.href}>
+                <Link href={item.href}>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+
                     <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
+                  </SidebarMenuButton>
+                </Link>
               ) : (
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.title}>

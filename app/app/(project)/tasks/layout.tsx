@@ -2,24 +2,24 @@ import type { Metadata } from 'next'
 import { auth } from '@auth'
 import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
-import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
+import { fetchAllPersonalTasks } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
 
 export const metadata: Metadata = {
-  title: 'Team | Mirama',
-  description: 'Overview of Team',
+  title: 'Personal Tasks | Mirama',
+  description: 'Overview of Personal Tasks',
 }
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
 
-  const members = await fetchAllTeamMembers(session)
+  const tasks = await fetchAllPersonalTasks(session)
 
   if (!session?.user) {
-    return redirect('/auth/login?callbackUrl=/app/team')
+    return redirect('/auth/login?callbackUrl=/app/tasks')
   }
 
   const fallbackData = {
-    '/api/db/team/member': members,
+    '/api/db/task/personal': tasks,
   }
 
   return (
