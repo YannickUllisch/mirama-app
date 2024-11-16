@@ -18,28 +18,26 @@ import TaskCategoryItem from '../task/TaskCategoryItem'
 import UserMultiSelect from '../Select/UserMultiSelect'
 
 interface SettingsTabProps {
-  project: Project & {
-    taskCategories: TaskCategory[]
-    users: (ProjectUser & { user: User })[]
-  }
+  projectId: string
 }
 
-const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
+const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
   // Fetching data
   const { data: users, isLoading: _usersLoading } = useSWR<User[]>(
     '/api/db/team/member',
   )
 
+  const { data: project } = useSWR<Project>(`/api/db/projekt/${projectId}`)
+
   const { data: taskCategories, mutate: updateCategories } = useSWR<
     TaskCategory[]
-  >(project ? `/api/db/projekt/taskCategories?projectId=${project.id}` : '')
+  >(`/api/db/projekt/taskCategories?projectId=${projectId}`)
 
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session } = useSession({ required: true })
 
   const isSessionProjectManager = useMemo(() => {
-    return project?.users?.find((user) => user.id === session?.user.id)
-      ?.isManager
+    return users?.find((user) => user.id === session?.user.id)?.isManager
   }, [project, session])
 
   return (
@@ -47,17 +45,17 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
       <div className="flex justify-between pb-10">
         <div className="flex flex-col">
           <span className="font-medium text-3xl">General</span>
-          <span>{project.name}</span>
-          <span>{project.priority}</span>
-          <span>{project.status}</span>
+          <span>{project?.name}</span>
+          <span>{project?.priority}</span>
+          <span>{project?.status}</span>
         </div>
 
         {isTeamAdminOrOwner(session) || isSessionProjectManager ? (
           <div className="flex justify-start gap-2">
             <Button
               onClick={() =>
-                updateResourceById('projekt', project.id, {
-                  archived: !project.archived,
+                updateResourceById('projekt', project?.id ?? '', {
+                  archived: !project?.archived,
                 })
               }
               className="gap-2 hover:text-orange-500 hover:no-underline hover:bg-hover"
@@ -74,7 +72,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
               dialogDesc={'Deleting a project can not be undone!'}
               submitButtonText={'Delete'}
               onConfirmation={() =>
-                deleteResources('projekt', [project.id]).then(() =>
+                deleteResources('projekt', [project?.id ?? '']).then(() =>
                   router.push('/app'),
                 )
               }
@@ -172,7 +170,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
           <span className="text-xl">Task Categories</span>
           <AddTaskCategoryDialog
             mutate={updateCategories}
-            projectId={project?.id}
+            projectId={projectId}
             key={'task-category-dialog'}
           >
             <Button
@@ -184,19 +182,12 @@ const SettingsTab: FC<SettingsTabProps> = ({ project }) => {
           </AddTaskCategoryDialog>
         </div>
         <div className="flex gap-2">
-          {taskCategories
-            ? taskCategories?.map((category) => (
-                <TaskCategoryItem
-                  key={`category-item-${category.title}`}
-                  title={category.title}
-                />
-              ))
-            : project.taskCategories.map((category) => (
-                <TaskCategoryItem
-                  key={`category-item-${category.title}`}
-                  title={category.title}
-                />
-              ))}
+          {taskCategories?.map((category) => (
+            <TaskCategoryItem
+              key={`category-item-${category.title}`}
+              title={category.title}
+            />
+          ))}
         </div>
       </div>
     </div>

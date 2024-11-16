@@ -62,6 +62,7 @@ model User {
 
   projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
   comments      Comment[]
+  notifications   Notification[]
 }
 
 model VerificationToken {
@@ -91,6 +92,7 @@ model Project {
   tasks       Task[]
   tag         Tag[]
   expenses    Expense[]
+  notifications Notification[]
 
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
@@ -238,4 +240,20 @@ model Comment {
   // Author of the comment
   userId  String
   user    User      @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id    String    @id @default(cuid())
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id])
+
+  projectId       String?
+  project         Project?     @relation(fields: [projectId], references: [id])
+
+  sender          String
+  title           String
+  isRead          Boolean
+  resourceId      String
+
+  createdAt       DateTime  @default(now())
 }

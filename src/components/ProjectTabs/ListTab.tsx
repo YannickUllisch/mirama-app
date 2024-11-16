@@ -44,17 +44,11 @@ import { capitalize } from '@src/lib/utils'
 import { Badge } from '../ui/badge'
 
 interface TaskProps {
-  project: Project & {
-    tasks: (Task & {
-      assignedTo: User | null
-      tags: Tag[]
-      category: TaskCategory | null
-    })[]
-    users: (ProjectUser & { user: User })[]
-  }
+  projectId: string
+  projectName: string
 }
 
-const ListTab: FC<TaskProps> = ({ project }) => {
+const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   // We fetch tasks instead of passing from parent to have more specific control.
   const {
     data: tasks,
@@ -66,7 +60,11 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       tags: Tag[]
       category: TaskCategory | null
     })[]
-  >(`/api/db/task?id=${project.id}`)
+  >(`/api/db/task?id=${projectId}`)
+
+  const { data: users } = useSWR<User[]>(
+    `/api/db/projekt/users?id=${projectId}`,
+  )
 
   // Table states
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -122,7 +120,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               )}
 
               <Link
-                href={`/app/${project.name}/edit/${row.original.id}`}
+                href={`/app/${projectName}/edit/${row.original.id}`}
                 className="hover:underline"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -143,7 +141,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link
-                    href={`/app/${project.name}/edit/${row.original.id}`}
+                    href={`/app/${projectName}/edit/${row.original.id}`}
                     className="gap-3"
                   >
                     <Pencil className="h-4 w-4 " />
@@ -152,7 +150,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link
-                    href={`/app/${project.name}/create/${row.original.projectId}?parentId=${row.original.id}`}
+                    href={`/app/${projectName}/create/${row.original.projectId}?parentId=${row.original.id}`}
                     className="gap-3"
                   >
                     <BetweenHorizonalStart className="h-4 w-4 " />
@@ -264,18 +262,20 @@ const ListTab: FC<TaskProps> = ({ project }) => {
             }
           >
             {/* We iterate over project.users to only allow members connected to the current project */}
-            {project.users?.map((user) => (
-              <SelectItem value={user.userId} key={`user-item-${user.id}`}>
-                <div className="flex items-center gap-1">
-                  <UserAvatar
-                    avatarSize={25}
-                    fontSize={10}
-                    username={user.user.name}
-                  />
-                  {user.user.name}
-                </div>
-              </SelectItem>
-            ))}
+            {users
+              ? users.map((user) => (
+                  <SelectItem value={user.id} key={`user-item-${user.id}`}>
+                    <div className="flex items-center gap-1">
+                      <UserAvatar
+                        avatarSize={25}
+                        fontSize={10}
+                        username={user.name}
+                      />
+                      {user.name}
+                    </div>
+                  </SelectItem>
+                ))
+              : null}
           </GeneralTableSelect>
         )
       },
@@ -333,7 +333,7 @@ const ListTab: FC<TaskProps> = ({ project }) => {
       <DataTable
         tableIdentifier="taskTabTable"
         columns={columns}
-        data={tasks ?? project.tasks}
+        data={tasks ?? []}
         enableRowSelection
         dataLoading={tasksLoading}
         rowSelection={rowSelection}
@@ -348,23 +348,21 @@ const ListTab: FC<TaskProps> = ({ project }) => {
           addToolbarleft: (
             <>
               <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                {project && (
-                  <Link
-                    href={`/app/${project.name}/create/${project.id}`}
-                    legacyBehavior
-                    passHref
-                  >
-                    <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                      <Plus width={15} className="ml-2" />
-                      <Button
-                        style={{ fontSize: 11, textDecoration: 'none' }}
-                        variant="link"
-                      >
-                        New Task
-                      </Button>
-                    </div>
-                  </Link>
-                )}
+                <Link
+                  href={`/app/${projectName}/create/${projectId}`}
+                  legacyBehavior
+                  passHref
+                >
+                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                    <Plus width={15} className="ml-2" />
+                    <Button
+                      style={{ fontSize: 11, textDecoration: 'none' }}
+                      variant="link"
+                    >
+                      New Task
+                    </Button>
+                  </div>
+                </Link>
               </div>
             </>
           ),

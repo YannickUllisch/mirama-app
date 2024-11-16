@@ -12,10 +12,11 @@ import { redirect } from 'next/navigation'
 import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { getUserById } from '@src/lib/api/queries/User/UserQueries'
 import { fetchSessionTeam } from '@src/lib/api/queries/Team/TeamQueries'
+import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
 
 export const metadata: Metadata = {
-  title: 'Projects | Mirama',
-  description: 'Project and Task Management',
+  title: 'App Dashboard | Mirama',
+  description: 'App Dashboard',
 }
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -23,35 +24,42 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserById(session?.user.id ?? 'undefined')
 
   if (!session || !user) {
-    redirect('/')
+    return redirect('/auth/signin?callbackUrl=/app')
   }
+
   const team = await fetchSessionTeam(session)
   if (!team) {
     // TODO: Extend Team, such that new Teams can be created and users can have multiple teams
-    redirect('/')
+    redirect('/auth/signin?callbackUrl=/app')
   }
   const projects = await fetchAllAssignedProjects(false)
+
+  const fallbackData = {
+    '/api/db/projekt': projects,
+  }
 
   return (
     <SessionWrapper>
       <SwrProvider>
-        <SidebarProvider>
-          <AppSidebar
-            projects={projects}
-            user={user}
-            className="bg-neutral-950"
-            team={team}
-          />
-          <SidebarInset>
-            <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
-              <AppHeader />
-              <div className="flex-1 px-6 pt-5 min-h-[700px]">
-                <Suspense fallback={<Loading />}>{children}</Suspense>
+        <SWRFallbackWrapper fallback={fallbackData}>
+          <SidebarProvider>
+            <AppSidebar
+              projects={projects}
+              user={user}
+              className="bg-neutral-950"
+              team={team}
+            />
+            <SidebarInset>
+              <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
+                <AppHeader />
+                <div className="flex-1 px-6 pt-5 min-h-[700px]">
+                  <Suspense fallback={<Loading />}>{children}</Suspense>
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+            </SidebarInset>
+          </SidebarProvider>
+        </SWRFallbackWrapper>
       </SwrProvider>
     </SessionWrapper>
   )

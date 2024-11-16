@@ -1,24 +1,59 @@
-'use server'
-import { auth } from '@auth'
-import { db } from '@src/lib/db'
-import ClientTeamPage from './client'
-import { redirect } from 'next/navigation'
-import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
+'use client'
+import type { User } from '@prisma/client'
+import UserCard from '@src/components/Avatar/UserCard'
+import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
+import { Button } from '@src/components/ui/button'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { Plus, Users } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import React from 'react'
+import useSWR from 'swr'
 
-const TeamPage = async () => {
+const ClientTeamPage = () => {
   // Session
-  const session = await auth()
+  const { data: session, update } = useSession({ required: true })
 
-  const members = await fetchAllTeamMembers(session)
+  // Fetching Data
+  const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
+    '/api/db/team/member',
+  )
 
-  if (!session) {
-    redirect('')
-  }
   return (
-    <main className="flex flex-col">
-      <ClientTeamPage session={session} teamMembers={members} />
-    </main>
+    <>
+      <div className="flex items-center gap-4 dark:text-white mb-6">
+        <Users width={20} />
+        <span style={{ fontSize: 20 }}>Team</span>
+        {isTeamAdminOrOwner(session) && (
+          <>
+            <span>|</span>
+            <AddMemberDialog>
+              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Plus width={15} className="ml-2" />
+                <Button
+                  style={{ fontSize: 11, textDecoration: 'none' }}
+                  variant="link"
+                >
+                  Add User
+                </Button>
+              </div>
+            </AddMemberDialog>
+          </>
+        )}
+      </div>
+
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6">
+        {teamMembers?.map((member) => (
+          <UserCard
+            session={session}
+            user={member}
+            key={`member-card-${member.id}`}
+            mutate={updateMembers}
+            updateSession={update}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 
-export default TeamPage
+export default ClientTeamPage

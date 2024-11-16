@@ -7,26 +7,19 @@ import { useSession } from 'next-auth/react'
 import type { Session } from 'next-auth'
 
 interface TabProps {
+  projectId: string
   session: Session | null
-  project: Project & {
-    users: (ProjectUser & { user: User })[]
-    tasks: (Task & { assignedTo: User | null })[]
-  }
 }
 
-const BoardTab: FC<TabProps> = ({ project, session }) => {
+const BoardTab: FC<TabProps> = ({ projectId, session }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
     })[]
-  >(`/api/db/task?id=${project?.id}`)
+  >(`/api/db/task?id=${projectId}`)
 
   return (
-    <KanbanBoard
-      tasks={tasks ?? []}
-      projectId={project?.id}
-      session={session}
-    />
+    <KanbanBoard tasks={tasks ?? []} projectId={projectId} session={session} />
   )
 }
 export default BoardTab
