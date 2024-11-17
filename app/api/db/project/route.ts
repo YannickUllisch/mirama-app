@@ -4,8 +4,10 @@ import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
-import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
+import {
+  fetchAllAssignedProjects,
+  fetchAllAssignedProjectsTest,
+} from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const GET = auth(async (req) => {
   try {
@@ -14,6 +16,9 @@ export const GET = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
+    const include = JSON.parse(
+      req.nextUrl.searchParams.get('include') as string,
+    )
 
     // We often only want to fetch either archived or non-archived projects.
     // Optionally this can be given in the request URL.
@@ -22,7 +27,7 @@ export const GET = auth(async (req) => {
     )
     // If Team Owner or Admin, all projects should be returned.
 
-    const response = await fetchAllAssignedProjects(archivedStatus)
+    const response = await fetchAllAssignedProjectsTest(archivedStatus, include)
 
     return Response.json(response, { status: 200 })
   } catch (err) {

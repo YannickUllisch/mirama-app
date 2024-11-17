@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { db } from '@db'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { generateInclude, isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const fetchSingleProjectByName = async (name: string) => {
   const session = await auth()
@@ -73,6 +73,30 @@ export const fetchAllAssignedProjects = async (archivedStatus?: boolean) => {
       },
       expenses: true,
     },
+  })
+
+  return response
+}
+
+export const fetchAllAssignedProjectsTest = async (
+  archivedStatus?: boolean,
+  rawIncludes?: Record<string, any>,
+) => {
+  const session = await auth()
+
+  const include = rawIncludes ? generateInclude(rawIncludes, 0, 1) : undefined
+
+  const response = await db.project.findMany({
+    where: {
+      teamId: session?.user.teamId,
+      archived: archivedStatus ? archivedStatus : false,
+      users: {
+        some: {
+          userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
+        },
+      },
+    },
+    include,
   })
 
   return response
