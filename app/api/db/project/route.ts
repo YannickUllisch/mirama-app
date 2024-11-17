@@ -16,9 +16,9 @@ export const GET = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const include = JSON.parse(
-      req.nextUrl.searchParams.get('include') as string,
-    )
+    // const include = JSON.parse(
+    //   req.nextUrl.searchParams.get('include') as string,
+    // )
 
     // We often only want to fetch either archived or non-archived projects.
     // Optionally this can be given in the request URL.
@@ -27,7 +27,7 @@ export const GET = auth(async (req) => {
     )
     // If Team Owner or Admin, all projects should be returned.
 
-    const response = await fetchAllAssignedProjectsTest(archivedStatus, include)
+    const response = await fetchAllAssignedProjects(archivedStatus)
 
     return Response.json(response, { status: 200 })
   } catch (err) {

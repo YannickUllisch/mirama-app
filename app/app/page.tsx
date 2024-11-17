@@ -81,7 +81,7 @@ const ClientAppPage = () => {
                     Managed By:{' '}
                     <AvatarGroup
                       usernames={
-                        project.users.map((u) => u.user.name ?? '') ?? []
+                        project?.users?.map((u) => u.user.name ?? '') ?? []
                       }
                       avatarSize={6}
                       previewAmount={2}
