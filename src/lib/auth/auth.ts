@@ -3,14 +3,55 @@ import { db } from '@src/lib/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { Role } from '@prisma/client'
 import authConfig from './auth.config'
-import { getUserById } from '../api/queries/User/UserQueries'
+import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      })
+    },
+  },
   callbacks: {
-    async signIn({ user }) {
-      if (user.id) {
-        const existingUser = await getUserById(user.id)
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        const user = await getUserByEmail(profile?.email ?? 'undef')
 
+        // Find the user by email
+        const existingUser = await db.user.findUnique({
+          where: { id: user?.id },
+        })
+
+        if (existingUser) {
+          // Check if an account for this provider already exists for the user
+          const linkedAccount = await db.account.findFirst({
+            where: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              userId: existingUser.id,
+            },
+          })
+
+          if (linkedAccount) {
+            return true
+          }
+
+          // Link the Google account to the existing user
+          await db.account.create({
+            data: {
+              userId: existingUser.id,
+              ...account,
+            },
+          })
+
+          return true
+        }
+      }
+
+      if (user.id && account?.provider === 'credentials') {
+        const existingUser = await getUserById(user.id)
         // Prevent SignIn without email verification
         if (
           !existingUser ||
@@ -56,12 +97,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    error: '/',
+    error: '/error',
     newUser: '/',
     signIn: '/auth/login',
     signOut: '/',
   },
   adapter: PrismaAdapter(db),
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+  },
   ...authConfig,
 })

@@ -12,6 +12,7 @@ import {
   ClipboardList,
   GanttChart,
   LayoutList,
+  Map as MapIcon,
   NotepadText,
   Settings,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ import ListTab from '@src/components/ProjectTabs/ListTab'
 import { Separator } from '@src/components/ui/separator'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
+import OverviewTab from '@src/components/ProjectTabs/OverviewTab'
 
 const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   // Session
@@ -40,6 +42,16 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
     component: JSX.Element
     headerComponent: JSX.Element
   }[] = [
+    {
+      id: 'overview',
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      component: <OverviewTab />,
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <MapIcon width={15} /> Overview
+        </div>
+      ),
+    },
     {
       id: 'list',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
@@ -100,7 +112,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentTab = searchParams.get('tab')
-  const [tab, setTab] = useState(currentTab ?? 'list')
+  const [tab, setTab] = useState(currentTab ?? 'overview')
 
   useEffect(() => {
     if (currentTab !== tab) {

@@ -28,10 +28,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   const team = await fetchSessionTeam(session)
-  if (!team) {
-    // TODO: Extend Team, such that new Teams can be created and users can have multiple teams
-    redirect('/')
-  }
+
   const projects = await fetchAllAssignedProjects(false)
 
   const fallbackData = {

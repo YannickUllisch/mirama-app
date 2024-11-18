@@ -8,7 +8,7 @@ import {
 } from '@src/components/Tree/TreeViewAPI'
 import useSWR from 'swr'
 
-const TreeFileTest = () => {
+const TaskTree = () => {
   const { data: tasks } = useSWR<(Task & { subtasks: Task[] })[]>(
     `/api/db/task?id=${'8b869c2a-5b95-4ecf-bf6d-617f24f6a2c3'}`,
   )
@@ -77,4 +77,4 @@ const TreeFileTest = () => {
   )
 }
 
-export default TreeFileTest
+export default TaskTree

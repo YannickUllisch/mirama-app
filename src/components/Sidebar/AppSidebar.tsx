@@ -59,7 +59,11 @@ const AppMenu: AppMenuItem[] = [
     isActive: true,
     items: [
       {
-        title: 'Team',
+        title: 'Company',
+        href: '/app/company',
+      },
+      {
+        title: 'Teams',
         href: '/app/team',
       },
       {
@@ -92,7 +96,7 @@ interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'props'> {
   user: User
   projects: Project[]
-  team: Team
+  team: Team | null
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -107,7 +111,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         <SidebarTeamSwitcher
           team={{
             logo: Component,
-            name: team.name,
+            name: team?.name ?? 'No Team',
             plan: 'Enterprise',
           }}
         />

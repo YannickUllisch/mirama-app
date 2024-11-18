@@ -2,10 +2,31 @@ import Credentials from 'next-auth/providers/credentials'
 import type { NextAuthConfig } from 'next-auth'
 import { LoginSchema } from '@src/lib/schemas'
 import bcrypt from 'bcryptjs'
+import GoogleProvider from 'next-auth/providers/google'
+
 import { getUserByEmail } from '../api/queries/User/UserQueries'
 
 export default {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      profile: (profile) => {
+        return {
+          id: profile.oid,
+          email: profile.email,
+          image: profile.image,
+          name: profile.name,
+          teamId: profile.tid,
+        }
+      },
+      authorization: {
+        params: {
+          scope:
+            'openid email profile https://www.googleapis.com/auth/calendar',
+        },
+      },
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedfields = LoginSchema.safeParse(credentials)
