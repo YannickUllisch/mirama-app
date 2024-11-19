@@ -18,10 +18,18 @@ import { useState, useTransition } from 'react'
 import { LoginSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { login } from '@src/lib/auth/login'
+import { useSearchParams } from 'next/navigation'
 
 const LoginForm = () => {
+  const searchParams = useSearchParams()
+  const urlError =
+    searchParams.get('error') === 'OAuthAccountNotLinked'
+      ? 'Email already in use with different provider!'
+      : ''
+
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
+
   const [isPending, startTransition] = useTransition()
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -87,7 +95,7 @@ const LoginForm = () => {
           />
         </div>
         <FormSuccess message={success} />
-        <FormError message={error} />
+        <FormError message={error || urlError} />
         <Button
           type="submit"
           className="w-full bg-primary hover:bg-primary-light dark:bg-primary-dark dark:hover:bg-primary text-white"

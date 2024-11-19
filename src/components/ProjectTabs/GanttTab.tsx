@@ -3,15 +3,20 @@ import React, { useCallback, useState } from 'react'
 import '@bitnoi.se/react-scheduler/dist/style.css'
 import { Scheduler, type SchedulerData } from '@bitnoi.se/react-scheduler'
 
+interface iRange {
+  startDate: Date
+  endDate: Date
+}
+
 const GanttTab = () => {
   const [filterButtonState, setFilterButtonState] = useState(0)
 
-  const [_range, setRange] = useState({
+  const [_range, setRange] = useState<iRange>({
     startDate: new Date(),
     endDate: new Date(),
   })
 
-  const handleRangeChange = useCallback((range) => {
+  const handleRangeChange = useCallback((range: iRange) => {
     setRange(range)
   }, [])
 
