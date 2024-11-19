@@ -8,45 +8,22 @@ import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
 export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      })
+      const existingUser = await getUserByEmail(user.email ?? 'undef')
+      if (existingUser) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { emailVerified: new Date() },
+        })
+      }
     },
   },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {
-        const user = await getUserByEmail(profile?.email ?? 'undef')
+        const existingUser = await getUserByEmail(profile?.email ?? 'undef')
 
-        // Find the user by email
-        const existingUser = await db.user.findUnique({
-          where: { id: user?.id },
-        })
-
-        if (existingUser) {
-          // Check if an account for this provider already exists for the user
-          const linkedAccount = await db.account.findFirst({
-            where: {
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              userId: existingUser.id,
-            },
-          })
-
-          if (linkedAccount) {
-            return true
-          }
-
-          // Link the Google account to the existing user
-          await db.account.create({
-            data: {
-              userId: existingUser.id,
-              ...account,
-            },
-          })
-
-          return true
+        if (!existingUser?.emailVerified) {
+          return false
         }
       }
 
@@ -83,7 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
 
-    async jwt({ token }) {
+    async jwt({ token, account }) {
       if (!token.sub) return token
 
       const existingUser = await getUserById(token.sub)
@@ -92,6 +69,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.teamId = existingUser.teamId
       token.role = existingUser.role
       token.name = existingUser.name
+
+      if (account) {
+        token.provider = account.provider
+        token.providerAccountId = account.providerAccountId
+      }
 
       return token
     },

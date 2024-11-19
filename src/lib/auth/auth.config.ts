@@ -11,9 +11,10 @@ export default {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      issuer: 'https://accounts.google.com',
       profile: (profile) => {
         return {
-          id: profile.oid,
+          id: profile.sub,
           email: profile.email,
           image: profile.image,
           name: profile.name,

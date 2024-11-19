@@ -39,6 +39,7 @@ const SidebarProjectsNav = ({
             <div>{item.isActive}</div>
           </SidebarMenuItem>
         ))}
+        {projects.length < 1 && <span>No Projects Found</span>}
       </SidebarMenu>
     </SidebarGroup>
   )
