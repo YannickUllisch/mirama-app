@@ -1,10 +1,10 @@
 'use server'
 import type * as z from 'zod'
-import { signIn } from '@auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { AuthError } from 'next-auth'
 import { LoginSchema } from '@src/lib/schemas'
 import { getUserByEmail } from '../api/queries/User/UserQueries'
+import { signIn } from '@auth'
 
 export const resendLogin = async (formData: FormData) => {
   try {

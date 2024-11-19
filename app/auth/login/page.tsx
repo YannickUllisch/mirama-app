@@ -23,9 +23,8 @@ const LoginPage = () => {
         <Separator />
       </div>
       <LoginForm />
-
       {/* <form action={resendLogin}>
-        <Input type="email" placeholder="Email" />
+        <Input type="email" name="email" placeholder="Email" />
         <Button type="submit">Sign in with Resend</Button>
       </form> */}
     </AuthCard>

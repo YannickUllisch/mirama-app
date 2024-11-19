@@ -4,6 +4,8 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { Role } from '@prisma/client'
 import authConfig from './auth.config'
 import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
+import ResendProvider from 'next-auth/providers/resend'
+import { resend } from '@/src/email/mailer'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
@@ -120,4 +122,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   ...authConfig,
+  providers: [
+    ...authConfig.providers,
+    ResendProvider({
+      from: 'noreply@onresend.com',
+      apiKey: process.env.RESEND_API_KEY,
+      // Currently doesnt work due to non verified from Email
+    }),
+  ],
 })
