@@ -6,6 +6,14 @@ import { AuthError } from 'next-auth'
 import { LoginSchema } from '@src/lib/schemas'
 import { getUserByEmail } from '../api/queries/User/UserQueries'
 
+export const resendLogin = async (formData: FormData) => {
+  try {
+    await signIn('resend', formData)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values)
 

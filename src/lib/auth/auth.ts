@@ -19,12 +19,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === 'google') {
+      if (account?.provider === 'google' && user.id) {
         const existingUser = await getUserByEmail(profile?.email ?? 'undef')
 
         if (!existingUser?.emailVerified) {
           return false
         }
+
+        await db.account.upsert({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+          update: {
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            access_token: account.access_token,
+          },
+          create: {
+            userId: existingUser.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            access_token: account.access_token,
+            type: account.type,
+            scope: account.scope,
+            id_token: account.id_token,
+            token_type: account.token_type,
+          },
+        })
+
+        return true
       }
 
       if (user.id && account?.provider === 'credentials') {
@@ -57,6 +85,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.name = token.name
       }
 
+      if (token.provider && session.user) {
+        session.user.provider = token.provider as string
+      }
+
       return session
     },
 
@@ -72,7 +104,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (account) {
         token.provider = account.provider
-        token.providerAccountId = account.providerAccountId
       }
 
       return token
