@@ -1,5 +1,5 @@
 'use client'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -11,16 +11,29 @@ import {
 } from '@src/components/ui/breadcrumb'
 import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
-import { Button } from '@src/components/ui/button'
-import { AlignJustify, FolderOpen, Home, Search } from 'lucide-react'
-import HeaderProfile from './HeaderProfile'
-import type { Session } from 'next-auth'
+import { Search } from 'lucide-react'
 import { Input } from '../ui/input'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
+import { LoadBarPulse } from '../Loading/LoadBarPulse'
 
 const AppHeader = () => {
   const pathname = usePathname()
+  const [pageLoading, setPageLoading] = useState<boolean>(false)
+  const [currentPath, setCurrentPath] = useState<string>(pathname)
+
+  useEffect(() => {
+    if (pathname !== currentPath && pageLoading) {
+      setCurrentPath(pathname)
+      setPageLoading(false)
+    }
+  }, [currentPath, pageLoading, pathname])
+
+  const onRouteChange = () => {
+    if (!pageLoading) {
+      setPageLoading(true)
+    }
+  }
 
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
@@ -41,6 +54,7 @@ const AppHeader = () => {
 
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
+      {pageLoading && <LoadBarPulse />}
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
         <Separator
@@ -57,7 +71,8 @@ const AppHeader = () => {
                     <Link
                       href={accumulatedPaths[index]}
                       passHref
-                      legacyBehavior
+                      onClick={onRouteChange}
+                      onKeyUp={onRouteChange}
                     >
                       <BreadcrumbLink>
                         {capitalize(

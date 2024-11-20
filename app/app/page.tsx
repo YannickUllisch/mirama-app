@@ -15,8 +15,13 @@ import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
 import { Button } from '@src/components/ui/button'
 import { useSession } from 'next-auth/react'
+import { Suspense, useState } from 'react'
+import { Skeleton } from '@src/components/ui/skeleton'
+import { LoadBarPulse } from '@src/components/Loading/LoadBarPulse'
 
 const ClientAppPage = () => {
+  const [pageLoading, setPageLoading] = useState<boolean>(false)
+
   const { data: session } = useSession({ required: true })
 
   const { data: projects, mutate } =
@@ -26,33 +31,41 @@ const ClientAppPage = () => {
       })[]
     >('/api/db/project')
 
+  const onRouteChange = () => {
+    if (!pageLoading) {
+      setPageLoading(true)
+    }
+  }
+
   return (
     <div className="flex flex-col">
+      {pageLoading && <LoadBarPulse />}
       <div className="flex items-center gap-4 dark:text-white mb-6">
         <Home width={20} />
         <span style={{ fontSize: 20 }}>Dashboard</span>
-
-        {isTeamAdminOrOwner(session) && (
-          <>
-            <span>|</span>
-            <AddProjectDialog
-              key={'Project Dialog'}
-              mutate={mutate}
-              button={
-                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                  <Plus width={15} className="ml-2" />
-                  <Button
-                    className="text-text"
-                    style={{ fontSize: 11, textDecoration: 'none' }}
-                    variant="link"
-                  >
-                    New Project
-                  </Button>
-                </div>
-              }
-            />
-          </>
-        )}
+        <Suspense fallback={<Skeleton />}>
+          {isTeamAdminOrOwner(session) && (
+            <>
+              <span>|</span>
+              <AddProjectDialog
+                key={'Project Dialog'}
+                mutate={mutate}
+                button={
+                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                    <Plus width={15} className="ml-2" />
+                    <Button
+                      className="text-text"
+                      style={{ fontSize: 11, textDecoration: 'none' }}
+                      variant="link"
+                    >
+                      New Project
+                    </Button>
+                  </div>
+                }
+              />
+            </>
+          )}
+        </Suspense>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-y-5 overflow-auto sm:overflow-visible place-content-center">
@@ -63,7 +76,12 @@ const ClientAppPage = () => {
               project.name,
             )}`}
           >
-            <Link href={`/app/${project.name}`} legacyBehavior prefetch>
+            <Link
+              href={`/app/${project.name}`}
+              prefetch
+              onClick={onRouteChange}
+              onKeyUp={onRouteChange}
+            >
               <Card className="flex min-w-64 h-[92%] flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                 <CardHeader
                   style={{

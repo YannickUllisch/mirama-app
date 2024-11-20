@@ -15,7 +15,10 @@ const SubTasksGroup = ({
     <div className="flex flex-col">
       <Label className="mb-3">Subtasks</Label>
       {tasks.map((task) => (
-        <div className="m-1 p-2 outline-hover outline-dashed hover:bg-hover relative group">
+        <div
+          key={`subtask-${task.id}`}
+          className="m-1 p-2 outline-hover outline-dashed hover:bg-hover relative group"
+        >
           <div className="flex justify-between mr-5">
             <div className="flex gap-2">
               <CornerDownRight className="w-4 h-4 flex-shrink-0" />

@@ -158,7 +158,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                   variant={'link'}
                   onClick={() => router.back()}
                 >
-                  Return to Overview
+                  Return
                 </Button>
               </div>
             )}
@@ -295,7 +295,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                     <SelectContent>
                       {project?.taskCategories.map((category) => (
                         <SelectItem
-                          key={`category-item-${category}`}
+                          key={`category-item-${category.id}`}
                           value={category.id}
                         >
                           {category.title}

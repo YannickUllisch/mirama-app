@@ -66,6 +66,7 @@ export const fetchAllAssignedProjects = async (archivedStatus?: boolean) => {
       },
     },
     include: {
+      tasks: true,
       users: {
         include: {
           user: true,
