@@ -9,15 +9,19 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@src/components/ui/breadcrumb'
-import { capitalize } from '@src/lib/utils'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import Link from 'next/link'
-import { Search } from 'lucide-react'
+import { PlusSquare, Search, UserPlus } from 'lucide-react'
 import { Input } from '../ui/input'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 import { LoadBarPulse } from '../Loading/LoadBarPulse'
+import type { Session } from 'next-auth'
+import AddProjectDialog from '../Dialogs/AddProjectDialog'
+import AddMemberDialog from '../Dialogs/AddMemberDialog'
+import GeneralTooltip from '../GeneralTooltip'
 
-const AppHeader = () => {
+const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
   const [pageLoading, setPageLoading] = useState<boolean>(false)
   const [currentPath, setCurrentPath] = useState<string>(pathname)
@@ -108,6 +112,23 @@ const AppHeader = () => {
         </Link>
       </div>
       <div className="flex items-center gap-2">
+        {isTeamAdminOrOwner(session) && (
+          <div className="flex gap-2">
+            <AddProjectDialog
+              key={'Project Dialog'}
+              button={
+                <GeneralTooltip tipText="Add Project">
+                  <PlusSquare className="w-4 cursor-pointer hover:text-white" />
+                </GeneralTooltip>
+              }
+            />
+            <AddMemberDialog>
+              <GeneralTooltip tipText="Add User">
+                <UserPlus className="w-4 cursor-pointer hover:text-white" />
+              </GeneralTooltip>
+            </AddMemberDialog>
+          </div>
+        )}
         <div className="md:block hidden">
           <div className="flex gap-1 rounded-md px-2 items-center border border-hover">
             <Search className="w-4 h-4 text-gray-500" />

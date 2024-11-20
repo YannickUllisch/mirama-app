@@ -71,33 +71,27 @@ const ClientProjectsPage = () => {
   }
 
   return (
-    <>
-      <div className="flex items-center gap-4 dark:text-white mb-2">
-        <Folder width={20} />
-        <span style={{ fontSize: 20 }}>All Projects</span>
-      </div>
-      <DataTable
-        tableIdentifier="projectPageTable"
-        columns={ProjectColumns({
-          mutate: updateProjects,
-          session: session,
-          users: users ?? [],
-        })}
-        data={projects ?? []}
-        dataLoading={projectsLoading || usersLoading}
-        toolbarOptions={{
-          showViewOptionsicon: true,
-          showFilterOption: true,
-          filterOptionType: 'PROJECT',
-          addToolbarleft: isTeamAdminOrOwner(session) && <LeftToolbar />,
-          refresh: { mutate: updateProjects },
-        }}
-        footerOptions={{
-          addFooterRow: <FooterRow />,
-          showPagination: true,
-        }}
-      />
-    </>
+    <DataTable
+      tableIdentifier="projectPageTable"
+      columns={ProjectColumns({
+        mutate: updateProjects,
+        session: session,
+        users: users ?? [],
+      })}
+      data={projects ?? []}
+      dataLoading={projectsLoading || usersLoading}
+      toolbarOptions={{
+        showViewOptionsicon: true,
+        showFilterOption: true,
+        filterOptionType: 'PROJECT',
+        addToolbarleft: isTeamAdminOrOwner(session) && <LeftToolbar />,
+        refresh: { mutate: updateProjects },
+      }}
+      footerOptions={{
+        addFooterRow: <FooterRow />,
+        showPagination: true,
+      }}
+    />
   )
 }
 

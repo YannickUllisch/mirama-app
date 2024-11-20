@@ -17,8 +17,7 @@ import {
 } from '@src/components/ui/popover'
 import { Separator } from '@src/components/ui/separator'
 import type { Column } from '@tanstack/react-table'
-import { Check, PlusCircle } from 'lucide-react'
-import { cn } from '@src/lib/utils'
+import { PlusCircle } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 
 interface DataTableFacetedFilterProps<TData, TValue> {

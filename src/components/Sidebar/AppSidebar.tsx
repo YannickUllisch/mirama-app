@@ -49,6 +49,10 @@ const AppMenu: AppMenuItem[] = [
         title: 'Tasks',
         href: '/app/tasks',
       },
+      {
+        title: 'Calendar',
+        href: '/app/calendar',
+      },
     ],
   },
   {

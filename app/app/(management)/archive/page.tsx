@@ -20,25 +20,19 @@ const ArchivePage = () => {
   >('/api/db/project?archived=true')
 
   return (
-    <>
-      <div className="flex items-center gap-4 dark:text-white mb-5">
-        <Archive width={20} />
-        <span style={{ fontSize: 20 }}>Archive</span>
-      </div>
-      <DataTable
-        tableIdentifier="archivedTable"
-        toolbarOptions={{
-          showViewOptionsicon: true,
-          showFilterOption: true,
-          filterOptionType: 'PROJECT',
-        }}
-        footerOptions={{ showPagination: true }}
-        expandedContent
-        columns={ArchiveColumns({ mutate: updateProjects, session: session })}
-        data={projects ?? []}
-        dataLoading={projectsLoading}
-      />
-    </>
+    <DataTable
+      tableIdentifier="archivedTable"
+      toolbarOptions={{
+        showViewOptionsicon: true,
+        showFilterOption: true,
+        filterOptionType: 'PROJECT',
+      }}
+      footerOptions={{ showPagination: true }}
+      expandedContent
+      columns={ArchiveColumns({ mutate: updateProjects, session: session })}
+      data={projects ?? []}
+      dataLoading={projectsLoading}
+    />
   )
 }
 

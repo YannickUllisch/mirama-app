@@ -5,26 +5,20 @@ import {
   CardFooter,
   CardHeader,
 } from '@src/components/ui/card'
-import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
+import { getColorByName } from '@src/lib/utils'
 import type { Project, ProjectUser, User } from '@prisma/client'
-import { CalendarDays, Home, Plus } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import { Button } from '@src/components/ui/button'
-import { useSession } from 'next-auth/react'
-import { Suspense, useState } from 'react'
-import { Skeleton } from '@src/components/ui/skeleton'
+import { useState } from 'react'
 import { LoadBarPulse } from '@src/components/Loading/LoadBarPulse'
 
 const ClientAppPage = () => {
   const [pageLoading, setPageLoading] = useState<boolean>(false)
 
-  const { data: session } = useSession({ required: true })
-
-  const { data: projects, mutate } =
+  const { data: projects } =
     useSWR<
       (Project & {
         users: (ProjectUser & { user: User })[]
@@ -40,33 +34,6 @@ const ClientAppPage = () => {
   return (
     <div className="flex flex-col">
       {pageLoading && <LoadBarPulse />}
-      <div className="flex items-center gap-4 dark:text-white mb-6">
-        <Home width={20} />
-        <span style={{ fontSize: 20 }}>Dashboard</span>
-        <Suspense fallback={<Skeleton />}>
-          {isTeamAdminOrOwner(session) && (
-            <>
-              <span>|</span>
-              <AddProjectDialog
-                key={'Project Dialog'}
-                mutate={mutate}
-                button={
-                  <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                    <Plus width={15} className="ml-2" />
-                    <Button
-                      className="text-text"
-                      style={{ fontSize: 11, textDecoration: 'none' }}
-                      variant="link"
-                    >
-                      New Project
-                    </Button>
-                  </div>
-                }
-              />
-            </>
-          )}
-        </Suspense>
-      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-y-5 overflow-auto sm:overflow-visible place-content-center">
         {projects?.map((project) => (

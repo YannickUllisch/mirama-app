@@ -49,7 +49,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
             />
             <SidebarInset>
               <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
-                <AppHeader />
+                <AppHeader session={session} />
                 <div className="flex-1 px-6 pt-5 min-h-[1000px]">
                   <Suspense fallback={<Loading />}>{children}</Suspense>
                 </div>
