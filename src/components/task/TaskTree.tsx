@@ -67,8 +67,8 @@ const TaskTree = () => {
 
   return (
     <Tree
-      className="rounded-md h-60 bg-background overflow-hidden p-2"
-      initialSelectedId="21"
+      className="rounded-md h-60 overflow-hidden p-2"
+      initialExpendedItems={tasks?.map((task) => task.id)}
       elements={elements}
     >
       {renderTreeElements(elements)}
