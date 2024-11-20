@@ -17,15 +17,15 @@ import {
   Settings,
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import BoardTab from '@src/components/ProjectTabs/BoardTab'
-import AnalyticsTab from '@src/components/ProjectTabs/AnalyticsTab'
-import SettingsTab from '@src/components/ProjectTabs/SettingsTab'
-import GanttTab from '@src/components/ProjectTabs/GanttTab'
-import ListTab from '@src/components/ProjectTabs/ListTab'
 import { Separator } from '@src/components/ui/separator'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
-import OverviewTab from '@src/components/ProjectTabs/OverviewTab'
+import AnalyticsTab from '@src/components/Tabs/ProjectTabs/AnalyticsTab'
+import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
+import GanttTab from '@src/components/Tabs/ProjectTabs/GanttTab'
+import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
+import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
+import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 
 const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   // Session

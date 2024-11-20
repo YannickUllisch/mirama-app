@@ -1,10 +1,9 @@
 'use client'
 import type { FC } from 'react'
-import type { Project, ProjectUser, Task, User } from '@prisma/client'
+import type { Task, User } from '@prisma/client'
 import useSWR from 'swr'
-import KanbanBoard from '../Kanban/KanbanBoard'
-import { useSession } from 'next-auth/react'
 import type { Session } from 'next-auth'
+import KanbanBoard from '@src/components/Kanban/KanbanBoard'
 
 interface TabProps {
   projectId: string

@@ -41,7 +41,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import type { KeyedMutator } from 'swr'
 
-export const columns = ({
+export const ProjectColumns = ({
   session,
   mutate,
   users,

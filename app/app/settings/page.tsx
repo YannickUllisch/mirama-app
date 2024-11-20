@@ -10,9 +10,9 @@ import {
 import { useSession } from 'next-auth/react'
 import { Settings, Tags, User } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import AccountTab from '@src/components/SettingTabs/AccountTab'
-import TagsTab from '@src/components/SettingTabs/TagsTab'
 import { Separator } from '@src/components/ui/separator'
+import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
+import TagsTab from '@src/components/Tabs/SettingTabs/TagsTab'
 
 const ProjectPage = () => {
   const { data: session } = useSession()

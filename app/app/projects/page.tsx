@@ -8,7 +8,7 @@ import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
 import { useSession } from 'next-auth/react'
-import { columns } from './columns'
+import { ProjectColumns } from './columns'
 import { projectIncludeConfig } from './shared'
 
 const ClientProjectsPage = () => {
@@ -78,7 +78,7 @@ const ClientProjectsPage = () => {
       </div>
       <DataTable
         tableIdentifier="projectPageTable"
-        columns={columns({
+        columns={ProjectColumns({
           mutate: updateProjects,
           session: session,
           users: users ?? [],
