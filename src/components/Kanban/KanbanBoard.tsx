@@ -29,6 +29,7 @@ import type { Session } from 'next-auth'
 interface KanbanBoardProps {
   session: Session | null
   projectId: string
+  onRouteChange: () => void
   tasks: (Task & {
     assignedTo: User
   })[]

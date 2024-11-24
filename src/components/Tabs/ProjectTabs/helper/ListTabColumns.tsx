@@ -31,9 +31,11 @@ export const ListTabColumns = ({
   projectName,
   users,
   mutate,
+  onRouteChange,
 }: {
   projectName: string
   users: User[]
+  onRouteChange: () => void
   mutate: KeyedMutator<
     (Task & {
       assignedTo: User
@@ -85,6 +87,13 @@ export const ListTabColumns = ({
         cell: ({ getValue, row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
 
+          const onClick = (
+            event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+          ) => {
+            event.stopPropagation()
+            onRouteChange()
+          }
+
           return (
             <div className="flex justify-between group w-full">
               <div className="flex items-center gap-2">
@@ -95,9 +104,9 @@ export const ListTabColumns = ({
                 )}
 
                 <Link
+                  onClick={(e) => onClick(e)}
                   href={`/app/${projectName}/edit/${row.original.id}`}
                   className="hover:underline"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {getValue() as string}
                 </Link>
@@ -116,6 +125,8 @@ export const ListTabColumns = ({
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
                     <Link
+                      onClick={onRouteChange}
+                      onKeyUp={onRouteChange}
                       href={`/app/${projectName}/edit/${row.original.id}`}
                       className="gap-3"
                     >
@@ -125,6 +136,8 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
+                      onClick={onRouteChange}
+                      onKeyUp={onRouteChange}
                       href={`/app/${projectName}/create/${row.original.projectId}?parentId=${row.original.id}`}
                       className="gap-3"
                     >
@@ -306,7 +319,7 @@ export const ListTabColumns = ({
         },
       },
     ],
-    [users, projectName, mutate],
+    [users, projectName, mutate, onRouteChange],
   )
   return cols
 }

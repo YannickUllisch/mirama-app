@@ -13,9 +13,10 @@ import { ListTabColumns } from './helper/ListTabColumns'
 interface TaskProps {
   projectId: string
   projectName: string
+  onRouteChange: () => void
 }
 
-const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
+const ListTab: FC<TaskProps> = ({ projectId, projectName, onRouteChange }) => {
   // We fetch tasks instead of passing from parent to have more specific control.
   const {
     data: tasks,
@@ -44,8 +45,9 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
       <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
         <Link
           href={`/app/${projectName}/create/${projectId}`}
-          legacyBehavior
           passHref
+          onClick={onRouteChange}
+          onKeyUp={onRouteChange}
         >
           <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
             <Plus width={15} className="ml-2" />
@@ -69,6 +71,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
           mutate: updateTasks,
           projectName: projectName,
           users: users ?? [],
+          onRouteChange: onRouteChange,
         })}
         data={tasks ?? []}
         enableRowSelection

@@ -26,15 +26,26 @@ import GanttTab from '@src/components/Tabs/ProjectTabs/GanttTab'
 import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
 import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
+import { LoadBarPulse } from '@src/components/Loading/LoadBarPulse'
 
 const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   // Session
   const { data: session } = useSession({ required: true })
 
+  // States
+  const [pageLoading, setPageLoading] = useState<boolean>(false)
+
   // Fetching Project by name
   const { data: project } = useSWR<Project>(
     `/api/db/project/name/${params.name}`,
   )
+
+  const onRouteChange = () => {
+    if (!pageLoading) {
+      setPageLoading(true)
+    }
+  }
+
   // Tab definitions
   const projectTabs: {
     roles: Role[]
@@ -59,6 +70,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
         <ListTab
           projectId={project?.id ?? ''}
           projectName={project?.name ?? ''}
+          onRouteChange={onRouteChange}
         />
       ),
       headerComponent: (
@@ -70,7 +82,13 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
     {
       id: 'kanban',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <BoardTab projectId={project?.id ?? ''} session={session} />,
+      component: (
+        <BoardTab
+          projectId={project?.id ?? ''}
+          session={session}
+          onRouteChange={onRouteChange}
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <ClipboardList width={15} /> Board
@@ -124,6 +142,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
+      {pageLoading && <LoadBarPulse />}
       <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">
         <NotepadText strokeWidth={1.5} width={20} />
         <span style={{ fontSize: 20 }}>{params.name}</span>

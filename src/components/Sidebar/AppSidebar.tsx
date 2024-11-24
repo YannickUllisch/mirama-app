@@ -6,6 +6,7 @@ import {
   Bell,
   HelpCircleIcon,
   Component,
+  UserPlus,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -27,6 +28,7 @@ import type { Session } from 'next-auth'
 import { LoadBarPulse } from '../Loading/LoadBarPulse'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import AddMemberDialog from '../Dialogs/AddMemberDialog'
 
 const AppMenu: AppMenuItem[] = [
   {

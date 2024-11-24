@@ -7,7 +7,6 @@ import type { KanbanItemType } from '@src/lib/constants'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
-import { SelectItem } from '../ui/tableSelect'
 
 const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
   const path = usePathname()

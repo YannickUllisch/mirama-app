@@ -8,9 +8,10 @@ import KanbanBoard from '@src/components/Kanban/KanbanBoard'
 interface TabProps {
   projectId: string
   session: Session | null
+  onRouteChange: () => void
 }
 
-const BoardTab: FC<TabProps> = ({ projectId, session }) => {
+const BoardTab: FC<TabProps> = ({ projectId, session, onRouteChange }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
@@ -18,7 +19,12 @@ const BoardTab: FC<TabProps> = ({ projectId, session }) => {
   >(`/api/db/task?id=${projectId}`)
 
   return (
-    <KanbanBoard tasks={tasks ?? []} projectId={projectId} session={session} />
+    <KanbanBoard
+      tasks={tasks ?? []}
+      projectId={projectId}
+      session={session}
+      onRouteChange={onRouteChange}
+    />
   )
 }
 export default BoardTab

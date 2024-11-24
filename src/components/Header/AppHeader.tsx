@@ -11,7 +11,13 @@ import {
 } from '@src/components/ui/breadcrumb'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import Link from 'next/link'
-import { PlusSquare, Search, UserPlus } from 'lucide-react'
+import {
+  Ellipsis,
+  EllipsisVertical,
+  PlusSquare,
+  Search,
+  UserPlus,
+} from 'lucide-react'
 import { Input } from '../ui/input'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
@@ -20,6 +26,7 @@ import type { Session } from 'next-auth'
 import AddProjectDialog from '../Dialogs/AddProjectDialog'
 import AddMemberDialog from '../Dialogs/AddMemberDialog'
 import GeneralTooltip from '../GeneralTooltip'
+import { Button } from '../ui/button'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
@@ -111,33 +118,23 @@ const AppHeader = ({ session }: { session: Session | null }) => {
           </span>
         </Link>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 ">
         {isTeamAdminOrOwner(session) && (
-          <div className="flex gap-2">
+          <div className="gap-2 flex">
             <AddProjectDialog
               key={'Project Dialog'}
               button={
-                <GeneralTooltip tipText="Add Project">
-                  <PlusSquare className="w-4 cursor-pointer hover:text-white" />
-                </GeneralTooltip>
+                <Button className="p-3 text-xs" variant={'outline'}>
+                  Add Project
+                </Button>
               }
             />
-            <AddMemberDialog>
-              <GeneralTooltip tipText="Add User">
-                <UserPlus className="w-4 cursor-pointer hover:text-white" />
-              </GeneralTooltip>
-            </AddMemberDialog>
           </div>
         )}
-        <div className="md:block hidden">
-          <div className="flex gap-1 rounded-md px-2 items-center border border-hover">
-            <Search className="w-4 h-4 text-gray-500" />
-            <Input
-              placeholder="Search..."
-              className="text-xs focus-visible:ring-0 flex-1 border-none focus:ring-0 shadow-none focus:outline-none bg-transparent"
-            />
-          </div>
-        </div>
+
+        <Button variant={'ghost'} className="p-0 m-0 bg-transparent">
+          <EllipsisVertical />
+        </Button>
       </div>
     </header>
   )
