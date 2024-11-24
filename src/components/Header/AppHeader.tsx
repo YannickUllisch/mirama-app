@@ -31,8 +31,16 @@ import { Button } from '../ui/button'
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
   const [pageLoading, setPageLoading] = useState<boolean>(false)
+  const [isMounted, setIsMounted] = useState(false)
   const [currentPath, setCurrentPath] = useState<string>(pathname)
 
+  // Sync currentPath with pathname after mount
+  useEffect(() => {
+    setCurrentPath(pathname)
+    setIsMounted(true)
+  }, [pathname])
+
+  // Logic to handle loading bar on redirect through header
   useEffect(() => {
     if (pathname !== currentPath && pageLoading) {
       setCurrentPath(pathname)
@@ -62,6 +70,12 @@ const AppHeader = ({ session }: { session: Session | null }) => {
 
     return { pathSegments: segments, accumulatedPaths: paths }
   }, [pathname])
+
+  // Guard rendering until component has mounted
+  // Avoids rendering breadcrumbs before hydration
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
@@ -119,7 +133,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
         </Link>
       </div>
       <div className="flex items-center gap-2 ">
-        {isTeamAdminOrOwner(session) && (
+        {session && isTeamAdminOrOwner(session) && (
           <div className="gap-2 flex">
             <AddProjectDialog
               key={'Project Dialog'}
@@ -131,10 +145,6 @@ const AppHeader = ({ session }: { session: Session | null }) => {
             />
           </div>
         )}
-
-        <Button variant={'ghost'} className="p-0 m-0 bg-transparent">
-          <EllipsisVertical />
-        </Button>
       </div>
     </header>
   )

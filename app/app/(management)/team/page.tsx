@@ -2,7 +2,6 @@
 import type { User } from '@prisma/client'
 import UserCard from '@src/components/Avatar/UserCard'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
-import { Button } from '@src/components/ui/button'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { Plus, Users } from 'lucide-react'
 import { useSession } from 'next-auth/react'
@@ -11,7 +10,7 @@ import useSWR from 'swr'
 
 const ClientTeamPage = () => {
   // Session
-  const { data: session, update } = useSession({ required: true })
+  const { data: session, update } = useSession()
 
   // Fetching Data
   const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
@@ -27,14 +26,9 @@ const ClientTeamPage = () => {
           <>
             <span>|</span>
             <AddMemberDialog>
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <div className="flex gap-2 items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                 <Plus width={15} className="ml-2" />
-                <Button
-                  style={{ fontSize: 11, textDecoration: 'none' }}
-                  variant="link"
-                >
-                  Add User
-                </Button>
+                <span className="text-xs">Add User</span>
               </div>
             </AddMemberDialog>
           </>
