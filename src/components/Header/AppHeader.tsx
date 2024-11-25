@@ -11,21 +11,11 @@ import {
 } from '@src/components/ui/breadcrumb'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import Link from 'next/link'
-import {
-  Ellipsis,
-  EllipsisVertical,
-  PlusSquare,
-  Search,
-  UserPlus,
-} from 'lucide-react'
-import { Input } from '../ui/input'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 import { LoadBarPulse } from '../Loading/LoadBarPulse'
 import type { Session } from 'next-auth'
 import AddProjectDialog from '../Dialogs/AddProjectDialog'
-import AddMemberDialog from '../Dialogs/AddMemberDialog'
-import GeneralTooltip from '../GeneralTooltip'
 import { Button } from '../ui/button'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
@@ -99,13 +89,13 @@ const AppHeader = ({ session }: { session: Session | null }) => {
                       onClick={onRouteChange}
                       onKeyUp={onRouteChange}
                     >
-                      <BreadcrumbLink>
+                      <span>
                         {capitalize(
                           segment
                             .replace(/-/g, ' ')
                             .replace('app', 'Dashboard'),
                         )}
-                      </BreadcrumbLink>
+                      </span>
                     </Link>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />

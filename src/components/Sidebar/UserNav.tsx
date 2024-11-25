@@ -1,14 +1,6 @@
 'use client'
 import { signOut } from 'next-auth/react'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Settings,
-  Sparkles,
-} from 'lucide-react'
+import { ChevronsUpDown, LogOut, Settings, Sparkles } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,

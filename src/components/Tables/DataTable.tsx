@@ -382,10 +382,7 @@ export function DataTable<TData extends TableData, TValue>({
                   </TableRow>
                   {enableRowSelection && row.getIsExpanded() && (
                     <TableRow>
-                      <TableCell
-                        colSpan={row.getVisibleCells().length}
-                        className=""
-                      >
+                      <TableCell colSpan={row.getVisibleCells().length}>
                         {expandedContent}
                       </TableCell>
                     </TableRow>

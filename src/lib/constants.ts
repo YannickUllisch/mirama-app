@@ -39,3 +39,10 @@ export type KanbanItemType = {
   id: UniqueIdentifier
   task?: Task & { assignedTo: User }
 }
+
+export interface GoogleCalendarEvent {
+  summary: string
+  description?: string
+  startDateISO: string
+  endDateISO: string
+}

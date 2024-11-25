@@ -228,74 +228,70 @@ type FolderProps = {
 const Folder = forwardRef<
   HTMLDivElement,
   FolderProps & React.HTMLAttributes<HTMLDivElement>
->(
-  ({
+>((props, _) => {
+  const {
     className,
     element,
     value,
     isSelectable = true,
     isSelect,
     children,
-    ...props
-  }) => {
-    const {
-      direction,
-      handleExpand,
-      expendedItems,
-      indicator,
-      setExpendedItems,
-      openIcon,
-      closeIcon,
-    } = useTree()
+    ...rest
+  } = props // Destructure props here
 
-    return (
-      <AccordionPrimitive.Item
-        {...props}
-        value={value}
-        className="relative overflow-hidden h-full "
+  const {
+    direction,
+    handleExpand,
+    expendedItems,
+    indicator,
+    setExpendedItems,
+    openIcon,
+    closeIcon,
+  } = useTree()
+
+  return (
+    <AccordionPrimitive.Item
+      {...rest} // Use the spread `rest` here
+      value={value}
+      className="relative overflow-hidden h-full "
+    >
+      <AccordionPrimitive.Trigger
+        className={cn('flex items-center gap-1 text-sm rounded-md', className, {
+          'bg-muted rounded-md': isSelect && isSelectable,
+          'cursor-pointer': isSelectable,
+          'cursor-not-allowed opacity-50': !isSelectable,
+        })}
+        disabled={!isSelectable}
+        onClick={() => handleExpand(value)}
       >
-        <AccordionPrimitive.Trigger
-          className={cn(
-            'flex items-center gap-1 text-sm rounded-md',
-            className,
-            {
-              'bg-muted rounded-md': isSelect && isSelectable,
-              'cursor-pointer': isSelectable,
-              'cursor-not-allowed opacity-50': !isSelectable,
-            },
-          )}
-          disabled={!isSelectable}
-          onClick={() => handleExpand(value)}
+        <ChevronRight
+          className={`transform transition-transform duration-200 ${
+            expendedItems?.includes(value) ? 'rotate-90' : 'rotate-0'
+          }`}
+        />
+        {expendedItems?.includes(value)
+          ? openIcon ?? <FolderOpenIcon className="h-4 w-4" />
+          : closeIcon ?? <FolderIcon className="h-4 w-4" />}
+        <span>{element}</span>
+      </AccordionPrimitive.Trigger>
+      <AccordionPrimitive.Content className="text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down relative overflow-hidden h-full">
+        {element && indicator && <TreeIndicator aria-hidden="true" />}
+        <AccordionPrimitive.Root
+          dir={direction}
+          type="multiple"
+          className="flex flex-col gap-1 py-1 ml-5 rtl:mr-5 "
+          defaultValue={expendedItems}
+          value={expendedItems}
+          onValueChange={(value) => {
+            setExpendedItems?.((prev) => [...(prev ?? []), value[0]])
+          }}
         >
-          <ChevronRight
-            className={`transform transition-transform duration-200 ${
-              expendedItems?.includes(value) ? 'rotate-90' : 'rotate-0'
-            }`}
-          />
-          {expendedItems?.includes(value)
-            ? openIcon ?? <FolderOpenIcon className="h-4 w-4" />
-            : closeIcon ?? <FolderIcon className="h-4 w-4" />}
-          <span>{element}</span>
-        </AccordionPrimitive.Trigger>
-        <AccordionPrimitive.Content className="text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down relative overflow-hidden h-full">
-          {element && indicator && <TreeIndicator aria-hidden="true" />}
-          <AccordionPrimitive.Root
-            dir={direction}
-            type="multiple"
-            className="flex flex-col gap-1 py-1 ml-5 rtl:mr-5 "
-            defaultValue={expendedItems}
-            value={expendedItems}
-            onValueChange={(value) => {
-              setExpendedItems?.((prev) => [...(prev ?? []), value[0]])
-            }}
-          >
-            {children}
-          </AccordionPrimitive.Root>
-        </AccordionPrimitive.Content>
-      </AccordionPrimitive.Item>
-    )
-  },
-)
+          {children}
+        </AccordionPrimitive.Root>
+      </AccordionPrimitive.Content>
+    </AccordionPrimitive.Item>
+  )
+})
 
 Folder.displayName = 'Folder'
 

@@ -6,7 +6,6 @@ import {
   Bell,
   HelpCircleIcon,
   Component,
-  UserPlus,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -28,7 +27,6 @@ import type { Session } from 'next-auth'
 import { LoadBarPulse } from '../Loading/LoadBarPulse'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import AddMemberDialog from '../Dialogs/AddMemberDialog'
 
 const AppMenu: AppMenuItem[] = [
   {
@@ -152,7 +150,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
           session={session}
           projects={projects.map((p) => ({
             href: `/app/${p.name}`,
-            name: p.name,
+            original: p,
             isActive:
               DateTime.fromJSDate(p.startDate) <= DateTime.now() &&
               DateTime.fromJSDate(p.endDate) >= DateTime.now(),

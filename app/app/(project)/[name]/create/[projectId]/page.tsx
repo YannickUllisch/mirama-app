@@ -279,7 +279,7 @@ const CreateTaskForm = ({
                     <SelectContent>
                       {project?.taskCategories.map((category) => (
                         <SelectItem
-                          key={`category-item-${category}`}
+                          key={`category-item-${category.id}`}
                           value={category.id}
                         >
                           {category.title}

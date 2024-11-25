@@ -9,18 +9,34 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@src/components/ui/sidebar'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import { ChevronRight, Ellipsis, PlusSquare } from 'lucide-react'
-import type { Task } from '@prisma/client'
+import {
+  ChevronRight,
+  Ellipsis,
+  MoreHorizontal,
+  PlusSquare,
+  Trash2,
+} from 'lucide-react'
+import type { Project, Task } from '@prisma/client'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@src/components/ui/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
+import { GoogleBinaryIcon, GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
+import { AddGoogleCalendarEvent } from '@src/lib/api/AddGCalendarEvent'
 
 const SidebarProjectsNav = ({
   projects,
@@ -28,14 +44,16 @@ const SidebarProjectsNav = ({
   onRouteChange,
 }: {
   projects: {
-    name: string
     href: string
+    original: Project
     isActive: boolean
     tasks: Task[]
   }[]
   session: Session | null
   onRouteChange: () => void
 }) => {
+  const { isMobile } = useSidebar()
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
@@ -54,12 +72,12 @@ const SidebarProjectsNav = ({
       <SidebarMenu>
         {projects.map((item) => (
           <Collapsible
-            key={item.name}
+            key={item.original.name}
             asChild
             defaultOpen={false}
             className="group/collapsible"
           >
-            <SidebarMenuItem key={item.name}>
+            <SidebarMenuItem key={item.original.name}>
               <div className="flex items-center gap-1">
                 <CollapsibleTrigger>
                   <ChevronRight
@@ -76,16 +94,51 @@ const SidebarProjectsNav = ({
                       onClick={onRouteChange}
                       onKeyUp={onRouteChange}
                     >
-                      <span>{item.name}</span>
+                      <span>{item.original.name}</span>
                     </Link>
                   </div>
                 </SidebarMenuButton>
               </div>
-              {isTeamAdminOrOwner(session) && (
-                <SidebarMenuAction showOnHover>
-                  <Ellipsis />
-                </SidebarMenuAction>
-              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuAction showOnHover>
+                    <MoreHorizontal />
+                    <span className="sr-only">More</span>
+                  </SidebarMenuAction>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-48 rounded-lg"
+                  side={isMobile ? 'bottom' : 'right'}
+                  align={isMobile ? 'end' : 'start'}
+                >
+                  <DropdownMenuItem
+                    className="gap-2"
+                    onClick={() =>
+                      AddGoogleCalendarEvent({
+                        session: session,
+                        event: {
+                          endDateISO: item.original.endDate.toISOString(),
+                          startDateISO: item.original.startDate.toISOString(),
+                          summary: item.original.name,
+                          description: item.original.priority,
+                        },
+                      })
+                    }
+                  >
+                    <GoogleColoredIcon height="17" width="17" />
+                    <span>Add to GCalendar</span>
+                  </DropdownMenuItem>
+                  {isTeamAdminOrOwner(session) && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="gap-2">
+                        <Trash2 className="text-red-500 w-4" />
+                        <span>Delete Project</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
               <div>{item.isActive}</div>
 
               <CollapsibleContent>
@@ -99,7 +152,7 @@ const SidebarProjectsNav = ({
                         className="flex justify-between"
                       >
                         <Link
-                          href={`/app/${item.name}/edit/${task.id}`}
+                          href={`/app/${item.original.name}/edit/${task.id}`}
                           onClick={onRouteChange}
                           onKeyUp={onRouteChange}
                           className="flex justify-between items-center w-full"

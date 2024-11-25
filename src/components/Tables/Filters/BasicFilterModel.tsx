@@ -3,7 +3,6 @@ import type { Table } from '@tanstack/react-table'
 import { Input } from '@src/components/ui/input'
 import { DataTableFacetedFilter } from './FacetedFilter'
 import { Button } from '@src/components/ui/button'
-import { ArrowDown, CircleIcon } from 'lucide-react'
 import { PriorityType, StatusType, TaskStatusType } from '@prisma/client'
 import { capitalize } from '@src/lib/utils'
 
