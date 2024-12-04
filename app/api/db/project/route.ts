@@ -4,7 +4,10 @@ import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'
-import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
+import {
+  fetchAllAssignedProjects,
+  fetchAllAssignedProjectsDynamicInclude,
+} from '@src/lib/api/queries/Project/ProjectQuerys'
 
 export const GET = auth(async (req) => {
   try {

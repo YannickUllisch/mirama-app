@@ -1,5 +1,6 @@
 import { auth } from '@auth'
 import { db } from '@db'
+import type { Project, User } from '@prisma/client'
 import { generateInclude, isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const fetchSingleProjectByName = async (name: string) => {
@@ -97,8 +98,10 @@ export const fetchAllAssignedProjectsDynamicInclude = async (
         },
       },
     },
-    include,
+    include: include,
   })
+
+  console.log(response)
 
   return response
 }
