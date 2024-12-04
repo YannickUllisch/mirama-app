@@ -24,11 +24,11 @@ const GridTab: FC<Props> = ({ onRouteChange }) => {
     (Project & {
       users: (ProjectUser & { user: User })[]
     })[]
-  >(
-    `/api/db/project?archived=false&include=${encodeURIComponent(
-      JSON.stringify(gridProjectsinclude),
-    )}`,
-  )
+  >({
+    url: '/api/db/project',
+    archived: false,
+    include: gridProjectsinclude,
+  })
 
   return (
     <div className="flex flex-col">

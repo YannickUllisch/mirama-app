@@ -53,12 +53,10 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const users = await fetchAllTeamMembers(session)
 
   const fallbackData = {
-    [`/api/db/project?archived=false&include=${encodeURIComponent(
-      JSON.stringify(gridProjectsinclude),
-    )}`]: gridProjects,
-    [`/api/db/project?archived=false&include=${encodeURIComponent(
-      JSON.stringify(tableProjectsInclude),
-    )}`]: tableProjects,
+    '#url:"/api/db/project",include:#users:true,,archived:false,':
+      tableProjects,
+    '#url:"/api/db/project",include:#users:#user:true,,,archived:false,':
+      gridProjects,
     '/api/db/team/member': users,
   }
 

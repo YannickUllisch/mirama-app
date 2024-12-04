@@ -61,7 +61,6 @@ interface DataTableProps<TData extends TableData, TValue> {
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
   rowSelection?: RowSelectionState
   expandedContent?: React.ReactNode
-
   toolbarOptions?: {
     refresh?: {
       mutate?: () => any
@@ -96,6 +95,7 @@ export function DataTable<TData extends TableData, TValue>({
   // States
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
     // Check the localStorage if a filterModel is defined
     const localStorageItem = getLocalStorageItem({
@@ -139,7 +139,7 @@ export function DataTable<TData extends TableData, TValue>({
 
     if (localStorageItem) return localStorageItem
 
-    return { items: [] }
+    return []
   })
 
   const onColumnFiltersChange = (filterModel: Updater<ColumnFiltersState>) => {
@@ -202,13 +202,14 @@ export function DataTable<TData extends TableData, TValue>({
     onColumnVisibilityChange,
     getRowCanExpand: () => true,
     enableColumnResizing: true,
-    onColumnSizingChange,
+    onColumnSizingChange: onColumnSizingChange,
     columnResizeMode: 'onChange',
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    onColumnFiltersChange,
+    onColumnFiltersChange: onColumnFiltersChange,
     onGlobalFilterChange: setGlobalFilter,
     enableGlobalFilter: true,
+    globalFilterFn: 'includesString',
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,

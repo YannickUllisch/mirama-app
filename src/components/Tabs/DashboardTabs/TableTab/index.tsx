@@ -3,8 +3,8 @@ import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import type { Session } from 'next-auth'
-import React, { type FC } from 'react'
-import useSWR from 'swr'
+import React, { useEffect, type FC } from 'react'
+import useSWR, { useSWRConfig } from 'swr'
 import { ProjectColumns } from './columns'
 
 interface Props {
@@ -22,11 +22,11 @@ const TableTab: FC<Props> = ({ users, session, onRouteChange }) => {
     (Project & {
       users: ProjectUser[]
     })[]
-  >(
-    `/api/db/project?archived=false&include=${encodeURIComponent(
-      JSON.stringify(tableProjectsInclude),
-    )}`,
-  )
+  >({
+    url: '/api/db/project',
+    archived: false,
+    include: tableProjectsInclude,
+  })
 
   const FooterRow = () => {
     return (
