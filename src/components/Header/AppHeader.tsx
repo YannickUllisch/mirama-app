@@ -17,6 +17,7 @@ import { LoadBarPulse } from '../Loading/LoadBarPulse'
 import type { Session } from 'next-auth'
 import AddProjectDialog from '../Dialogs/AddProjectDialog'
 import { Button } from '../ui/button'
+import { Plus } from 'lucide-react'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
@@ -124,12 +125,15 @@ const AppHeader = ({ session }: { session: Session | null }) => {
       </div>
       <div className="flex items-center gap-2 ">
         {session && isTeamAdminOrOwner(session) && (
-          <div className="gap-2 flex">
+          <div className="gap-1 flex">
             <AddProjectDialog
               key={'Project Dialog'}
               button={
                 <Button className="p-3 text-xs" variant={'outline'}>
-                  Add Project
+                  <div className="flex gap-2 items-center">
+                    <Plus className="w-3" />
+                    Project
+                  </div>
                 </Button>
               }
             />

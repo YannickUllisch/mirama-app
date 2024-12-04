@@ -1,21 +1,19 @@
-'use client'
-import { Button } from '@src/components/ui/button'
-import { Folder, Plus } from 'lucide-react'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
-import type { ProjectUser, Project, User } from '@prisma/client'
-import useSWR from 'swr'
+import { tableProjectsInclude } from '@/app/app/shared'
+import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
-import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import { useSession } from 'next-auth/react'
+import type { Session } from 'next-auth'
+import React, { type FC } from 'react'
+import useSWR from 'swr'
 import { ProjectColumns } from './columns'
-import { projectIncludeConfig } from './shared'
 
-const ClientProjectsPage = () => {
-  // Session
-  const { data: session } = useSession({ required: true })
-
-  // Fetching Data
+interface Props {
+  users: User[]
+  onRouteChange: () => void
+  session: Session | null
+}
+const TableTab: FC<Props> = ({ users, session, onRouteChange }) => {
+  // Fetching Project Data
   const {
     data: projects,
     mutate: updateProjects,
@@ -26,33 +24,9 @@ const ClientProjectsPage = () => {
     })[]
   >(
     `/api/db/project?archived=false&include=${encodeURIComponent(
-      JSON.stringify(projectIncludeConfig),
+      JSON.stringify(tableProjectsInclude),
     )}`,
   )
-
-  const { data: users, isLoading: usersLoading } = useSWR<User[]>(
-    '/api/db/team/member',
-  )
-
-  const LeftToolbar = () => {
-    return (
-      <AddProjectDialog
-        key={'Project Dialog'}
-        mutate={updateProjects}
-        button={
-          <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            <Plus width={15} className="ml-2" />
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
-            >
-              New Project
-            </Button>
-          </div>
-        }
-      />
-    )
-  }
 
   const FooterRow = () => {
     return (
@@ -77,14 +51,14 @@ const ClientProjectsPage = () => {
         mutate: updateProjects,
         session: session,
         users: users ?? [],
+        onRouteChange: onRouteChange,
       })}
       data={projects ?? []}
-      dataLoading={projectsLoading || usersLoading}
+      dataLoading={projectsLoading}
       toolbarOptions={{
         showViewOptionsicon: true,
         showFilterOption: true,
         filterOptionType: 'PROJECT',
-        addToolbarleft: isTeamAdminOrOwner(session) && <LeftToolbar />,
         refresh: { mutate: updateProjects },
       }}
       footerOptions={{
@@ -95,4 +69,4 @@ const ClientProjectsPage = () => {
   )
 }
 
-export default ClientProjectsPage
+export default TableTab

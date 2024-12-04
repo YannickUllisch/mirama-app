@@ -9,10 +9,17 @@ import { auth } from '@auth'
 import { SidebarInset, SidebarProvider } from '@src/components/ui/sidebar'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
 import { redirect } from 'next/navigation'
-import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
+import { fetchAllAssignedProjectsDynamicInclude } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { getUserById } from '@src/lib/api/queries/User/UserQueries'
 import { fetchSessionTeam } from '@src/lib/api/queries/Team/TeamQueries'
 import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
+import {
+  gridProjectsinclude,
+  sidebarProjectsInclude,
+  tableProjectsInclude,
+} from './shared'
+import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
+import type { Project, Task } from '@prisma/client'
 
 export const metadata: Metadata = {
   title: 'App Dashboard | Mirama',
@@ -29,10 +36,30 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
 
   const team = await fetchSessionTeam(session)
 
-  const projects = await fetchAllAssignedProjects(false)
+  // Fetching projects with different include relations for fallback in tabs.
+  const gridProjects = await fetchAllAssignedProjectsDynamicInclude(
+    false,
+    gridProjectsinclude,
+  )
+  const tableProjects = await fetchAllAssignedProjectsDynamicInclude(
+    false,
+    tableProjectsInclude,
+  )
+  const sidebarProjects = await fetchAllAssignedProjectsDynamicInclude(
+    false,
+    sidebarProjectsInclude,
+  )
+
+  const users = await fetchAllTeamMembers(session)
 
   const fallbackData = {
-    '/api/db/project': projects,
+    [`/api/db/project?archived=false&include=${encodeURIComponent(
+      JSON.stringify(gridProjectsinclude),
+    )}`]: gridProjects,
+    [`/api/db/project?archived=false&include=${encodeURIComponent(
+      JSON.stringify(tableProjectsInclude),
+    )}`]: tableProjects,
+    '/api/db/team/member': users,
   }
 
   return (
@@ -41,7 +68,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
         <SWRFallbackWrapper fallback={fallbackData}>
           <SidebarProvider>
             <AppSidebar
-              projects={projects}
+              projects={sidebarProjects as (Project & { tasks: Task[] })[]}
               user={user}
               session={session}
               className="bg-neutral-950"

@@ -1,6 +1,5 @@
 'use client'
 import React, { type FC, type PropsWithChildren } from 'react'
-import { toast } from 'sonner'
 import { SWRConfig } from 'swr'
 
 const SWRFallbackWrapper: FC<

@@ -45,10 +45,12 @@ export const ProjectColumns = ({
   session,
   mutate,
   users,
+  onRouteChange,
 }: {
   session: Session | null
   mutate: KeyedMutator<(Project & { users: ProjectUser[] })[]>
   users: User[]
+  onRouteChange: () => void
 }) => {
   const cols: ColumnDef<Project & { users: ProjectUser[] }>[] = useMemo(
     () => [
@@ -108,6 +110,8 @@ export const ProjectColumns = ({
                 <Link
                   href={`/app/${row.original.name}`}
                   className="hover:underline"
+                  onClick={onRouteChange}
+                  onKeyUp={onRouteChange}
                 >
                   {getValue() as string}
                 </Link>
@@ -125,6 +129,8 @@ export const ProjectColumns = ({
             <Link
               href={`/app/${row.original.name}`}
               className="hover:underline"
+              onClick={onRouteChange}
+              onKeyUp={onRouteChange}
             >
               {getValue() as string}
             </Link>
@@ -440,7 +446,7 @@ export const ProjectColumns = ({
         },
       },
     ],
-    [users, session, mutate],
+    [users, session, mutate, onRouteChange],
   )
 
   return cols

@@ -1,29 +1,29 @@
 'use client'
+import { Role, type User } from '@prisma/client'
+import React, { useEffect, useState } from 'react'
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@src/components/ui/card'
-import { getColorByName } from '@src/lib/utils'
-import type { Project, ProjectUser, User } from '@prisma/client'
-import { CalendarDays } from 'lucide-react'
-import { DateTime } from 'luxon'
-import Link from 'next/link'
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@src/components/ui/tabs'
+import { Grid2x2, Home, TableProperties } from 'lucide-react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Separator } from '@src/components/ui/separator'
+import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import { useState } from 'react'
 import { LoadBarPulse } from '@src/components/Loading/LoadBarPulse'
+import GridTab from '@src/components/Tabs/DashboardTabs/GridTab'
+import TableTab from '@src/components/Tabs/DashboardTabs/TableTab'
 
-const ClientAppPage = () => {
+const ClientProjectPage = () => {
+  // Session
+  const { data: session } = useSession({ required: true })
+
+  // States
   const [pageLoading, setPageLoading] = useState<boolean>(false)
 
-  const { data: projects } =
-    useSWR<
-      (Project & {
-        users: (ProjectUser & { user: User })[]
-      })[]
-    >('/api/db/project')
+  const { data: users } = useSWR<User[]>('/api/db/team/member')
 
   const onRouteChange = () => {
     if (!pageLoading) {
@@ -31,73 +31,86 @@ const ClientAppPage = () => {
     }
   }
 
-  return (
-    <div className="flex flex-col">
-      {pageLoading && <LoadBarPulse />}
-
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-y-5 overflow-auto sm:overflow-visible place-content-center">
-        {projects?.map((project) => (
-          <Card
-            key={`${project.id}-card`}
-            className={`w-[50px] z-10 h-[100%] shadow-none border-none ${getColorByName(
-              project.name,
-            )}`}
-          >
-            <Link
-              href={`/app/${project.name}`}
-              prefetch
-              onClick={onRouteChange}
-              onKeyUp={onRouteChange}
-            >
-              <Card className="flex min-w-64 h-[92%] flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
-                <CardHeader
-                  style={{
-                    fontSize: 25,
-                  }}
-                  className="justify-center flex items-start m-1"
-                >
-                  {project.name}
-                </CardHeader>
-                <CardContent className="flex flex-col items-start">
-                  <div
-                    style={{ fontSize: 12 }}
-                    className="flex gap-2 items-center mb-2"
-                  >
-                    Managed By:{' '}
-                    <AvatarGroup
-                      usernames={
-                        project?.users?.map((u) => u.user.name ?? '') ?? []
-                      }
-                      avatarSize={6}
-                      previewAmount={2}
-                      fontSize={8}
-                    />
-                  </div>
-                  <div
-                    style={{ fontSize: 11 }}
-                    className="flex flex-row items-center gap-1 align-middle"
-                  >
-                    <CalendarDays className="w-4 h-4" />
-                    {`${DateTime.fromISO(
-                      new Date(project.startDate as Date).toISOString(),
-                    ).toFormat('dd.MM')} - ${DateTime.fromISO(
-                      new Date(project.endDate as Date).toISOString(),
-                    ).toFormat('dd.MM')}`}
-                  </div>
-                </CardContent>
-                <CardFooter />
-              </Card>
-            </Link>
-          </Card>
-        ))}
-      </div>
-      {projects && projects.length < 1 ? (
-        <div className="flex justify-center items-center font-bold">
-          You are not assigned to any projects
+  // Tab definitions
+  const dashboardTabs: {
+    roles: Role[]
+    id: string
+    component: JSX.Element
+    headerComponent: JSX.Element
+  }[] = [
+    {
+      id: 'grid',
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      component: <GridTab onRouteChange={onRouteChange} />,
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <Grid2x2 width={15} /> Grid
         </div>
-      ) : null}
-    </div>
+      ),
+    },
+    {
+      id: 'table',
+      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      component: (
+        <TableTab
+          session={session}
+          users={users ?? []}
+          onRouteChange={onRouteChange}
+        />
+      ),
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <TableProperties width={15} /> Table
+        </div>
+      ),
+    },
+  ]
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get('tab')
+  const [tab, setTab] = useState(currentTab ?? 'grid')
+
+  useEffect(() => {
+    if (currentTab !== tab) {
+      const newParams = new URLSearchParams(searchParams)
+      newParams.set('tab', tab)
+      router.replace(`${pathname}?${newParams.toString()}`)
+    }
+  }, [tab, currentTab, pathname, searchParams, router])
+
+  return (
+    <Tabs value={tab} onValueChange={setTab} className="w-full">
+      {pageLoading && <LoadBarPulse />}
+      <div className="flex items-center gap-4 dark:text-white mb-2 rounded-lg p-1 w-fit">
+        <TabsList className="justify-center">
+          {dashboardTabs.map(
+            (tabHeader) =>
+              session &&
+              tabHeader.roles.includes(session.user.role) && (
+                <TabsTrigger
+                  style={{ fontSize: 12 }}
+                  value={tabHeader.id}
+                  key={tabHeader.id}
+                >
+                  {tabHeader.headerComponent}
+                </TabsTrigger>
+              ),
+          )}
+        </TabsList>
+      </div>
+      <Separator className="m-4" />
+      {dashboardTabs.map(
+        (tab) =>
+          session &&
+          tab.roles.includes(session.user.role) && (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ),
+      )}
+    </Tabs>
   )
 }
 
-export default ClientAppPage
+export default ClientProjectPage

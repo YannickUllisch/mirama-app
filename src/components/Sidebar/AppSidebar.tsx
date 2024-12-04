@@ -42,10 +42,6 @@ const AppMenu: AppMenuItem[] = [
     isActive: true,
     items: [
       {
-        title: 'Projects',
-        href: '/app/projects',
-      },
-      {
         title: 'Tasks',
         href: '/app/tasks',
       },

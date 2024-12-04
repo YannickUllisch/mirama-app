@@ -79,7 +79,7 @@ export const fetchAllAssignedProjects = async (archivedStatus?: boolean) => {
   return response
 }
 
-export const fetchAllAssignedProjectsTest = async (
+export const fetchAllAssignedProjectsDynamicInclude = async (
   archivedStatus?: boolean,
   rawIncludes?: Record<string, any>,
 ) => {
