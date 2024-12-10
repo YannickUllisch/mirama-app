@@ -224,14 +224,6 @@ export const PUT = auth(async (req) => {
       },
     })
 
-    try {
-      if (project.users) {
-      }
-    } catch (err) {
-      console.error('Error in creating ProjectUser Records', err)
-      throw err
-    }
-
     return Response.json(
       { ok: true, message: 'Project Successfully updated' },
       { status: 200 },

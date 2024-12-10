@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import React, { useMemo, type FC } from 'react'
+import React, { useEffect, useMemo, useState, type FC } from 'react'
 import { Button } from '@src/components/ui/button'
 import type { Project, ProjectUser, TaskCategory, User } from '@prisma/client'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
@@ -22,20 +22,49 @@ interface SettingsTabProps {
 }
 
 const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
-  // Fetching data
-  const { data: users, isLoading: _usersLoading } = useSWR<User[]>(
-    '/api/db/team/member',
-  )
+  // States
 
+  // Fetching Data
   const { data: project } = useSWR<Project>(`/api/db/project/${projectId}`)
 
   const { data: taskCategories, mutate: updateCategories } = useSWR<
     TaskCategory[]
   >(`/api/db/project/taskCategories?projectId=${projectId}`)
 
-  const { data: projectUsers } = useSWR<(ProjectUser & { user: User })[]>(
-    `/api/db/projectuser?projectId=${projectId}`,
+  const { data: projectUsers, mutate: updateProjectUsers } = useSWR<
+    (ProjectUser & { user: User })[]
+  >(`/api/db/projectuser?projectId=${projectId}`)
+
+  const [managerIds, setManagersIds] = useState<string[]>(
+    projectUsers?.filter((user) => user.isManager).map((pu) => pu.userId) ?? [],
   )
+
+  const [assignedUserIds, setAssignedUserIds] = useState<string[]>(
+    projectUsers?.map((pu) => pu.userId) ?? [],
+  )
+
+  const onManagerSelectionUpdate = (ids: string[]) => {
+    updateResourceById(
+      'projectuser',
+      projectId,
+      {
+        userIds: ids,
+        setAsManagers: true,
+      },
+      { mutate: updateProjectUsers },
+    )
+  }
+
+  const onAssignedUserSelectionUpdate = (ids: string[]) => {
+    updateResourceById(
+      'projectuser',
+      projectId,
+      {
+        userIds: ids,
+      },
+      { mutate: updateProjectUsers },
+    )
+  }
 
   const router = useRouter()
   const { data: session } = useSession({ required: true })
@@ -123,9 +152,9 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         {isTeamAdminOrOwner(session) && (
           <div className="flex items-center">
             <UserMultiSelect
-              assignedUsers={projectUsers?.filter((u) => u.isManager) ?? []}
-              users={users ?? []}
-              projectId={projectId}
+              selectedUserIds={managerIds}
+              setSelectedUserIds={setManagersIds}
+              onSelectionChange={onManagerSelectionUpdate}
             >
               <Button
                 variant="link"
@@ -153,9 +182,9 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         {isTeamAdminOrOwner(session) && (
           <div className="flex items-center">
             <UserMultiSelect
-              assignedUsers={projectUsers ?? []}
-              users={users ?? []}
-              projectId={projectId}
+              selectedUserIds={assignedUserIds}
+              setSelectedUserIds={setAssignedUserIds}
+              onSelectionChange={onAssignedUserSelectionUpdate}
             >
               <Button
                 variant="link"

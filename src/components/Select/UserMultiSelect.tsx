@@ -1,6 +1,5 @@
-import type { ProjectUser, User } from '@prisma/client'
+import type { User } from '@prisma/client'
 import type React from 'react'
-import { type FC, type PropsWithChildren, useEffect, useState } from 'react'
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -8,61 +7,42 @@ import {
   MultiSelectorItem,
   MultiSelectorList,
 } from '../ui/multiselect'
-import { v4 } from 'uuid'
 import UserAvatar from '../Avatar/UserAvatar'
+import useSWR from 'swr'
+import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
+import { Button } from '../ui/button'
 
 interface UserMultiSelectProps {
-  users: User[]
-  assignedUsers: (ProjectUser & { user: User })[]
-  projectId: string
-  managerSelect?: boolean
+  selectedUserIds: string[]
+  setSelectedUserIds: Dispatch<SetStateAction<string[]>>
+  onSelectionChange?: (ids: string[]) => void
 }
 
 const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
+  selectedUserIds,
+  setSelectedUserIds,
+  onSelectionChange,
   children,
-  users,
-  assignedUsers,
-  projectId,
-  managerSelect,
 }) => {
-  const [selectedUsers, setSelectedUsers] =
-    useState<(ProjectUser & { user: User })[]>(assignedUsers)
-
-  useEffect(() => {
-    console.log(selectedUsers)
-  }, [selectedUsers])
+  // Fetching users depending on scope.
+  const { data: users } = useSWR<User[]>('/api/db/team/member')
 
   return (
     <MultiSelector
       className="col-span-3 flex-grow"
-      values={assignedUsers.map((p) => p.user.name)}
-      onValuesChange={(usernames) =>
-        setSelectedUsers((prevSelect) => ({
-          ...prevSelect,
-          users: usernames
-            .map((name) => {
-              const existingUser = users?.find((user) => user.name === name)
-              if (!existingUser) return null
-
-              const existingProjectUser = assignedUsers.find(
-                (pu) => pu.user.name === name,
-              )
-
-              return (
-                existingProjectUser || {
-                  id: v4(),
-                  isManager: managerSelect ? true : false,
-                  projectId: projectId,
-                  userId: existingUser.id,
-                  user: existingUser,
-                }
-              )
-            })
-            .filter((u) => u !== null) as (ProjectUser & {
-            user: User
-          })[],
-        }))
-      }
+      values={selectedUserIds}
+      onValuesChange={(updated) => {
+        const updatedUserIds =
+          users
+            ?.filter((user) => updated.includes(user.id))
+            .map((user) => user.id) ?? []
+        setSelectedUserIds(updatedUserIds)
+        // Running some function on selection change
+        // Might have to change this to avoid a bunch of API requests
+        if (onSelectionChange) {
+          onSelectionChange(updatedUserIds)
+        }
+      }}
       loop
     >
       <MultiSelectorInput asChild>{children}</MultiSelectorInput>
@@ -70,7 +50,7 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
         <MultiSelectorList>
           {users?.map((user) => (
             <MultiSelectorItem
-              value={user.name}
+              value={user.id}
               className="hover:bg-neutral-200 dark:hover:bg-neutral-800"
               key={`multiselect-item-${user.name}`}
             >
