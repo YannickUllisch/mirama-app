@@ -1,12 +1,14 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
+import type { NextRequest } from 'next/server'
+import { Role } from '@prisma/client'
 
-export const GET = auth(async (req) => {
+export const GET = async (req: NextRequest) => {
   try {
     // Checking Permissions
-    const session = req.auth
-    const validatedRequest = await validateRequest(session)
+    const session = await auth()
+    const validatedRequest = await validateRequest(session, [Role.USER])
     if (validatedRequest) {
       return validatedRequest
     }
@@ -31,4 +33,4 @@ export const GET = auth(async (req) => {
       { status: 500 },
     )
   }
-})
+}

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { DateTime } from 'luxon'
 import ToggleTheme from './ToggleTheme'
 
-const Footer = async () => {
+const Footer = () => {
   return (
     <div className="bg-white dark:bg-neutral-900/10 mx-auto flex h-[60px] border-t-2 border-neutral-100 dark:border-neutral-800 text-black/80 dark:text-white/80 w-full ">
       <div className="w-full max-w-md md:max-w-7xl xl:max-w-6xl lg:max-w-4xl mx-auto text-xs align-center justify-between flex">

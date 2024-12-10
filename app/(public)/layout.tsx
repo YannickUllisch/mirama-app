@@ -2,7 +2,6 @@
 import InfoFooter from '@src/components/Footer/InfoFooter'
 import PublicHeader from '@src/components/Header/PublicHeader'
 import { auth } from '@auth'
-import React, { type FC, type PropsWithChildren } from 'react'
 import Footer from '@src/components/Footer/Footer'
 import dynamic from 'next/dynamic'
 
@@ -11,7 +10,7 @@ const LenisProvider = dynamic(
   { ssr: false },
 )
 
-const Layout: FC<PropsWithChildren> = async ({ children }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
   return (
     <div className="bg-light-gradient dark:bg-dark-gradient">

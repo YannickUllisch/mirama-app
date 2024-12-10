@@ -1,6 +1,6 @@
 'use client'
 import { type Project, Role } from '@prisma/client'
-import React, { useEffect, useState } from 'react'
+import React, { type JSX, use, useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,

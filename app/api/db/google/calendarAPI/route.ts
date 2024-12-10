@@ -1,15 +1,13 @@
 import { auth } from '@auth'
 import { db } from '@db'
 import { Role } from '@prisma/client'
-import { sendVerificationRequest } from '@src/email/mailer'
 import { validateRequest } from '@src/lib/validateRequest'
 import { google } from 'googleapis'
-import { signIn } from 'next-auth/react'
 
-export const POST = auth(async (req) => {
+export const POST = async (_req: Request) => {
   try {
     // Checking Permissions
-    const session = req.auth
+    const session = await auth()
     const validatedRequest = await validateRequest(session, [
       Role.OWNER,
       Role.ADMIN,
@@ -28,7 +26,6 @@ export const POST = auth(async (req) => {
         { status: 500 },
       )
     }
-
     // NOTE: I have not figured out yet how the API can work without being logged in through google
     if (session?.user.provider === 'google') {
       const account = await db.account.findFirst({
@@ -37,28 +34,23 @@ export const POST = auth(async (req) => {
           provider: 'google',
         },
       })
-
       if (!account || !account.access_token) {
         return Response.json(
           { ok: false, message: 'Linked account not found!' },
           { status: 500 },
         )
       }
-
       const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID ?? '',
         process.env.GOOGLE_CLIENT_SECRET ?? '',
       )
-
       // Set the access token for the request
       oauth2Client.setCredentials({
         access_token: account.access_token,
         refresh_token: account?.refresh_token,
       })
-
       // Use Google Calendar API to add the event
       const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
-
       try {
         const result = await calendar.events.insert({
           calendarId: 'primary',
@@ -94,7 +86,6 @@ export const POST = auth(async (req) => {
         console.error(err)
       }
     }
-
     return Response.json(
       { success: false, message: 'Need to be logged in with google provider' },
       { status: 401 },
@@ -105,4 +96,4 @@ export const POST = auth(async (req) => {
       { status: 500 },
     )
   }
-})
+}

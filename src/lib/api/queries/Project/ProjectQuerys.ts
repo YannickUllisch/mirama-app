@@ -101,7 +101,5 @@ export const fetchAllAssignedProjectsDynamicInclude = async (
     include: include,
   })
 
-  console.log(response)
-
   return response
 }
