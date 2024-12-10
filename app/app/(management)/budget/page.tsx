@@ -58,6 +58,7 @@ const BudgetPage = () => {
 
       {projects?.map((project) => (
         <GeneralAccordion
+          key={`project-budget-${project.name}`}
           trigger={
             <div className="gap-4 flex">
               <span>{project.name}</span>

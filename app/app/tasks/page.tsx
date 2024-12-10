@@ -11,7 +11,7 @@ const TasksPage = () => {
     <div className="w-full h-full gap-5">
       {tasks
         ? tasks.map((task) => (
-            <div className="gap-5 m-5">
+            <div className="gap-5 m-5" key={`task-${task.title}`}>
               <TaskListItem
                 taskId={task.id}
                 taskCode={task.taskCode}

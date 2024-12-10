@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@src/components/ThemeProvider'
+import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
 import './globals.css'
 import { Toaster } from 'sonner'
 import type { Metadata } from 'next'

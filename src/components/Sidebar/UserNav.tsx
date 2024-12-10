@@ -86,7 +86,7 @@ const SidebarUserNav = ({ user }: { user: User }) => {
                 icon={<Sparkles width={ICON_WIDTH} />}
                 label="Upgrade to Pro"
               />
-              <Link href={'/app/settings'} legacyBehavior passHref>
+              <Link href={'/app/settings'}>
                 <DropdownItem
                   icon={<Settings width={ICON_WIDTH} />}
                   label="Settings"

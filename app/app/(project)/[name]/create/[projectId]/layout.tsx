@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { auth } from '@auth'
-import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
+import SWRFallbackWrapper from '@src/components/Wrappers/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
 import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'

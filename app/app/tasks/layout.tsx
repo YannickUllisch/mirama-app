@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { auth } from '@auth'
-import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
+import SWRFallbackWrapper from '@src/components/Wrappers/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
 import { fetchAllPersonalTasks } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
 

@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest) => {
   try {
     // Checking Permissions
     const session = await auth()
-    const validatedRequest = await validateRequest(session, [Role.USER])
+    const validatedRequest = await validateRequest(session)
     if (validatedRequest) {
       return validatedRequest
     }

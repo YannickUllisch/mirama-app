@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 import Loading from '../loading'
-import SessionWrapper from '@src/components/SessionWrapper'
+import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import AppHeader from '@src/components/Header/AppHeader'
 import type { Metadata } from 'next'
-import SwrProvider from '@src/components/SwrProvider'
+import SwrProvider from '@src/components/Wrappers/SwrProvider'
 import Footer from '@src/components/Footer/Footer'
 import { auth } from '@auth'
 import { SidebarInset, SidebarProvider } from '@src/components/ui/sidebar'
@@ -12,7 +12,7 @@ import { redirect } from 'next/navigation'
 import { fetchAllAssignedProjectsDynamicInclude } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { getUserById } from '@src/lib/api/queries/User/UserQueries'
 import { fetchSessionTeam } from '@src/lib/api/queries/Team/TeamQueries'
-import SWRFallbackWrapper from '@src/components/SWRFallbackWrapper'
+import SWRFallbackWrapper from '@src/components/Wrappers/SWRFallbackWrapper'
 import {
   gridProjectsinclude,
   sidebarProjectsInclude,
