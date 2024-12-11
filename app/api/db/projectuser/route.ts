@@ -3,7 +3,6 @@ import { validateRequest } from '@src/lib/validateRequest'
 import { fetchProjectUsersJoinedByProjectId } from '@src/lib/api/queries/Project/ProjectUserJoinQuerys'
 import { db } from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
-import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 
 export const GET = auth(async (req) => {
   try {
@@ -79,7 +78,7 @@ export const PUT = auth(async (req) => {
 
     // Different conditions whether or not we want to update Managers or add users to Project in general
     if (body.setAsManagers) {
-      await Promise.all(
+      await db.$transaction(
         body.userIds.map((id) =>
           db.projectUser.upsert({
             where: {
@@ -108,7 +107,7 @@ export const PUT = auth(async (req) => {
 
       // Update operations to downgrade managers
       if (usersToRemove.length > 0) {
-        await Promise.all(
+        await db.$transaction(
           usersToRemove.map((projectUser) =>
             db.projectUser.update({
               where: {

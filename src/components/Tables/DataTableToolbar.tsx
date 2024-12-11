@@ -48,33 +48,35 @@ const DataTableToolbar = <TData extends TableData>({
   return (
     <>
       <div className="flex items-center m-1 outline-none justify-between ">
-        {toolbarOptions?.addToolbarleft}
-        {toolbarOptions?.showFilterOption && (
-          <div
-            className="relative flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
-            onClick={() => setShowFilters((checked) => !checked)}
-            onKeyDown={() => setShowFilters((checked) => !checked)}
-          >
-            {columnFilters.length > 0 || globalFilter !== '' ? (
-              <span className="absolute top-0 right-0 h-2 w-2 bg-rose-500 rounded-full">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-              </span>
-            ) : null}
-
-            <SlidersHorizontal width={15} className="ml-2" />
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
+        <div className="flex gap-2">
+          {toolbarOptions?.addToolbarleft}
+          {toolbarOptions?.showFilterOption && (
+            <div
+              className="relative flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+              onClick={() => setShowFilters((checked) => !checked)}
+              onKeyDown={() => setShowFilters((checked) => !checked)}
             >
-              Show Filters
-            </Button>
-            <ChevronDown
-              className={`${
-                showFilters ? 'rotate-180' : ''
-              } ease-in-out transition w-3 h-3 mr-2`}
-            />
-          </div>
-        )}
+              {columnFilters.length > 0 || globalFilter !== '' ? (
+                <span className="absolute top-0 right-0 h-2 w-2 bg-rose-500 rounded-full">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                </span>
+              ) : null}
+
+              <SlidersHorizontal width={15} className="ml-2" />
+              <Button
+                style={{ fontSize: 11, textDecoration: 'none' }}
+                variant="link"
+              >
+                Show Filters
+              </Button>
+              <ChevronDown
+                className={`${
+                  showFilters ? 'rotate-180' : ''
+                } ease-in-out transition w-3 h-3 mr-2`}
+              />
+            </div>
+          )}
+        </div>
         <div className="flex gap-3 items-center">
           {toolbarOptions?.addToolbarright}
           <ToolbarViewOptions table={table} />
