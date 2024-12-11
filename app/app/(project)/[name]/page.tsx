@@ -1,6 +1,6 @@
 'use client'
 import { type Project, Role } from '@prisma/client'
-import React, { type JSX, use, useEffect, useState } from 'react'
+import React, { type JSX, useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -56,7 +56,13 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
     {
       id: 'overview',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <OverviewTab />,
+      component: (
+        <OverviewTab
+          projectName={project?.name ?? ''}
+          projectId={project?.id ?? ''}
+          session={session}
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <MapIcon width={15} /> Overview

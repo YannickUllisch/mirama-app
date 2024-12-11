@@ -21,7 +21,7 @@ import { useState } from 'react'
 import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
-import DataTableToolbar from './DataTableToolbar'
+import DataTableToolbar from '@src/components/Tables/DataTableToolbar'
 
 export interface TableData {
   id: string

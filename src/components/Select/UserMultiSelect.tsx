@@ -6,8 +6,8 @@ import {
   MultiSelectorInput,
   MultiSelectorItem,
   MultiSelectorList,
-} from '../ui/multiselect'
-import UserAvatar from '../Avatar/UserAvatar'
+} from '@src/components/ui/multiselect'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import useSWR from 'swr'
 import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
 

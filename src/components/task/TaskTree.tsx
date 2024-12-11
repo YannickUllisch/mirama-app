@@ -6,13 +6,13 @@ import {
   Tree,
   CollapseButton,
 } from '@src/components/Tree/TreeViewAPI'
-import useSWR from 'swr'
+import type { FC } from 'react'
 
-const TaskTree = () => {
-  const { data: tasks } = useSWR<(Task & { subtasks: Task[] })[]>(
-    `/api/db/task?id=${'8b869c2a-5b95-4ecf-bf6d-617f24f6a2c3'}`,
-  )
+interface TaskTreeProps {
+  tasks: (Task & { subtasks: Task[] })[]
+}
 
+const TaskTree: FC<TaskTreeProps> = ({ tasks }) => {
   const buildTreeElements = (tasks: (Task & { subtasks: Task[] })[]): any[] => {
     const visited = new Set<string>() // Track visited task IDs to avoid infinite loops
 

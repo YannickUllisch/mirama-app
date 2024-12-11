@@ -12,6 +12,7 @@ export const fetchTasksByProjectId = async (id: string) => {
       subtasks: true,
       tags: true,
       category: true,
+      comments: true,
     },
   })
 
