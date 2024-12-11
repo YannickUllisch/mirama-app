@@ -10,7 +10,6 @@ import {
 import UserAvatar from '../Avatar/UserAvatar'
 import useSWR from 'swr'
 import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
-import { Button } from '../ui/button'
 
 interface UserMultiSelectProps {
   selectedUserIds: string[]

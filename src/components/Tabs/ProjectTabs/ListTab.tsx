@@ -82,7 +82,6 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName, onRouteChange }) => {
         setSortingState={setSortingState}
         toolbarOptions={{
           refresh: { mutate: updateTasks },
-          showViewOptionsicon: true,
           showFilterOption: true,
           filterOptionType: 'TASK',
           addToolbarleft: <ToolbarLeft />,

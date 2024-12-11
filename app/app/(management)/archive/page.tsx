@@ -1,7 +1,6 @@
 'use client'
 import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { Archive } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 import useSWR from 'swr'
@@ -23,7 +22,6 @@ const ArchivePage = () => {
     <DataTable
       tableIdentifier="archivedTable"
       toolbarOptions={{
-        showViewOptionsicon: true,
         showFilterOption: true,
         filterOptionType: 'PROJECT',
       }}

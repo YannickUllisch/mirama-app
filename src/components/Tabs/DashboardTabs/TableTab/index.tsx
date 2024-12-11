@@ -56,7 +56,6 @@ const TableTab: FC<Props> = ({ users, session, onRouteChange }) => {
       data={projects ?? []}
       dataLoading={projectsLoading}
       toolbarOptions={{
-        showViewOptionsicon: true,
         showFilterOption: true,
         filterOptionType: 'PROJECT',
         refresh: { mutate: updateProjects },

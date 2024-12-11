@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
-import { Button } from '../ui/button'
+import { Button } from '@src/components/ui/button'
 
 interface ToolbarViewOptionsProps<TData> {
   table: Table<TData>
