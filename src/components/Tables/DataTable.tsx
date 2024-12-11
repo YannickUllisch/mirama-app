@@ -61,7 +61,7 @@ interface DataTableProps<TData extends TableData, TValue> {
   }
 }
 
-export function DataTable<TData extends TableData, TValue>({
+export const DataTable = <TData extends TableData, TValue>({
   columns,
   data,
   tableIdentifier,
@@ -74,7 +74,7 @@ export function DataTable<TData extends TableData, TValue>({
   expandedContent,
   toolbarOptions,
   footerOptions,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>) => {
   // States
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
