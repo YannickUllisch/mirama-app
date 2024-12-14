@@ -1,14 +1,14 @@
-'use client'
 import { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import ConfigPanel from './components/ConfigPanel'
+import { StyledSchedulerFrame } from './styles'
+import { Scheduler } from '.'
 import type {
   ConfigFormValues,
   SchedulerData,
   SchedulerProjectData,
-} from '@src/components/Scheduler/types/global'
-import type { ParsedDatesRange } from '@src/components/Scheduler/utils/getDatesRange'
-import { StyledSchedulerFrame } from '@src/components/Scheduler/styles'
-import { Scheduler } from '@src/components/Scheduler'
+} from './types/global'
+import type { ParsedDatesRange } from './utils/getDatesRange'
 
 function test() {
   const [values, setValues] = useState<ConfigFormValues>({
@@ -26,6 +26,18 @@ function test() {
     startDate: new Date(),
     endDate: new Date(),
   })
+  const filteredMockedSchedulerData = mockedSchedulerData.map((person) => ({
+    ...person,
+    data: person.data.filter(
+      (project) =>
+        // we use "dayjs" for date calculations, but feel free to use library of your choice
+        dayjs(project.startDate).isBetween(range.startDate, range.endDate) ||
+        dayjs(project.endDate).isBetween(range.startDate, range.endDate) ||
+        (dayjs(project.startDate).isBefore(range.startDate, 'day') &&
+          dayjs(project.endDate).isAfter(range.endDate, 'day')),
+    ),
+  }))
+
   const handleRangeChange = useCallback((range: ParsedDatesRange) => {
     setRange(range)
   }, [])
@@ -38,7 +50,8 @@ function test() {
     )
 
   return (
-    <div className="relative h-[500px] w-full">
+    <>
+      <ConfigPanel values={values} onSubmit={setValues} />
       {isFullscreen ? (
         <Scheduler
           startDate={
@@ -47,7 +60,7 @@ function test() {
               : undefined
           }
           onRangeChange={handleRangeChange}
-          data={mockedSchedulerData}
+          data={filteredMockedSchedulerData}
           isLoading={false}
           onTileClick={handleTileClick}
           onFilterData={handleFilterData}
@@ -68,14 +81,14 @@ function test() {
             }
             onRangeChange={handleRangeChange}
             isLoading={false}
-            data={mockedSchedulerData}
+            data={filteredMockedSchedulerData}
             onTileClick={handleTileClick}
             onFilterData={handleFilterData}
             onItemClick={(data) => console.log('clicked: ', data)}
           />
         </StyledSchedulerFrame>
       )}
-    </div>
+    </>
   )
 }
 
