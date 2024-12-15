@@ -39,7 +39,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
   }, [pathname])
 
   return (
-    <header className="flex gap-2 p-4 justify-between bg-transparent dark:border-neutral-800 border-neutral-100">
+    <header className="sticky top-0 w-full flex gap-2 border-b-2 p-4 justify-between bg-inherit z-20 dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
         <Separator
@@ -87,7 +87,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
           </span>
         </Link>
       </div>
-      <div className="flex items-center gap-2 ">
+      <div className="flex items-center gap-2">
         {session && isTeamAdminOrOwner(session) && (
           <div className="gap-1 flex">
             <AddProjectDialog

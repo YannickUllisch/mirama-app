@@ -1,5 +1,8 @@
 'use client'
 import type { Project } from '@prisma/client'
+import { newevents } from '@src/components/Calendar/shadcn-fullcalender-main/data/events'
+import { calendarConfig } from '@src/components/Calendar/shadcn-fullcalender-main/full-calender-config'
+import FullCalender from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/full-calender'
 
 import useSWR from 'swr'
 
@@ -17,7 +20,11 @@ const CalendarClientPage = () => {
   //     })) ?? []
   //   )
   // }, [projects])
-  return null
+  return (
+    <section className="py-10">
+      <FullCalender events={newevents} config={calendarConfig} />
+    </section>
+  )
 }
 
 export default CalendarClientPage

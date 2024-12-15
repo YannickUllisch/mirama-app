@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table'
 import { Table } from '@src/components/ui/table'
 import type React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'

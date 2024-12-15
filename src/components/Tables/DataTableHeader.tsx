@@ -20,7 +20,7 @@ const DataTableHeader = <TData extends TableData>({
       if (headerRef.current) {
         const rect: DOMRect = headerRef.current.getBoundingClientRect()
 
-        setIsSticky(rect.top <= 0)
+        setIsSticky(rect.top <= 69)
       }
     }
     window.addEventListener('scroll', handleScroll)
@@ -34,7 +34,9 @@ const DataTableHeader = <TData extends TableData>({
     <TableHeader
       ref={headerRef}
       className={`dark:bg-neutral-900 bg-neutral-50 ${
-        isSticky ? 'sticky top-0 z-10 border outline' : ''
+        isSticky
+          ? 'sticky top-[69px] z-10 outline outline-neutral-200 dark:outline-neutral-800'
+          : ''
       }`}
     >
       {table.getHeaderGroups().map((headerGroup) => (

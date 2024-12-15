@@ -66,7 +66,7 @@ const ClientProjectPage = () => {
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
       <div className="flex items-center gap-4 dark:text-white mb-2 rounded-lg p-1 w-fit">
-        <TabsList className="justify-center">
+        <TabsList className="justify-center border">
           {dashboardTabs.map(
             (tabHeader) =>
               session &&
@@ -82,7 +82,6 @@ const ClientProjectPage = () => {
           )}
         </TabsList>
       </div>
-      <Separator className="m-4" />
       {dashboardTabs.map(
         (tab) =>
           session &&

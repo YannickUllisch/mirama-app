@@ -44,7 +44,7 @@ const TableTab: FC<Props> = ({ users, session }) => {
   }
 
   return (
-    <div className="h-[2000px]">
+    <div>
       <DataTable
         tableIdentifier="projectPageTable"
         columns={ProjectColumns({

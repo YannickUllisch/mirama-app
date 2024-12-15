@@ -131,11 +131,8 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">
-        <NotepadText strokeWidth={1.5} width={20} />
-        <span style={{ fontSize: 20 }}>{params.name}</span>
-        <span>|</span>
-        <TabsList className="justify-center">
+      <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-7 rounded-lg p-1">
+        <TabsList className="inline-flex items-center justify-center border">
           {projectTabs.map(
             (tabHeader) =>
               session &&
@@ -151,7 +148,6 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
           )}
         </TabsList>
       </div>
-      <Separator className="m-4" />
       {projectTabs.map(
         (tab) =>
           session &&
