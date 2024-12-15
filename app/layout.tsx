@@ -2,6 +2,7 @@ import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
 import './globals.css'
 import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
+import NextTopLoader from 'nextjs-toploader'
 
 export const metadata: Metadata = {
   title: 'Start | Mirama',
@@ -13,6 +14,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     <html suppressHydrationWarning lang="en">
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body className="bg-neutral-50 dark:bg-neutral-900/40">
+        <NextTopLoader />
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
