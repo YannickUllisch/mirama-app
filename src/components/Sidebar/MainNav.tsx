@@ -22,14 +22,9 @@ import type { FC } from 'react'
 interface MainNavProps
   extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {
   items: AppMenuItem[]
-  onRouteChange: () => void
 }
 
-const SidebarMainNav: FC<MainNavProps> = ({
-  items,
-  onRouteChange,
-  ...props
-}) => {
+const SidebarMainNav: FC<MainNavProps> = ({ items, ...props }) => {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupLabel>App</SidebarGroupLabel>
@@ -43,12 +38,7 @@ const SidebarMainNav: FC<MainNavProps> = ({
           >
             <SidebarMenuItem>
               {!item.isCollapsible && item.href ? (
-                <Link
-                  href={item.href}
-                  prefetch
-                  onClick={onRouteChange}
-                  onKeyUp={onRouteChange}
-                >
+                <Link href={item.href} prefetch>
                   <SidebarMenuButton tooltip={item.title}>
                     {item.icon && <item.icon />}
 
@@ -70,12 +60,7 @@ const SidebarMainNav: FC<MainNavProps> = ({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <Link
-                          href={subItem.href}
-                          prefetch
-                          onClick={onRouteChange}
-                          onKeyUp={onRouteChange}
-                        >
+                        <Link href={subItem.href} prefetch>
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>

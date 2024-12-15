@@ -10,7 +10,6 @@ import {
   type UniqueIdentifier,
   type DragMoveEvent,
   DragOverlay,
-  closestCenter,
   PointerSensor,
   KeyboardSensor,
   rectIntersection,
@@ -29,7 +28,6 @@ import type { Session } from 'next-auth'
 interface KanbanBoardProps {
   session: Session | null
   projectId: string
-  onRouteChange: () => void
   tasks: (Task & {
     assignedTo: User
   })[]

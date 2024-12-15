@@ -9,10 +9,9 @@ import { ProjectColumns } from './columns'
 
 interface Props {
   users: User[]
-  onRouteChange: () => void
   session: Session | null
 }
-const TableTab: FC<Props> = ({ users, session, onRouteChange }) => {
+const TableTab: FC<Props> = ({ users, session }) => {
   // Fetching Project Data
   const {
     data: projects,
@@ -45,26 +44,27 @@ const TableTab: FC<Props> = ({ users, session, onRouteChange }) => {
   }
 
   return (
-    <DataTable
-      tableIdentifier="projectPageTable"
-      columns={ProjectColumns({
-        mutate: updateProjects,
-        session: session,
-        users: users ?? [],
-        onRouteChange: onRouteChange,
-      })}
-      data={projects ?? []}
-      dataLoading={projectsLoading}
-      toolbarOptions={{
-        showFilterOption: true,
-        filterOptionType: 'PROJECT',
-        refresh: { mutate: updateProjects },
-      }}
-      footerOptions={{
-        addFooterRow: <FooterRow />,
-        showPagination: true,
-      }}
-    />
+    <div className="h-[2000px]">
+      <DataTable
+        tableIdentifier="projectPageTable"
+        columns={ProjectColumns({
+          mutate: updateProjects,
+          session: session,
+          users: users ?? [],
+        })}
+        data={projects ?? []}
+        dataLoading={projectsLoading}
+        toolbarOptions={{
+          showFilterOption: true,
+          filterOptionType: 'PROJECT',
+          refresh: { mutate: updateProjects },
+        }}
+        footerOptions={{
+          addFooterRow: <FooterRow />,
+          showPagination: true,
+        }}
+      />
+    </div>
   )
 }
 

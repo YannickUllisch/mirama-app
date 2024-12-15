@@ -41,7 +41,6 @@ import { AddGoogleCalendarEvent } from '@src/lib/api/AddGCalendarEvent'
 const SidebarProjectsNav = ({
   projects,
   session,
-  onRouteChange,
 }: {
   projects: {
     href: string
@@ -50,7 +49,6 @@ const SidebarProjectsNav = ({
     tasks: Task[]
   }[]
   session: Session | null
-  onRouteChange: () => void
 }) => {
   const { isMobile } = useSidebar()
 
@@ -88,12 +86,7 @@ const SidebarProjectsNav = ({
 
                 <SidebarMenuButton asChild>
                   <div className="flex items-center">
-                    <Link
-                      prefetch
-                      href={item.href}
-                      onClick={onRouteChange}
-                      onKeyUp={onRouteChange}
-                    >
+                    <Link prefetch href={item.href}>
                       <span>{item.original.name}</span>
                     </Link>
                   </div>
@@ -153,8 +146,6 @@ const SidebarProjectsNav = ({
                       >
                         <Link
                           href={`/app/${item.original.name}/edit/${task.id}`}
-                          onClick={onRouteChange}
-                          onKeyUp={onRouteChange}
                           className="flex justify-between items-center w-full"
                         >
                           <span className="truncate max-w-[calc(100%-1rem)] text-ellipsis overflow-hidden whitespace-nowrap">

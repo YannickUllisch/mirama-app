@@ -14,11 +14,7 @@ import Link from 'next/link'
 import React, { type FC } from 'react'
 import useSWR from 'swr'
 
-interface Props {
-  onRouteChange: () => void
-}
-
-const GridTab: FC<Props> = ({ onRouteChange }) => {
+const GridTab = () => {
   // Fetching Project Data
   const { data: projects } = useSWR<
     (Project & {
@@ -40,12 +36,7 @@ const GridTab: FC<Props> = ({ onRouteChange }) => {
               project.name,
             )}`}
           >
-            <Link
-              href={`/app/${project.name}`}
-              prefetch
-              onClick={onRouteChange}
-              onKeyUp={onRouteChange}
-            >
+            <Link href={`/app/${project.name}`} prefetch>
               <Card className="flex min-w-64 h-[92%] flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                 <CardHeader
                   style={{

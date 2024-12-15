@@ -3,6 +3,7 @@ import type { TableData } from '@src/components/Tables/DataTable'
 import { flexRender, type Table } from '@tanstack/react-table'
 import { TableHead, TableHeader, TableRow } from '@src/components//ui/table'
 import { GripVertical } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 interface DataTableContentProps<TData extends TableData> {
   table: Table<TData>
@@ -11,8 +12,31 @@ interface DataTableContentProps<TData extends TableData> {
 const DataTableHeader = <TData extends TableData>({
   table,
 }: DataTableContentProps<TData>) => {
+  const [isSticky, setIsSticky] = useState<boolean>(true)
+  const headerRef = useRef<HTMLTableSectionElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const rect: DOMRect = headerRef.current.getBoundingClientRect()
+
+        setIsSticky(rect.top <= 0)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <TableHeader className="dark:bg-neutral-900 bg-neutral-50">
+    <TableHeader
+      ref={headerRef}
+      className={`dark:bg-neutral-900 bg-neutral-50 ${
+        isSticky ? 'sticky top-0 z-10 border outline' : ''
+      }`}
+    >
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id} className="headerGroup group">
           {headerGroup.headers.map((header) => {

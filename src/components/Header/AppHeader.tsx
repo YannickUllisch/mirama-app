@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -13,7 +13,6 @@ import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import Link from 'next/link'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
-import { LoadBarPulse } from '../Loading/LoadBarPulse'
 import type { Session } from 'next-auth'
 import AddProjectDialog from '../Dialogs/AddProjectDialog'
 import { Button } from '../ui/button'
@@ -21,29 +20,6 @@ import { Plus } from 'lucide-react'
 
 const AppHeader = ({ session }: { session: Session | null }) => {
   const pathname = usePathname()
-  const [pageLoading, setPageLoading] = useState<boolean>(false)
-  const [isMounted, setIsMounted] = useState(false)
-  const [currentPath, setCurrentPath] = useState<string>(pathname)
-
-  // Sync currentPath with pathname after mount
-  useEffect(() => {
-    setCurrentPath(pathname)
-    setIsMounted(true)
-  }, [pathname])
-
-  // Logic to handle loading bar on redirect through header
-  useEffect(() => {
-    if (pathname !== currentPath && pageLoading) {
-      setCurrentPath(pathname)
-      setPageLoading(false)
-    }
-  }, [currentPath, pageLoading, pathname])
-
-  const onRouteChange = () => {
-    if (!pageLoading) {
-      setPageLoading(true)
-    }
-  }
 
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
@@ -62,15 +38,8 @@ const AppHeader = ({ session }: { session: Session | null }) => {
     return { pathSegments: segments, accumulatedPaths: paths }
   }, [pathname])
 
-  // Guard rendering until component has mounted
-  // Avoids rendering breadcrumbs before hydration
-  if (!isMounted) {
-    return null
-  }
-
   return (
-    <header className="flex gap-2 p-4 justify-between w-full bg-inherit dark:border-neutral-800 border-neutral-100">
-      {pageLoading && <LoadBarPulse />}
+    <header className="flex gap-2 p-4 justify-between bg-transparent dark:border-neutral-800 border-neutral-100">
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
         <Separator
@@ -84,12 +53,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
               {index < pathSegments.length - 1 ? (
                 <>
                   <BreadcrumbItem>
-                    <Link
-                      href={accumulatedPaths[index]}
-                      passHref
-                      onClick={onRouteChange}
-                      onKeyUp={onRouteChange}
-                    >
+                    <Link href={accumulatedPaths[index]} passHref>
                       <span>
                         {capitalize(
                           segment

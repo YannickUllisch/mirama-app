@@ -7,12 +7,11 @@ import {
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import { Grid2x2, Home, TableProperties } from 'lucide-react'
+import { Grid2x2, TableProperties } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Separator } from '@src/components/ui/separator'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
-import { LoadBarPulse } from '@src/components/Loading/LoadBarPulse'
 import GridTab from '@src/components/Tabs/DashboardTabs/GridTab'
 import TableTab from '@src/components/Tabs/DashboardTabs/TableTab'
 
@@ -20,16 +19,7 @@ const ClientProjectPage = () => {
   // Session
   const { data: session } = useSession({ required: true })
 
-  // States
-  const [pageLoading, setPageLoading] = useState<boolean>(false)
-
   const { data: users } = useSWR<User[]>('/api/db/team/member')
-
-  const onRouteChange = () => {
-    if (!pageLoading) {
-      setPageLoading(true)
-    }
-  }
 
   // Tab definitions
   const dashboardTabs: {
@@ -41,7 +31,7 @@ const ClientProjectPage = () => {
     {
       id: 'grid',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GridTab onRouteChange={onRouteChange} />,
+      component: <GridTab />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <Grid2x2 width={15} /> Grid
@@ -51,13 +41,7 @@ const ClientProjectPage = () => {
     {
       id: 'table',
       roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: (
-        <TableTab
-          session={session}
-          users={users ?? []}
-          onRouteChange={onRouteChange}
-        />
-      ),
+      component: <TableTab session={session} users={users ?? []} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <TableProperties width={15} /> Table
@@ -81,7 +65,6 @@ const ClientProjectPage = () => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      {pageLoading && <LoadBarPulse />}
       <div className="flex items-center gap-4 dark:text-white mb-2 rounded-lg p-1 w-fit">
         <TabsList className="justify-center">
           {dashboardTabs.map(

@@ -31,11 +31,9 @@ export const ListTabColumns = ({
   projectName,
   users,
   mutate,
-  onRouteChange,
 }: {
   projectName: string
   users: User[]
-  onRouteChange: () => void
   mutate: KeyedMutator<
     (Task & {
       assignedTo: User
@@ -91,7 +89,6 @@ export const ListTabColumns = ({
             event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
           ) => {
             event.stopPropagation()
-            onRouteChange()
           }
 
           return (
@@ -125,8 +122,6 @@ export const ListTabColumns = ({
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
                     <Link
-                      onClick={onRouteChange}
-                      onKeyUp={onRouteChange}
                       href={`/app/${projectName}/edit/${row.original.id}`}
                       className="gap-3"
                     >
@@ -136,8 +131,6 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      onClick={onRouteChange}
-                      onKeyUp={onRouteChange}
                       href={`/app/${projectName}/create/${row.original.projectId}?parentId=${row.original.id}`}
                       className="gap-3"
                     >
@@ -319,7 +312,7 @@ export const ListTabColumns = ({
         },
       },
     ],
-    [users, projectName, mutate, onRouteChange],
+    [users, projectName, mutate],
   )
   return cols
 }

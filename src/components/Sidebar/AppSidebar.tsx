@@ -24,9 +24,6 @@ import SidebarSecondaryNav from './SecondaryNav'
 import SidebarUserNav from './UserNav'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
-import { LoadBarPulse } from '../Loading/LoadBarPulse'
-import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
 
 const AppMenu: AppMenuItem[] = [
   {
@@ -110,26 +107,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   session,
   ...props
 }) => {
-  const updatedPath = usePathname()
-  const [pageLoading, setPageLoading] = useState<boolean>(false)
-  const [currentPath, setCurrentPath] = useState<string>(updatedPath)
-
-  useEffect(() => {
-    if (updatedPath !== currentPath && pageLoading) {
-      setCurrentPath(updatedPath)
-      setPageLoading(false)
-    }
-  }, [currentPath, pageLoading, updatedPath])
-
-  const onRouteChange = () => {
-    if (!pageLoading) {
-      setPageLoading(true)
-    }
-  }
-
   return (
     <Sidebar collapsible="icon" {...props}>
-      {pageLoading && <LoadBarPulse />}
       <SidebarHeader>
         <SidebarTeamSwitcher
           team={{
@@ -140,9 +119,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         />
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
-        <SidebarMainNav items={AppMenu} onRouteChange={onRouteChange} />
+        <SidebarMainNav items={AppMenu} />
         <SidebarProjectsNav
-          onRouteChange={onRouteChange}
           session={session}
           projects={projects.map((p) => ({
             href: `/app/${p.name}`,
