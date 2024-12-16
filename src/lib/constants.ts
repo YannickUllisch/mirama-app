@@ -13,6 +13,7 @@ export interface AppMenuItem {
   items?: {
     title: string
     href: string
+    roles?: Role[]
   }[]
   roles?: Role[]
 }
