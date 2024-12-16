@@ -37,6 +37,8 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 0 0% 89.8%;
     --sidebar-ring: 349.7 89.2% 60.2%;
+    --chart-1: 349.7 89.2% 60.2%;
+    --chart-2: 238.7 83.5% 66.7%;
   }
 
   .dark {
@@ -71,6 +73,8 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 0 0% 14.9%;
     --sidebar-ring: 349.7 89.2% 60.2%;
+    --chart-1: 349.7 89.2% 60.2%;
+    --chart-2: 238.7 83.5% 66.7%;
   }
 }
 

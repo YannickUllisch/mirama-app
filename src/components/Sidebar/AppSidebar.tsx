@@ -63,8 +63,8 @@ const AppMenu: AppMenuItem[] = [
         href: '/app/team',
       },
       {
-        title: 'Budgets',
-        href: '/app/budget',
+        title: 'Finances',
+        href: '/app/finances',
       },
       {
         title: 'Archive',

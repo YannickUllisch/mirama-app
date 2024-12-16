@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { Task, User } from '@prisma/client'
+import type { Role, Task, User } from '@prisma/client'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -14,6 +14,7 @@ export interface AppMenuItem {
     title: string
     href: string
   }[]
+  roles?: Role[]
 }
 
 export interface SecondaryAppMenuItem {

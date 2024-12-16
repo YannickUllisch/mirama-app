@@ -6,27 +6,26 @@ import {
   SelectGroup,
   SelectTrigger,
   SelectValue,
-} from '@src/components/ui/tableSelect'
-import { cn } from '@src/lib/utils'
+} from '@src/components/ui/select'
 
 interface GeneralSelectProps {
   value: string
+  placeholder?: string
   setValue: Dispatch<SetStateAction<string>>
-  stylingProps?: {
-    triggerclassname?: string
-  }
+  triggerProps?: React.ComponentPropsWithoutRef<'button'>
 }
 
 const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
   children,
   value,
   setValue,
-  stylingProps,
+  placeholder,
+  triggerProps,
 }) => {
   return (
     <Select value={value} onValueChange={setValue}>
-      <SelectTrigger className={cn('', stylingProps?.triggerclassname)}>
-        <SelectValue placeholder={value} />
+      <SelectTrigger {...triggerProps}>
+        <SelectValue placeholder={placeholder ?? value} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>{children}</SelectGroup>
