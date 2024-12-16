@@ -16,7 +16,7 @@ const Views = (props: ViewsProps) => {
   const isWeekView = props.activeTab === 'week'
   return (
     <Card
-      className={`transition-all rounded-lg border bg-background/50 duration-300 text-card-foreground shadow-sm p-2 sm:p-4 ${
+      className={`transition-all shadow-none rounded-lg border bg-background/50 duration-300 text-card-foreground p-2 sm:p-4 ${
         props.isAnimating
           ? 'opacity-0 -translate-y-1'
           : 'opacity-100 translate-y-0'

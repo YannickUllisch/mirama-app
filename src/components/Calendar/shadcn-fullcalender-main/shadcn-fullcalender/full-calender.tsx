@@ -50,7 +50,7 @@ const FullCalender = ({ events, config }: CalendarProps) => {
   })
 
   return (
-    <div>
+    <>
       <CalenderHeader
         currentDate={currentDate}
         setCurrentDate={setCurrentDate}
@@ -71,7 +71,7 @@ const FullCalender = ({ events, config }: CalendarProps) => {
         isAnimating={isAnimating}
         events={events}
       />
-    </div>
+    </>
   )
 }
 
