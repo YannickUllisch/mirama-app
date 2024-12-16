@@ -1,17 +1,16 @@
 'use client'
-
 import { CalendarPlus } from 'lucide-react'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from '../ui/credenza'
 import EventColoredButton from './event-colored-button'
 import EventForm from '../calender-components/eventform'
+import {
+  Credenza,
+  CredenzaTrigger,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaDescription,
+  CredenzaBody,
+} from '@src/components/ui/credenza'
 
 export type ColorScheme = 'red' | 'blue' | 'green' | 'default' // Define the ColorScheme type
 

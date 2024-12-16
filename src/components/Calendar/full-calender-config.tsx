@@ -1,5 +1,5 @@
 'use client'
-import type { CalendarProps } from './shadcn-fullcalender/types/event'
+import type { CalendarProps } from './types/event'
 
 export const calendarConfig: CalendarProps['config'] = {
   addEventConfig: {

@@ -7,6 +7,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function classNames(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+
 export const getColorByName = (username: string) => {
   // Hash the username string
   let hash = 0

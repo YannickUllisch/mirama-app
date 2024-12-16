@@ -2,16 +2,16 @@
 import EventForm from './eventform'
 import { Plus } from 'lucide-react'
 import { CalendarPlus } from 'lucide-react'
+import { Button } from '@src/components/ui/button'
 import {
   Credenza,
-  CredenzaBody,
+  CredenzaTrigger,
   CredenzaContent,
-  CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
-  CredenzaTrigger,
-} from '../ui/credenza'
-import { Button } from '@src/components/ui/button'
+  CredenzaDescription,
+  CredenzaBody,
+} from '@src/components/ui/credenza'
 
 type ButtonProps = {
   variant?: 'default' | 'secondary' | 'primary' // Optional variant type

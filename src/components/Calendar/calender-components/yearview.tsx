@@ -1,4 +1,4 @@
-import type { Event } from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/types/event.tsx'
+import type { Event } from '@src/components/Calendar/types/event'
 import {
   addDays,
   eachDayOfInterval,

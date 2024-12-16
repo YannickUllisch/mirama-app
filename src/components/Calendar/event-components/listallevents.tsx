@@ -1,18 +1,18 @@
 'use client'
 import { Button } from '@src/components/ui/button'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from '../ui/credenza'
 import EventModal from './eventmodal' // Importing EventModalProps type
 import { Eventyearviewbtn } from './yearviewlist'
 import AddEvent from '../calender-components/add-event'
 import { CalendarPlus } from 'lucide-react'
+import {
+  Credenza,
+  CredenzaTrigger,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaDescription,
+  CredenzaBody,
+} from '@src/components/ui/credenza'
 
 type Event = {
   eventname: string

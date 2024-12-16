@@ -1,8 +1,8 @@
 'use client'
 import type { Project } from '@prisma/client'
 import { newevents } from '@src/components/Calendar/shadcn-fullcalender-main/data/events'
-import { calendarConfig } from '@src/components/Calendar/shadcn-fullcalender-main/full-calender-config'
-import FullCalender from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/full-calender'
+import { calendarConfig } from '@src/components/Calendar/full-calender-config'
+import FullCalender from '@src/components/Calendar/full-calender'
 
 import useSWR from 'swr'
 

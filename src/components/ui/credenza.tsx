@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@src/components/ui/dialog'
-import { useMediaQuery } from '../../hooks/use-media-query'
+
 import {
   Drawer,
   DrawerClose,
@@ -21,6 +21,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@src/components/ui/drawer'
+import { useMediaQuery } from '@src/hooks/use-media-query'
 import { cn } from '@src/lib/utils'
 
 interface BaseProps {

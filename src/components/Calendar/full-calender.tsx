@@ -1,8 +1,5 @@
 'use client'
-
 import { useState } from 'react'
-import CalenderHeader from './calender-components/calender-header'
-import Views from './calender-components/views'
 import { months } from './constants'
 import { useAnimationTrigger } from './hooks/useAnimationTrigger'
 import { useMonthChange } from './hooks/useMonthChange'
@@ -11,6 +8,8 @@ import { useYearChange } from './hooks/useYearChange'
 import type { CalendarProps } from './types/event'
 import type { TabTypes } from './types/tabs'
 import { useWeekChange } from './hooks/useWeekChange'
+import Views from './calender-components/views'
+import CalenderHeader from './calender-components/calender-header'
 
 const FullCalender = ({ events, config }: CalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date())

@@ -29,11 +29,9 @@ export function Eventyearviewbtn(props: {
         <div className="flex items-center space-x-[0.2px] justify-center ">
           {props.eventsForDate.length > 0 ? (
             <>
-              {/* biome-ignore lint/suspicious/noArrayIndexKey: <explanation> */}
-              {props.eventsForDate.slice(0, 4).map((_event, index) => (
+              {props.eventsForDate.slice(0, 4).map((event, index) => (
                 <div
-                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                  key={index} // Add a unique key for each event
+                  key={event}
                   className={`w-1 bg-yellow-500 aspect-square rounded-full  ${
                     index === 3 ? 'opacity-50' : '' // Optional: Add a class for the 4th item
                   }`}

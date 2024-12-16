@@ -1,8 +1,8 @@
 import { getDay, startOfMonth, startOfWeek } from 'date-fns'
+import type { Event } from '@src/components/Calendar/types/event'
 import { daysOfWeek } from '../constants'
-import { renderDaysOfWeek } from '../utils/week-render'
-import { renderDaysInMonth } from '../utils/day-render'
-import type { Event } from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/types/event.tsx'
+import { renderDaysOfWeek } from '../helpers/week-render'
+import { renderDaysInMonth } from '../helpers/day-render'
 
 interface MonthViewProps {
   currentDate: Date

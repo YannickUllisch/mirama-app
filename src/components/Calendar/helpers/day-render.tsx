@@ -1,8 +1,8 @@
 import { addDays, format, parseISO } from 'date-fns'
-import type { Event } from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/types/event.tsx'
+import type { Event } from '@src/components/Calendar/types/event'
 import EventModal from '../event-components/eventmodal'
-import AddEvent from '../calender-components/add-event'
 import ListAllEvents from '../event-components/listallevents'
+import AddEvent from '../calender-components/add-event'
 
 interface RenderDaysInMonthProps {
   currentDate: Date

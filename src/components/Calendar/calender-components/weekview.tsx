@@ -1,4 +1,4 @@
-import type { Event } from '@src/components/Calendar/shadcn-fullcalender-main/shadcn-fullcalender/types/event.tsx'
+import type { Event } from '@src/components/Calendar/types/event'
 import { Button } from '@src/components/ui/button'
 import {
   addDays,
@@ -78,7 +78,6 @@ interface WeekViewProps {
 }
 
 export function WeekView({ currentDate, events }: WeekViewProps) {
-  console.log('--->>> events: ', events)
   const weekNumber = getISOWeek(currentDate)
   const firstWeekDay = startOfWeek(currentDate, { weekStartsOn: 1 })
   const weekDays = Array.from({ length: 7 }).map((_, i) =>
@@ -99,9 +98,9 @@ export function WeekView({ currentDate, events }: WeekViewProps) {
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
       <div className="mb-4 relative z-20">
         <div className="grid grid-cols-8 gap-0">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((x) => (
             <div
-              key={`week-view-top-header-${i}`}
+              key={`week-view-top-header-${x}`}
               className="text-center text-xs font-semibold"
             />
           ))}
@@ -133,9 +132,9 @@ export function WeekView({ currentDate, events }: WeekViewProps) {
                     </span>
                   </div>
 
-                  {Array.from({ length: 24 }).map((_, i) => (
+                  {Array.from({ length: 24 }).map((x, i) => (
                     <div
-                      key={`hours-${i}`}
+                      key={`hours-${x}`}
                       className="cursor-pointer h-16 pr-2 text-center text-sm text-muted-foreground border-r border-border"
                     >
                       {i < 10 ? `0${i}` : i}:00
@@ -144,9 +143,9 @@ export function WeekView({ currentDate, events }: WeekViewProps) {
                 </button>
                 <div className="col-span-7 relative z-10">
                   <div className="grid grid-cols-7 gap-0">
-                    {weekDays.map((weekDay, i) => (
+                    {weekDays.map((weekDay) => (
                       <DayView
-                        key={`week-day-${i}`}
+                        key={`week-day-${weekDay.toString()}`}
                         events={calendarEvents}
                         day={weekDay}
                       />
@@ -238,17 +237,14 @@ export function AllDayEventsView({ events = [] }: AllDayEventsViewProps) {
         <div className="w-[12.5%]" />
         {events.map((event, i) => (
           <AllDayEventView
-            key={`all-day-event-${i}`}
+            key={`all-day-event-${event.title}`}
             event={event}
             isLast={events.length === i + 1}
           />
         ))}
-        {Array.from({ length: 7 - events.length }).map((_, i) => (
+        {Array.from({ length: 7 - events.length }).map((x) => (
           <div
-            key={`all-day-event-placeholder-${
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              i
-            }`}
+            key={`all-day-event-placeholder-${x}`}
             className="min-h-[24px] px-1"
           />
         ))}
@@ -377,9 +373,9 @@ export function DayView({ events = [], day }: DayViewProps) {
       </div>
       <div className="relative h-[calc(100%-3rem)]">
         {/* Render Hours Cells */}
-        {Array.from({ length: 24 }).map((_, i) => (
+        {Array.from({ length: 24 }).map((x, i) => (
           <div
-            key={`day-${dayInTheMonth}-${i}`}
+            key={`day-${dayInTheMonth}-${x}`}
             className={`h-16 ${i > 0 ? 'border-t border-border' : ''} ${
               i === 24 - 1 ? 'border-b' : ''
             }`}
