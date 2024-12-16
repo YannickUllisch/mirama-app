@@ -39,7 +39,7 @@ const AppHeader = ({ session }: { session: Session | null }) => {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 w-full flex gap-2 border-b-2 p-4 justify-between bg-inherit z-20 dark:border-neutral-800 border-neutral-100">
+    <header className="sticky top-0 w-full flex gap-2 border-b-2 p-4 justify-between bg-inherit z-20 dark:border-neutral-800/40 border-neutral-100/60">
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
         <Separator

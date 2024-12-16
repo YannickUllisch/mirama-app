@@ -1,6 +1,13 @@
 'use client'
 import { signOut } from 'next-auth/react'
-import { ChevronsUpDown, LogOut, Settings, Sparkles } from 'lucide-react'
+import {
+  Check,
+  ChevronsUpDown,
+  LogOut,
+  Settings,
+  Sparkles,
+  SunMoon,
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +15,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import {
@@ -19,10 +29,12 @@ import {
 import type { User } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import Link from 'next/link'
+import { useTheme } from 'next-themes'
 
 const ICON_WIDTH = 17
 
 const SidebarUserNav = ({ user }: { user: User }) => {
+  const { theme, setTheme } = useTheme()
   const { isMobile } = useSidebar()
 
   const DropdownItem = ({
@@ -41,6 +53,15 @@ const SidebarUserNav = ({ user }: { user: User }) => {
           {label}
         </div>
       </DropdownMenuItem>
+    )
+  }
+
+  const SubItemChecked = ({ subItem }: { subItem: string }) => {
+    return (
+      <div className="flex items-center gap-2 justify-between w-full">
+        {subItem}
+        {theme === subItem.toLowerCase() && <Check width={13} />}
+      </div>
     )
   }
 
@@ -86,6 +107,26 @@ const SidebarUserNav = ({ user }: { user: User }) => {
                 icon={<Sparkles width={ICON_WIDTH} />}
                 label="Upgrade to Pro"
               />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <div className="flex items-center gap-3">
+                    <SunMoon width={ICON_WIDTH} />
+                    Change Theme
+                  </div>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem onClick={() => setTheme('light')}>
+                    <SubItemChecked subItem="Light" />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme('dark')}>
+                    <SubItemChecked subItem="Dark" />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme('system')}>
+                    <SubItemChecked subItem="System" />
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+
               <Link href={'/app/settings'}>
                 <DropdownItem
                   icon={<Settings width={ICON_WIDTH} />}

@@ -2,7 +2,12 @@ import type { Task } from '@prisma/client'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import TaskTree from '@src/components/task/TaskTree'
 import { ScrollArea } from '@src/components/ui/scroll-area'
-import { Blocks, FileSymlink, MessageSquareText } from 'lucide-react'
+import {
+  Blocks,
+  FileSymlink,
+  MessageSquareText,
+  SquareArrowOutUpRight,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
@@ -52,7 +57,7 @@ const OverviewTab: FC<OverviewTabProps> = ({
                   <span className="text-base">{task.title}</span>
 
                   <Link href={`/app/${projectName}/edit/${task.id}`}>
-                    <FileSymlink className="w-4 h-4" />
+                    <SquareArrowOutUpRight className="w-4 h-4" />
                   </Link>
                 </div>
 
