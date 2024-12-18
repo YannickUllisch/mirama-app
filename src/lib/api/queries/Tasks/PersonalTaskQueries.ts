@@ -17,7 +17,7 @@ export const fetchPersonalTasksByProjectId = async (
 ) => {
   const response = await db.task.findMany({
     where: {
-      id,
+      projectId: id,
       assignedToId: session?.user.id,
       teamId: session?.user.teamId ?? 'undefined',
     },

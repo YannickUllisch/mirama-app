@@ -53,17 +53,19 @@ model User {
   emailVerified     DateTime?
   password          String?
   role              Role      @default(USER)
-  teamId            String?
+  teamId            String? 
   accounts          Account[]
   // These are needed for overview of personal projets and tasks a user is assigned to.
   tasks             Task[]
 
   team              Team?     @relation(fields: [teamId], references: [id])
-  preferredDateType String @default("dd-MM-yyyy")
+  preferredDateType String    @default("dd-MM-yyyy")
 
   projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
   comments      Comment[]
   notifications   Notification[]
+
+  @@index([teamId, id], map: "user_team_project_idx")
 }
 
 model VerificationToken {
@@ -96,6 +98,9 @@ model Project {
 
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
+
+  @@index([name, teamId], map: "name_team_idx")
+  @@index([teamId, archived], map: "team_archived_idx")
 }
 
 model Task {
@@ -129,6 +134,8 @@ model Task {
   tags          Tag[]
   comments      Comment[]
   
+  @@index([projectId], map: "task_project_id_idx")
+  @@index([assignedToId, teamId], map: "task_assignedTo_team_idx")  
 }
 
 model TaskCategory {
@@ -180,6 +187,8 @@ model ProjectUser {
     user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
+    @@index([projectId], map: "project_user_project_idx")
+    @@index([userId], map: "project_user_user_idx")
 }
 
 model Tag {
