@@ -89,7 +89,7 @@ export const ListTabColumns = ({
               paddingLeft: `${row.depth * 2}rem`,
             }}
           >
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {row.getCanExpand() ? (
                 <ChevronUp
                   className={`dark:text-white h-3.5 w-3.5 cursor-pointer transition-all ease-out transform ${
@@ -98,7 +98,13 @@ export const ListTabColumns = ({
                   onClick={row.getToggleExpandedHandler()}
                 />
               ) : null}
-              {getValue<boolean>()}
+              <Link
+                onClick={(e) => e.stopPropagation()}
+                href={`/app/${projectName}/edit/${row.original.id}`}
+                className="hover:underline"
+              >
+                {getValue() as string}
+              </Link>
             </div>
           </div>
         ),
@@ -112,13 +118,6 @@ export const ListTabColumns = ({
         size: 170,
         cell: ({ getValue, row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
-
-          const onClick = (
-            event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-          ) => {
-            event.stopPropagation()
-          }
-
           return (
             <div className="flex justify-between group w-full">
               <div className="flex items-center gap-2">
@@ -127,14 +126,9 @@ export const ListTabColumns = ({
                     {row.original.category.title}
                   </Badge>
                 )}
-
-                <Link
-                  onClick={(e) => onClick(e)}
-                  href={`/app/${projectName}/edit/${row.original.id}`}
-                  className="hover:underline"
-                >
+                <span className="overflow-ellipsis flex-1 min-w-0">
                   {getValue() as string}
-                </Link>
+                </span>
               </div>
 
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>

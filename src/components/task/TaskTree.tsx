@@ -6,6 +6,7 @@ import {
   Tree,
   CollapseButton,
 } from '@src/components/Tree/TreeViewAPI'
+import { useTree } from '@src/hooks/useTree'
 import type { FC } from 'react'
 
 interface TaskTreeProps {
@@ -13,53 +14,20 @@ interface TaskTreeProps {
 }
 
 const TaskTree: FC<TaskTreeProps> = ({ tasks }) => {
-  const buildTreeElements = (tasks: (Task & { subtasks: Task[] })[]): any[] => {
-    const visited = new Set<string>() // Track visited task IDs to avoid infinite loops
-
-    const helper = (taskList: (Task & { subtasks: Task[] })[]): any[] => {
-      return taskList
-        .map((task) => {
-          if (visited.has(task.id)) {
-            return null // Avoid processing the same task multiple times
-          }
-          visited.add(task.id)
-
-          const isFolder = task.subtasks.length > 0
-
-          return {
-            id: task.id,
-            name: task.title,
-            isFolder,
-            isSelectable: true,
-            children: isFolder
-              ? helper(
-                  tasks.filter((t) =>
-                    task.subtasks.some((subtask) => subtask.id === t.id),
-                  ),
-                )
-              : undefined,
-          }
-        })
-        .filter(Boolean) // Remove null entries
-    }
-
-    return helper(tasks)
-  }
-
-  const elements = buildTreeElements(tasks ?? [])
+  const taskTrees = useTree(tasks ?? [], 'subtasks')
 
   const renderTreeElements = (elements: any[]) => {
     return elements.map((element) => {
-      if (element.isFolder) {
+      if (element.subtasks?.length > 0) {
         return (
-          <Folder key={element.id} value={element.id} element={element.name}>
-            {element.children && renderTreeElements(element.children)}
+          <Folder key={element.id} value={element.id} element={element.title}>
+            {element.subtasks && renderTreeElements(element.subtasks)}
           </Folder>
         )
       }
       return (
         <File key={element.id} value={element.id}>
-          <p>{element.name}</p>
+          <p>{element.title}</p>
         </File>
       )
     })
@@ -69,10 +37,10 @@ const TaskTree: FC<TaskTreeProps> = ({ tasks }) => {
     <Tree
       className="rounded-md h-60 overflow-hidden p-2"
       initialExpendedItems={tasks?.map((task) => task.id)}
-      elements={elements}
+      elements={taskTrees as any[]}
     >
-      {renderTreeElements(elements)}
-      <CollapseButton elements={elements} />
+      {renderTreeElements(taskTrees)}
+      <CollapseButton elements={taskTrees as any[]} />
     </Tree>
   )
 }
