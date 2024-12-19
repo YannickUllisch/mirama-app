@@ -20,6 +20,7 @@ const buttonVariants = cva(
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-neutral-900 dark:text-white',
         link: 'text-text underline-offset-4 hover:underline',
         success: 'bg-emerald-600 hover:bg-emerald-500 text-white',
+        auth: 'w-full bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-300',
       },
       size: {
         default: 'h-9 px-4 py-2',

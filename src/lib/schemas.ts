@@ -11,18 +11,12 @@ export const LoginSchema = z.object({
   }),
 })
 
-export const RegisterSchema = z
-  .object({
-    email: z.string().email({ message: 'Invalid email format' }),
-    password: z
-      .string()
-      .min(6, { message: 'Password needs to include at least 6 characters' }),
-    passwordValidation: z.string(),
-  })
-  .refine((data) => data.password === data.passwordValidation, {
-    message: 'Passwords do not match',
-    path: ['passwordValidation'],
-  })
+export const RegisterSchema = z.object({
+  email: z.string().email({ message: 'Invalid email format' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password needs to include at least 6 characters' }),
+})
 
 const RoleTypes = z.enum([Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER])
 
