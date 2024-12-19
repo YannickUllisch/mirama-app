@@ -10,7 +10,7 @@ import { TableBody, TableCell, TableRow } from '@src/components/ui/table'
 import { Loader2 } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 
-interface DataTableContentProps<TData extends TableData, TValue> {
+interface DataTableContentProps<TData extends TableData<TData>, TValue> {
   table: Table<TData>
   columns: ColumnDef<TData, TValue>[]
   dataLoading?: boolean
@@ -19,13 +19,11 @@ interface DataTableContentProps<TData extends TableData, TValue> {
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
 }
 
-const DataTableContent = <TData extends TableData, TValue>({
+const DataTableContent = <TData extends TableData<TData>, TValue>({
   columns,
   table,
   dataLoading,
   enableRowSelection,
-  expandedContent,
-  onRowSelectionChange,
 }: DataTableContentProps<TData, TValue>) => {
   return (
     <TableBody>
@@ -35,25 +33,25 @@ const DataTableContent = <TData extends TableData, TValue>({
             <TableRow
               key={row.id}
               className="group"
-              onClick={(event) => {
-                const target = event.target as Element
-                const isCheckbox = target.closest('.shadcn-checkbox')
+              // onClick={(event) => {
+              //   const target = event.target as Element
+              //   const isCheckbox = target.closest('.shadcn-checkbox')
 
-                if (isCheckbox) {
-                  row.toggleSelected()
-                } else {
-                  if (event.shiftKey) {
-                    row.toggleSelected()
-                  } else {
-                    if (onRowSelectionChange) {
-                      onRowSelectionChange({})
-                    }
-                    if (enableRowSelection) {
-                      row.toggleSelected()
-                    }
-                  }
-                }
-              }}
+              //   if (isCheckbox) {
+              //     row.toggleSelected()
+              //   } else {
+              //     if (event.shiftKey) {
+              //       row.toggleSelected()
+              //     } else {
+              //       if (onRowSelectionChange) {
+              //         onRowSelectionChange({})
+              //       }
+              //       if (enableRowSelection) {
+              //         row.toggleSelected()
+              //       }
+              //     }
+              //   }
+              // }}
               data-state={
                 enableRowSelection && row.getIsSelected() ? 'selected' : null
               }
@@ -78,13 +76,6 @@ const DataTableContent = <TData extends TableData, TValue>({
                 </TableCell>
               ))}
             </TableRow>
-            {enableRowSelection && row.getIsExpanded() && (
-              <TableRow>
-                <TableCell colSpan={row.getVisibleCells().length}>
-                  {expandedContent}
-                </TableCell>
-              </TableRow>
-            )}
           </React.Fragment>
         ))
       ) : (

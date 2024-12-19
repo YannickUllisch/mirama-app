@@ -14,6 +14,7 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   type Updater,
+  getExpandedRowModel,
 } from '@tanstack/react-table'
 import { Table } from '@src/components/ui/table'
 import type React from 'react'
@@ -23,8 +24,10 @@ import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
 import DataTableToolbar from '@src/components/Tables/DataTableToolbar'
 
-export interface TableData {
+export interface TableData<TData> {
   id: string
+  subtasks?: TData[]
+  parentId?: string
 }
 
 // Persistance, fetching states from Local Storage
@@ -34,7 +37,7 @@ export const getLocalStorageItem = ({ item }: { item: string }) => {
   return savedFilters ? JSON.parse(savedFilters) : null
 }
 
-interface DataTableProps<TData extends TableData, TValue> {
+interface DataTableProps<TData extends TableData<TData>, TValue> {
   tableIdentifier: string
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -61,7 +64,7 @@ interface DataTableProps<TData extends TableData, TValue> {
   }
 }
 
-export const DataTable = <TData extends TableData, TValue>({
+export const DataTable = <TData extends TableData<TData>, TValue>({
   columns,
   data,
   tableIdentifier,
@@ -159,12 +162,20 @@ export const DataTable = <TData extends TableData, TValue>({
     setColumnSizing(newColSizeState)
   }
 
-  const table = useReactTable({
+  const [expanded, setExpanded] = useState({})
+
+  const table = useReactTable<TData>({
     data,
     columns,
     // Sets row ID to the ID of the given data.
-    getRowId: (row) => row.id,
+    getRowId: (row, _, parent) =>
+      parent ? [parent.id, row.id].join('.') : row.id,
+
+    getSubRows: (row) => row.subtasks || [],
+    getRowCanExpand: (row) => row.subRows && row.subRows.length > 0,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    onExpandedChange: setExpanded,
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSortingState ? setSortingState : setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -172,7 +183,6 @@ export const DataTable = <TData extends TableData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange,
     onColumnVisibilityChange,
-    getRowCanExpand: () => true,
     enableColumnResizing: true,
     onColumnSizingChange: onColumnSizingChange,
     columnResizeMode: 'onChange',
@@ -182,6 +192,8 @@ export const DataTable = <TData extends TableData, TValue>({
     onGlobalFilterChange: setGlobalFilter,
     enableGlobalFilter: true,
     globalFilterFn: 'includesString',
+    filterFromLeafRows: true,
+
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
@@ -189,6 +201,7 @@ export const DataTable = <TData extends TableData, TValue>({
       columnSizing,
       columnFilters,
       globalFilter,
+      expanded,
     },
     initialState: {
       pagination: { pageSize: 10 },

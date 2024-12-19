@@ -2,7 +2,6 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
 import type { NextRequest } from 'next/server'
-import { Role } from '@prisma/client'
 
 export const GET = async (req: NextRequest) => {
   try {

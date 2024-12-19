@@ -5,11 +5,11 @@ import { TableHead, TableHeader, TableRow } from '@src/components//ui/table'
 import { GripVertical } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
-interface DataTableContentProps<TData extends TableData> {
+interface DataTableContentProps<TData extends TableData<TData>> {
   table: Table<TData>
 }
 
-const DataTableHeader = <TData extends TableData>({
+const DataTableHeader = <TData extends TableData<TData>>({
   table,
 }: DataTableContentProps<TData>) => {
   const [isSticky, setIsSticky] = useState<boolean>(true)

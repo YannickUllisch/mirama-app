@@ -115,8 +115,8 @@ model Task {
 
   // Allow for recursive subtasks
   parentId      String? // This field is null for top-level comments
-  parent        Task? @relation("SubTasks", fields: [parentId], references: [id])
-  subtasks      Task[] @relation("SubTasks")
+  parent        Task?       @relation("SubTasks", fields: [parentId], references: [id])
+  subtasks      Task[]      @relation("SubTasks")
 
   // We allow tasks to be of optional category type.
   categoryId    String?

@@ -180,6 +180,7 @@ export const PUT = auth(async (req) => {
         },
         data: {
           ...task,
+          parentId: id !== task.parentId ? task.parentId : null, // Resolved issue in which a task can be its own parent breaking tree construction
           tags: {
             connect: task.tags
               ? task.tags?.map((tagId) => ({ id: tagId }))

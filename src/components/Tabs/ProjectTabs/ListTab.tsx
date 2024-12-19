@@ -2,7 +2,7 @@
 import type { Tag, Task, TaskCategory, User } from '@prisma/client'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import type React from 'react'
-import { useState, type FC } from 'react'
+import { useEffect, useMemo, useState, type FC } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Plus } from 'lucide-react'
@@ -25,6 +25,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
     (Task & {
       assignedTo: User
       tags: Tag[]
+      subtasks: Task[]
       category: TaskCategory | null
     })[]
   >(`/api/db/task?id=${projectId}`)
@@ -38,6 +39,23 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   const [sortingState, setSortingState] = useState<SortingState>([
     { id: 'taskCode', desc: true },
   ])
+
+  const taskTrees: any[] = useMemo(() => {
+    if (!tasks) return []
+    // Define a recursive function to build the tree
+    const buildTree = (task: Task): Task & { subtasks: Task[] } => {
+      return {
+        ...task,
+        subtasks: tasks
+          ?.filter((t) => t.parentId === task.id)
+          .map(buildTree) as any, // Recursively build subtasks
+      }
+    }
+
+    // Get root nodes and build the tree structure
+    const rootNodes = tasks?.filter((task) => !task.parentId) || []
+    return rootNodes.map(buildTree) // Build the tree for each root node
+  }, [tasks])
 
   const ToolbarLeft = () => {
     return (
@@ -66,7 +84,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
           projectName: projectName,
           users: users ?? [],
         })}
-        data={tasks ?? []}
+        data={taskTrees ?? []}
         enableRowSelection
         dataLoading={tasksLoading}
         rowSelection={rowSelection}

@@ -21,7 +21,13 @@ import { SelectItem } from '@src/components/ui/tableSelect'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { capitalize } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
-import { BetweenHorizonalStart, Ellipsis, Pencil, Trash } from 'lucide-react'
+import {
+  BetweenHorizonalStart,
+  ChevronUp,
+  Ellipsis,
+  Pencil,
+  Trash,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
@@ -38,6 +44,7 @@ export const ListTabColumns = ({
     (Task & {
       assignedTo: User
       tags: Tag[]
+      subtasks: Task[]
       category: TaskCategory | null
     })[]
   >
@@ -46,6 +53,7 @@ export const ListTabColumns = ({
     Task & {
       assignedTo: User | null
       tags: Tag[]
+      subtasks: Task
       category: TaskCategory | null
     }
   >[] = useMemo(
@@ -69,10 +77,30 @@ export const ListTabColumns = ({
         enableSorting: false,
         enableResizing: false,
       },
+
       {
         accessorKey: 'taskCode',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Code" />
+        ),
+        cell: ({ row, getValue }) => (
+          <div
+            style={{
+              paddingLeft: `${row.depth * 2}rem`,
+            }}
+          >
+            <div className="flex gap-2">
+              {row.getCanExpand() ? (
+                <ChevronUp
+                  className={`dark:text-white h-3.5 w-3.5 cursor-pointer transition-all ease-out transform ${
+                    row.getIsExpanded() ? 'rotate-180' : 'rotate-90'
+                  }`}
+                  onClick={row.getToggleExpandedHandler()}
+                />
+              ) : null}
+              {getValue<boolean>()}
+            </div>
+          </div>
         ),
       },
       {
@@ -296,7 +324,7 @@ export const ListTabColumns = ({
         cell: ({ row, getValue }) => {
           return (
             <div
-              className="flex items-center cursor-default justify-left mr-8 gap-1 flex-wrap"
+              className="flex items-center cursor-default justify-left mr-8 gap-1"
               key={`tag-${row.index}`}
             >
               {(getValue() as Tag[]).map((tag) => (

@@ -8,7 +8,7 @@ import { Button } from '@src/components/ui/button'
 import { ToolbarViewOptions } from '@src/components/Tables/Toolbar/ToolbarViewOptions'
 import ToolbarRefresh from '@src/components/Tables/Toolbar/ToolbarRefresh'
 
-interface DataTableToolBarProps<TData extends TableData> {
+interface DataTableToolBarProps<TData extends TableData<TData>> {
   table: Table<TData>
   tableIdentifier: string
   columnFilters: ColumnFiltersState
@@ -25,7 +25,7 @@ interface DataTableToolBarProps<TData extends TableData> {
   globalFilter: string
 }
 
-const DataTableToolbar = <TData extends TableData>({
+const DataTableToolbar = <TData extends TableData<TData>>({
   globalFilter,
   setGlobalFilter,
   table,
