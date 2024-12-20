@@ -18,6 +18,8 @@ import { useState, useTransition } from 'react'
 import { RegisterSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { AuthSocial } from './Socials'
+import NextTopLoader from 'nextjs-toploader'
+import { Loader2 } from 'lucide-react'
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('')
@@ -39,7 +41,6 @@ const RegisterForm = () => {
     startTransition(() => {
       register(vals).then((data) => {
         if (data) {
-          setSuccess(data.success)
           setError(data.error)
         }
       })
@@ -47,84 +48,92 @@ const RegisterForm = () => {
   }
 
   return (
-    <Form {...form}>
-      <form
-        className={'flex flex-col gap-6'}
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-3xl font-bold font-serif">
-            Keep your business organized
-          </h1>
-          <p className="text-balance text-xs text-muted-foreground">
-            We are currently not open for public registrations!
-          </p>
-        </div>
-        <div className="grid gap-6">
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="email@example.com"
-                      type="email"
-                      required
-                      className="focus-visible:ring-black dark:focus-visible:ring-white"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+    <>
+      <Form {...form}>
+        <form
+          className={'flex flex-col gap-6'}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-3xl font-bold font-serif">
+              Keep your business organized
+            </h1>
+            <p className="text-balance text-xs text-muted-foreground">
+              We are currently not open for public registrations
+            </p>
+          </div>
+          <div className="grid gap-6">
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="email@example.com"
+                        type="email"
+                        required
+                        className="focus-visible:ring-black dark:focus-visible:ring-white"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        id="password"
+                        type="password"
+                        disabled={isPending}
+                        required
+                        className="focus-visible:ring-black dark:focus-visible:ring-white"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormSuccess message={success} />
+            <FormError message={error} />
+            <Button disabled={isPending} type="submit" variant={'auth'}>
+              {!isPending ? (
+                'Create Account'
+              ) : (
+                <div className="w-full flex justify-center items-center min-h-[650px]">
+                  <Loader2 className="h-6 w-6 text-text-inverted animate-spin ml-2 m-1" />
+                </div>
               )}
-            />
+            </Button>
+            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+              <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
+                Or sign up with
+              </span>
+            </div>
+            <AuthSocial />
           </div>
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="password"
-                      type="password"
-                      disabled={isPending}
-                      required
-                      className="focus-visible:ring-black dark:focus-visible:ring-white"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="text-center text-sm">
+            Already have an account?{' '}
+            <a href="/auth/login" className="underline underline-offset-4">
+              Login
+            </a>
           </div>
-          <FormSuccess message={success} />
-          <FormError message={error} />
-          <Button disabled={isPending} type="submit" variant={'auth'}>
-            Create Account
-          </Button>
-          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-            <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
-              Or sign up with
-            </span>
-          </div>
-          <AuthSocial />
-        </div>
-        <div className="text-center text-sm">
-          Already have an account?{' '}
-          <a href="/auth/login" className="underline underline-offset-4">
-            Login
-          </a>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   )
 }
 

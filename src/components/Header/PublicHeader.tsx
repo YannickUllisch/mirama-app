@@ -8,13 +8,8 @@ const PublicHeader = ({ session }: { session: Session | null }) => {
     <header className="sticky top-0 backdrop-blur-sm z-50 sm:flex py-1 px-4 mx-auto w-full max-w-8xl">
       <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
         <div className="flex items-center">
-          <Link
-            href={'/'}
-            className="md:ml-4  sm:ml-0 lg:ml-0 flex gap-2 items-start"
-          >
-            <span className="font-semibold" style={{ fontSize: 30 }}>
-              MIRAGE.
-            </span>
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl font-bold">.mirage</span>
           </Link>
         </div>
         <div className="flex items-center">

@@ -8,12 +8,10 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
 import { Button } from '@src/components/ui/button'
 import { FormError } from '@src/components/auth/popups/FormError'
-
 import { useState, useTransition } from 'react'
 import { LoginSchema } from '@src/lib/schemas'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
@@ -21,6 +19,8 @@ import { login } from '@src/lib/auth/login'
 import { useSearchParams } from 'next/navigation'
 import { Label } from '../ui/label'
 import { AuthSocial } from './Socials'
+import { PasswordInput } from './PasswordInput'
+import { Loader2 } from 'lucide-react'
 
 const LoginForm = () => {
   const searchParams = useSearchParams()
@@ -45,8 +45,6 @@ const LoginForm = () => {
   const onSubmit = (vals: z.infer<typeof LoginSchema>) => {
     setError('')
     setSuccess('')
-
-    console.log(vals)
 
     startTransition(() => {
       login(vals).then((data) => {
@@ -76,15 +74,13 @@ const LoginForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <Label>Email</Label>
                   <FormControl>
                     <Input
                       {...field}
                       id="email"
                       disabled={isPending}
-                      placeholder="m@example.com"
-                      type="email"
-                      required
+                      placeholder="email@example.com"
                       className="focus-visible:ring-black dark:focus-visible:ring-white"
                     />
                   </FormControl>
@@ -98,7 +94,7 @@ const LoginForm = () => {
               <Label htmlFor="password">Password</Label>
               <a
                 href="/"
-                className="ml-auto text-sm underline-offset-4 hover:underline"
+                className="ml-auto text-xs underline-offset-4 hover:underline"
               >
                 Forgot your password?
               </a>
@@ -109,12 +105,11 @@ const LoginForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       {...field}
+                      autoComplete="current-password"
                       id="password"
-                      type="password"
                       disabled={isPending}
-                      required
                       className="focus-visible:ring-black dark:focus-visible:ring-white"
                     />
                   </FormControl>
@@ -122,11 +117,18 @@ const LoginForm = () => {
                 </FormItem>
               )}
             />
+            <FormSuccess message={success} />
+            <FormError message={error || urlError} />
           </div>
-          <FormSuccess message={success} />
-          <FormError message={error || urlError} />
+
           <Button disabled={isPending} type="submit" variant={'auth'}>
-            Login
+            {!isPending ? (
+              'Login'
+            ) : (
+              <div className="w-full flex justify-center items-center min-h-[650px]">
+                <Loader2 className="h-6 w-6 text-text-inverted animate-spin ml-2 m-1" />
+              </div>
+            )}
           </Button>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
