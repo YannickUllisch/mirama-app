@@ -1,11 +1,11 @@
 import NextAuth from 'next-auth'
 import { db } from '@src/lib/db'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { Role } from '@prisma/client'
 import authConfig from './auth.config'
-import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
 import ResendProvider from 'next-auth/providers/resend'
-import { resend } from '@/src/email/mailer'
+import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
+import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
+import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
@@ -24,7 +24,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account?.provider === 'google' && user.id) {
         const existingUser = await getUserByEmail(profile?.email ?? 'undef')
 
-        if (!existingUser?.emailVerified) {
+        // If invited but account hasnt been created
+        if (!existingUser) {
+          const existingInvite = await getValidCompanyInvitation({
+            email: user.email ?? 'undef',
+          })
+
+          if (existingInvite) {
+            await db.user.create({
+              data: {
+                email: existingInvite.email,
+                name: existingInvite.name,
+                role: existingInvite.role,
+                teamId: existingInvite.teamId,
+                emailVerified: new Date(),
+              },
+            })
+
+            // Deleting invitation in DB for cleanup
+            // We remove all invites since we to this point only assume that they can be invited to a single company
+            await db.companyInvitation.deleteMany({
+              where: {
+                email: existingInvite.email,
+              },
+            })
+
+            return true
+          }
           return false
         }
 
@@ -117,7 +143,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/auth/login',
     signOut: '/',
   },
-  adapter: PrismaAdapter(db),
+  adapter: CreatePrismaAdapter(),
   session: {
     strategy: 'jwt',
   },
@@ -125,9 +151,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     ...authConfig.providers,
     ResendProvider({
-      from: 'noreply@onresend.com',
+      from: process.env.RESEND_EMAIL_FROM,
       apiKey: process.env.RESEND_API_KEY,
-      // Currently doesnt work due to non verified from Email
     }),
   ],
 })

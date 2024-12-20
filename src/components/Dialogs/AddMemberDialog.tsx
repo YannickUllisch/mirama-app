@@ -54,7 +54,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = (vals: z.infer<typeof InvitationSchema>) => {
     startTransition(() => {
-      postResource('team/member', vals)
+      postResource('invite', vals)
         .then(() => {
           form.reset()
           setIsOpen(false)

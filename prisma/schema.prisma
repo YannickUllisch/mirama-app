@@ -49,7 +49,7 @@ model Team {
 model User {
   id                String    @id @default(cuid())
   name              String    
-  email             String?   @unique
+  email             String   @unique
   emailVerified     DateTime?
   password          String?
   role              Role      @default(USER)
@@ -67,6 +67,7 @@ model User {
 
   @@index([teamId, id], map: "user_team_project_idx")
 }
+
 
 model VerificationToken {
   identifier String
@@ -265,4 +266,13 @@ model Notification {
   resourceId      String
 
   createdAt       DateTime  @default(now())
+}
+
+model CompanyInvitation {
+  email     String   @id
+  name      String  
+  role      Role
+  teamId    String
+  expiresAt DateTime @default(now())
+
 }

@@ -18,6 +18,12 @@ export const RegisterSchema = z.object({
     .min(6, { message: 'Password needs to include at least 6 characters' }),
 })
 
+export const EmailLoginSchema = z.object({
+  email: z.string().email({
+    message: 'Invalid email format',
+  }),
+})
+
 const RoleTypes = z.enum([Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER])
 
 export const InvitationSchema = z.object({

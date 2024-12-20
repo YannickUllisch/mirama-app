@@ -5,6 +5,7 @@ import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { v4 } from 'uuid'
 import type { Task } from '@prisma/client'
 import { fetchTasksByProjectId } from '@src/lib/api/queries/Tasks/TaskQueries'
+import { resend } from '@src/email/mailer'
 
 export const GET = auth(async (req) => {
   try {

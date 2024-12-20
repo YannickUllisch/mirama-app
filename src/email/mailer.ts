@@ -1,27 +1,25 @@
 import { Resend } from 'resend'
-import { EmailTemplate } from './templates/SignInEmailTemplate'
+import { InvitationEmail } from './templates/InvitationEmail'
 
 export const resend = new Resend(process.env.RESEND_API_KEY ?? '')
 
-export const sendVerificationRequest = async (params: {
+export const sendCompanyInvitationEmail = async (params: {
   identifier: string
   url: string
-  expires: Date
-  token: string
-  request: Request
+  teamName: string
+  inviterName: string
 }) => {
-  const { identifier, url } = params
+  const { identifier, url, teamName, inviterName } = params
   const { host } = new URL(url)
 
-  // Use azure mailer to send email
-  const result = await resend.emails.send({
-    from: 'Mirama <noreply@mirama.dev',
+  const email = await resend.emails.send({
+    from: 'Acme <onboarding@resend.dev>',
     to: identifier,
-    subject: `Sign in to ${host}`,
-    react: EmailTemplate({ firstName: 'John' }),
+    subject: `Invitation to ${host}`,
+    react: InvitationEmail({ inviterName, teamName, url: url }),
   })
 
-  if (result.error) {
-    throw new Error(`Email could not be sent, ${result.error}`)
+  if (email.error) {
+    throw new Error(`Email could not be sent, ${email.error}`)
   }
 }

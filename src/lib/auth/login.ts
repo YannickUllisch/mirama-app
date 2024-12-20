@@ -7,11 +7,7 @@ import { getUserByEmail } from '../api/queries/User/UserQueries'
 import { signIn } from '@auth'
 
 export const resendLogin = async (formData: FormData) => {
-  try {
-    await signIn('resend', formData)
-  } catch (err) {
-    console.error(err)
-  }
+  await signIn('resend', formData)
 }
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import Loading from '@/app/loading'
+import { AuthSocial } from '@src/components/auth/Socials'
 
 export default function LoginPage() {
   return (
@@ -18,6 +19,13 @@ export default function LoginPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <LoginForm />
+            <AuthSocial />
+            <div className="text-center text-sm">
+              Don&apos;t have an account?{' '}
+              <a href="/auth/register" className="underline underline-offset-4">
+                Create an account
+              </a>
+            </div>
           </div>
         </div>
       </div>

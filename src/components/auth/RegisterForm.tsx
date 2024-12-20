@@ -20,6 +20,7 @@ import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { AuthSocial } from './Socials'
 import NextTopLoader from 'nextjs-toploader'
 import { Loader2 } from 'lucide-react'
+import { PasswordInput } from './PasswordInput'
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('')
@@ -93,12 +94,11 @@ const RegisterForm = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
+                      <PasswordInput
                         {...field}
+                        autoComplete="current-password"
                         id="password"
-                        type="password"
                         disabled={isPending}
-                        required
                         className="focus-visible:ring-black dark:focus-visible:ring-white"
                       />
                     </FormControl>
@@ -118,12 +118,6 @@ const RegisterForm = () => {
                 </div>
               )}
             </Button>
-            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-              <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
-                Or sign up with
-              </span>
-            </div>
-            <AuthSocial />
           </div>
           <div className="text-center text-sm">
             Already have an account?{' '}

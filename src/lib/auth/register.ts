@@ -7,6 +7,7 @@ import { signIn } from '@auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { redirect } from 'next/navigation'
 import { isRedirectError } from 'next/dist/client/components/redirect'
+import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -18,48 +19,52 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const { email, password } = validatedFields.data
   const hashedPassword = await bcryptjs.hash(password, 10)
 
-  const existingUser = await db.user.findUnique({
-    where: {
-      email,
-    },
-  })
+  const invitation = await getValidCompanyInvitation({ email })
 
-  // Dont let already used Emails register again
-  if (existingUser?.password && existingUser.emailVerified) {
-    return { error: 'This Email is already registered' }
-  }
-
-  // We only let existing users create accounts, since its a invite only system.
-  // Once one has been invited and registers we automatically verify their Email.
-  if (existingUser && !existingUser.password) {
-    try {
-      await db.user.update({
-        where: { email },
-        data: {
-          password: hashedPassword,
-          emailVerified: new Date(),
-        },
-      })
-
-      try {
-        await signIn('credentials', {
-          email,
-          password,
-          redirect: false,
-        })
-      } catch (err) {
-        // We get redirect error when trying to signin even when signin is successfull
-        // For now just force redirect
-        if (isRedirectError(err)) {
-          redirect(DEFAULT_LOGIN_REDIRECT)
-        }
-      }
-    } catch (error) {
-      console.error('Error during user update or sign-in:', error)
-      return { error: 'Server Error, please contact support' }
+  if (!invitation) {
+    return {
+      error: 'Invitation Eroror, please contact your administrator',
     }
   }
 
+  await db.user.create({
+    data: {
+      email: invitation.email,
+      name: invitation.name,
+      role: invitation.role,
+      teamId: invitation.teamId,
+      emailVerified: new Date(),
+      password: hashedPassword,
+    },
+  })
+
+  try {
+    await db.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+        emailVerified: new Date(),
+      },
+    })
+
+    try {
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
+    } catch (err) {
+      // We get redirect error when trying to signin even when signin is successfull
+      // For now just force redirect
+      if (isRedirectError(err)) {
+        redirect(DEFAULT_LOGIN_REDIRECT)
+      }
+    }
+  } catch (error) {
+    console.error('Error during user update or sign-in:', error)
+    return { error: 'Server Error, please contact support' }
+  }
+
   // Case 3: User does not exist
-  return { error: 'This system is currently invite only' }
+  return { error: 'Contact your administrator for an invitation' }
 }

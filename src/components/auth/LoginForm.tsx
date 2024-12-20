@@ -135,13 +135,6 @@ const LoginForm = () => {
               Or continue with
             </span>
           </div>
-          <AuthSocial />
-        </div>
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{' '}
-          <a href="/auth/register" className="underline underline-offset-4">
-            Create an account
-          </a>
         </div>
       </form>
     </Form>
