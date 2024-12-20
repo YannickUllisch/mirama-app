@@ -23,7 +23,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   if (!invitation) {
     return {
-      error: 'Invitation Eroror, please contact your administrator',
+      error: 'Invitation Error, please contact your administrator',
     }
   }
 

@@ -60,7 +60,7 @@ const RegisterForm = () => {
               Keep your business organized
             </h1>
             <p className="text-balance text-xs text-muted-foreground">
-              We are currently not open for public registrations
+              Get started today by entering your Email and Password
             </p>
           </div>
           <div className="grid gap-6">
