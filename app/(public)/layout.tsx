@@ -16,7 +16,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     <div className="bg-light-gradient dark:bg-dark-gradient">
       {/* <LenisProvider> */}
       <PublicHeader session={session} />
-      {children}
+      <div className="min-h-svh ">{children}</div>
       <InfoFooter />
       <Footer />
       {/* </LenisProvider> */}

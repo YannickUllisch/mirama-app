@@ -2,7 +2,7 @@
 import React from 'react'
 
 const PrivacyPage = () => {
-  return <div>page</div>
+  return null
 }
 
 export default PrivacyPage

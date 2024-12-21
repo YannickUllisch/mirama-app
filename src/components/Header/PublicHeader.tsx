@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
 import type { Session } from 'next-auth'
+import ToggleTheme from '../Footer/ToggleTheme'
 
 const PublicHeader = ({ session }: { session: Session | null }) => {
   return (
@@ -12,32 +13,19 @@ const PublicHeader = ({ session }: { session: Session | null }) => {
             <span className="text-2xl font-bold">.mirage</span>
           </Link>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
+          <ToggleTheme height="4" width="4" />
+          <Link href={'/contact'} passHref>
+            <Button variant={'ghost'}>Contact Us</Button>
+          </Link>
           {session ? (
-            <Link href={'/app'} passHref legacyBehavior>
-              <Button
-                variant={'destructive'}
-                className="bg-primary hover:bg-primary-light dark:bg-primary-dark dark:hover:bg-primary"
-              >
-                Dashboard
-              </Button>
+            <Link href={'/app'} passHref>
+              <Button variant={'auth'}>Dashboard</Button>
             </Link>
           ) : (
-            <>
-              <Link href={'/auth/login'} passHref legacyBehavior>
-                <Button variant={'ghost'} className="hover:bg-neutral-200 mr-4">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href={'/auth/register'} passHref legacyBehavior>
-                <Button
-                  variant={'destructive'}
-                  className="bg-primary hover:bg-primary-dark"
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </>
+            <Link href={'/auth/login'} passHref>
+              <Button variant={'auth'}>Sign In</Button>
+            </Link>
           )}
         </div>
       </div>

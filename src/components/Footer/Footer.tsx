@@ -7,11 +7,15 @@ import ToggleTheme from './ToggleTheme'
 const Footer = () => {
   return (
     <div className="bg-white dark:bg-neutral-900/10 mx-auto flex h-[60px] border-t-2 border-neutral-100/60 dark:border-neutral-800/40 text-black/80 dark:text-white/80 w-full ">
-      <div className="w-full max-w-md md:max-w-7xl xl:max-w-6xl lg:max-w-4xl mx-auto text-xs align-center justify-between flex">
-        <div className="items-center flex text-black/80 dark:text-white/80">
+      <div className="w-full mx-[5%] text-xs align-center justify-center md:justify-between flex">
+        <div className="items-center text-black/80 dark:text-white/80 hidden md:flex">
           <div>{`Copyright © ${DateTime.now().year} Mirage Studio`}</div>
         </div>
-        <div className="gap-4 md:gap-2 items-center flex">
+        <div className="gap-4 justify-center md:gap-2 items-center flex">
+          <Link className="hover:underline" href="/about-us">
+            About Us
+          </Link>
+          <span>·</span>
           <Link className="hover:underline" href="/privacy">
             Privacy Policy
           </Link>

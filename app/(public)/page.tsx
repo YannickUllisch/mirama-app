@@ -1,8 +1,7 @@
 'use client'
 import type { FC } from 'react'
-import { CircleHelp, Leaf } from 'lucide-react'
+import { CircleHelp, Leaf, Shapes } from 'lucide-react'
 import Link from 'next/link'
-import HoverBox from '@src/components/LandingPage/HoverCard'
 import { Button } from '@src/components/ui/button'
 import SectionHeading from '@src/components/LandingPage/SectionHeading'
 
@@ -12,10 +11,13 @@ const LandingPage: FC = () => {
       <div className="h-[600px] flex flex-col">
         <div className="pt-40 flex flex-col items-center overflow-hidden">
           <SectionHeading classname="h-[30px]">
-            <Leaf className="w-5 h-5" />
+            <Shapes className="w-5 h-5" />
             <span>Project & Task Management Tool</span>
           </SectionHeading>
-          <div className="text-center flex flex-col items-center gap-1 mb-24">
+          <span className="font-serif mt-5 text-5xl md:mt-2 md:text-9xl text-center font-bold">
+            COMING SOON..
+          </span>
+          {/* <div className="text-center flex flex-col items-center gap-1 mb-24">
             <h2
               style={{ fontSize: 50 }}
               className="font-bold text-wrap text-text"
@@ -33,7 +35,7 @@ const LandingPage: FC = () => {
                 Get started
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -43,20 +45,19 @@ const LandingPage: FC = () => {
             <CircleHelp className="w-5 h-5" />
             <span>Why Mirage</span>
           </SectionHeading>
-          <h2 className="font-bold text-6xl">
-            Managing Projects <br /> made Effortless
-          </h2>
-          <p className="text-text-secondary">
+          <h2 className="font-bold text-6xl">Management made Effortless</h2>
+          <p>...</p>
+          {/* <p className="text-text-secondary">
             Effortlessly manage projects with our powerful SaaS tool. <br />
             Boost productivity, enhance collaboration, and keep your team on{' '}
             <br />
             track with our user-friendly platform designed for seamless project
             and task management.
-          </p>
+          </p> */}
         </div>
       </div>
 
-      <div className="bg-primary text-white h-[700px] flex justify-center items-center">
+      <div className="bg-secondary text-white h-[700px] flex justify-center items-center">
         COMING SOON
       </div>
     </>

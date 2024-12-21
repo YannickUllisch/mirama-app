@@ -15,7 +15,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     <html suppressHydrationWarning lang="en">
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body className="bg-neutral-50 dark:bg-neutral-900/40">
-        <NextTopLoader color="#F43F5E" showSpinner={false} />
+        <NextTopLoader zIndex={99999} color="#F43F5E" showSpinner={false} />
         <Toaster />
         <SpeedInsights />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

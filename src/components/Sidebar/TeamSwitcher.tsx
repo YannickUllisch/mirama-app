@@ -1,6 +1,13 @@
 'use client'
 import type * as React from 'react'
-import { ChevronsUpDown } from 'lucide-react'
+import {
+  BookOpen,
+  BookOpenText,
+  ChevronsUpDown,
+  DotSquare,
+  LayoutDashboard,
+  Shapes,
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@src/components/ui/sidebar'
+import Link from 'next/link'
 
 interface SidebarTeamProps {
   name: string
@@ -21,7 +29,7 @@ interface SidebarTeamProps {
   plan: string
 }
 
-const SidebarTeamSwitcher = ({ team }: { team: SidebarTeamProps }) => {
+const SidebarTeamSwitcher = ({ _ }: { team: SidebarTeamProps }) => {
   const { isMobile } = useSidebar()
   // const [activeTeam, setActiveTeam] = React.useState(teams[0])
 
@@ -35,21 +43,20 @@ const SidebarTeamSwitcher = ({ team }: { team: SidebarTeamProps }) => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <team.logo className="size-4" />
+                <LayoutDashboard size={18} />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span
-                  className="truncate font-semibold"
-                  style={{ fontSize: 20 }}
-                >
-                  {`${team.name.toUpperCase()}.`}
-                </span>
-                <span
+                <div className="flex items-center">
+                  <Link href="/" className="flex items-center gap-2">
+                    <span className="text-2xl font-bold">.mirage</span>
+                  </Link>
+                </div>
+                {/* <span
                   className="truncate text-text-secondary"
                   style={{ fontSize: 12 }}
                 >
                   {team.plan}
-                </span>
+                </span> */}
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>

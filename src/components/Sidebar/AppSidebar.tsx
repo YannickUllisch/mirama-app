@@ -30,6 +30,7 @@ import SidebarSecondaryNav from './SecondaryNav'
 import SidebarUserNav from './UserNav'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
+import Link from 'next/link'
 
 const AppMenu: AppMenuItem[] = [
   {
