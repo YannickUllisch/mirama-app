@@ -1,6 +1,6 @@
 'use client'
 import { Role, type User } from '@prisma/client'
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
 import GridTab from '@src/components/Tabs/DashboardTabs/GridTab'
 import TableTab from '@src/components/Tabs/DashboardTabs/TableTab'
+import Loading from '../loading'
 
 const ClientProjectPage = () => {
   // Session
@@ -64,34 +65,36 @@ const ClientProjectPage = () => {
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="flex items-center gap-4 dark:text-white mb-2 rounded-lg p-1 w-fit">
-        <TabsList className="justify-center border">
-          {dashboardTabs.map(
-            (tabHeader) =>
-              session &&
-              tabHeader.roles.includes(session.user.role) && (
-                <TabsTrigger
-                  style={{ fontSize: 12 }}
-                  value={tabHeader.id}
-                  key={tabHeader.id}
-                >
-                  {tabHeader.headerComponent}
-                </TabsTrigger>
-              ),
-          )}
-        </TabsList>
-      </div>
-      {dashboardTabs.map(
-        (tab) =>
-          session &&
-          tab.roles.includes(session.user.role) && (
-            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-              {tab.component}
-            </TabsContent>
-          ),
-      )}
-    </Tabs>
+    <Suspense fallback={<Loading />}>
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <div className="flex items-center gap-4 dark:text-white mb-2 rounded-lg p-1 w-fit">
+          <TabsList className="justify-center border">
+            {dashboardTabs.map(
+              (tabHeader) =>
+                session &&
+                tabHeader.roles.includes(session.user.role) && (
+                  <TabsTrigger
+                    style={{ fontSize: 12 }}
+                    value={tabHeader.id}
+                    key={tabHeader.id}
+                  >
+                    {tabHeader.headerComponent}
+                  </TabsTrigger>
+                ),
+            )}
+          </TabsList>
+        </div>
+        {dashboardTabs.map(
+          (tab) =>
+            session &&
+            tab.roles.includes(session.user.role) && (
+              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+                {tab.component}
+              </TabsContent>
+            ),
+        )}
+      </Tabs>
+    </Suspense>
   )
 }
 

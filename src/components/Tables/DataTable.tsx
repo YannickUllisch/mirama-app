@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-table'
 import { Table } from '@src/components/ui/table'
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
@@ -170,7 +170,6 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
     // Sets row ID to the ID of the given data.
     getRowId: (row, _, parent) =>
       parent ? [parent.id, row.id].join('.') : row.id,
-
     getSubRows: (row) => row.subtasks || [],
     getRowCanExpand: (row) => row.subRows && row.subRows.length > 0,
     getCoreRowModel: getCoreRowModel(),

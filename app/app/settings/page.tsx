@@ -8,11 +8,12 @@ import {
   TabsTrigger,
 } from '@src/components/ui/tabs'
 import { useSession } from 'next-auth/react'
-import { Settings, Tags, User } from 'lucide-react'
+import { Settings, Tags, User, UserCog } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Separator } from '@src/components/ui/separator'
 import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
 import TagsTab from '@src/components/Tabs/SettingTabs/TagsTab'
+import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
 
 const ProjectPage = () => {
   const { data: session } = useSession()
@@ -40,6 +41,16 @@ const ProjectPage = () => {
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <Tags width={15} /> Tags
+        </div>
+      ),
+    },
+    {
+      id: 'invitations',
+      roles: [Role.ADMIN, Role.OWNER],
+      component: <InvitationsTab session={session} />,
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <UserCog width={15} /> Invitations
         </div>
       ),
     },

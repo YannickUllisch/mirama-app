@@ -8,16 +8,12 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@src/components/ui/breadcrumb'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { capitalize } from '@src/lib/utils'
 import Link from 'next/link'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
-import type { Session } from 'next-auth'
-import AddProjectDialog from '../Dialogs/AddProjectDialog'
-import { Button } from '../ui/button'
-import { Plus } from 'lucide-react'
 
-const AppHeader = ({ session }: { session: Session | null }) => {
+const AppHeader = () => {
   const pathname = usePathname()
 
   // We extract all segments from the URL for breadcrumbs.
@@ -88,23 +84,6 @@ const AppHeader = ({ session }: { session: Session | null }) => {
             MIRAGE.
           </span>
         </Link>
-      </div>
-      <div className="flex items-center gap-2">
-        {session && isTeamAdminOrOwner(session) && (
-          <div className="gap-1 flex">
-            <AddProjectDialog
-              key={'Project Dialog'}
-              button={
-                <Button className="p-3 text-xs" variant={'outline'}>
-                  <div className="flex gap-2 items-center">
-                    <Plus className="w-3" />
-                    Project
-                  </div>
-                </Button>
-              }
-            />
-          </div>
-        )}
       </div>
     </header>
   )
