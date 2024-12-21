@@ -29,7 +29,7 @@ interface SidebarTeamProps {
   plan: string
 }
 
-const SidebarTeamSwitcher = ({ _ }: { team: SidebarTeamProps }) => {
+const SidebarTeamSwitcher = ({ team }: { team: SidebarTeamProps }) => {
   const { isMobile } = useSidebar()
   // const [activeTeam, setActiveTeam] = React.useState(teams[0])
 
@@ -71,7 +71,7 @@ const SidebarTeamSwitcher = ({ _ }: { team: SidebarTeamProps }) => {
               Teams
             </DropdownMenuLabel>
             <DropdownMenuItem className="text-text-secondary">
-              Coming Soon..
+              Coming Soon.. {team.plan}
             </DropdownMenuItem>
             {/* {teams.map((team, index) => (
               <DropdownMenuItem
