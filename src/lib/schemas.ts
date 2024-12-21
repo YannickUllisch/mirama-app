@@ -24,6 +24,24 @@ export const EmailLoginSchema = z.object({
   }),
 })
 
+export const ContactSchema = z.object({
+  firstName: z.string().min(2, { message: 'Please define your First Name' }),
+  lastName: z.string().min(2, { message: 'Please define your Last Name' }),
+  email: z.string().email({ message: 'Invalid email format' }),
+  phone: z
+    .string()
+    .regex(/^\+?[1-9]\d{1,14}$/, {
+      message: 'Please enter a valid phone number',
+    })
+    .optional(), // Make phone optional if required
+  message: z
+    .string()
+    .min(20, { message: 'Please add atleast 20 characters to your Message' })
+    .max(1000, {
+      message: 'Please keep your message concise and below 1000 characters',
+    }),
+})
+
 const RoleTypes = z.enum([Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER])
 
 export const InvitationSchema = z.object({

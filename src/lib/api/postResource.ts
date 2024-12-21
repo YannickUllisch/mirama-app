@@ -8,6 +8,7 @@ export const postResource = async <T, U>(
   options?: {
     mutate?: KeyedMutator<U[]>
   },
+  successMessage?: string,
 ) => {
   try {
     toast.promise(api.post(route, params), {
@@ -17,7 +18,7 @@ export const postResource = async <T, U>(
         if (options?.mutate) {
           options.mutate()
         }
-        return 'Resource Created!'
+        return successMessage ? successMessage : 'Resource Created!'
       },
     })
   } catch (error: any) {

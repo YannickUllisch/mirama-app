@@ -5,21 +5,21 @@ import { auth } from '@auth'
 import Footer from '@src/components/Footer/Footer'
 import dynamic from 'next/dynamic'
 
-const LenisProvider = dynamic(
-  () => import('@src/components/Wrappers/LenisWrapper'),
-  { ssr: false },
-)
+// const LenisProvider = dynamic(
+//   () => import('@src/components/Wrappers/LenisWrapper'),
+//   { ssr: false },
+// )
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
   return (
     <div className="bg-light-gradient dark:bg-dark-gradient">
-      <LenisProvider>
-        <PublicHeader session={session} />
-        {children}
-        <InfoFooter />
-        <Footer />
-      </LenisProvider>
+      {/* <LenisProvider> */}
+      <PublicHeader session={session} />
+      {children}
+      <InfoFooter />
+      <Footer />
+      {/* </LenisProvider> */}
     </div>
   )
 }

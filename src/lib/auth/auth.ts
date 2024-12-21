@@ -142,6 +142,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     newUser: '/',
     signIn: '/auth/login',
     signOut: '/',
+    verifyRequest: '/auth/login',
   },
   adapter: CreatePrismaAdapter(),
   session: {

@@ -15,7 +15,6 @@ import {
   DialogTrigger,
 } from '@src/components/ui/dialog'
 import { Button } from '@src/components/ui/button'
-import { Label } from '../ui/label'
 import { FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { resendLogin } from '@src/lib/auth/login'
 import { Mail } from 'lucide-react'
@@ -32,6 +31,7 @@ const ResendSigninDialog = () => {
 
   const onSubmit = (vals: z.infer<typeof EmailLoginSchema>) => {
     resendLogin(vals as any)
+    setIsOpen(false)
   }
 
   return (

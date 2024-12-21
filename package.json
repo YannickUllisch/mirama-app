@@ -65,6 +65,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.51.2",
+    "react-phone-number-input": "^3.4.10",
     "react-resizable-panels": "^2.0.16",
     "react-social-icons": "^6.16.0",
     "recharts": "^2.15.0",
