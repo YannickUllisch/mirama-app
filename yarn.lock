@@ -2073,6 +2073,11 @@
   resolved "https://registry.npmjs.org/@vercel/ruby/-/ruby-2.0.5.tgz"
   integrity sha512-Gfm8HDech41vf+EPleRzgoJUnDTJerKgckMm4KX0JT860gV9XBMSOWYH7eMWHmMza104+HRCWL7wT6OlpftF2Q==
 
+"@vercel/speed-insights@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@vercel/speed-insights/-/speed-insights-1.1.0.tgz#d48bce27b38a35da86805cc316656344a2230108"
+  integrity sha512-rAXxuhhO4mlRGC9noa5F7HLMtGg8YF1zAN6Pjd1Ny4pII4cerhtwSG4vympbCl+pWkH7nBS9kVXRD4FAn54dlg==
+
 "@vercel/static-build@2.4.6":
   version "2.4.6"
   resolved "https://registry.npmjs.org/@vercel/static-build/-/static-build-2.4.6.tgz"

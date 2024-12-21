@@ -59,8 +59,8 @@ export const POST = async (req: Request) => {
       })
 
       await sendCompanyInvitationEmail({
-        identifier: 'nussartz@gmail.com', // temporary since I cannot send mails without a domain
-        url: 'http://localhost:3000',
+        identifier: invitation.email, // temporary since I cannot send mails without a domain
+        url: process.env.BASE_URL ?? '',
         inviterName: session?.user.name ?? 'REDACTED',
         teamName: invitationTeam.name,
       })
