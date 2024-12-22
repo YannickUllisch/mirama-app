@@ -1,11 +1,13 @@
 'use client'
-import type { Task } from '@prisma/client'
+import type { Project, Task } from '@prisma/client'
 import TaskListItem from '@src/components/task/TaskListItem'
 import React from 'react'
 import useSWR from 'swr'
 
 const TasksPage = () => {
-  const { data: tasks } = useSWR<Task[]>('/api/db/task/personal')
+  const { data: tasks } = useSWR<
+    (Task & { subtasks: Task[]; project: Project })[]
+  >('/api/db/task/personal')
 
   return (
     <div className="w-full h-full gap-5">

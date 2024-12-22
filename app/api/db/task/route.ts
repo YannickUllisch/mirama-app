@@ -72,6 +72,16 @@ export const POST = auth(async (req) => {
       )
     }
 
+    await db.tag.updateMany({
+      where: {
+        teamId: session?.user.teamId ?? 'undef',
+        title: {
+          in: task.tags,
+        },
+      },
+      data: {},
+    })
+
     // Creating Task
     try {
       await db.task.create({

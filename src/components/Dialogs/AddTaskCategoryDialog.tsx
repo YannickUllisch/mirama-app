@@ -28,14 +28,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
-import { Book, MapPin } from 'lucide-react'
 import { TaskCategorySchema } from '@src/lib/schemas'
 
 interface AddTaskCategoryProps {
@@ -107,37 +99,6 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
                   </FormItem>
                 )}
               />
-              {/* <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="icon"
-                  render={({ field }) => (
-                    <FormItem className="col-span-3">
-                      <FormLabel>Icon</FormLabel>
-                      <Select
-                        disabled={isPending}
-                        {...field}
-                        onValueChange={field.onChange}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Icon" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="MapPin">
-                            <MapPin />
-                          </SelectItem>
-                          <SelectItem value="Book">
-                            <Book />
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div> */}
             </div>
 
             <Button disabled={isPending} type="submit">

@@ -8,9 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ')
 }
-
 
 export const getColorByName = (username: string) => {
   // Hash the username string
@@ -60,7 +59,13 @@ export const isTeamAdminOrOwner = (session: Session | null) => {
 }
 
 // Change this hierarchy when adding new Roles.
-const roleHierarchy = [Role.USER, Role.FREELANCE, Role.ADMIN, Role.OWNER]
+const roleHierarchy = [
+  Role.OBSERVER,
+  Role.USER,
+  Role.FREELANCE,
+  Role.ADMIN,
+  Role.OWNER,
+]
 
 /**
  * This function returns boolean signifying if Role1 is higher than Role2.

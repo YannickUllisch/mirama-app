@@ -35,7 +35,7 @@ const AppHeader = () => {
 
   return (
     <header
-      style={{ zIndex: 5 }}
+      style={{ zIndex: 50 }}
       className="sticky top-0 w-full flex gap-2 border-b-2 p-4 justify-between bg-inherit dark:border-neutral-800/40 border-neutral-100/60"
     >
       <div className="flex items-center justify-start gap-4 pl-2">

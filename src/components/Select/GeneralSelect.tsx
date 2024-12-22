@@ -11,7 +11,7 @@ import {
 interface GeneralSelectProps {
   value: string
   placeholder?: string
-  setValue: Dispatch<SetStateAction<string>>
+  setValue: Dispatch<SetStateAction<any>>
   triggerProps?: React.ComponentPropsWithoutRef<'button'>
 }
 
@@ -25,7 +25,10 @@ const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
   return (
     <Select value={value} onValueChange={setValue}>
       <SelectTrigger {...triggerProps}>
-        <SelectValue placeholder={placeholder ?? value} />
+        <SelectValue
+          placeholder={placeholder ?? value}
+          defaultValue={value ?? undefined}
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>{children}</SelectGroup>

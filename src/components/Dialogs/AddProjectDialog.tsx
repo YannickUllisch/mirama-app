@@ -18,22 +18,18 @@ import useSWR from 'swr'
 import {
   PriorityType,
   type Project,
-  Task,
   type User,
   type ProjectUser,
 } from '@prisma/client'
 import { capitalize, cn } from '@src/lib/utils'
-import { api } from '@api'
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
-  SelectGroup,
   SelectItem,
 } from '@src/components/ui/select'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import { toast } from 'sonner'
 import { v4 } from 'uuid'
 import { useSession } from 'next-auth/react'
 import {

@@ -8,16 +8,14 @@ import {
   TabsTrigger,
 } from '@src/components/ui/tabs'
 import {
-  BarChartBig,
   ClipboardList,
   GanttChart,
   LayoutList,
   Map as MapIcon,
-  NotepadText,
   Settings,
+  Table2,
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Separator } from '@src/components/ui/separator'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
 import AnalyticsTab from '@src/components/Tabs/ProjectTabs/AnalyticsTab'
@@ -45,7 +43,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   }[] = [
     {
       id: 'overview',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      roles: Object.values(Role),
       component: (
         <OverviewTab
           projectName={project?.name ?? ''}
@@ -60,8 +58,8 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
       ),
     },
     {
-      id: 'list',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      id: 'table',
+      roles: Object.values(Role),
       component: (
         <ListTab
           projectId={project?.id ?? ''}
@@ -70,13 +68,13 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
       ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
-          <LayoutList width={15} /> Task List
+          <Table2 width={15} /> Task Table
         </div>
       ),
     },
     {
       id: 'kanban',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      roles: Object.values(Role),
       component: <BoardTab projectId={project?.id ?? ''} session={session} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -86,27 +84,27 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
     },
     {
       id: 'gantt',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GanttTab />,
+      roles: Object.values(Role),
+      component: <GanttTab projectId={project?.id ?? ''} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt
         </div>
       ),
     },
-    {
-      id: 'analytics',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <AnalyticsTab />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <BarChartBig width={15} /> Analytics
-        </div>
-      ),
-    },
+    // {
+    //   id: 'analytics',
+    //   roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+    //   component: <AnalyticsTab />,
+    //   headerComponent: (
+    //     <div className="flex justify-center gap-1 items-center">
+    //       <BarChartBig width={15} /> Analytics
+    //     </div>
+    //   ),
+    // },
     {
       id: 'settings',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      roles: Object.values(Role),
       component: <SettingsTab projectId={project?.id ?? ''} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">

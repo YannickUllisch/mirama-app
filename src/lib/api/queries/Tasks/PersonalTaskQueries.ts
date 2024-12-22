@@ -7,6 +7,10 @@ export const fetchAllPersonalTasks = async (session: Session | null) => {
       assignedToId: session?.user.id,
       teamId: session?.user.teamId ?? 'undefined',
     },
+    include: {
+      subtasks: true,
+      project: true,
+    },
   })
   return response
 }

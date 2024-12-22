@@ -1,100 +1,208 @@
 'use client'
-import React, { useCallback, useState } from 'react'
-import '@bitnoi.se/react-scheduler/dist/style.css'
-import { Scheduler, type SchedulerData } from '@bitnoi.se/react-scheduler'
 
-interface iRange {
-  startDate: Date
-  endDate: Date
-}
+import type { Task, TaskCategory, User } from '@prisma/client'
+import GeneralSelect from '@src/components/Select/GeneralSelect'
+import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@src/components/ui/context-menu'
+import {
+  exampleFeatures,
+  exampleMarkers,
+} from '@src/components/ui/roadmap-ui/content'
+import {
+  GanttCreateMarkerTrigger,
+  GanttFeatureItem,
+  GanttFeatureList,
+  GanttFeatureListGroup,
+  GanttHeader,
+  GanttMarker,
+  GanttProvider,
+  GanttSidebar,
+  GanttSidebarGroup,
+  GanttSidebarItem,
+  GanttTimeline,
+  GanttToday,
+} from '@src/components/ui/roadmap-ui/gantt'
+import { SelectItem } from '@src/components/ui/select'
+import groupBy from 'lodash.groupby'
+import { EyeIcon, LinkIcon, TrashIcon } from 'lucide-react'
+import { DateTime } from 'luxon'
+import { type FC, SetStateAction, useState } from 'react'
+import { toast } from 'sonner'
+import useSWR from 'swr'
 
-const GanttTab = () => {
-  const [filterButtonState, setFilterButtonState] = useState(0)
+const GanttTab = ({ projectId }: { projectId: string }) => {
+  const { data: tasks } = useSWR<
+    (Task & {
+      assignedTo: User
+      subtasks: Task[]
+      category: TaskCategory | null
+    })[]
+  >(`/api/db/task?id=${projectId}`)
 
-  const [_range, setRange] = useState<iRange>({
-    startDate: new Date(),
-    endDate: new Date(),
-  })
+  const [rangeView, setRangeView] = useState<'daily' | 'monthly' | 'quarterly'>(
+    'monthly',
+  )
 
-  const handleRangeChange = useCallback((range: iRange) => {
-    setRange(range)
-  }, [])
+  const groupedFeatures: Record<string, typeof tasks> = groupBy(
+    tasks,
+    'projectId',
+  )
+
+  const sortedGroupedTasks = Object.fromEntries(
+    Object.entries(groupedFeatures).sort(([nameA], [nameB]) =>
+      nameA.localeCompare(nameB),
+    ),
+  )
+
+  const handleViewFeature = (id: string) =>
+    toast.success(`Feature selected: ${id}`)
+
+  const handleCopyLink = (id: string) => toast.success(`Copy link: ${id}`)
+
+  const handleRemoveFeature = (id: string) =>
+    toast.success(`Remove feature: ${id}`)
+
+  const handleRemoveMarker = (id: string) =>
+    toast.success(`Remove marker: ${id}`)
+
+  const handleCreateMarker = (date: Date) =>
+    toast.success(`Create marker: ${date.toISOString()}`)
+
+  const handleMoveFeature = (id: string, startAt: Date, endAt: Date | null) => {
+    if (!endAt) {
+      return
+    }
+
+    // setFeatures((prev) =>
+    //   prev.map((feature) =>
+    //     feature.id === id ? { ...feature, startAt, endAt } : feature,
+    //   ),
+    // )
+
+    toast.success(`Move feature: ${id} from ${startAt} to ${endAt}`)
+  }
+
+  const handleAddFeature = (date: Date) =>
+    toast.success(`Add feature: ${date.toISOString()}`)
 
   return (
-    <div className="relative h-[500px] w-full">
-      <Scheduler
-        data={mockedSchedulerData}
-        onRangeChange={handleRangeChange}
-        onTileClick={(clickedResource) => console.log(clickedResource)}
-        onItemClick={(item) => console.log(item)}
-        onFilterData={() => {
-          // Some filtering logic...
-          setFilterButtonState(1)
-        }}
-        onClearFilterData={() => {
-          // Some clearing filters logic...
-          setFilterButtonState(0)
-        }}
-        config={{
-          zoom: 1,
-          filterButtonState,
-          defaultTheme: 'dark',
-        }}
-      />
-    </div>
+    <>
+      <GeneralSelect value={rangeView} setValue={setRangeView}>
+        <SelectItem value="daily">Daily</SelectItem>
+        <SelectItem value="monthly">Monthly</SelectItem>
+        <SelectItem value="quarterly">Quarterly</SelectItem>
+      </GeneralSelect>
+      <div className="border rounded-md">
+        <GanttProvider onAddItem={handleAddFeature} range={rangeView} zoom={50}>
+          <GanttSidebar>
+            {Object.entries(sortedGroupedTasks).map(([group, tasks]) => (
+              <GanttSidebarGroup key={group} name={group}>
+                {tasks?.map((task) => (
+                  <GanttSidebarItem
+                    key={task.id}
+                    feature={{
+                      endAt: DateTime.now().plus({ month: 5 }).toJSDate(),
+                      id: task.id,
+                      name: task.title,
+                      startAt: new Date(),
+                      status: { color: 'red', id: '1', name: 'onTime' },
+                    }}
+                    onSelectItem={handleViewFeature}
+                  />
+                ))}
+              </GanttSidebarGroup>
+            ))}
+          </GanttSidebar>
+          <GanttTimeline>
+            <GanttHeader />
+            <GanttFeatureList>
+              {Object.entries(sortedGroupedTasks).map(([group, tasks]) => (
+                <GanttFeatureListGroup key={group}>
+                  {tasks?.map((task) => (
+                    <div className="flex" key={task.id}>
+                      <ContextMenu>
+                        <ContextMenuTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={() => handleViewFeature(task.id)}
+                          >
+                            <GanttFeatureItem
+                              onMove={handleMoveFeature}
+                              endAt={DateTime.now()
+                                .plus({ month: 5 })
+                                .toJSDate()}
+                              startAt={DateTime.now().toJSDate()}
+                              id={task.id}
+                              name={task.title}
+                              status={{ color: 'red', id: '1', name: 'onTime' }}
+                            >
+                              <p className="flex-1 truncate text-xs">
+                                {task.title}
+                              </p>
+                              {task.assignedTo && (
+                                <Avatar className="h-4 w-4">
+                                  <AvatarFallback>
+                                    {task.assignedTo.name.slice(0, 2)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              )}
+                            </GanttFeatureItem>
+                          </button>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                          <ContextMenuItem
+                            className="flex items-center gap-2"
+                            onClick={() => handleViewFeature(task.id)}
+                          >
+                            <EyeIcon
+                              size={16}
+                              className="text-muted-foreground"
+                            />
+                            View feature
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            className="flex items-center gap-2"
+                            onClick={() => handleCopyLink(task.id)}
+                          >
+                            <LinkIcon
+                              size={16}
+                              className="text-muted-foreground"
+                            />
+                            Copy link
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            className="flex items-center gap-2 text-destructive"
+                            onClick={() => handleRemoveFeature(task.id)}
+                          >
+                            <TrashIcon size={16} />
+                            Remove from roadmap
+                          </ContextMenuItem>
+                        </ContextMenuContent>
+                      </ContextMenu>
+                    </div>
+                  ))}
+                </GanttFeatureListGroup>
+              ))}
+            </GanttFeatureList>
+            {exampleMarkers.map((marker) => (
+              <GanttMarker
+                key={marker.id}
+                {...marker}
+                onRemove={handleRemoveMarker}
+              />
+            ))}
+            <GanttToday />
+            <GanttCreateMarkerTrigger onCreateMarker={handleCreateMarker} />
+          </GanttTimeline>
+        </GanttProvider>
+      </div>
+    </>
   )
 }
 
 export default GanttTab
-
-const mockedSchedulerData: SchedulerData = [
-  {
-    id: '070ac5b5-8369-4cd2-8ba2-0a209130cc60',
-    label: {
-      icon: 'https://picsum.photos/24',
-      title: 'Joe Doe',
-      subtitle: 'Frontend Developer',
-    },
-    data: [
-      {
-        id: '8b71a8a5-33dd-4fc8-9caa-b4a584ba3762',
-        startDate: new Date('2023-04-13T15:31:24.272Z'),
-        endDate: new Date('2023-08-28T10:28:22.649Z'),
-        occupancy: 3600,
-        title: 'Project A',
-        subtitle: 'Subtitle A',
-        description: 'array indexing Salad West Account',
-        bgColor: 'rgb(254,165,177)',
-      },
-      {
-        id: '22fbe237-6344-4c8e-affb-64a1750f33bd',
-        startDate: new Date('2023-10-07T08:16:31.123Z'),
-        endDate: new Date('2023-11-15T21:55:23.582Z'),
-        occupancy: 2852,
-        title: 'Project B',
-        subtitle: 'Subtitle B',
-        description: 'Tuna Home pascal IP drive',
-        bgColor: 'rgb(254,165,177)',
-      },
-      {
-        id: '3601c1cd-f4b5-46bc-8564-8c983919e3f5',
-        startDate: new Date('2023-03-30T22:25:14.377Z'),
-        endDate: new Date('2023-09-01T07:20:50.526Z'),
-        occupancy: 1800,
-        title: 'Project C',
-        subtitle: 'Subtitle C',
-        bgColor: 'rgb(254,165,177)',
-      },
-      {
-        id: 'b088e4ac-9911-426f-aef3-843d75e714c2',
-        startDate: new Date('2023-10-28T10:08:22.986Z'),
-        endDate: new Date('2023-10-30T12:30:30.150Z'),
-        occupancy: 11111,
-        title: 'Project D',
-        subtitle: 'Subtitle D',
-        description: 'Garden heavy an software Metal',
-        bgColor: 'rgb(254,165,177)',
-      },
-    ],
-  },
-]
