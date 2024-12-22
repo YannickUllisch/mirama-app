@@ -1,23 +1,18 @@
 import { db } from '@src/lib/db'
 import { auth } from '@auth'
-import { Role, type Expense } from '@prisma/client'
+import { type Milestone, Role } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchExpensesByProjectId } from '@src/lib/api/queries/Project/ExpenseQuerys'
+import { fetchMilestonesByProjectId } from '@src/lib/api/queries/Project/MilestoneQueries'
 
 export const GET = auth(async (req) => {
   try {
     const session = req.auth
-    const validatedRequest = await validateRequest(session, [
-      Role.ADMIN,
-      Role.OWNER,
-    ])
+    const validatedRequest = await validateRequest(session)
     if (validatedRequest) {
       return validatedRequest
     }
-
-    const projectId = req.nextUrl.searchParams.get('projectid') as string
-
-    const response = await fetchExpensesByProjectId(projectId)
+    const projectId = req.nextUrl.searchParams.get('id') as string
+    const response = await fetchMilestonesByProjectId(projectId)
 
     return Response.json(response, { status: 200 })
   } catch (err) {
@@ -38,29 +33,32 @@ export const POST = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const expense = (await req.json()) as Omit<Expense, 'id'>
+    const milestone = (await req.json()) as Omit<Milestone, 'id'>
 
-    if (!expense) {
+    if (!milestone) {
       return Response.json(
-        { ok: false, message: 'Expense attributes must be defined in request' },
+        {
+          ok: false,
+          message: 'Milestone attributes must be defined in request',
+        },
         { status: 400 },
       )
     }
 
     try {
-      await db.expense.create({
+      await db.milestone.create({
         data: {
-          ...expense,
+          ...milestone,
           id: undefined,
         },
       })
     } catch (err) {
-      console.error('Error in creating Expense', err)
+      console.error('Error in creating Milestone', err)
       throw err
     }
 
     return Response.json(
-      { ok: true, message: 'Expense created' },
+      { ok: true, message: 'Milestone created' },
       { status: 201 },
     )
   } catch (err) {
@@ -91,7 +89,7 @@ export const DELETE = auth(async (req) => {
       )
     }
 
-    await db.expense.deleteMany({
+    await db.milestone.deleteMany({
       where: {
         id: {
           in: ids,
@@ -100,7 +98,7 @@ export const DELETE = auth(async (req) => {
     })
 
     return Response.json(
-      { ok: true, message: 'Expense(s) Deleted' },
+      { ok: true, message: 'Milestone(s) Deleted' },
       { status: 200 },
     )
   } catch (err) {
@@ -121,32 +119,35 @@ export const PUT = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    const expense = (await req.json()) as Partial<Expense>
+    const milestone = (await req.json()) as Partial<Milestone>
 
-    if (!expense) {
+    if (!milestone) {
       return Response.json(
-        { ok: false, message: 'Expense attributes must be defined in request' },
+        {
+          ok: false,
+          message: 'Milestone attributes must be defined in request',
+        },
         { status: 400 },
       )
     }
 
     try {
-      await db.expense.update({
+      await db.milestone.update({
         where: {
-          id: expense.id,
+          id: milestone.id,
         },
         data: {
-          ...expense,
+          ...milestone,
           id: undefined,
         },
       })
     } catch (err) {
-      console.error('Error in creating Expense', err)
+      console.error('Error in creating Milestone', err)
       throw err
     }
 
     return Response.json(
-      { ok: true, message: 'Expense Update' },
+      { ok: true, message: 'Milestone Update' },
       { status: 201 },
     )
   } catch (err) {

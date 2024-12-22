@@ -87,6 +87,7 @@ const CreateTaskForm = ({
       description: '',
       title: '',
       dueDate: new Date(),
+      startDate: new Date(),
       priority: PriorityType.LOW,
       projectId: params.projectId,
       status: TaskStatusType.NOT_STARTED,
@@ -422,6 +423,21 @@ const CreateTaskForm = ({
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="mt-5 flex flex-col">
+                    <FormLabel>Start Date</FormLabel>
+                    <CalendarSelect
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

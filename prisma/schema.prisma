@@ -96,12 +96,23 @@ model Project {
   tag         Tag[]
   expenses    Expense[]
   notifications Notification[]
+  milestones    Milestone[]
 
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
 
   @@index([name, teamId], map: "name_team_idx")
   @@index([teamId, archived], map: "team_archived_idx")
+}
+
+model Milestone {
+  id      String    @id @default(cuid())
+  date    DateTime 
+  title   String
+  colors  String
+
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id])
 }
 
 model Task {
@@ -112,7 +123,8 @@ model Task {
   description  String?
   priority     PriorityType   @default(LOW)
   status       TaskStatusType
-  dueDate      DateTime?
+  startDate    DateTime   @default(now())
+  dueDate      DateTime   @default(now())
 
   // Allow for recursive subtasks
   parentId      String? // This field is null for top-level comments

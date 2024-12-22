@@ -62,18 +62,24 @@ export const ProjectSchema = z.object({
   endDate: z.date(),
 })
 
-export const TaskSchema = z.object({
-  assignedToId: z.string().nullable().optional(),
-  dueDate: z.date().nullable().optional(),
-  title: z.string().min(1, { message: 'Title cannot be empty.' }),
-  description: z.string().nullable().optional(),
-  priority: PriorityTypeSchema.default('LOW'),
-  status: TaskStatusTypeSchema.default('NOT_STARTED'),
-  projectId: z.string(),
-  tags: z.string().array().optional(),
-  parentId: z.string().optional(),
-  categoryId: z.string().optional(),
-})
+export const TaskSchema = z
+  .object({
+    assignedToId: z.string().nullable().optional(),
+    dueDate: z.date({ message: 'Due Date has to be defined' }),
+    startDate: z.date({ message: 'Start Date has to be defined' }),
+    title: z.string().min(1, { message: 'Title cannot be empty.' }),
+    description: z.string().nullable().optional(),
+    priority: PriorityTypeSchema.default('LOW'),
+    status: TaskStatusTypeSchema.default('NOT_STARTED'),
+    projectId: z.string(),
+    tags: z.string().array().optional(),
+    parentId: z.string().optional(),
+    categoryId: z.string().optional(),
+  })
+  .refine((data) => data.startDate <= data.dueDate, {
+    message: 'Start Date must be before or equal to Due Date',
+    path: ['startDate'],
+  })
 
 export const TaskCategorySchema = z.object({
   title: z.string(),
@@ -96,3 +102,11 @@ export const ChangePasswordSchema = z
     message: 'Please choose a different password',
     path: ['new'],
   })
+
+export const MilestoneSchema = z.object({
+  id: z.string(),
+  date: z.coerce.date(),
+  title: z.string(),
+  colors: z.string(),
+  projectId: z.string(),
+})

@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import type { Session } from 'next-auth'
-import { Role } from '@prisma/client'
+import { Role, type TaskStatusType } from '@prisma/client'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -144,4 +144,52 @@ export const generateInclude = (
   }
 
   return include
+}
+
+export const getColorByTaskStatusType = (status: string) => {
+  switch (status) {
+    case 'COMPLETE':
+      return 'bg-emerald-500'
+    case 'IN_PROGRESS':
+      return 'bg-yellow-500'
+    case 'NOT_STARTED':
+      return 'bg-gray-400'
+    default:
+      break
+  }
+}
+
+/**
+ * Function that brightens or darkens a given hex color
+ * @param hex The color to be adjusted
+ * @param percentage The amount of adjustment in percent 0-100.
+ * @returns Adjusted Hex string
+ */
+export const adjustBrightness = (hex: string, percentage: number) => {
+  const color = hex.startsWith('#') ? hex.slice(1) : hex
+
+  const r = Number.parseInt(color.substring(0, 2), 16)
+  const g = Number.parseInt(color.substring(2, 4), 16)
+  const b = Number.parseInt(color.substring(4, 6), 16)
+
+  const adjust = (channel: any) =>
+    Math.min(255, Math.max(0, channel + (channel * percentage) / 100))
+
+  const newR = adjust(r)
+  const newG = adjust(g)
+  const newB = adjust(b)
+
+  return `rgb(${newR}, ${newG}, ${newB})`
+}
+
+export const calculateBrightness = (hex: string) => {
+  const color = hex.startsWith('#') ? hex.slice(1) : hex
+
+  // Parse RGB values
+  const r = Number.parseInt(color.substring(0, 2), 16)
+  const g = Number.parseInt(color.substring(2, 4), 16)
+  const b = Number.parseInt(color.substring(4, 6), 16)
+
+  // Calculate relative luminance
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }

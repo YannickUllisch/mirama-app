@@ -288,6 +288,26 @@ export const ListTabColumns = ({
         },
       },
       {
+        accessorKey: 'startDate',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Start Date" />
+        ),
+        id: 'Due Date',
+        cell: ({ row }) => {
+          return (
+            <div
+              className="flex items-center cursor-default justify-left mr-8 gap-1"
+              key={`calendar-end-${row.index}`}
+            >
+              {DateTime.fromISO(
+                new Date(row.original.startDate as Date).toISOString(),
+              ).toFormat('dd.MM.yyyy')}
+            </div>
+          )
+        },
+        filterFn: 'equalsString',
+      },
+      {
         accessorKey: 'dueDate',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Due Date" />

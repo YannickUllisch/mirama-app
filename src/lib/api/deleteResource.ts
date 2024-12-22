@@ -9,20 +9,15 @@ export const deleteResources = async <U>(
     mutate?: KeyedMutator<U[]>
   },
 ) => {
-  try {
-    toast.promise(api.delete(route, { data: ids }), {
-      loading: 'Updating..',
-      error: (err) => err.response.statusText ?? err,
-      success: () => {
-        if (options?.mutate) {
-          options.mutate()
-        }
-
-        return 'Resource Deleted.'
-      },
+  api
+    .delete(route, { data: ids })
+    .then(() => {
+      if (options?.mutate) {
+        options.mutate()
+      }
     })
-  } catch (error: any) {
-    toast.error(error)
-    throw error.response?.statusText ?? error
-  }
+    .catch((error) => {
+      toast.error(error)
+      throw error.response?.statusText ?? error
+    })
 }

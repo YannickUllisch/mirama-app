@@ -93,6 +93,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       description: task?.description,
       title: task?.title ?? '',
       dueDate: new Date(task?.dueDate ?? ''),
+      startDate: new Date(task?.startDate ?? ''),
       priority: task?.priority ?? PriorityType.LOW,
       projectId: task?.projectId ?? '',
       status: task?.status ?? TaskStatusType.NOT_STARTED,
@@ -104,7 +105,8 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       assignedToId: undefined,
       description: '',
       title: '',
-      dueDate: undefined,
+      dueDate: new Date(),
+      startDate: new Date(),
       priority: PriorityType.LOW,
       projectId: task?.projectId,
       status: TaskStatusType.NOT_STARTED,
@@ -446,6 +448,20 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="mt-5 flex flex-col">
+                    <FormLabel>Start Date</FormLabel>
+                    <CalendarSelect
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="dueDate"

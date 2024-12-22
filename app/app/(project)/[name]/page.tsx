@@ -85,7 +85,13 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
     {
       id: 'gantt',
       roles: Object.values(Role),
-      component: <GanttTab projectId={project?.id ?? ''} />,
+      component: (
+        <GanttTab
+          projectId={project?.id ?? ''}
+          pEndDate={new Date(project?.endDate ?? '')}
+          pStartDate={new Date(project?.startDate ?? '')}
+        />
+      ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <GanttChart width={15} /> Gantt
