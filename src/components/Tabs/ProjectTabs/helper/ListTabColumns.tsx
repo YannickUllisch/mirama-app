@@ -370,7 +370,6 @@ export const ListTabColumns = ({
         ),
         id: 'tags',
         size: 50,
-        enableResizing: false,
         cell: ({ row, getValue }) => {
           return (
             <div

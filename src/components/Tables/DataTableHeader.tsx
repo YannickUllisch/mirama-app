@@ -35,9 +35,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
       ref={headerRef}
       style={{ zIndex: 4 }}
       className={`dark:bg-neutral-900 bg-neutral-50 ${
-        isSticky
-          ? 'sticky top-[69px] outline outline-neutral-200 dark:outline-neutral-800'
-          : ''
+        isSticky ? 'sticky top-[69px]' : ''
       }`}
     >
       {table.getHeaderGroups().map((headerGroup) => (

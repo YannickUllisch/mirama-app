@@ -1,18 +1,30 @@
 import { db } from '@db'
 
-export const fetchTasksByProjectId = async (id: string) => {
+export const fetchTasksByProjectId = async (
+  id: string,
+  ignoreCompleted?: boolean,
+) => {
   const response = await db.task.findMany({
     where: {
       project: {
         id,
       },
+      ...(ignoreCompleted && {
+        status: {
+          not: 'DONE',
+        },
+      }),
     },
+
     include: {
       assignedTo: true,
       subtasks: true,
       tags: true,
       category: true,
       comments: true,
+    },
+    orderBy: {
+      priority: 'asc',
     },
   })
 

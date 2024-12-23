@@ -90,6 +90,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
           projectId={project?.id ?? ''}
           pEndDate={new Date(project?.endDate ?? '')}
           pStartDate={new Date(project?.startDate ?? '')}
+          projectName={project?.name ?? ''}
         />
       ),
       headerComponent: (
@@ -134,9 +135,9 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full">
+    <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
       <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-7 rounded-lg p-1">
-        <TabsList className="inline-flex items-center justify-center border">
+        <TabsList className="inline-flex items-center justify-start border overflow-x-auto whitespace-nowrap sm:justify-center sm:gap-2">
           {projectTabs.map(
             (tabHeader) =>
               session &&

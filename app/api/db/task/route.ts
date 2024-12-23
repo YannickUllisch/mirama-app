@@ -17,6 +17,8 @@ export const GET = auth(async (req) => {
     }
 
     const id = req.nextUrl.searchParams.get('id') as string
+    const ignoreCompleted =
+      (req.nextUrl.searchParams.get('ignoreCompleted') as string) === 'true'
 
     if (!id) {
       return Response.json(
@@ -25,7 +27,7 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await fetchTasksByProjectId(id)
+    const response = await fetchTasksByProjectId(id, ignoreCompleted)
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

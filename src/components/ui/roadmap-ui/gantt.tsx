@@ -32,7 +32,7 @@ import {
   startOfMonth,
 } from 'date-fns'
 import throttle from 'lodash.throttle'
-import { PlusIcon, TrashIcon } from 'lucide-react'
+import { Loader2, PlusIcon, TrashIcon } from 'lucide-react'
 import {
   createContext,
   useCallback,
@@ -582,7 +582,7 @@ export const GanttSidebar: FC<GanttSidebarProps> = ({
   <div
     data-roadmap-ui="gantt-sidebar"
     className={cn(
-      'sticky left-0 z-30 h-max min-h-full rounded-xl overflow-clip border-border/50 border-r bg-neutral-50 dark:bg-background/60 backdrop-blur-md',
+      'sticky left-0 z-30 h-max min-h-full overflow-clip border-border/50 border-r bg-neutral-50 dark:bg-neutral-900/20 backdrop-blur-md',
       className,
     )}
   >
@@ -829,7 +829,7 @@ export const GanttFeatureItemCard: FC<GanttFeatureItemCardProps> = ({
   useEffect(() => setDragging(isPressed), [isPressed, setDragging])
 
   return (
-    <Card className="h-full w-full rounded-md bg-background p-2 text-xs shadow-sm">
+    <Card className="h-full w-full rounded-2xl bg-background hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800 p-2 text-xs shadow-sm">
       <div
         className={cn(
           'flex h-full w-full items-center justify-between gap-2 text-left',
@@ -877,7 +877,7 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
     },
   })
 
-  const daysPerPixel = 1 / (gantt.zoom / 30) // Adjust this ratio based on zoom level or column width.
+  const daysPerPixel = 1 / (gantt.zoom / 20) // Adjust this ratio based on zoom level or column width.
 
   const handleItemDragStart = () => {
     setPreviousMouseX(mousePosition.x)
@@ -1069,12 +1069,15 @@ export const GanttMarker: FC<
               onClick={handleRemove}
             >
               <TrashIcon size={16} />
-              Remove marker
+              Remove Milestone
             </ContextMenuItem>
           ) : null}
         </ContextMenuContent>
       </ContextMenu>
-      <div className={cn('h-full w-px bg-card', className)} />
+      <div
+        style={{ backgroundColor: backgroundHex, opacity: 0.3 }}
+        className={cn('h-full w-px bg-card', className)}
+      />
     </div>
   )
 }
@@ -1232,7 +1235,7 @@ export const GanttProvider: FC<GanttProviderProps> = ({
     >
       <div
         className={cn(
-          'gantt relative grid h-full w-full flex-none select-none overflow-auto rounded-sm bg-background/50',
+          'gantt relative grid h-full min-h-[600px] w-full flex-none select-none overflow-auto rounded-sm bg-background/50',
           range,
           className,
         )}

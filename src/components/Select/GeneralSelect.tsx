@@ -7,6 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
+import { View } from 'lucide-react'
+import { cn } from '@src/lib/utils'
 
 interface GeneralSelectProps {
   value: string
@@ -24,7 +26,10 @@ const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
 }) => {
   return (
     <Select value={value} onValueChange={setValue}>
-      <SelectTrigger {...triggerProps}>
+      <SelectTrigger
+        {...triggerProps}
+        className={cn('w-fit gap-2', triggerProps?.className)}
+      >
         <SelectValue
           placeholder={placeholder ?? value}
           defaultValue={value ?? undefined}

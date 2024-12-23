@@ -1,6 +1,4 @@
 'use client'
-
-import { MilestoneSchema } from '@/prisma/zod'
 import type { Milestone, Task, TaskCategory, User } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
@@ -29,11 +27,23 @@ import { SelectItem } from '@src/components/ui/select'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
 import { EyeIcon, LinkIcon, TrashIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { capitalize } from '@src/lib/utils'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import Link from 'next/link'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@src/components/ui/sheet'
+import { Checkbox } from '@src/components/ui/checkbox'
+import { Label } from '@src/components/ui/label'
 
 const defaultMilestone: Milestone = {
   colors: '#FFFFFF',
@@ -57,17 +67,25 @@ const groupOptions: {
 
 const GanttTab = ({
   projectId,
+  projectName,
   pStartDate,
   pEndDate,
-}: { projectId: string; pStartDate?: Date; pEndDate?: Date }) => {
+}: {
+  projectId: string
+  pStartDate?: Date
+  pEndDate?: Date
+  projectName: string
+}) => {
+  const [ignoreCompleted, setIgnoreCompleted] = useState(false)
+
   // Fetching Data
-  const { data: tasks } = useSWR<
+  const { data: tasks, mutate: updateTasks } = useSWR<
     (Task & {
       assignedTo: User
       subtasks: Task[]
       category: TaskCategory | null
     })[]
-  >(`/api/db/task?id=${projectId}`)
+  >(`/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`)
 
   const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
     `/api/db/project/milestones?id=${projectId}`,
@@ -88,20 +106,31 @@ const GanttTab = ({
   const groupedTasks = useMemo(() => {
     return groupBy(tasks, (task) => {
       const value = get(task, groupKey)
-      return value !== undefined ? value : 'Unassigned'
+      return value !== undefined && value !== null ? value : 'Unassigned'
     })
   }, [tasks, groupKey])
 
-  const handleViewFeature = (id: string) =>
-    toast.success(`Feature selected: ${id}`)
+  const sortedTasks = (
+    tasks: (typeof groupedTasks)[keyof typeof groupedTasks],
+  ) => {
+    return tasks?.slice().sort((a, b) => {
+      return a.id.localeCompare(b.id)
+    })
+  }
 
-  const handleCopyLink = (id: string) => toast.success(`Copy link: ${id}`)
+  const [isTaskOpen, setIsTaskOpen] = useState(false)
+  const handleViewFeature = (_id: string) => {
+    setIsTaskOpen((curr) => !curr)
+  }
 
-  const handleRemoveFeature = (id: string) =>
-    toast.success(`Remove feature: ${id}`)
-
-  const handleRemoveMarker = (id: string) => {
-    deleteResources('project/milestones', [id], { mutate: updateMilestones })
+  // Copying URL of Task
+  const handleCopyLink = (id: string) => {
+    if (typeof window !== 'undefined') {
+      const currentURL = window.location.origin
+      navigator.clipboard.writeText(
+        `${currentURL}/app/${projectName}/edit/${id}`,
+      )
+    }
   }
 
   const handleInteractMarker = (id: string) => {
@@ -119,14 +148,12 @@ const GanttTab = ({
     if (!endAt) {
       return
     }
-
-    // setFeatures((prev) =>
-    //   prev.map((feature) =>
-    //     feature.id === id ? { ...feature, startAt, endAt } : feature,
-    //   ),
-    // )
-
-    toast.success(`Move feature: ${id} from ${startAt} to ${endAt}`)
+    updateResourceById(
+      'task',
+      id,
+      { startDate: startAt, dueDate: endAt },
+      { mutate: updateTasks },
+    )
   }
 
   const handleAddFeature = (date: Date) =>
@@ -134,7 +161,7 @@ const GanttTab = ({
 
   return (
     <>
-      <div className="flex pb-4 gap-2">
+      <div className="flex pb-4 gap-2 items-center ">
         <GeneralSelect value={rangeView} setValue={setRangeView}>
           <SelectItem value="daily">Daily</SelectItem>
           <SelectItem value="monthly">Monthly</SelectItem>
@@ -147,6 +174,27 @@ const GanttTab = ({
             </SelectItem>
           ))}
         </GeneralSelect>
+        <div className="flex items-center space-x-2 text-text-secondary">
+          <Checkbox
+            className="border-text-secondary"
+            checked={ignoreCompleted}
+            onCheckedChange={(e) => setIgnoreCompleted(Boolean(e))}
+          />
+          <Label className="text-xs font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Hide Completed
+          </Label>
+        </div>
+        <Sheet open={isTaskOpen} onOpenChange={setIsTaskOpen}>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Are you absolutely sure?</SheetTitle>
+              <SheetDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
       </div>
       <AddMilestoneDialog
         isOpen={isMilestoneDialogOpen}
@@ -155,7 +203,7 @@ const GanttTab = ({
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
       />
-      <div className="border rounded-lg">
+      <div className="border rounded-md">
         <GanttProvider
           endDate={pEndDate}
           startDate={pStartDate}
@@ -169,7 +217,7 @@ const GanttTab = ({
                 key={group}
                 name={capitalize(group.replace('_', ' ')).toString()}
               >
-                {tasks?.map((task) => (
+                {sortedTasks(tasks)?.map((task) => (
                   <GanttSidebarItem
                     key={task.id}
                     feature={task}
@@ -184,7 +232,7 @@ const GanttTab = ({
             <GanttFeatureList>
               {Object.entries(groupedTasks).map(([group, tasks]) => (
                 <GanttFeatureListGroup key={group}>
-                  {tasks?.map((task) => (
+                  {sortedTasks(tasks)?.map((task) => (
                     <div className="flex" key={task.id}>
                       <ContextMenu>
                         <ContextMenuTrigger asChild>
@@ -214,13 +262,15 @@ const GanttTab = ({
                         <ContextMenuContent>
                           <ContextMenuItem
                             className="flex items-center gap-2"
-                            onClick={() => handleViewFeature(task.id)}
+                            asChild
                           >
-                            <EyeIcon
-                              size={16}
-                              className="text-muted-foreground"
-                            />
-                            View feature
+                            <Link href={`/app/${projectName}/edit/${task.id}`}>
+                              <EyeIcon
+                                size={16}
+                                className="text-muted-foreground"
+                              />
+                              View Task
+                            </Link>
                           </ContextMenuItem>
                           <ContextMenuItem
                             className="flex items-center gap-2"
@@ -234,10 +284,14 @@ const GanttTab = ({
                           </ContextMenuItem>
                           <ContextMenuItem
                             className="flex items-center gap-2 text-destructive"
-                            onClick={() => handleRemoveFeature(task.id)}
+                            onClick={() =>
+                              deleteResources('task', [task.id], {
+                                mutate: updateTasks,
+                              })
+                            }
                           >
                             <TrashIcon size={16} />
-                            Remove from roadmap
+                            Delete Task
                           </ContextMenuItem>
                         </ContextMenuContent>
                       </ContextMenu>
@@ -253,7 +307,11 @@ const GanttTab = ({
                 id={milestone.id}
                 label={milestone.title}
                 backgroundHex={milestone.colors}
-                onRemove={handleRemoveMarker}
+                onRemove={() =>
+                  deleteResources('project/milestones', [milestone.id], {
+                    mutate: updateMilestones,
+                  })
+                }
                 onInteract={handleInteractMarker}
               />
             ))}
