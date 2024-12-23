@@ -90,7 +90,7 @@ const CreateTaskForm = ({
       startDate: new Date(),
       priority: PriorityType.LOW,
       projectId: params.projectId,
-      status: TaskStatusType.NOT_STARTED,
+      status: TaskStatusType.NEW,
       tags: [],
       parentId: defaultParentId ? defaultParentId : undefined,
       categoryId: undefined,

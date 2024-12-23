@@ -82,8 +82,10 @@ export const TaskSchema = z
   })
 
 export const TaskCategorySchema = z.object({
+  id: z.string(),
   title: z.string(),
   projectId: z.string(),
+  color: z.string(),
 })
 
 export const ChangePasswordSchema = z

@@ -1,9 +1,10 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, {
+import type React from 'react'
+import {
+  type Dispatch,
   type FC,
   type PropsWithChildren,
-  useState,
   useTransition,
 } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -21,50 +22,76 @@ import { Button } from '@src/components/ui/button'
 import { postResource } from '@src/lib/api/postResource'
 import type { KeyedMutator } from 'swr'
 import type { TaskCategory } from '@prisma/client'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form'
+import { FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { TaskCategorySchema } from '@src/lib/schemas'
+import { Label } from '../ui/label'
+import { ColorPicker } from '../ui/color-picker'
+import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface AddTaskCategoryProps {
   mutate: KeyedMutator<TaskCategory[]>
   projectId: string
+  defaultCategory?: TaskCategory
+  open: boolean
+  setOpen: Dispatch<React.SetStateAction<boolean>>
+  onClose: () => void
 }
 
 const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
   children,
   mutate,
   projectId,
+  defaultCategory,
+  open,
+  setOpen,
+  onClose,
 }) => {
   const [isPending, startTransition] = useTransition()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
   const form = useForm<z.infer<typeof TaskCategorySchema>>({
     resolver: zodResolver(TaskCategorySchema),
-    defaultValues: {
+    values: {
+      id: defaultCategory?.id ?? '',
       projectId: projectId,
-      title: '',
+      title: defaultCategory?.title ?? '',
+      color: defaultCategory?.color ?? '#FFFFFF',
     },
   })
 
   const onSubmit = (vals: z.infer<typeof TaskCategorySchema>) => {
     startTransition(() => {
-      postResource('project/taskCategories', vals, { mutate })
-        .then(() => {
-          form.reset()
-          setIsOpen(false)
-        })
-        .catch(() => {
-          setIsOpen(false)
-        })
+      if (vals.id === '') {
+        postResource('project/taskCategories', vals, { mutate })
+          .then(() => {
+            onDialogClose()
+          })
+          .catch(() => {
+            onDialogClose()
+          })
+      } else {
+        updateResourceById('project/taskCategories', vals.id, vals, { mutate })
+          .then(() => {
+            onDialogClose()
+          })
+          .catch(() => {
+            onDialogClose()
+          })
+      }
     })
   }
+
+  const onDialogClose = () => {
+    if (open) {
+      setOpen(false)
+      onClose()
+      form.reset()
+      return
+    }
+    setOpen(true)
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+    <Dialog open={open} onOpenChange={onDialogClose}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -86,7 +113,7 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <Label>Category</Label>
                     <FormControl>
                       <Input
                         {...field}
@@ -95,6 +122,19 @@ const AddTaskCategoryDialog: FC<PropsWithChildren<AddTaskCategoryProps>> = ({
                         type="text"
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <Label>Color</Label>
+                    <ColorPicker {...field} />
                     <FormMessage />
                   </FormItem>
                 )}

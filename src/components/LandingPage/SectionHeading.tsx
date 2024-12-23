@@ -12,7 +12,7 @@ const SectionHeading: FC<PropsWithChildren<SectionHeadingProps>> = ({
   return (
     <div
       className={cn(
-        'flex items-center text-xs outline rounded-md p-2 gap-2 text-text-inverted bg-text dark:outline-neutral-400',
+        'flex items-center text-xs border rounded-md p-2 gap-2 text-text-inverted bg-text dark:border-neutral-400',
         classname,
       )}
     >

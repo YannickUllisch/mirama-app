@@ -14,16 +14,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
+import { SortAsc } from 'lucide-react'
+import type React from 'react'
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
+  icon?: React.ReactNode
   title: string
 }
 
 export const DataTableColumnHeader = <TData, TValue>({
   column,
   title,
+  icon,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) => {
   if (!column.getCanSort()) {
@@ -37,17 +41,18 @@ export const DataTableColumnHeader = <TData, TValue>({
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent hover:bg-transparent"
+            className="-ml-3 h-8 data-[state=open]:bg-accent hover:bg-transparent gap-1 items-center"
           >
+            {icon}
             <span className="dark:text-neutral-400" style={{ fontSize: 14 }}>
               {title}
             </span>
             {column.getIsSorted() === 'desc' ? (
-              <ArrowDownIcon className="ml-2 h-4 w-4 dark:text-neutral-400" />
+              <ArrowDownIcon className="h-4 w-4 dark:text-neutral-400" />
             ) : column.getIsSorted() === 'asc' ? (
-              <ArrowUpIcon className="ml-2 h-4 w-4 dark:text-neutral-400" />
+              <ArrowUpIcon className="h-4 w-4 dark:text-neutral-400" />
             ) : (
-              <CaretSortIcon className="ml-2 h-4 w-4 dark:text-neutral-400" />
+              <CaretSortIcon className=" h-4 w-4 dark:text-neutral-400" />
             )}
           </Button>
         </DropdownMenuTrigger>

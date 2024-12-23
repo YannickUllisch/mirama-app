@@ -171,6 +171,8 @@ model TaskCategory {
   projectId   String
   project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  color       String            @default("#000000")
+
   task Task[]
 }
 
@@ -199,7 +201,7 @@ enum StatusType {
 enum TaskStatusType {
   NEW 
   ACTIVE 
-  RESOLVED
+  DONE
 }
 
 

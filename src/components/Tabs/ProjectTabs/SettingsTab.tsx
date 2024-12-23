@@ -38,6 +38,11 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
   const [managerIds, setManagersIds] = useState<string[]>(
     projectUsers?.filter((user) => user.isManager).map((pu) => pu.userId) ?? [],
   )
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    string | undefined
+  >(undefined)
+
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState<boolean>(false)
 
   const [assignedUserIds, setAssignedUserIds] = useState<string[]>(
     projectUsers?.map((pu) => pu.userId) ?? [],
@@ -65,6 +70,13 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
       { mutate: updateProjectUsers },
     )
   }
+
+  const selectedTaskCategory = useMemo(() => {
+    if (selectedCategoryId && taskCategories) {
+      return taskCategories.find((cat) => cat.id === selectedCategoryId)
+    }
+    return undefined
+  }, [selectedCategoryId, taskCategories])
 
   const router = useRouter()
   const { data: session } = useSession({ required: true })
@@ -205,6 +217,10 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
             mutate={updateCategories}
             projectId={projectId}
             key={'task-category-dialog'}
+            open={categoryDialogOpen}
+            setOpen={setCategoryDialogOpen}
+            defaultCategory={selectedTaskCategory}
+            onClose={() => setSelectedCategoryId(undefined)}
           >
             <Button
               variant="link"
@@ -217,8 +233,13 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
         <div className="flex gap-2">
           {taskCategories?.map((category) => (
             <TaskCategoryItem
+              color={category.color}
               key={`category-item-${category.title}`}
               title={category.title}
+              onClick={() => {
+                setSelectedCategoryId(category.id)
+                setCategoryDialogOpen(true)
+              }}
             />
           ))}
         </div>

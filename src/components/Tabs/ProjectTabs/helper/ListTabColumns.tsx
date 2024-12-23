@@ -19,14 +19,27 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { capitalize } from '@src/lib/utils'
+import {
+  adjustBrightness,
+  calculateBrightness,
+  capitalize,
+  getColorByTaskStatusType,
+} from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import {
   BetweenHorizonalStart,
+  CalendarClock,
   ChevronUp,
+  ClockArrowDown,
   Ellipsis,
+  FolderSearch,
+  Loader,
+  NotepadText,
+  PanelBottomClose,
   Pencil,
+  Tag as TagIcon,
   Trash,
+  UserRoundPen,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
@@ -112,7 +125,11 @@ export const ListTabColumns = ({
       {
         accessorKey: 'title',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Title" />
+          <DataTableColumnHeader
+            column={column}
+            title="Title"
+            icon={<NotepadText className="dark:text-neutral-400" size={15} />}
+          />
         ),
         id: 'title',
         size: 170,
@@ -121,11 +138,6 @@ export const ListTabColumns = ({
           return (
             <div className="flex justify-between group w-full">
               <div className="flex items-center gap-2">
-                {row.original.category && (
-                  <Badge variant={'outline'}>
-                    {row.original.category.title}
-                  </Badge>
-                )}
                 <span className="overflow-ellipsis flex-1 min-w-0">
                   {getValue() as string}
                 </span>
@@ -178,9 +190,44 @@ export const ListTabColumns = ({
         },
       },
       {
+        accessorFn: (val) => val.category?.title ?? '',
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Category"
+            icon={<FolderSearch className="dark:text-neutral-400" size={15} />}
+          />
+        ),
+        id: 'Category',
+        cell: ({ getValue, row }) => {
+          const color = row.original.category?.color
+          if (!color) return null
+          const brightness = calculateBrightness(color)
+
+          const textColor =
+            brightness > 200
+              ? adjustBrightness(color, -200) // Darken text for bright backgrounds
+              : adjustBrightness(color, 200) // Brighten text for dark backgrounds
+          return (
+            <Badge
+              variant={'outline'}
+              style={{ backgroundColor: color, color: textColor }}
+            >
+              {getValue() as string}
+            </Badge>
+          )
+        },
+      },
+      {
         accessorKey: 'priority',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Priority" />
+          <DataTableColumnHeader
+            column={column}
+            title="Priority"
+            icon={
+              <ClockArrowDown className="dark:text-neutral-400" size={15} />
+            }
+          />
         ),
         id: 'priority',
         cell: ({ row, getValue }) => {
@@ -210,27 +257,21 @@ export const ListTabColumns = ({
       {
         accessorKey: 'status',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Status" />
+          <DataTableColumnHeader
+            column={column}
+            title="Status"
+            icon={
+              <PanelBottomClose className="dark:text-neutral-400" size={15} />
+            }
+          />
         ),
         id: 'status',
-        cell: ({ row, getValue }) => {
+        cell: ({ getValue }) => {
           return (
-            <GeneralTableSelect
-              key={`status${row.id}`}
-              id={row.original.id}
-              mutate={mutate}
-              initialValue={capitalize(
-                (getValue() as string).replace('_', ' '),
-              )}
-              apiRoute="task"
-              paramToUpdate="status"
-            >
-              {Object.keys(TaskStatusType).map((status) => (
-                <SelectItem key={`status-item-${status}`} value={status}>
-                  {capitalize(status.replace('_', ' '))}
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
+            <Badge className={getColorByTaskStatusType(getValue() as string)}>
+              {' '}
+              {capitalize(getValue() as string)}
+            </Badge>
           )
         },
         filterFn: (row, id, value) => {
@@ -240,7 +281,11 @@ export const ListTabColumns = ({
       {
         accessorFn: (val) => val.assignedTo?.name ?? '',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Assignee" />
+          <DataTableColumnHeader
+            column={column}
+            title="Assignee"
+            icon={<UserRoundPen className="dark:text-neutral-400" size={15} />}
+          />
         ),
         id: 'Assignee',
         cell: ({ row }) => {
@@ -288,49 +333,40 @@ export const ListTabColumns = ({
         },
       },
       {
-        accessorKey: 'startDate',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Start Date" />
-        ),
-        id: 'Due Date',
-        cell: ({ row }) => {
-          return (
-            <div
-              className="flex items-center cursor-default justify-left mr-8 gap-1"
-              key={`calendar-end-${row.index}`}
-            >
-              {DateTime.fromISO(
-                new Date(row.original.startDate as Date).toISOString(),
-              ).toFormat('dd.MM.yyyy')}
-            </div>
-          )
-        },
-        filterFn: 'equalsString',
-      },
-      {
         accessorKey: 'dueDate',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Due Date" />
+          <DataTableColumnHeader
+            column={column}
+            title="Estimation"
+            icon={<CalendarClock className="dark:text-neutral-400" size={15} />}
+          />
         ),
-        id: 'Due Date',
+        id: 'Estimation',
         cell: ({ row }) => {
           return (
             <div
               className="flex items-center cursor-default justify-left mr-8 gap-1"
               key={`calendar-end-${row.index}`}
             >
-              {DateTime.fromISO(
+              {`${DateTime.fromISO(
+                new Date(row.original.startDate as Date).toISOString(),
+              ).toFormat('MMM dd, yyyy')} - ${DateTime.fromISO(
                 new Date(row.original.dueDate as Date).toISOString(),
-              ).toFormat('dd.MM.yyyy')}
+              ).toFormat('MMM dd, yyyy')}`}
             </div>
           )
         },
         filterFn: 'equalsString',
+        size: 200,
       },
       {
         accessorKey: 'tags',
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Tags" />
+          <DataTableColumnHeader
+            column={column}
+            title="Tags"
+            icon={<TagIcon className="dark:text-neutral-400" size={15} />}
+          />
         ),
         id: 'tags',
         size: 50,

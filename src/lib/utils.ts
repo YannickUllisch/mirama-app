@@ -148,12 +148,12 @@ export const generateInclude = (
 
 export const getColorByTaskStatusType = (status: string) => {
   switch (status) {
-    case 'RESOLVED':
-      return 'bg-emerald-500'
+    case 'DONE':
+      return 'bg-emerald-500 hover:bg-emerald-400 text-white'
     case 'ACTIVE':
-      return 'bg-yellow-500'
+      return 'bg-yellow-500 hover:bg-yellow-400 text-white'
     case 'NEW':
-      return 'bg-gray-400'
+      return 'bg-gray-400 hover:bg-gray-300 text-white'
     default:
       break
   }
