@@ -148,11 +148,11 @@ export const generateInclude = (
 
 export const getColorByTaskStatusType = (status: string) => {
   switch (status) {
-    case 'COMPLETE':
+    case 'RESOLVED':
       return 'bg-emerald-500'
-    case 'IN_PROGRESS':
+    case 'ACTIVE':
       return 'bg-yellow-500'
-    case 'NOT_STARTED':
+    case 'NEW':
       return 'bg-gray-400'
     default:
       break

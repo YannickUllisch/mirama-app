@@ -857,7 +857,7 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
   className,
   ...feature
 }) => {
-  const { scrollX } = useGantt()
+  // const { scrollX } = useGantt()
   const gantt = useContext(GanttContext)
   const timelineStartDate = new Date(gantt.timelineData.at(0)?.year ?? 0, 0, 1)
   const [startAt, setStartAt] = useState<Date>(feature.startDate)
@@ -877,6 +877,8 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
     },
   })
 
+  const daysPerPixel = 1 / (gantt.zoom / 30) // Adjust this ratio based on zoom level or column width.
+
   const handleItemDragStart = () => {
     setPreviousMouseX(mousePosition.x)
     setPreviousStartAt(startAt)
@@ -884,36 +886,32 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
   }
 
   const handleItemDragMove = () => {
-    const currentDate = getDateByMousePosition(gantt, mousePosition.x)
-    const originalDate = getDateByMousePosition(gantt, previousMouseX)
-    const delta =
-      gantt.range === 'daily'
-        ? getDifferenceIn(gantt.range)(currentDate, originalDate)
-        : getInnerDifferenceIn(gantt.range)(currentDate, originalDate)
-    const newStartDate = addDays(previousStartAt, delta)
-    const newEndDate = previousEndAt ? addDays(previousEndAt, delta) : null
+    const deltaPixels = mousePosition.x - previousMouseX
+    const deltaDays = Math.round(deltaPixels * daysPerPixel)
 
-    setStartAt(newStartDate)
-    setEndAt(newEndDate)
+    setStartAt(addDays(previousStartAt, deltaDays))
+    if (previousEndAt) {
+      setEndAt(addDays(previousEndAt, deltaDays))
+    }
+  }
+
+  const handleLeftDragMove = () => {
+    const deltaPixels = mousePosition.x - previousMouseX
+    const deltaDays = Math.round(deltaPixels * daysPerPixel)
+
+    setStartAt(addDays(previousStartAt, deltaDays))
+  }
+
+  const handleRightDragMove = () => {
+    const deltaPixels = mousePosition.x - previousMouseX
+    const deltaDays = Math.round(deltaPixels * daysPerPixel)
+
+    if (previousEndAt) {
+      setEndAt(addDays(previousEndAt, deltaDays))
+    }
   }
 
   const onDragEnd = () => onMove?.(feature.id, startAt, endAt)
-  const handleLeftDragMove = () => {
-    const ganttRect = gantt.ref?.current?.getBoundingClientRect()
-    const x =
-      mousePosition.x - (ganttRect?.left ?? 0) + scrollX - gantt.sidebarWidth
-    const newStartAt = getDateByMousePosition(gantt, x)
-
-    setStartAt(newStartAt)
-  }
-  const handleRightDragMove = () => {
-    const ganttRect = gantt.ref?.current?.getBoundingClientRect()
-    const x =
-      mousePosition.x - (ganttRect?.left ?? 0) + scrollX - gantt.sidebarWidth
-    const newEndAt = getDateByMousePosition(gantt, x)
-
-    setEndAt(newEndAt)
-  }
 
   return (
     <div
@@ -932,6 +930,7 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
           <DndContext
             sensors={[mouseSensor]}
             modifiers={[restrictToHorizontalAxis]}
+            onDragStart={handleItemDragStart}
             onDragMove={handleLeftDragMove}
             onDragEnd={onDragEnd}
           >
@@ -959,6 +958,7 @@ export const GanttFeatureItem: FC<GanttFeatureItemProps> = ({
           <DndContext
             sensors={[mouseSensor]}
             modifiers={[restrictToHorizontalAxis]}
+            onDragStart={handleItemDragStart}
             onDragMove={handleRightDragMove}
             onDragEnd={onDragEnd}
           >

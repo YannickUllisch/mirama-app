@@ -98,6 +98,7 @@ model Project {
   notifications Notification[]
   milestones    Milestone[]
 
+
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
 
@@ -119,6 +120,7 @@ model Task {
   id           String         @id @default(cuid())
   taskCode     String
 
+  type         TaskType @default(TASK)
   title        String
   description  String?
   priority     PriorityType   @default(LOW)
@@ -149,6 +151,17 @@ model Task {
   
   @@index([projectId], map: "task_project_id_idx")
   @@index([assignedToId, teamId], map: "task_assignedTo_team_idx")  
+}
+
+
+enum TaskType {
+  ISSUE
+  STORY
+  TASK
+  FEATURE
+  EPIC
+  RESEARCH
+  CONFIG
 }
 
 model TaskCategory {
@@ -184,9 +197,9 @@ enum StatusType {
 }
 
 enum TaskStatusType {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETE
+  NEW 
+  ACTIVE 
+  RESOLVED
 }
 
 
