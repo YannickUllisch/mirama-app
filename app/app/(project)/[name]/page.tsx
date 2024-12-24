@@ -68,7 +68,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
       ),
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
-          <Table2 width={15} /> Task Table
+          <Table2 width={15} /> Table
         </div>
       ),
     },
@@ -99,16 +99,6 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
         </div>
       ),
     },
-    // {
-    //   id: 'analytics',
-    //   roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-    //   component: <AnalyticsTab />,
-    //   headerComponent: (
-    //     <div className="flex justify-center gap-1 items-center">
-    //       <BarChartBig width={15} /> Analytics
-    //     </div>
-    //   ),
-    // },
     {
       id: 'settings',
       roles: Object.values(Role),

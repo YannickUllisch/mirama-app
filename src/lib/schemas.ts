@@ -70,7 +70,7 @@ export const TaskSchema = z
     title: z.string().min(1, { message: 'Title cannot be empty.' }),
     description: z.string().nullable().optional(),
     priority: PriorityTypeSchema.default('LOW'),
-    status: TaskStatusTypeSchema.default('NOT_STARTED'),
+    status: TaskStatusTypeSchema.default('NEW'),
     projectId: z.string(),
     tags: z.string().array().optional(),
     parentId: z.string().optional(),

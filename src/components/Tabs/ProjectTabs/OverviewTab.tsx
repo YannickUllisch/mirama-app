@@ -35,8 +35,7 @@ const OverviewTab: FC<OverviewTabProps> = ({
       return tasks
         ?.filter(
           (task) =>
-            task.assignedToId === session?.user.id &&
-            task.status !== 'COMPLETE',
+            task.assignedToId === session?.user.id && task.status !== 'DONE',
         )
         .sort((a, b) => +new Date(a.dueDate ?? 0) - +new Date(b.dueDate ?? 0))
     }

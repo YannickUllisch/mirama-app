@@ -1,5 +1,12 @@
 'use client'
-import type { Milestone, Task, TaskCategory, User } from '@prisma/client'
+import {
+  type Tag,
+  TaskStatusType,
+  type Milestone,
+  type Task,
+  type TaskCategory,
+  type User,
+} from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
@@ -26,7 +33,7 @@ import {
 import { SelectItem } from '@src/components/ui/select'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
-import { EyeIcon, LinkIcon, TrashIcon } from 'lucide-react'
+import { CheckSquare, EyeIcon, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
@@ -44,6 +51,8 @@ import {
 } from '@src/components/ui/sheet'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Label } from '@src/components/ui/label'
+import ViewTaskSheet from '@src/components/task/ViewTaskSheet'
+import { Separator } from '@src/components/ui/separator'
 
 const defaultMilestone: Milestone = {
   colors: '#FFFFFF',
@@ -76,20 +85,16 @@ const GanttTab = ({
   pEndDate?: Date
   projectName: string
 }) => {
+  // General States
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
-
-  // Fetching Data
-  const { data: tasks, mutate: updateTasks } = useSWR<
-    (Task & {
-      assignedTo: User
-      subtasks: Task[]
-      category: TaskCategory | null
-    })[]
-  >(`/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`)
-
-  const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
-    `/api/db/project/milestones?id=${projectId}`,
+  const [rangeView, setRangeView] = useState<'daily' | 'monthly' | 'quarterly'>(
+    'monthly',
   )
+  const [groupKey, setGroupKey] = useState<string>('assignedTo.name')
+
+  // Task Rleated States
+  const [isTaskOpen, setIsTaskOpen] = useState(false)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>()
 
   // Milestone States
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] =
@@ -97,12 +102,21 @@ const GanttTab = ({
   const [selectedMilestone, setSelectedMilestone] =
     useState<Milestone>(defaultMilestone)
 
-  // Gantt chart States
-  const [rangeView, setRangeView] = useState<'daily' | 'monthly' | 'quarterly'>(
-    'monthly',
-  )
-  const [groupKey, setGroupKey] = useState<string>('assignedTo.name')
+  // Fetching Data
+  const { data: tasks, mutate: updateTasks } = useSWR<
+    (Task & {
+      assignedTo: User
+      subtasks: Task[]
+      category: TaskCategory | null
+      tags: Tag[]
+    })[]
+  >(`/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`)
 
+  const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
+    `/api/db/project/milestones?id=${projectId}`,
+  )
+
+  // Sorting and grouping Data
   const groupedTasks = useMemo(() => {
     return groupBy(tasks, (task) => {
       const value = get(task, groupKey)
@@ -118,9 +132,10 @@ const GanttTab = ({
     })
   }
 
-  const [isTaskOpen, setIsTaskOpen] = useState(false)
-  const handleViewFeature = (_id: string) => {
+  // Handling Gantt Chart Events
+  const handleViewFeature = (id: string) => {
     setIsTaskOpen((curr) => !curr)
+    setSelectedTaskId(id)
   }
 
   // Copying URL of Task
@@ -184,17 +199,6 @@ const GanttTab = ({
             Hide Completed
           </Label>
         </div>
-        <Sheet open={isTaskOpen} onOpenChange={setIsTaskOpen}>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Are you absolutely sure?</SheetTitle>
-              <SheetDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
       </div>
       <AddMilestoneDialog
         isOpen={isMilestoneDialogOpen}
@@ -203,7 +207,7 @@ const GanttTab = ({
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
       />
-      <div className="border rounded-md">
+      <div className="border border-border/50 dark:border-border rounded-md">
         <GanttProvider
           endDate={pEndDate}
           startDate={pStartDate}
@@ -262,14 +266,32 @@ const GanttTab = ({
                         <ContextMenuContent>
                           <ContextMenuItem
                             className="flex items-center gap-2"
+                            onClick={() =>
+                              updateResourceById(
+                                '/task',
+                                task.id,
+                                { status: TaskStatusType.DONE },
+                                { mutate: updateTasks },
+                              )
+                            }
+                          >
+                            <CheckSquare
+                              size={16}
+                              className="text-muted-foreground"
+                            />
+                            Mark as Complete
+                          </ContextMenuItem>
+                          <Separator />
+                          <ContextMenuItem
+                            className="flex items-center gap-2"
                             asChild
                           >
                             <Link href={`/app/${projectName}/edit/${task.id}`}>
-                              <EyeIcon
+                              <Pencil
                                 size={16}
                                 className="text-muted-foreground"
                               />
-                              View Task
+                              Edit Task
                             </Link>
                           </ContextMenuItem>
                           <ContextMenuItem
@@ -320,6 +342,12 @@ const GanttTab = ({
           </GanttTimeline>
         </GanttProvider>
       </div>
+      <ViewTaskSheet
+        open={isTaskOpen}
+        setOpen={setIsTaskOpen}
+        taskId={selectedTaskId ?? ''}
+        projectName={projectName}
+      />
     </>
   )
 }
