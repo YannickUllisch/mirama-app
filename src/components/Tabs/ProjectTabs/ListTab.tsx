@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { ListTabColumns } from './helper/ListTabColumns'
 import { useTree } from '@src/hooks/useTree'
-import TaskTypeCreate from '@src/components/Task/TaskTypeCreate'
+import TaskTypeCreate from '@src/components/Tasket/TaskTypeCreate'
 
 interface TaskProps {
   projectId: string

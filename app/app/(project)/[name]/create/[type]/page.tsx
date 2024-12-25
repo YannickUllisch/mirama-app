@@ -60,7 +60,7 @@ import { capitalize } from '@src/lib/utils'
 import { Label } from '@src/components/ui/label'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import useSWR from 'swr'
-import TaskTypeSelect from '@src/components/Task/TaskTypeCreate'
+import TaskTypeSelect from '@src/components/Tasket/TaskTypeCreate'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 

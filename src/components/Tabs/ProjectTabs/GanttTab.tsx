@@ -51,7 +51,7 @@ import {
 } from '@src/components/ui/sheet'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Label } from '@src/components/ui/label'
-import ViewTaskSheet from '@src/components/Task/ViewTaskSheet'
+import ViewTaskSheet from '@src/components/Tasket/ViewTaskSheet'
 import { Separator } from '@src/components/ui/separator'
 
 const defaultMilestone: Milestone = {
