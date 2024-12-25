@@ -1,6 +1,6 @@
 'use client'
 import type { Project, Task } from '@prisma/client'
-import TaskListItem from '@src/components/Tasket/TaskListItem'
+import TaskListItem from '@src/components/Task/TaskListItem'
 import React from 'react'
 import useSWR from 'swr'
 

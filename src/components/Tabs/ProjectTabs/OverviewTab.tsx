@@ -1,6 +1,6 @@
 import type { Task } from '@prisma/client'
 import GeneralTooltip from '@src/components/GeneralTooltip'
-import TaskTree from '@src/components/Tasket/TaskTree'
+import TaskTree from '@src/components/Task/TaskTree'
 import { ScrollArea } from '@src/components/ui/scroll-area'
 import {
   Blocks,
