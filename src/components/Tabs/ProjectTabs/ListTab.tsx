@@ -5,11 +5,9 @@ import type React from 'react'
 import { useState, type FC } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { Plus } from 'lucide-react'
-import { Button } from '@src/components/ui/button'
-import Link from 'next/link'
 import { ListTabColumns } from './helper/ListTabColumns'
 import { useTree } from '@src/hooks/useTree'
+import TaskTypeCreate from '@src/components/Task/TaskTypeCreate'
 
 interface TaskProps {
   projectId: string
@@ -46,17 +44,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   const ToolbarLeft = () => {
     return (
       <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-        <Link href={`/app/${projectName}/create/${projectId}`} passHref>
-          <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-            <Plus width={15} className="ml-2" />
-            <Button
-              style={{ fontSize: 11, textDecoration: 'none' }}
-              variant="link"
-            >
-              New Task
-            </Button>
-          </div>
-        </Link>
+        <TaskTypeCreate projectId={projectId} projectName={projectName} />
       </div>
     )
   }

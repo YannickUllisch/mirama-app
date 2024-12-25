@@ -19,6 +19,7 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import {
   adjustBrightness,
   calculateBrightness,
@@ -38,6 +39,7 @@ import {
   PanelBottomClose,
   Pencil,
   Tag as TagIcon,
+  Text,
   Trash,
   UserRoundPen,
 } from 'lucide-react'
@@ -111,13 +113,7 @@ export const ListTabColumns = ({
                   onClick={row.getToggleExpandedHandler()}
                 />
               ) : null}
-              <Link
-                onClick={(e) => e.stopPropagation()}
-                href={`/app/${projectName}/edit/${row.original.id}`}
-                className="hover:underline"
-              >
-                {getValue() as string}
-              </Link>
+              {getValue() as string}
             </div>
           </div>
         ),
@@ -128,7 +124,7 @@ export const ListTabColumns = ({
           <DataTableColumnHeader
             column={column}
             title="Title"
-            icon={<NotepadText className="dark:text-neutral-400" size={15} />}
+            icon={<Text className="dark:text-neutral-400" size={15} />}
           />
         ),
         id: 'title',
@@ -139,7 +135,14 @@ export const ListTabColumns = ({
             <div className="flex justify-between group w-full">
               <div className="flex items-center gap-2">
                 <span className="overflow-ellipsis flex-1 min-w-0">
-                  {getValue() as string}
+                  <Link
+                    onClick={(e) => e.stopPropagation()}
+                    href={`/app/${projectName}/edit/${row.original.id}`}
+                    className="hover:underline flex gap-2 items-center underline-offset-4"
+                  >
+                    {getTaskTypeIcon(row.original.type)}
+                    {getValue() as string}
+                  </Link>
                 </span>
               </div>
 
@@ -165,7 +168,7 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/app/${projectName}/create/${row.original.projectId}?parentId=${row.original.id}`}
+                      href={`/app/${projectName}/create/${row.original.type}?parentId=${row.original.id}&projectId=${row.original.projectId}`}
                       className="gap-3"
                     >
                       <BetweenHorizonalStart className="h-4 w-4 " />
@@ -217,6 +220,7 @@ export const ListTabColumns = ({
             </Badge>
           )
         },
+        enableSorting: false,
       },
       {
         accessorKey: 'priority',
@@ -269,7 +273,6 @@ export const ListTabColumns = ({
         cell: ({ getValue }) => {
           return (
             <Badge className={getColorByTaskStatusType(getValue() as string)}>
-              {' '}
               {capitalize(getValue() as string)}
             </Badge>
           )
@@ -361,6 +364,7 @@ export const ListTabColumns = ({
       },
       {
         accessorKey: 'tags',
+        enableSorting: false,
         header: ({ column }) => (
           <DataTableColumnHeader
             column={column}

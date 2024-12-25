@@ -1,5 +1,5 @@
 import { PriorityTypeSchema, TaskStatusTypeSchema } from '@/prisma/zod'
-import { Role } from '@prisma/client'
+import { Role, TaskType } from '@prisma/client'
 import * as z from 'zod'
 
 export const LoginSchema = z.object({
@@ -71,10 +71,11 @@ export const TaskSchema = z
     description: z.string().nullable().optional(),
     priority: PriorityTypeSchema.default('LOW'),
     status: TaskStatusTypeSchema.default('NEW'),
-    projectId: z.string(),
+    projectId: z.string().min(10, { message: 'Please Choose a valid Project' }),
     tags: z.string().array().optional(),
     parentId: z.string().optional(),
     categoryId: z.string().optional(),
+    type: z.nativeEnum(TaskType),
   })
   .refine((data) => data.startDate <= data.dueDate, {
     message: 'Start Date must be before or equal to Due Date',

@@ -6,6 +6,7 @@ import { v4 } from 'uuid'
 import type { Task } from '@prisma/client'
 import { fetchTasksByProjectId } from '@src/lib/api/queries/Tasks/TaskQueries'
 import { resend } from '@src/email/mailer'
+import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 
 export const GET = auth(async (req) => {
   try {
@@ -74,16 +75,6 @@ export const POST = auth(async (req) => {
       )
     }
 
-    await db.tag.updateMany({
-      where: {
-        teamId: session?.user.teamId ?? 'undef',
-        title: {
-          in: task.tags,
-        },
-      },
-      data: {},
-    })
-
     // Creating Task
     try {
       await db.task.create({
@@ -91,8 +82,12 @@ export const POST = auth(async (req) => {
           ...task,
           id: newId,
           teamId: session?.user.teamId ?? 'undefined',
-          parentId: task.parentId ? task.parentId : undefined,
+          parentId:
+            task.parentId && !isTaskTypeContainer(task.type)
+              ? task.parentId
+              : undefined,
           taskCode: await generateTaskId(project.name, newId),
+
           tags: {
             connect: task.tags
               ? task.tags?.map((tagId) => ({ id: tagId }))

@@ -15,7 +15,7 @@ import UserAvatar from '@src/components/Avatar/UserAvatar'
 import UserMultiSelect from '@src/components/Select/UserMultiSelect'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import AddTaskCategoryDialog from '@src/components/Dialogs/AddTaskCategoryDialog'
-import TaskCategoryItem from '@src/components/task/TaskCategoryItem'
+import TaskCategoryItem from '@src/components/Task/TaskCategoryItem'
 
 interface SettingsTabProps {
   projectId: string

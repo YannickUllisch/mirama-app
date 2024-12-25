@@ -2,8 +2,12 @@ import type { Metadata } from 'next'
 import { auth } from '@auth'
 import SWRFallbackWrapper from '@src/components/Wrappers/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
-import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
+import {
+  fetchSingleProjectById,
+  fetchSingleProjectByName,
+} from '@src/lib/api/queries/Project/ProjectQuerys'
 import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'
+import { TaskType } from '@prisma/client'
 
 export const metadata: Metadata = {
   title: 'Create Task',
@@ -15,18 +19,23 @@ const Layout = async ({
   params,
 }: {
   children: React.ReactNode
-  params: { name: string; projectId: string }
+  params: { name: string; type: string }
 }) => {
   const session = await auth()
 
-  const project = await fetchSingleProjectById(params.projectId)
+  const project = await fetchSingleProjectByName(params.name)
   const tags = await fetchAllTeamTags(session)
 
   // Handling invalid dynamic routes
   if (!session?.user) {
     return redirect(
-      `/auth/login?callbackUrl=/app/${params.name}/create/${params.projectId}`,
+      `/auth/login?callbackUrl=/app/${params.name}/create/${params.type}`,
     )
+  }
+
+  const validTypes = Object.values(TaskType)
+  if (!validTypes.includes(params.type.toUpperCase() as TaskType)) {
+    redirect(`/app/${params.name}`)
   }
 
   if (!project) {

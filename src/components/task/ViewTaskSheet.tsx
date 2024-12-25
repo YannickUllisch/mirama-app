@@ -15,7 +15,6 @@ import {
   Folders,
   FolderSearch,
   Loader2,
-  Maximize2,
   MessagesSquareIcon,
   PanelBottomClose,
   Pencil,
@@ -55,7 +54,7 @@ const ViewTaskSheet = ({
   >(`/api/db/task/${taskId}`)
 
   // Tab definitions
-  const projectTabs: {
+  const taskSheetTabs: {
     id: string
     component: JSX.Element
     headerComponent: JSX.Element
@@ -232,7 +231,7 @@ const ViewTaskSheet = ({
             <SheetFooter className=" h-full justify-start p-3">
               <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
                 <TabsList className="inline-flex items-center justify-start border overflow-x-auto whitespace-nowrap sm:justify-center sm:gap-2">
-                  {projectTabs.map((tabHeader) => (
+                  {taskSheetTabs.map((tabHeader) => (
                     <TabsTrigger
                       style={{ fontSize: 12 }}
                       value={tabHeader.id}
@@ -242,7 +241,7 @@ const ViewTaskSheet = ({
                     </TabsTrigger>
                   ))}
                 </TabsList>
-                {projectTabs.map((tab) => (
+                {taskSheetTabs.map((tab) => (
                   <TabsContent value={tab.id} key={`${tab.id}-tab`}>
                     {tab.component}
                   </TabsContent>
