@@ -1,15 +1,9 @@
-import React, {
-  useContext,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from 'react'
+import React, { useState, type Dispatch, type SetStateAction } from 'react'
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetFooter,
-  SheetHeader,
   SheetTitle,
 } from '@src/components/ui/sheet'
 import {
@@ -50,7 +44,6 @@ import { SelectItem } from '../ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
 import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
-import { AssignedUserContext } from '@/app/app/(project)/[name]/page'
 
 interface ViewTaskSheet {
   open: boolean
