@@ -77,8 +77,6 @@ const ViewTaskSheet = ({
     }
   >(`/api/db/task/${taskId}`)
 
-  const users = useContext(AssignedUserContext)
-
   // Tab definitions
   const taskSheetTabs: {
     id: string
@@ -201,7 +199,7 @@ const ViewTaskSheet = ({
                       )
                     }
                   >
-                    {/* We iterate over project.users to only allow members connected to the current project */}
+                    {/* We iterate over project.users to only allow members connected to the current project
                     {users
                       ? users.map((user) => (
                           <SelectItem
@@ -218,7 +216,7 @@ const ViewTaskSheet = ({
                             </div>
                           </SelectItem>
                         ))
-                      : null}
+                      : null} */}
                   </GeneralTableSelect>
                 </div>
 

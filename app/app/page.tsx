@@ -9,7 +9,6 @@ import {
 } from '@src/components/ui/tabs'
 import { Grid2x2, TableProperties } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Separator } from '@src/components/ui/separator'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
 import GridTab from '@src/components/Tabs/DashboardTabs/GridTab'

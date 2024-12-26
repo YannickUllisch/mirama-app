@@ -23,10 +23,6 @@ import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
 import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 
-export const AssignedUserContext = createContext<
-  (ProjectUser & { user: User })[] | undefined
->(undefined)
-
 const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   // Session
   const { data: session } = useSession({ required: true })
@@ -145,17 +141,15 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
           )}
         </TabsList>
       </div>
-      <AssignedUserContext.Provider value={project?.users}>
-        {projectTabs.map(
-          (tab) =>
-            session &&
-            tab.roles.includes(session.user.role) && (
-              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                {tab.component}
-              </TabsContent>
-            ),
-        )}
-      </AssignedUserContext.Provider>
+      {projectTabs.map(
+        (tab) =>
+          session &&
+          tab.roles.includes(session.user.role) && (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ),
+      )}
     </Tabs>
   )
 }
