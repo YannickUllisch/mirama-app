@@ -21,6 +21,7 @@ import {
   type Task,
   type TaskCategory,
   TaskStatusType,
+  type TaskTagJoin,
   type TaskType,
   type User,
 } from '@prisma/client'
@@ -71,7 +72,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   const { data: task, mutate: updateTask } = useSWR<
     Task & {
       subtasks: Task[]
-      tags: Tag[]
+      tags: (TaskTagJoin & { tag: Tag })[]
     }
   >(`/api/db/task/${params.id}`)
 
@@ -102,7 +103,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       priority: task?.priority ?? PriorityType.LOW,
       projectId: task?.projectId ?? '',
       status: task?.status ?? TaskStatusType.NEW,
-      tags: task?.tags.map((tag) => tag.id),
+      tags: task?.tags.map((tag) => tag.tagId),
       parentId: task?.parentId ?? undefined,
       categoryId: task?.categoryId ?? undefined,
       type: task?.type ?? 'TASK',
@@ -154,7 +155,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                     style={{ textDecoration: 'none', fontSize: 12 }}
                     variant={'link'}
                   >
-                    Return to Overview
+                    Return
                   </Button>
                 </div>
               </ConfirmationDialog>
@@ -374,7 +375,12 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                     onBlur={field.onBlur}
                   >
                     <FormControl>
-                      <MultiSelectorTrigger className="w-full border-neutral-200 shadow-sm dark:border-neutral-800">
+                      <MultiSelectorTrigger
+                        renderValue={(item) =>
+                          tags?.find((tag) => tag.id === item)?.title
+                        }
+                        className="w-full border-neutral-200 shadow-sm dark:border-neutral-800"
+                      >
                         <MultiSelectorInput placeholder="Add Tag" />
                       </MultiSelectorTrigger>
                     </FormControl>
@@ -584,7 +590,10 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                 key={'link-subtask-dialog'}
                 parentId={params.id}
                 subTasks={
-                  project?.tasks?.filter((t) => t.parentId !== params.id) ?? []
+                  project?.tasks?.filter(
+                    (t) =>
+                      t.parentId !== params.id && !isTaskTypeContainer(t.type),
+                  ) ?? []
                 }
                 mutate={() => {
                   updateProject()

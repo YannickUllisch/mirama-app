@@ -19,7 +19,11 @@ export const fetchTasksByProjectId = async (
     include: {
       assignedTo: true,
       subtasks: true,
-      tags: true,
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
       category: true,
       comments: true,
     },
@@ -38,7 +42,11 @@ export const fetchTaskById = async (id: string) => {
     },
     include: {
       assignedTo: true,
-      tags: true,
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
       parent: true,
       subtasks: true,
       category: true,

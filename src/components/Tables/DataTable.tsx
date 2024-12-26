@@ -42,6 +42,7 @@ interface DataTableProps<TData extends TableData<TData>, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   dataLoading?: boolean
+  ignoreSubrows?: boolean
   sortingState?: SortingState
   setSortingState?: React.Dispatch<React.SetStateAction<SortingState>>
   enableRowSelection?: boolean
@@ -69,6 +70,7 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
   data,
   tableIdentifier,
   dataLoading,
+  ignoreSubrows,
   sortingState,
   setSortingState,
   enableRowSelection,
@@ -170,7 +172,7 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
     // Sets row ID to the ID of the given data.
     getRowId: (row, _, parent) =>
       parent ? [parent.id, row.id].join('.') : row.id,
-    getSubRows: (row) => row.subtasks || [],
+    getSubRows: (row) => (!ignoreSubrows ? row.subtasks || [] : undefined),
     getRowCanExpand: (row) => row.subRows && row.subRows.length > 0,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

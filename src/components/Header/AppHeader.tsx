@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
@@ -13,13 +13,8 @@ import Link from 'next/link'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 import { Button } from '../ui/button'
-import { Ellipsis, LinkIcon } from 'lucide-react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip'
+import { Ellipsis } from 'lucide-react'
+import { APP_HEADER_HEIGHT } from '@src/lib/constants'
 
 const AppHeader = () => {
   const pathname = usePathname()
@@ -44,7 +39,7 @@ const AppHeader = () => {
   return (
     <header
       style={{ zIndex: 50 }}
-      className="sticky top-0 w-full flex gap-2 h-[50px] border-b-2 p-4 justify-between bg-inherit dark:border-neutral-800/40 border-neutral-100/60"
+      className={`sticky top-0 w-full flex gap-2 h-[${APP_HEADER_HEIGHT}px] border-b-2 p-4 justify-between bg-inherit dark:border-neutral-800/40 border-neutral-100/60`}
     >
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />

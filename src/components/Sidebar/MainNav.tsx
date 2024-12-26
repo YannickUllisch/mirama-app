@@ -16,7 +16,7 @@ import {
   SidebarMenuSubItem,
 } from '@src/components/ui/sidebar'
 import Link from 'next/link'
-import type { AppMenuItem } from '@src/lib/constants'
+import type { AppMenuItem } from '@src/lib/types'
 import type { FC } from 'react'
 import type { Session } from 'next-auth'
 import { Role } from '@prisma/client'

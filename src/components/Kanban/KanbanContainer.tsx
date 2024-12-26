@@ -6,12 +6,14 @@ import clsx from 'clsx'
 import { capitalize } from '@src/lib/utils'
 import { TaskStatusType } from '@prisma/client'
 import { Ellipsis, Plus, SquarePlus } from 'lucide-react'
+import { Button } from '../ui/button'
 
 export interface KanbanContainerProps {
   id: UniqueIdentifier
   title: string
   itemAmount: number
   onAddItem?: () => void
+  className?: string
 }
 
 const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
@@ -20,6 +22,7 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   title,
   onAddItem,
   itemAmount,
+  className,
 }) => {
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: id,
@@ -36,25 +39,40 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'w-full h-screen p-4 bg-neutral-100 dark:bg-neutral-900 dark:border-neutral-800 border rounded-xl flex flex-col gap-y-4 cursor-default',
+        'w-full h-full rounded-md border flex flex-col cursor-default',
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h1 className="text-gray-800 text-xl dark:text-white">
-            {capitalize(title ?? '')}
-          </h1>
-          <span>{itemAmount}</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <Plus
-            className="cursor-pointer text-emerald-800 w-5 h-5"
-            onClick={onAddItem}
-          />
-          <Ellipsis className="cursor-pointer w-4 h-4" />
+      <div className="sticky top-0 bg-hover dark:bg-neutral-950/50 p-4 border-b dark:border-neutral-800 z-10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h1 className="text-gray-800 text-xl dark:text-white">
+              {capitalize(title ?? '')}
+            </h1>
+            <span>{itemAmount}</span>
+          </div>
+          <div className="flex gap-2 items-center">
+            <Button
+              variant={'ghost'}
+              className="w-fit p-1 h-fit"
+              onClick={onAddItem}
+            >
+              <Plus className="cursor-pointer text-emerald-800 w-5 h-5" />
+            </Button>
+            <Button variant={'ghost'} className="w-fit p-1 h-fit">
+              <Ellipsis className="cursor-pointer w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">{children}</div>
+      {/* Scrollable Children */}
+      <div
+        className={clsx(
+          'overflow-y-auto w-full p-4 flex flex-col gap-2 h-full ', // Adjust styles as needed
+          className,
+        )}
+      >
+        {children}
+      </div>
     </div>
   )
 }

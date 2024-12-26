@@ -151,7 +151,7 @@ export const getColorByTaskStatusType = (status: string) => {
     case 'DONE':
       return 'bg-emerald-500 hover:bg-emerald-400 text-white'
     case 'ACTIVE':
-      return 'bg-yellow-500 hover:bg-yellow-400 text-white'
+      return 'bg-blue-500 hover:bg-blue-400 text-white'
     case 'NEW':
       return 'bg-gray-400 hover:bg-gray-300 text-white'
     default:

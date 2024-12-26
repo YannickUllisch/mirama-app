@@ -1,6 +1,5 @@
 'use client'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { MixerHorizontalIcon } from '@radix-ui/react-icons'
 import type { Table } from '@tanstack/react-table'
 import {
   DropdownMenu,
@@ -10,6 +9,7 @@ import {
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
 import { Button } from '@src/components/ui/button'
+import { ScanEye } from 'lucide-react'
 
 interface ToolbarViewOptionsProps<TData> {
   table: Table<TData>
@@ -24,14 +24,13 @@ export function ToolbarViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex bg-inherit"
+          className="ml-auto border-none hidden h-8 lg:flex bg-inherit gap-2"
         >
-          <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          View
+          <ScanEye className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

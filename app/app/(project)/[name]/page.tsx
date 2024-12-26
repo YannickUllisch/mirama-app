@@ -1,6 +1,6 @@
 'use client'
-import { type Project, Role } from '@prisma/client'
-import React, { type JSX, useEffect, useState } from 'react'
+import { type Project, type ProjectUser, Role, type User } from '@prisma/client'
+import React, { createContext, type JSX, useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -10,7 +10,6 @@ import {
 import {
   ClipboardList,
   GanttChart,
-  LayoutList,
   Map as MapIcon,
   Settings,
   Table2,
@@ -18,21 +17,24 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
-import AnalyticsTab from '@src/components/Tabs/ProjectTabs/AnalyticsTab'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 import GanttTab from '@src/components/Tabs/ProjectTabs/GanttTab'
 import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
 import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 
+export const AssignedUserContext = createContext<
+  (ProjectUser & { user: User })[] | undefined
+>(undefined)
+
 const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   // Session
   const { data: session } = useSession({ required: true })
 
   // Fetching Project by name
-  const { data: project } = useSWR<Project>(
-    `/api/db/project/name/${params.name}`,
-  )
+  const { data: project } = useSWR<
+    Project & { users: (ProjectUser & { user: User })[] }
+  >(`/api/db/project/name/${params.name}`)
 
   // Tab definitions
   const projectTabs: {
@@ -143,15 +145,17 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
           )}
         </TabsList>
       </div>
-      {projectTabs.map(
-        (tab) =>
-          session &&
-          tab.roles.includes(session.user.role) && (
-            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-              {tab.component}
-            </TabsContent>
-          ),
-      )}
+      <AssignedUserContext.Provider value={project?.users}>
+        {projectTabs.map(
+          (tab) =>
+            session &&
+            tab.roles.includes(session.user.role) && (
+              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+                {tab.component}
+              </TabsContent>
+            ),
+        )}
+      </AssignedUserContext.Provider>
     </Tabs>
   )
 }

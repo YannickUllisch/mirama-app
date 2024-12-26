@@ -22,7 +22,6 @@ export const GET = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-
     const response = await fetchSingleProjectById(id)
 
     return Response.json(response, { status: 200 })

@@ -4,6 +4,7 @@ import { flexRender, type Table } from '@tanstack/react-table'
 import { TableHead, TableHeader, TableRow } from '@src/components//ui/table'
 import { GripVertical } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { APP_HEADER_HEIGHT } from '@src/lib/constants'
 
 interface DataTableContentProps<TData extends TableData<TData>> {
   table: Table<TData>
@@ -20,7 +21,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
       if (headerRef.current) {
         const rect: DOMRect = headerRef.current.getBoundingClientRect()
 
-        setIsSticky(rect.top <= 69)
+        setIsSticky(rect.top <= APP_HEADER_HEIGHT - 3)
       }
     }
     window.addEventListener('scroll', handleScroll)
@@ -35,7 +36,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
       ref={headerRef}
       style={{ zIndex: 4 }}
       className={`dark:bg-neutral-900 bg-neutral-50 ${
-        isSticky ? 'sticky top-[69px]' : ''
+        isSticky ? `sticky top-[${APP_HEADER_HEIGHT - 3}px]` : ''
       }`}
     >
       {table.getHeaderGroups().map((headerGroup) => (

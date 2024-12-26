@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { FC } from 'react'
-import { ChevronDown, Plus, View } from 'lucide-react'
-import { capitalize, cn } from '@src/lib/utils'
+import { ChevronDown, Plus } from 'lucide-react'
+import { capitalize } from '@src/lib/utils'
 import { Button } from '@src/components/ui/button'
 import {
   DropdownMenu,
@@ -29,7 +29,7 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({
 }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer px-2">
           <Plus width={15} />
           <Button

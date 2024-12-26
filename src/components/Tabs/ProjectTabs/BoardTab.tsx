@@ -1,6 +1,6 @@
 'use client'
 import type { FC } from 'react'
-import type { Task, User } from '@prisma/client'
+import type { KanbanColumn, Task, User } from '@prisma/client'
 import useSWR from 'swr'
 import type { Session } from 'next-auth'
 import KanbanBoard from '@src/components/Kanban/KanbanBoard'

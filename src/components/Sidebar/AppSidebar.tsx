@@ -23,7 +23,7 @@ import {
   type Team,
   type User,
 } from '@prisma/client'
-import type { AppMenuItem, SecondaryAppMenuItem } from '@src/lib/constants'
+import type { AppMenuItem, SecondaryAppMenuItem } from '@src/lib/types'
 import SidebarMainNav from './MainNav'
 import SidebarProjectsNav from './ProjectsNav'
 import SidebarSecondaryNav from './SecondaryNav'

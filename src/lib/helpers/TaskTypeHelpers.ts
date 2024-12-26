@@ -5,6 +5,7 @@ export const isTaskTypeContainer = (type: TaskType): boolean => {
 }
 export const containerTaskTypes =
   Object.values(TaskType).filter(isTaskTypeContainer)
+
 export const individualTaskTypes = Object.values(TaskType).filter(
   (type) => !isTaskTypeContainer(type),
 )

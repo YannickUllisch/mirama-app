@@ -33,26 +33,27 @@ import {
 import { SelectItem } from '@src/components/ui/select'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
-import { CheckSquare, EyeIcon, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { CheckSquare, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { capitalize } from '@src/lib/utils'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import Link from 'next/link'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@src/components/ui/sheet'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Label } from '@src/components/ui/label'
-import ViewTaskSheet from '@src/components/Task/ViewTaskSheet'
 import { Separator } from '@src/components/ui/separator'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import dynamic from 'next/dynamic'
+
+// Dynamically import ViewTaskSheet
+const ViewTaskSheet = dynamic(
+  () => import('@src/components/Task/ViewTaskSheet'),
+  {
+    ssr: false, // Ensure it's only loaded on the client side
+  },
+)
 
 const defaultMilestone: Milestone = {
   colors: '#FFFFFF',
@@ -62,7 +63,12 @@ const defaultMilestone: Milestone = {
   title: '',
 }
 
-type TaskKey = 'assignedTo.name' | 'priority' | 'category.title' | 'status'
+type TaskKey =
+  | 'assignedTo.name'
+  | 'priority'
+  | 'category.title'
+  | 'status'
+  | 'type'
 
 const groupOptions: {
   label: string
@@ -72,6 +78,7 @@ const groupOptions: {
   { label: 'Priority', key: 'priority' },
   { label: 'Category', key: 'category.title' },
   { label: 'Status', key: 'status' },
+  { label: 'Type', key: 'type' },
 ]
 
 const GanttTab = ({
@@ -110,7 +117,11 @@ const GanttTab = ({
       category: TaskCategory | null
       tags: Tag[]
     })[]
-  >(`/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`)
+  >(
+    projectId
+      ? `/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`
+      : null,
+  )
 
   const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
     `/api/db/project/milestones?id=${projectId}`,
@@ -250,6 +261,7 @@ const GanttTab = ({
                               dueDate={new Date(task.dueDate)}
                               startDate={new Date(task.startDate)}
                             >
+                              {getTaskTypeIcon(task.type, 12)}
                               <p className="flex-1 truncate text-xs">
                                 {task.title}
                               </p>
@@ -347,6 +359,7 @@ const GanttTab = ({
         setOpen={setIsTaskOpen}
         taskId={selectedTaskId ?? ''}
         projectName={projectName}
+        mutate={updateTasks}
       />
     </>
   )

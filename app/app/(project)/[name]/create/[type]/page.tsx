@@ -27,7 +27,6 @@ import {
 import {
   BookCheck,
   BookOpenCheck,
-  Bug,
   MessageCircleWarning,
   Save,
   Undo,
@@ -60,7 +59,6 @@ import { capitalize } from '@src/lib/utils'
 import { Label } from '@src/components/ui/label'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import useSWR from 'swr'
-import TaskTypeSelect from '@src/components/Task/TaskTypeCreate'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 
@@ -101,6 +99,7 @@ const CreateTaskForm = ({
       projectId: defaultProjectId ?? '',
       status: TaskStatusType.NEW,
       tags: [],
+      subtasks: ['2523'],
       parentId:
         defaultParentId &&
         !isTaskTypeContainer(params.type.toUpperCase() as TaskType)
@@ -366,7 +365,12 @@ const CreateTaskForm = ({
                     onBlur={field.onBlur}
                   >
                     <FormControl>
-                      <MultiSelectorTrigger className="w-full border-neutral-200 shadow-sm dark:border-neutral-800">
+                      <MultiSelectorTrigger
+                        renderValue={(item) =>
+                          tags?.find((tag) => tag.id === item)?.title
+                        }
+                        className="w-full border-neutral-200 shadow-sm dark:border-neutral-800"
+                      >
                         <MultiSelectorInput placeholder="Add Tag" />
                       </MultiSelectorTrigger>
                     </FormControl>

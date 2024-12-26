@@ -34,6 +34,14 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+enum Role {
+  OWNER
+  ADMIN
+  USER
+  FREELANCE
+  OBSERVER
+}
+
 // Overarching model, Projects and Tasks are specifically created in a Team.
 model Team {
   id          String    @id @default(cuid())
@@ -77,6 +85,14 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model CompanyInvitation {
+  email     String   @id
+  name      String  
+  role      Role
+  teamId    String
+  expiresAt DateTime @default(now())
+}
+
 model Project {
   id          String       @id @default(cuid())
   name        String
@@ -97,7 +113,7 @@ model Project {
   expenses    Expense[]
   notifications Notification[]
   milestones    Milestone[]
-
+  kanbanColumns KanbanColumn[]
 
   // Task categories are defined at project level. 
   taskCategories  TaskCategory[]
@@ -105,6 +121,22 @@ model Project {
   @@index([name, teamId], map: "name_team_idx")
   @@index([teamId, archived], map: "team_archived_idx")
 }
+
+// Join table to represent many-to-many relationship between Project and User
+model ProjectUser {
+    id          String     @default(cuid()) @id
+    projectId   String
+    userId      String
+    isManager   Boolean    @default(false)
+
+    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
+    @@index([projectId], map: "project_user_project_idx")
+    @@index([userId], map: "project_user_user_idx")
+}
+
 
 model Milestone {
   id      String    @id @default(cuid())
@@ -146,8 +178,8 @@ model Task {
   project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
   teamId       String
   team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  tags          Tag[]
-  comments      Comment[]
+  tags         TaskTagJoin[]
+  comments     Comment[]
   
   @@index([projectId], map: "task_project_id_idx")
   @@index([assignedToId, teamId], map: "task_assignedTo_team_idx")  
@@ -160,27 +192,6 @@ enum TaskType {
   TASK
   FEATURE
   EPIC
-}
-
-model TaskCategory {
-  id    String    @id @default(cuid())
-  title String
-
-  projectId   String
-  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  color       String            @default("#000000")
-
-  task Task[]
-}
-
-
-enum Role {
-  OWNER
-  ADMIN
-  USER
-  FREELANCE
-  OBSERVER
 }
 
 enum PriorityType {
@@ -203,19 +214,16 @@ enum TaskStatusType {
 }
 
 
-// Join table to represent many-to-many relationship between Project and User
-model ProjectUser {
-    id          String     @default(cuid()) @id
-    projectId   String
-    userId      String
-    isManager   Boolean    @default(false)
+model TaskCategory {
+  id    String    @id @default(cuid())
+  title String
 
-    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-    @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
-    @@index([projectId], map: "project_user_project_idx")
-    @@index([userId], map: "project_user_user_idx")
+  color       String            @default("#000000")
+
+  task        Task[]
 }
 
 model Tag {
@@ -228,8 +236,19 @@ model Tag {
   projectId   String?
   project     Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  taskId   String?
-  task     Task?           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tasks       TaskTagJoin[]
+}
+
+model TaskTagJoin {
+  id      String @id @default(cuid())
+
+  taskId  String
+  task    Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  tagId   String
+  tag     Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, tagId]) // Prevent duplicate associations
 }
 
 // Expense modelling
@@ -294,11 +313,12 @@ model Notification {
   createdAt       DateTime  @default(now())
 }
 
-model CompanyInvitation {
-  email     String   @id
-  name      String  
-  role      Role
-  teamId    String
-  expiresAt DateTime @default(now())
+model KanbanColumn {
+  id            String @id @default(cuid())
+  name          String 
+  status        TaskStatusType
+  nextColumnId  String?   // Modelling Columns as linked list
 
+  projectId     String
+  project       Project @relation(fields: [projectId], references: [id])
 }

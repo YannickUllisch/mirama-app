@@ -3,10 +3,11 @@ import { CSS } from '@dnd-kit/utilities'
 import type { FC } from 'react'
 import UserAvatar from '../Avatar/UserAvatar'
 import { ClipboardCheck, UserIcon } from 'lucide-react'
-import type { KanbanItemType } from '@src/lib/constants'
+import type { KanbanItemType } from '@src/lib/types'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 
 const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
   const path = usePathname()
@@ -40,7 +41,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
         {/* Task title and link */}
         <div>
           <div className="flex gap-1 mb-1 hover:underline">
-            <ClipboardCheck width={15} className="flex-shrink-0" />{' '}
+            {getTaskTypeIcon(task?.type ?? 'TASK')}
             <Link href={`${path}/edit/${task?.id}`} legacyBehavior>
               <div
                 style={{ fontSize: 11 }}

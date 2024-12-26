@@ -22,7 +22,7 @@ import {
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import type { DndType } from '@src/lib/constants'
+import type { DndType } from '@src/lib/types'
 import type { Session } from 'next-auth'
 
 interface KanbanBoardProps {
@@ -47,6 +47,8 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
     }))
   }, [tasks])
 
+  const [hoveredContainerId, setHoveredContainerId] =
+    useState<UniqueIdentifier | null>(null)
   const [containers, setContainers] = useState<DndType[]>(initCols)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [_currentContainerId, setCurrentContainerId] =
@@ -135,6 +137,19 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
 
   const handleDragMove = (event: DragMoveEvent) => {
     const { active, over } = event
+
+    if (over?.data.current?.type === 'container') {
+      // Hovering directly over a container
+      setHoveredContainerId(over.id)
+    } else if (over?.data.current?.type === 'item') {
+      // Hovering over an item, find its container
+      const container = findValueOfItems(over.id, 'item') // Your helper function to locate the container
+      if (container) {
+        setHoveredContainerId(container.id)
+      }
+    } else {
+      setHoveredContainerId(null)
+    }
 
     // Handle Item sorting
     if (
@@ -229,7 +244,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
   // This is the function that handles the sorting of the containers and items when the user is done dragging.
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-
+    setHoveredContainerId(null)
     // Exit early if either `active` or `over` is null
     if (!active?.id || !over?.id) return
 
@@ -314,7 +329,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
   }
 
   return (
-    <div className="flex w-full min-h-screen justify-center">
+    <div className="flex w-full max-h-full justify-center">
       <div className="flex w-full gap-6">
         <DndContext
           sensors={sensors}
@@ -326,8 +341,13 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
           <SortableContext items={containers.map((container) => container.id)}>
             {containers.map((container) => (
               <KanbanContainer
+                className={
+                  hoveredContainerId === container.id
+                    ? 'bg-blue-500/10'
+                    : undefined
+                }
                 key={container.id}
-                title={container.title.replace('_', ' ')}
+                title={container.title}
                 itemAmount={container.items.length}
                 id={container.id}
                 onAddItem={() => {

@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState, type FC, type PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import {
   Select,
   SelectContent,
@@ -8,8 +8,8 @@ import {
   SelectValue,
 } from '@src/components/ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import ClearButton from '../Buttons/ClearButton'
 import { SelectItem } from '../ui/select'
+import { UserIcon } from 'lucide-react'
 
 interface GeneralTableSelectProps {
   initialValue: string | React.ReactNode
@@ -56,7 +56,10 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
           {children}
           {clearable && (
             <SelectItem value={'undefined'}>
-              <div />
+              <div className="flex items-center gap-4 ml-1">
+                <UserIcon className="w-[18px]" />
+                <span>Unassigned</span>
+              </div>
             </SelectItem>
           )}
         </SelectGroup>

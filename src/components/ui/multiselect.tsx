@@ -185,7 +185,7 @@ const MultiSelectorTrigger = forwardRef<
             'px-1 rounded-sm flex items-center gap-1',
             activeIndex === index && 'ring-2 ring-muted-foreground ',
           )}
-          variant={'destructive'}
+          variant={'outline'}
         >
           <span className="text-xs">
             {renderValue ? renderValue(item) : item}
@@ -215,11 +215,14 @@ const MultiSelectorInput = forwardRef<
 >(({ className, ...props }, ref) => {
   const { setOpen, inputValue, setInputValue, activeIndex, setActiveIndex } =
     useMultiSelect()
+  const resolvedValue = inputValue // This is the raw input value
+    ? inputValue // Show inputValue directly if not resolved
+    : ''
   return (
     <CommandPrimitive.Input
       {...props}
       ref={ref}
-      value={inputValue}
+      value={resolvedValue}
       onValueChange={activeIndex === -1 ? setInputValue : undefined}
       onBlur={() => setOpen(false)}
       onClick={() => {

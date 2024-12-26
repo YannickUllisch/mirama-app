@@ -87,11 +87,10 @@ export const POST = auth(async (req) => {
               ? task.parentId
               : undefined,
           taskCode: await generateTaskId(project.name, newId),
-
           tags: {
-            connect: task.tags
-              ? task.tags?.map((tagId) => ({ id: tagId }))
-              : undefined,
+            create: task.tags?.map((tagId) => ({
+              tag: { connect: { id: tagId } },
+            })),
           },
         },
       })
@@ -171,8 +170,10 @@ export const PUT = auth(async (req) => {
     const task = (await req.json()) as Partial<
       Omit<Task, 'id' | 'teamId'> & {
         tags?: string[]
+        subtasks?: string[]
       }
     >
+
     if (!task) {
       return Response.json(
         { ok: false, message: 'Task attributes must be defined in request' },
@@ -181,21 +182,53 @@ export const PUT = auth(async (req) => {
     }
 
     try {
-      await db.task.update({
+      const attachedTags = await db.taskTagJoin.findMany({
         where: {
-          id,
-          teamId: session?.user.teamId,
+          taskId: id,
         },
-        data: {
-          ...task,
-          parentId: id !== task.parentId ? task.parentId : null, // Avoid self-parenting
-          tags: {
-            connect: task.tags
-              ? task.tags?.map((tagId) => ({ id: tagId }))
-              : undefined,
-          },
+        select: {
+          tagId: true,
         },
       })
+
+      const existingTagIds = attachedTags.map((tag) => tag.tagId)
+
+      const tagsToRemove =
+        existingTagIds.filter((tagId) => !task.tags?.includes(tagId)) ?? []
+      const tagsToAdd =
+        task.tags?.filter((tagId) => !existingTagIds.includes(tagId)) ?? []
+
+      await db.$transaction([
+        // Remove tags
+        db.taskTagJoin.deleteMany({
+          where: {
+            taskId: id,
+            tagId: { in: tagsToRemove },
+          },
+        }),
+
+        // Add new tags
+        db.taskTagJoin.createMany({
+          data: tagsToAdd.map((tagId) => ({
+            taskId: id,
+            tagId,
+          })),
+        }),
+
+        // Update task details
+        db.task.update({
+          where: {
+            id,
+            teamId: session?.user.teamId,
+          },
+          data: {
+            ...task,
+            parentId: id !== task.parentId ? task.parentId : null, // Avoid self-parenting
+            tags: undefined,
+            subtasks: undefined,
+          },
+        }),
+      ])
     } catch (err) {
       console.error(err)
       throw err

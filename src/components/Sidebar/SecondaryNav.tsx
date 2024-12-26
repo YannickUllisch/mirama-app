@@ -7,7 +7,7 @@ import {
 } from '@src/components/ui/sidebar'
 import Link from 'next/link'
 import type { FC } from 'react'
-import type { SecondaryAppMenuItem } from '@src/lib/constants'
+import type { SecondaryAppMenuItem } from '@src/lib/types'
 
 interface SecondaryNavProps
   extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {

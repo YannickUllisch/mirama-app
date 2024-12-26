@@ -73,6 +73,7 @@ export const TaskSchema = z
     status: TaskStatusTypeSchema.default('NEW'),
     projectId: z.string().min(10, { message: 'Please Choose a valid Project' }),
     tags: z.string().array().optional(),
+    subtasks: z.string().array().optional(),
     parentId: z.string().optional(),
     categoryId: z.string().optional(),
     type: z.nativeEnum(TaskType),

@@ -77,7 +77,7 @@ const DataTableToolbar = <TData extends TableData<TData>>({
             </div>
           )}
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-1 items-center">
           {toolbarOptions?.addToolbarright}
           <ToolbarViewOptions table={table} />
           {toolbarOptions?.refresh && (

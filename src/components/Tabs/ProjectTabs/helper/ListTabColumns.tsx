@@ -1,6 +1,7 @@
 import {
   PriorityType,
   TaskStatusType,
+  type TaskTagJoin,
   type Tag,
   type Task,
   type TaskCategory,
@@ -17,6 +18,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@src/components/ui/hover-card'
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
@@ -58,7 +64,7 @@ export const ListTabColumns = ({
   mutate: KeyedMutator<
     (Task & {
       assignedTo: User
-      tags: Tag[]
+      tags: (TaskTagJoin & { tag: Tag })[]
       subtasks: Task[]
       category: TaskCategory | null
     })[]
@@ -245,6 +251,7 @@ export const ListTabColumns = ({
               )}
               apiRoute="task"
               paramToUpdate="priority"
+              stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
             >
               {Object.keys(PriorityType).map((priority) => (
                 <SelectItem key={`priority-item-${priority}`} value={priority}>
@@ -270,11 +277,39 @@ export const ListTabColumns = ({
           />
         ),
         id: 'status',
-        cell: ({ getValue }) => {
+        cell: ({ getValue, row }) => {
           return (
-            <Badge className={getColorByTaskStatusType(getValue() as string)}>
-              {capitalize(getValue() as string)}
-            </Badge>
+            <GeneralTableSelect
+              key={`status-${row.id}`}
+              id={row.original.id}
+              mutate={mutate}
+              initialValue={
+                <div className="flex gap-2 items-center">
+                  <div
+                    className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
+                      getValue() as string,
+                    )}`}
+                  />
+                  {capitalize(getValue() as string)}
+                </div>
+              }
+              apiRoute="task"
+              paramToUpdate="status"
+              stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
+            >
+              {Object.keys(TaskStatusType).map((status) => (
+                <SelectItem key={`status-item-${status}`} value={status}>
+                  <div className="flex gap-2 items-center">
+                    <div
+                      className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
+                        status,
+                      )}`}
+                    />
+                    {capitalize(status)}
+                  </div>
+                </SelectItem>
+              ))}
+            </GeneralTableSelect>
           )
         },
         filterFn: (row, id, value) => {
@@ -301,6 +336,9 @@ export const ListTabColumns = ({
               apiRoute="task"
               paramToUpdate="assignedToId"
               clearable
+              stylingProps={{
+                triggerStyle: !assignedTo ? '' : 'w-fit h-fit p-1',
+              }}
               initialValue={
                 assignedTo ? (
                   <div className="flex items-center gap-1">
@@ -364,6 +402,7 @@ export const ListTabColumns = ({
       },
       {
         accessorKey: 'tags',
+        id: 'tags',
         enableSorting: false,
         header: ({ column }) => (
           <DataTableColumnHeader
@@ -372,22 +411,54 @@ export const ListTabColumns = ({
             icon={<TagIcon className="dark:text-neutral-400" size={15} />}
           />
         ),
-        id: 'tags',
         size: 50,
         cell: ({ row, getValue }) => {
+          const tasks = getValue() as (TaskTagJoin & { tag: Tag })[]
+          const taskCount = tasks.length
+
+          // If there are more than 2 tasks, we will show the "X tasks left" badge
+          const remainingTasks = taskCount > 2 ? tasks.slice(2) : []
+
           return (
             <div
-              className="flex items-center cursor-default justify-left mr-8 gap-1"
+              className="flex items-center cursor-default justify-left flex-wrap gap-1"
               key={`tag-${row.index}`}
             >
-              {(getValue() as Tag[]).map((tag) => (
-                <span
-                  key={`status-item-${tag.title}`}
-                  className="bg-destructive text-white p-1 rounded-lg"
+              {/* Render up to 2 task badges */}
+              {tasks.slice(0, 2).map((tag) => (
+                <Badge
+                  variant="outline"
+                  className="flex-nowrap whitespace-nowrap text-ellipsis"
+                  key={`status-item-${tag.tag.title}`}
                 >
-                  {tag.title}
-                </span>
+                  {tag.tag.title}
+                </Badge>
               ))}
+
+              {/* Render the "X tasks left" badge if there are more than 2 tasks */}
+              {remainingTasks.length > 0 && (
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <Badge
+                      variant="outline"
+                      className="flex-nowrap whitespace-nowrap text-ellipsis"
+                    >
+                      .. {remainingTasks.length}
+                    </Badge>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    {/* Display the remaining tasks in the HoverCard */}
+                    {remainingTasks.map((task) => (
+                      <div
+                        key={`remaining-task-${task.id}`}
+                        className="text-xs"
+                      >
+                        {task.tag.title}
+                      </div>
+                    ))}
+                  </HoverCardContent>
+                </HoverCard>
+              )}
             </div>
           )
         },

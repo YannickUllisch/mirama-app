@@ -1,5 +1,5 @@
 import type { Session } from 'next-auth'
-import type { GoogleCalendarEvent } from '../constants'
+import type { GoogleCalendarEvent } from '../types'
 import { signIn } from 'next-auth/react'
 import { postResource } from './postResource'
 
