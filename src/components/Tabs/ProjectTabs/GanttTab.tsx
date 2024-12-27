@@ -1,19 +1,10 @@
 'use client'
-import {
-  type Tag,
-  TaskStatusType,
-  type Milestone,
-  type Task,
-  type TaskCategory,
-  type User,
-} from '@prisma/client'
+import type { Tag, Milestone, Task, TaskCategory, User } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import {
   ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
   ContextMenuTrigger,
 } from '@src/components/ui/context-menu'
 import {
@@ -24,28 +15,26 @@ import {
   GanttHeader,
   GanttMarker,
   GanttProvider,
+  GanttRangeEnum,
   GanttSidebar,
   GanttSidebarGroup,
   GanttSidebarItem,
   GanttTimeline,
   GanttToday,
 } from '@src/components/ui/roadmap-ui/gantt'
-import { SelectItem } from '@src/components/ui/select'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
-import { CheckSquare, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
 import get from 'lodash/get'
 import { capitalize } from '@src/lib/utils'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import Link from 'next/link'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Label } from '@src/components/ui/label'
-import { Separator } from '@src/components/ui/separator'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import dynamic from 'next/dynamic'
+import TaskContextContent from '@src/components/Task/TaskContextContent'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -149,16 +138,6 @@ const GanttTab = ({
     setSelectedTaskId(id)
   }
 
-  // Copying URL of Task
-  const handleCopyLink = (id: string) => {
-    if (typeof window !== 'undefined') {
-      const currentURL = window.location.origin
-      navigator.clipboard.writeText(
-        `${currentURL}/app/${projectName}/edit/${id}`,
-      )
-    }
-  }
-
   const handleInteractMarker = (id: string) => {
     const marker = milestones?.find((milestone) => milestone.id === id)
     setSelectedMilestone(marker ?? defaultMilestone)
@@ -188,18 +167,24 @@ const GanttTab = ({
   return (
     <>
       <div className="flex pb-4 gap-2 items-center ">
-        <GeneralSelect value={rangeView} setValue={setRangeView}>
-          <SelectItem value="daily">Daily</SelectItem>
-          <SelectItem value="monthly">Monthly</SelectItem>
-          <SelectItem value="quarterly">Quarterly</SelectItem>
-        </GeneralSelect>
-        <GeneralSelect value={groupKey} setValue={setGroupKey}>
-          {groupOptions.map((option) => (
-            <SelectItem key={option.key} value={option.key}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </GeneralSelect>
+        <GeneralSelect
+          value={rangeView}
+          setValue={setRangeView}
+          items={Object.keys(GanttRangeEnum).map((range) => ({
+            label: capitalize(range),
+            value: range,
+          }))}
+        />
+
+        <GeneralSelect
+          value={groupKey}
+          setValue={setGroupKey}
+          items={groupOptions.map((option) => ({
+            label: option.label,
+            value: option.key,
+          }))}
+        />
+
         <div className="flex items-center space-x-2 text-text-secondary">
           <Checkbox
             className="border-text-secondary"
@@ -275,59 +260,11 @@ const GanttTab = ({
                             </GanttFeatureItem>
                           </button>
                         </ContextMenuTrigger>
-                        <ContextMenuContent>
-                          <ContextMenuItem
-                            className="flex items-center gap-2"
-                            onClick={() =>
-                              updateResourceById(
-                                '/task',
-                                task.id,
-                                { status: TaskStatusType.DONE },
-                                { mutate: updateTasks },
-                              )
-                            }
-                          >
-                            <CheckSquare
-                              size={16}
-                              className="text-muted-foreground"
-                            />
-                            Mark as Complete
-                          </ContextMenuItem>
-                          <Separator />
-                          <ContextMenuItem
-                            className="flex items-center gap-2"
-                            asChild
-                          >
-                            <Link href={`/app/${projectName}/edit/${task.id}`}>
-                              <Pencil
-                                size={16}
-                                className="text-muted-foreground"
-                              />
-                              Edit Task
-                            </Link>
-                          </ContextMenuItem>
-                          <ContextMenuItem
-                            className="flex items-center gap-2"
-                            onClick={() => handleCopyLink(task.id)}
-                          >
-                            <LinkIcon
-                              size={16}
-                              className="text-muted-foreground"
-                            />
-                            Copy link
-                          </ContextMenuItem>
-                          <ContextMenuItem
-                            className="flex items-center gap-2 text-destructive"
-                            onClick={() =>
-                              deleteResources('task', [task.id], {
-                                mutate: updateTasks,
-                              })
-                            }
-                          >
-                            <TrashIcon size={16} />
-                            Delete Task
-                          </ContextMenuItem>
-                        </ContextMenuContent>
+                        <TaskContextContent
+                          mutate={updateTasks}
+                          projectName={projectName}
+                          taskId={task.id}
+                        />
                       </ContextMenu>
                     </div>
                   ))}

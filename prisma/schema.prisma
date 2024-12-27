@@ -190,6 +190,7 @@ enum TaskType {
   ISSUE
   STORY
   TASK
+  TEST
   FEATURE
   EPIC
 }

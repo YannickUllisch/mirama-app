@@ -1,4 +1,3 @@
-import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchAllPersonalTasks } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'

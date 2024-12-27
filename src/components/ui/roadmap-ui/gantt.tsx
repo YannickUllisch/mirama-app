@@ -87,7 +87,12 @@ export type GanttMarkerProps = {
   label: string
 }
 
-export type Range = 'daily' | 'monthly' | 'quarterly'
+export type GanttRange = 'daily' | 'monthly' | 'quarterly'
+export enum GanttRangeEnum {
+  daily = 'daily',
+  monthly = 'monthly',
+  quarterly = 'quarterly',
+}
 
 export type TimelineData = {
   year: number
@@ -100,7 +105,7 @@ export type TimelineData = {
 
 export type GanttContextProps = {
   zoom: number
-  range: Range
+  range: GanttRange
   columnWidth: number
   sidebarWidth: number
   headerHeight: number
@@ -111,7 +116,7 @@ export type GanttContextProps = {
   ref: RefObject<HTMLDivElement> | null
 }
 
-const getsDaysIn = (range: Range) => {
+const getsDaysIn = (range: GanttRange) => {
   // For when range is daily
   let fn = (_date: Date) => 1
 
@@ -122,7 +127,7 @@ const getsDaysIn = (range: Range) => {
   return fn
 }
 
-const getDifferenceIn = (range: Range) => {
+const getDifferenceIn = (range: GanttRange) => {
   let fn = differenceInDays
 
   if (range === 'monthly' || range === 'quarterly') {
@@ -132,7 +137,7 @@ const getDifferenceIn = (range: Range) => {
   return fn
 }
 
-const getInnerDifferenceIn = (range: Range) => {
+const getInnerDifferenceIn = (range: GanttRange) => {
   let fn = differenceInHours
 
   if (range === 'monthly' || range === 'quarterly') {
@@ -142,7 +147,7 @@ const getInnerDifferenceIn = (range: Range) => {
   return fn
 }
 
-const getStartOf = (range: Range) => {
+const getStartOf = (range: GanttRange) => {
   let fn = startOfDay
 
   if (range === 'monthly' || range === 'quarterly') {
@@ -152,7 +157,7 @@ const getStartOf = (range: Range) => {
   return fn
 }
 
-const getEndOf = (range: Range) => {
+const getEndOf = (range: GanttRange) => {
   let fn = endOfDay
 
   if (range === 'monthly' || range === 'quarterly') {
@@ -162,7 +167,7 @@ const getEndOf = (range: Range) => {
   return fn
 }
 
-const getAddRange = (range: Range) => {
+const getAddRange = (range: GanttRange) => {
   let fn = addDays
 
   if (range === 'monthly' || range === 'quarterly') {
@@ -293,7 +298,7 @@ const getWidth = (
 
 const calculateInnerOffset = (
   date: Date,
-  range: Range,
+  range: GanttRange,
   columnWidth: number,
 ) => {
   const startOf = getStartOf(range)
@@ -451,7 +456,7 @@ const QuarterlyHeader: FC = () => {
   )
 }
 
-const headers: Record<Range, FC> = {
+const headers: Record<GanttRange, FC> = {
   daily: DailyHeader,
   monthly: MonthlyHeader,
   quarterly: QuarterlyHeader,
@@ -1083,7 +1088,7 @@ export const GanttMarker: FC<
 }
 
 export type GanttProviderProps = {
-  range?: Range
+  range?: GanttRange
   zoom?: number
   startDate?: Date
   endDate?: Date

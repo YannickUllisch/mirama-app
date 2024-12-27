@@ -1,29 +1,44 @@
 import type React from 'react'
-import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
+import {
+  useEffect,
+  type Dispatch,
+  type FC,
+  type PropsWithChildren,
+  type SetStateAction,
+} from 'react'
 import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { View } from 'lucide-react'
 import { cn } from '@src/lib/utils'
 
 interface GeneralSelectProps {
-  value: string
+  value?: string
   placeholder?: string
   setValue: Dispatch<SetStateAction<any>>
   triggerProps?: React.ComponentPropsWithoutRef<'button'>
+  items: {
+    value: string
+    label: string | React.ReactNode
+  }[]
 }
 
-const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
-  children,
+const GeneralSelect: FC<GeneralSelectProps> = ({
   value,
   setValue,
   placeholder,
   triggerProps,
+  items,
 }) => {
+  useEffect(() => {
+    if (!value && items.length > 0) {
+      setValue(items[0].value)
+    }
+  }, [value, items, setValue])
   return (
     <Select value={value} onValueChange={setValue}>
       <SelectTrigger
@@ -32,11 +47,17 @@ const GeneralSelect: FC<PropsWithChildren<GeneralSelectProps>> = ({
       >
         <SelectValue
           placeholder={placeholder ?? value}
-          defaultValue={value ?? undefined}
+          defaultValue={value ?? items.length > 0 ? items[0].value : undefined}
         />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>{children}</SelectGroup>
+        <SelectGroup>
+          {items.map((item) => (
+            <SelectItem key={`select-item-${item.value}`} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   )

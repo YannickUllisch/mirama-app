@@ -1,5 +1,12 @@
 import type { TaskType } from '@prisma/client'
-import { BookOpen, Bug, ClipboardCheck, Crown, Trophy } from 'lucide-react'
+import {
+  BookOpen,
+  Bug,
+  ClipboardCheck,
+  Crown,
+  FlaskConical,
+  Trophy,
+} from 'lucide-react'
 import React from 'react'
 import { cn } from '../utils'
 
@@ -47,6 +54,14 @@ export const getTaskTypeIcon = (taskType: TaskType, size?: number) => {
           strokeWidth={2}
           size={size ?? ICON_SIZE}
           className={cn(defaultStyling, 'text-red-600')}
+        />
+      )
+    case 'TEST':
+      return (
+        <FlaskConical
+          strokeWidth={2}
+          size={size ?? ICON_SIZE}
+          className={cn(defaultStyling, 'text-lime-500')}
         />
       )
     default:

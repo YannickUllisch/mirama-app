@@ -114,7 +114,7 @@ const ViewTaskSheet = ({
           </div>
         ) : (
           <>
-            <header className="flex justify-between h-[50px] sticky w-full top-0 border-b bg-hover p-2">
+            <header className="flex justify-between h-[50px] sticky w-full top-0 bg-hover dark:bg-neutral-950 p-2">
               <div className="flex gap-2 items-center mt-1.5 ">
                 <SheetClose asChild>
                   <Button variant={'ghost'} className="p-1 h-fit">

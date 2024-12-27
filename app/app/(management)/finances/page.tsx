@@ -2,8 +2,7 @@
 import type { Expense, Project } from '@prisma/client'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { SelectItem } from '@src/components/ui/select'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { getExpenseColumns } from './columns'
 import { BudgetExpenseBarChart } from '@src/components/Analytics/BudgetExpenseBarChart'
@@ -45,13 +44,13 @@ const BudgetPage = () => {
           setValue={setSelectedProjectId}
           value={selectedProjectId}
           placeholder="Select Project"
-        >
-          {projects?.map((proj) => (
-            <SelectItem key={`project-${proj.name}`} value={proj.id}>
-              {proj.name}
-            </SelectItem>
-          ))}
-        </GeneralSelect>
+          items={
+            projects?.map((project) => ({
+              label: project.name,
+              value: project.id,
+            })) ?? []
+          }
+        />
         {selectedProject && (
           <>
             <DataTable
