@@ -1,6 +1,6 @@
 'use client'
 import { Role, type User } from '@prisma/client'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -27,28 +27,31 @@ const ClientProjectPage = () => {
     id: string
     component: JSX.Element
     headerComponent: JSX.Element
-  }[] = [
-    {
-      id: 'grid',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <GridTab />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <Grid2x2 width={15} /> Grid
-        </div>
-      ),
-    },
-    {
-      id: 'table',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
-      component: <TableTab session={session} users={users ?? []} />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <TableProperties width={15} /> Table
-        </div>
-      ),
-    },
-  ]
+  }[] = useMemo(
+    () => [
+      {
+        id: 'grid',
+        roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+        component: <GridTab />,
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <Grid2x2 width={15} /> Grid
+          </div>
+        ),
+      },
+      {
+        id: 'table',
+        roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+        component: <TableTab session={session} users={users ?? []} />,
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <TableProperties width={15} /> Table
+          </div>
+        ),
+      },
+    ],
+    [session, users],
+  )
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()

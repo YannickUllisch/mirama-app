@@ -45,7 +45,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
-import GeneralAccordion from '@src/components/GeneralAccordion'
+
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -64,6 +64,7 @@ import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
+import GeneralAccordion from '@src/components/GeneralAccordion'
 
 const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   // Routing used to return to previous page.

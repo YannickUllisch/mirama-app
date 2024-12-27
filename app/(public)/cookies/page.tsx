@@ -1,7 +1,11 @@
-import React from 'react'
+import CookiePolicy from '@src/markdown/CookiePolicy.mdx'
 
 const CookiesPage = () => {
-  return null
+  return (
+    <div className="p-3 border">
+      <CookiePolicy />
+    </div>
+  )
 }
 
 export default CookiesPage

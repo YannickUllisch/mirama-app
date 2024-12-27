@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import CookieConsent from '@src/components/CookieConsent'
 
 export const metadata: Metadata = {
   title: 'Start | Mirama',
@@ -18,6 +19,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
         <NextTopLoader zIndex={99999} color="#F43F5E" showSpinner={false} />
         <Toaster />
         <SpeedInsights />
+        <CookieConsent />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
