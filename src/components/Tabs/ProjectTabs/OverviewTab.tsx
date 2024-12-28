@@ -10,7 +10,7 @@ interface OverviewTabProps {
   session: Session | null
 }
 
-const OverviewTab: FC<OverviewTabProps> = ({ projectId }) => {
+const OverviewTab: FC<OverviewTabProps> = ({ projectId, projectName }) => {
   // Fetching Tasks
   const { data: tasks } = useSWR<
     (Task & { subtasks: Task[]; comments: Comment[] })[]
@@ -18,7 +18,7 @@ const OverviewTab: FC<OverviewTabProps> = ({ projectId }) => {
 
   return (
     <div className="flex">
-      <TaskTree tasks={tasks ?? []} />
+      <TaskTree tasks={tasks ?? []} projectName={projectName} />
     </div>
   )
 }
