@@ -3,7 +3,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -15,28 +14,13 @@ import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import {
-  ChevronRight,
-  Ellipsis,
-  MoreHorizontal,
-  PlusSquare,
-  Trash2,
-} from 'lucide-react'
+import { ChevronRight, PlusSquare } from 'lucide-react'
 import type { Project, Task } from '@prisma/client'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@src/components/ui/collapsible'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
-import { GoogleBinaryIcon, GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
-import { AddGoogleCalendarEvent } from '@src/lib/api/AddGCalendarEvent'
 
 const SidebarProjectsNav = ({
   projects,
@@ -50,8 +34,6 @@ const SidebarProjectsNav = ({
   }[]
   session: Session | null
 }) => {
-  const { isMobile } = useSidebar()
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
@@ -85,53 +67,12 @@ const SidebarProjectsNav = ({
                 </CollapsibleTrigger>
 
                 <SidebarMenuButton asChild>
-                  <div className="flex items-center">
-                    <Link prefetch href={item.href}>
-                      <span>{item.original.name}</span>
-                    </Link>
-                  </div>
+                  <Link prefetch={false} href={item.href}>
+                    <span>{item.original.name}</span>
+                  </Link>
                 </SidebarMenuButton>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuAction showOnHover>
-                    <MoreHorizontal />
-                    <span className="sr-only">More</span>
-                  </SidebarMenuAction>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-48 rounded-lg"
-                  side={isMobile ? 'bottom' : 'right'}
-                  align={isMobile ? 'end' : 'start'}
-                >
-                  <DropdownMenuItem
-                    className="gap-2"
-                    onClick={() =>
-                      AddGoogleCalendarEvent({
-                        session: session,
-                        event: {
-                          endDateISO: item.original.endDate.toISOString(),
-                          startDateISO: item.original.startDate.toISOString(),
-                          summary: item.original.name,
-                          description: item.original.priority,
-                        },
-                      })
-                    }
-                  >
-                    <GoogleColoredIcon height="17" width="17" />
-                    <span>Add to GCalendar</span>
-                  </DropdownMenuItem>
-                  {isTeamAdminOrOwner(session) && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="gap-2">
-                        <Trash2 className="text-red-500 w-4" />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+
               <div>{item.isActive}</div>
 
               <CollapsibleContent>

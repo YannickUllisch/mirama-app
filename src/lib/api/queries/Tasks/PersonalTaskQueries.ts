@@ -19,11 +19,12 @@ export const fetchAllPersonalTasks = async (session: Session | null) => {
 export const fetchPersonalTasksByProjectId = async (
   id: string,
   session: Session | null,
+  showAll?: boolean,
 ) => {
   const response = await db.task.findMany({
     where: {
       projectId: id,
-      assignedToId: session?.user.id,
+      assignedToId: showAll ? undefined : session?.user.id,
       teamId: session?.user.teamId ?? 'undefined',
     },
     include: {

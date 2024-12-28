@@ -19,7 +19,6 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
         <NextTopLoader zIndex={99999} color="#F43F5E" showSpinner={false} />
         <Toaster />
         <SpeedInsights />
-        <CookieConsent />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>

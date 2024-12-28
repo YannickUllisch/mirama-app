@@ -25,7 +25,6 @@ import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { useSession } from 'next-auth/react'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import ViewTaskSheet from '@src/components/Task/ViewTaskSheet'
 import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
@@ -45,10 +44,21 @@ import {
   DropdownMenuSubTrigger,
 } from '@ui/dropdown-menu'
 import { DateTime } from 'luxon'
+import { Checkbox } from '@ui/checkbox'
+import dynamic from 'next/dynamic'
+
+// Dynamically import ViewTaskSheet
+const ViewTaskSheet = dynamic(
+  () => import('@src/components/Task/ViewTaskSheet'),
+  {
+    ssr: false, // Ensure it's only loaded on the client side
+  },
+)
 
 const TasksPage = () => {
   // States
   const { data: session } = useSession()
+  const [showAllTasks, setShowAllTasks] = useState(false)
   const [selectedProjectId, setSelectedProjectId] = useState<string>()
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState<boolean>(false)
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(
@@ -75,7 +85,9 @@ const TasksPage = () => {
     mutate,
     isLoading: isTasksLoading,
   } = useSWR<(Task & { assignedTo: User; parent: Task })[]>(
-    selectedProjectId ? `/api/db/task/personal/${selectedProjectId}` : null,
+    selectedProjectId
+      ? `/api/db/task/personal/${selectedProjectId}?showAll=${showAllTasks}`
+      : null,
   )
 
   const selectedProject = useMemo(() => {
@@ -183,6 +195,13 @@ const TasksPage = () => {
           })) ?? []
         }
       />
+      <div className="flex gap-2 text-text-secondary items-center">
+        <Checkbox
+          checked={showAllTasks}
+          onCheckedChange={(e) => setShowAllTasks(Boolean(e))}
+        />
+        Show all Tasks
+      </div>
       <ViewTaskSheet
         projectName={selectedProject?.name ?? ''}
         open={isTaskSheetOpen}
@@ -220,6 +239,7 @@ const TasksPage = () => {
                               <DropdownMenuSubContent>
                                 {individualTaskTypes.map((type) => (
                                   <DropdownMenuItem
+                                    key={`tasktype-select-parented-${type}-${status}`}
                                     onClick={() =>
                                       onAddItem(status, type, task.id)
                                     }
@@ -244,6 +264,7 @@ const TasksPage = () => {
                           {individualTaskTypes.map((type) => (
                             <DropdownMenuItem
                               onClick={() => onAddItem(status, type, undefined)}
+                              key={`tasktype-select-${type}-${status}`}
                               className="flex gap-2 items-center"
                             >
                               {getTaskTypeIcon(type)}
@@ -271,7 +292,7 @@ const TasksPage = () => {
                         !isTaskTypeContainer(feature.type),
                     )
                     .map((feature, index) => (
-                      <ContextMenu>
+                      <ContextMenu key={`item-list-${feature.id}`}>
                         <ContextMenuTrigger>
                           <ListItem
                             key={feature.id}

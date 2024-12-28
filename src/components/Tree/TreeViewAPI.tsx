@@ -4,9 +4,7 @@ import { ScrollArea } from '@src/components/ui/scroll-area'
 import { cn } from '@src/lib/utils'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import {
-  ChevronDown,
   ChevronRight,
-  ChevronUp,
   FileIcon,
   FolderIcon,
   FolderOpenIcon,
@@ -223,6 +221,7 @@ type FolderProps = {
   element: string
   isSelectable?: boolean
   isSelect?: boolean
+  personalizedIcon?: React.ReactNode
 } & FolderComponentProps
 
 const Folder = forwardRef<
@@ -265,13 +264,16 @@ const Folder = forwardRef<
         onClick={() => handleExpand(value)}
       >
         <ChevronRight
+          size={15}
           className={`transform transition-transform duration-200 ${
             expendedItems?.includes(value) ? 'rotate-90' : 'rotate-0'
           }`}
         />
         {expendedItems?.includes(value)
-          ? openIcon ?? <FolderOpenIcon className="h-4 w-4" />
-          : closeIcon ?? <FolderIcon className="h-4 w-4" />}
+          ? openIcon ??
+            props.personalizedIcon ?? <FolderOpenIcon className="h-4 w-4" />
+          : closeIcon ??
+            props.personalizedIcon ?? <FolderIcon className="h-4 w-4" />}
         <span>{element}</span>
       </AccordionPrimitive.Trigger>
       <AccordionPrimitive.Content className="text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down relative overflow-hidden h-full">

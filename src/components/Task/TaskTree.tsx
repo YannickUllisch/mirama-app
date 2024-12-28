@@ -7,27 +7,44 @@ import {
   CollapseButton,
 } from '@src/components/Tree/TreeViewAPI'
 import { useTree } from '@src/hooks/useTree'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { SquareArrowOutUpRight } from 'lucide-react'
+import Link from 'next/link'
 import type { FC } from 'react'
 
 interface TaskTreeProps {
+  projectName: string
   tasks: (Task & { subtasks: Task[] })[]
 }
 
-const TaskTree: FC<TaskTreeProps> = ({ tasks }) => {
+const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {
   const taskTrees = useTree(tasks ?? [], 'subtasks')
 
   const renderTreeElements = (elements: any[]) => {
     return elements.map((element) => {
       if (element.subtasks?.length > 0) {
         return (
-          <Folder key={element.id} value={element.id} element={element.title}>
+          <Folder
+            personalizedIcon={getTaskTypeIcon(element.type)}
+            key={element.id}
+            value={element.id}
+            element={element.title}
+          >
             {element.subtasks && renderTreeElements(element.subtasks)}
           </Folder>
         )
       }
       return (
-        <File key={element.id} value={element.id}>
+        <File
+          fileIcon={getTaskTypeIcon(element.type)}
+          key={element.id}
+          value={element.id}
+          className="flex gap-2 items-center"
+        >
           <p>{element.title}</p>
+          <Link href={`/app/${projectName}/edit/${element.id}`}>
+            <SquareArrowOutUpRight size={10} />
+          </Link>
         </File>
       )
     })
@@ -35,7 +52,7 @@ const TaskTree: FC<TaskTreeProps> = ({ tasks }) => {
 
   return (
     <Tree
-      className="rounded-md h-60 overflow-hidden p-2"
+      className="rounded-md w-fit overflow-hidden p-2"
       initialExpendedItems={tasks?.map((task) => task.id)}
       elements={taskTrees as any[]}
     >

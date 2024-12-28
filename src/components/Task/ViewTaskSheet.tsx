@@ -68,7 +68,7 @@ const ViewTaskSheet = ({
       category: TaskCategory
       parent: Task
     }
-  >(`/api/db/task/${taskId}`)
+  >(taskId ? `/api/db/task/${taskId}` : null)
 
   // Tab definitions
   const taskSheetTabs: {
@@ -130,25 +130,27 @@ const ViewTaskSheet = ({
                   <Star className="text-text-secondary" size={15} />
                 </Button>
               </div>
-              <div className="flex gap-2 items-center mt-1.5">
-                <Button
-                  variant={'outline'}
-                  onClick={() => {
-                    if (task.status !== 'DONE') {
-                      updateResourceById(
-                        'task',
-                        task.id,
-                        { status: 'DONE' },
-                        { mutate },
-                      )
-                    }
-                  }}
-                  className="text-xs p-1 h-fit text-text-secondary flex gap-2 items-center"
-                >
-                  <CheckSquare size={15} />
-                  Mark as Complete
-                </Button>
-              </div>
+              {task.status !== 'DONE' && (
+                <div className="flex gap-2 items-center mt-1.5">
+                  <Button
+                    variant={'outline'}
+                    onClick={() => {
+                      if (task.status !== 'DONE') {
+                        updateResourceById(
+                          'task',
+                          task.id,
+                          { status: 'DONE' },
+                          { mutate },
+                        )
+                      }
+                    }}
+                    className="text-xs p-1 h-fit text-text-secondary flex gap-2 items-center"
+                  >
+                    <CheckSquare size={15} />
+                    Mark as Complete
+                  </Button>
+                </div>
+              )}
             </header>
             <Separator />
 

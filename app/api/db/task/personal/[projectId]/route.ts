@@ -1,4 +1,3 @@
-import { db } from '@src/lib/db'
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchPersonalTasksByProjectId } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
@@ -14,6 +13,7 @@ export const GET = auth(async (req) => {
 
     // Extracting name from dynamic route
     const projectId = req.nextUrl.pathname.split('/').pop()
+    const showAll = req.nextUrl.searchParams.get('showAll') === 'true'
 
     if (!projectId) {
       return Response.json(
@@ -22,7 +22,11 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await fetchPersonalTasksByProjectId(projectId, session)
+    const response = await fetchPersonalTasksByProjectId(
+      projectId,
+      session,
+      showAll,
+    )
 
     return Response.json(response, { status: 200 })
   } catch (err) {
