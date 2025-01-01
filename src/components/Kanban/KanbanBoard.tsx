@@ -14,27 +14,21 @@ import {
   KeyboardSensor,
   rectIntersection,
 } from '@dnd-kit/core'
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable'
+import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { TaskStatusType, type Task, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import type { DndType } from '@src/lib/types'
 import type { Session } from 'next-auth'
+import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'
+import type { Board, BoardColumn } from '@src/lib/types'
+import { Card, CardTitle } from '@ui/card'
 
-interface KanbanBoardProps {
-  session: Session | null
-  projectId: string
-  tasks: (Task & {
-    assignedTo: User
-  })[]
-}
-// KanBan Tutorial link: https://www.youtube.com/watch?v=IZ3w2PNh-hE
-const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
-  const initCols = useMemo(() => {
+function createBoards(tasks: GroupedContainerizedTasks | undefined): Board[] {
+  if (!tasks) return []
+  const { unparented, flattenedContainers } = tasks
+
+  // Helper function to create columns for a board
+  function createColumns(tasks: any[]): BoardColumn[] {
     return Object.values(TaskStatusType).map((status) => ({
       id: `container-${v4()}`,
       title: status,
@@ -42,21 +36,65 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         .filter((task) => task.status === status)
         .map((task) => ({
           id: `item-${task.id}`,
-          task: task,
+          task,
         })),
     }))
-  }, [tasks])
+  }
 
+  // Create a board for the "Unparented" group
+  const unparentedBoard: Board = {
+    id: `board-${v4()}`,
+    title: 'Unparented Tasks',
+    columns: createColumns(unparented),
+  }
+
+  // Create boards for each root node in the flattened containers
+  const containerBoards: Board[] = flattenedContainers.map((container) => ({
+    id: `board-${v4()}`,
+    title: `Board: ${container.id}`,
+    columns: createColumns(container.subtasks),
+  }))
+
+  // Combine all boards
+  return [unparentedBoard, ...containerBoards]
+}
+
+interface KanbanBoardProps {
+  session: Session | null
+  projectId: string
+  testTasks: GroupedContainerizedTasks
+  tasks: (Task & {
+    assignedTo: User | undefined
+    subtasks: (Task & { assignedTo: User | undefined })[]
+  })[]
+}
+// KanBan Tutorial link: https://www.youtube.com/watch?v=IZ3w2PNh-hE
+const KanbanBoard: FC<KanbanBoardProps> = ({
+  testTasks,
+  projectId,
+  session,
+}) => {
+  // const initCols = useMemo(() => {
+  //   return Object.values(TaskStatusType).map((status) => ({
+  //     id: `container-${v4()}`,
+  //     title: status,
+  //     items: tasks
+  //       .filter((task) => task.status === status)
+  //       .map((task) => ({
+  //         id: `item-${task.id}`,
+  //         task: task,
+  //       })),
+  //   }))
+  // }, [tasks])
+  const initBoards = useMemo(() => {
+    return createBoards(testTasks)
+  }, [testTasks])
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
-  const [containers, setContainers] = useState<DndType[]>(initCols)
+  const [boards, setBoards] = useState<Board[]>(initBoards)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [_currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier | null>()
-
-  useEffect(() => {
-    setContainers(initCols)
-  }, [initCols])
 
   // DnD Handlers
   const sensors = useSensors(
@@ -72,9 +110,11 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
 
   const onAddItem = (containerId: UniqueIdentifier) => {
     const id = `item-${v4()}`
-    const container = containers.find((item) => item.id === containerId)
-    if (!container) return
-    container.items.push({
+    const column = boards
+      .flatMap((board) => board.columns)
+      .find((item) => item.id === containerId)
+    if (!column) return
+    column.items.push({
       id,
       task: {
         id: v4(),
@@ -93,19 +133,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         categoryId: null,
         assignedToId: null,
         parentId: null,
-        assignedTo: {
-          preferredDateType: '',
-          email: '',
-          emailVerified: null,
-          id: v4(),
-          name: '',
-          password: '',
-          role: 'USER',
-          teamId: session?.user.teamId ?? 'undefined',
-        },
+        assignedTo: undefined,
       },
     })
-    setContainers([...containers])
+    // setBoards([...containers])
     //setItemName('')
     //setShowAddItemModal(false)
   }
@@ -113,12 +144,16 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
   // Find the value of the items
   const findValueOfItems = (id: UniqueIdentifier | undefined, type: string) => {
     if (type === 'container') {
-      return containers.find((item) => item.id === id)
+      return boards
+        .flatMap((board) => board.columns)
+        .find((item) => {
+          return item.id === id
+        })
     }
     if (type === 'item') {
-      return containers.find((container) =>
-        container.items.find((item) => item.id === id),
-      )
+      return boards
+        .flatMap((board) => board.columns)
+        .find((container) => container.items.find((item) => item.id === id))
     }
   }
   const findItemTask = (id: UniqueIdentifier | undefined) => {
@@ -167,12 +202,12 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
       if (!activeContainer || !overContainer) return
 
       // Find active and over container index
-      const activeContainerIndex = containers.findIndex(
-        (c) => c.id === activeContainer.id,
-      )
-      const overContainerIndex = containers.findIndex(
-        (c) => c.id === overContainer.id,
-      )
+      const activeContainerIndex = boards
+        .flatMap((board) => board.columns)
+        .findIndex((c) => c.id === activeContainer.id)
+      const overContainerIndex = boards
+        .flatMap((board) => board.columns)
+        .findIndex((c) => c.id === overContainer.id)
       // Find the index of the active and over item
       const activeItemIndex = activeContainer.items.findIndex(
         (item) => item.id === active.id,
@@ -181,25 +216,25 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         (item) => item.id === over.id,
       )
 
-      if (activeContainerIndex === overContainerIndex) {
-        const newItems = [...containers]
-        newItems[activeContainerIndex].items = arrayMove(
-          newItems[activeContainerIndex].items,
-          activeItemIndex,
-          overItemIndex,
-        )
+      // if (activeContainerIndex === overContainerIndex) {
+      //   const newItems = [...containers]
+      //   newItems[activeContainerIndex].items = arrayMove(
+      //     newItems[activeContainerIndex].items,
+      //     activeItemIndex,
+      //     overItemIndex,
+      //   )
 
-        setContainers(newItems)
-      } else {
-        // In different containers
-        const newItems = [...containers]
-        const [removeditem] = newItems[activeContainerIndex].items.splice(
-          activeItemIndex,
-          1,
-        )
-        newItems[overContainerIndex].items.splice(overItemIndex, 0, removeditem)
-        setContainers(newItems)
-      }
+      //   setContainers(newItems)
+      // } else {
+      //   // In different containers
+      //   const newItems = [...containers]
+      //   const [removeditem] = newItems[activeContainerIndex].items.splice(
+      //     activeItemIndex,
+      //     1,
+      //   )
+      //   newItems[overContainerIndex].items.splice(overItemIndex, 0, removeditem)
+      //   setContainers(newItems)
+      // }
 
       // Handling Item Drop Into a Container
       if (
@@ -217,26 +252,26 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
         if (!activeContainer || !overContainer) return
 
         // Find the index of the active and over container
-        const activeContainerIndex = containers.findIndex(
-          (container) => container.id === activeContainer.id,
-        )
-        const overContainerIndex = containers.findIndex(
-          (container) => container.id === overContainer.id,
-        )
+        const activeContainerIndex = boards
+          .flatMap((board) => board.columns)
+          .findIndex((container) => container.id === activeContainer.id)
+        const overContainerIndex = boards
+          .flatMap((board) => board.columns)
+          .findIndex((container) => container.id === overContainer.id)
 
         // Find the index of the active and over item
         const activeitemIndex = activeContainer.items.findIndex(
           (item) => item.id === active.id,
         )
 
-        // Remove the active item from the active container and add it to the over container
-        const newItems = [...containers]
-        const [removeditem] = newItems[activeContainerIndex].items.splice(
-          activeitemIndex,
-          1,
-        )
-        newItems[overContainerIndex].items.push(removeditem)
-        setContainers(newItems)
+        // // Remove the active item from the active container and add it to the over container
+        // const newItems = [...containers]
+        // const [removeditem] = newItems[activeContainerIndex].items.splice(
+        //   activeitemIndex,
+        //   1,
+        // )
+        // newItems[overContainerIndex].items.push(removeditem)
+        // setContainers(newItems)
       }
     }
   }
@@ -253,13 +288,14 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
       findValueOfItems(over.id, 'container') ||
       findValueOfItems(over.id, 'item')
 
+    console.log(overContainer, over.id)
     // If the active or over container is not found, exit early
     if (!activeContainer || !overContainer) return
 
     // Extract task ID and new status
-    const activeContainerIndex = containers.findIndex(
-      (container) => container.id === activeContainer.id,
-    )
+    const activeContainerIndex = boards
+      .flatMap((board) => board.columns)
+      .findIndex((container) => container.id === activeContainer.id)
     const activeItemIndex = activeContainer.items.findIndex(
       (item) => item.id === active.id,
     )
@@ -278,32 +314,32 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
       over?.id.toString().includes('item') &&
       active.id !== over.id
     ) {
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
-      )
+      const overContainerIndex = boards
+        .flatMap((board) => board.columns)
+        .findIndex((container) => container.id === overContainer.id)
       const overItemIndex = overContainer.items.findIndex(
         (item) => item.id === over.id,
       )
 
-      if (activeContainerIndex === overContainerIndex) {
-        // Same container sorting
-        const newItems = [...containers]
-        newItems[activeContainerIndex].items = arrayMove(
-          newItems[activeContainerIndex].items,
-          activeItemIndex,
-          overItemIndex,
-        )
-        setContainers(newItems)
-      } else {
-        // Moving to different containers
-        const newItems = [...containers]
-        const [removedItem] = newItems[activeContainerIndex].items.splice(
-          activeItemIndex,
-          1,
-        )
-        newItems[overContainerIndex].items.splice(overItemIndex, 0, removedItem)
-        setContainers(newItems)
-      }
+      // if (activeContainerIndex === overContainerIndex) {
+      //   // Same container sorting
+      //   const newItems = [...containers]
+      //   newItems[activeContainerIndex].items = arrayMove(
+      //     newItems[activeContainerIndex].items,
+      //     activeItemIndex,
+      //     overItemIndex,
+      //   )
+      //   setContainers(newItems)
+      // } else {
+      //   // Moving to different containers
+      //   const newItems = [...containers]
+      //   const [removedItem] = newItems[activeContainerIndex].items.splice(
+      //     activeItemIndex,
+      //     1,
+      //   )
+      //   newItems[overContainerIndex].items.splice(overItemIndex, 0, removedItem)
+      //   setContainers(newItems)
+      // }
     }
 
     // Handling item drop into a container
@@ -312,24 +348,24 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
       over?.id.toString().includes('container') &&
       active.id !== over.id
     ) {
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
-      )
+      const overContainerIndex = boards
+        .flatMap((board) => board.columns)
+        .findIndex((container) => container.id === overContainer.id)
 
-      const newItems = [...containers]
-      const [removedItem] = newItems[activeContainerIndex].items.splice(
-        activeItemIndex,
-        1,
-      )
-      newItems[overContainerIndex].items.push(removedItem)
-      setContainers(newItems)
+      // const newItems = [...containers]
+      // const [removedItem] = newItems[activeContainerIndex].items.splice(
+      //   activeItemIndex,
+      //   1,
+      // )
+      // newItems[overContainerIndex].items.push(removedItem)
+      // setContainers(newItems)
     }
 
     setActiveId(null)
   }
 
   return (
-    <div className="flex w-full max-h-full justify-center">
+    <div className="flex w-[1000px] overflow-x-scroll max-h-full justify-center ">
       <div className="flex w-full gap-6">
         <DndContext
           sensors={sensors}
@@ -338,36 +374,47 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, session }) => {
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext items={containers.map((container) => container.id)}>
-            {containers.map((container) => (
-              <KanbanContainer
-                className={
-                  hoveredContainerId === container.id
-                    ? 'bg-blue-500/10'
-                    : undefined
-                }
-                key={container.id}
-                title={container.title}
-                itemAmount={container.items.length}
-                id={container.id}
-                onAddItem={() => {
-                  setCurrentContainerId(container.id)
-                  onAddItem(container.id)
-                }}
-              >
-                <SortableContext items={container.items.map((i) => i.id)}>
-                  {container.items.map((item) => (
-                    <div key={item.id}>
-                      <KanbanItem
-                        key={`kanban-item-${item.id}`}
-                        id={item.id}
-                        task={item.task}
-                      />
-                    </div>
-                  ))}
-                </SortableContext>
-              </KanbanContainer>
-            ))}
+          <SortableContext items={boards.flatMap((board) => board.columns)}>
+            <div className="flex flex-col">
+              {boards.map((board) => (
+                <div className="display flex gap-2" key={`board-${board.id}`}>
+                  <Card className="w-[200px] h-[200px]">
+                    <CardTitle>{board.title} </CardTitle>
+                  </Card>
+                  <div className="flex">
+                    {board.columns.map((col) => (
+                      <KanbanContainer
+                        className={
+                          hoveredContainerId === col.id
+                            ? 'bg-blue-500/10'
+                            : undefined
+                        }
+                        key={col.id}
+                        title={col.title}
+                        itemAmount={col.items.length}
+                        id={col.id}
+                        onAddItem={() => {
+                          setCurrentContainerId(col.id)
+                          onAddItem(col.id)
+                        }}
+                      >
+                        <SortableContext items={col.items.map((i) => i.id)}>
+                          {col.items.map((item) => (
+                            <div key={item.id}>
+                              <KanbanItem
+                                key={`kanban-item-${item.id}`}
+                                id={item.id}
+                                task={item.task}
+                              />
+                            </div>
+                          ))}
+                        </SortableContext>
+                      </KanbanContainer>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </SortableContext>
           <DragOverlay adjustScale={false}>
             {activeId?.toString().includes('item') && (

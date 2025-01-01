@@ -26,20 +26,27 @@ export interface SecondaryAppMenuItem {
 }
 
 // Kanban Board
-export interface DndType {
+
+export type Board = {
+  id: string
+  title: string
+  columns: BoardColumn[]
+}
+
+export interface BoardColumn {
   id: UniqueIdentifier
   title: string
   items: {
     id: UniqueIdentifier
     task: Task & {
-      assignedTo: User
+      assignedTo: User | undefined
     }
   }[]
 }
 
 export type KanbanItemType = {
   id: UniqueIdentifier
-  task?: Task & { assignedTo: User }
+  task?: Task & { assignedTo: User | undefined }
 }
 
 export interface GoogleCalendarEvent {
