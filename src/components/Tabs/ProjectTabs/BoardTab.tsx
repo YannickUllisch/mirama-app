@@ -20,14 +20,14 @@ const BoardTab: FC<TabProps> = ({ projectId, session }) => {
     })[]
   >(`/api/db/task?id=${projectId}`)
 
+  // Move to Server Side
   const tree = useTree(tasks ?? [], 'subtasks')
 
-  const test = groupTasksByContainer(tree)
+  const containerGroupedTasks = groupTasksByContainer(tree)
 
   return (
     <KanbanBoard
-      testTasks={test}
-      tasks={tasks ?? []}
+      containerGroupedTasks={containerGroupedTasks}
       projectId={projectId}
       session={session}
     />

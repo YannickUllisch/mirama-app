@@ -42,10 +42,10 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         'w-full h-full rounded-md border flex flex-col cursor-default',
       )}
     >
-      <div className="sticky top-0 bg-hover dark:bg-neutral-950/50 p-4 border-b dark:border-neutral-800 z-10">
-        <div className="flex items-center justify-between">
+      <div className="sticky top-12 bg-hover dark:bg-neutral-950/50 p-2 border-b dark:border-neutral-800 z-10">
+        <div className="flex items-center justify-between mx-2">
           <div className="flex items-center gap-2">
-            <h1 className="text-gray-800 text-xl dark:text-white">
+            <h1 className="text-gray-800 text-lg dark:text-white">
               {capitalize(title ?? '')}
             </h1>
             <span>{itemAmount}</span>
@@ -57,9 +57,6 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
               onClick={onAddItem}
             >
               <Plus className="cursor-pointer text-emerald-800 w-5 h-5" />
-            </Button>
-            <Button variant={'ghost'} className="w-fit p-1 h-fit">
-              <Ellipsis className="cursor-pointer w-4 h-4" />
             </Button>
           </div>
         </div>

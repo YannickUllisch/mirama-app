@@ -3,15 +3,17 @@ import React, { type FC, useEffect, useState } from 'react'
 import { Input } from '@src/components/ui/tableInput'
 import { toast } from 'sonner'
 import { updateResourceById } from '@src/lib/api/updateResource'
+import { cn } from '@src/lib/utils'
 
 interface EditableCellProps {
   id: string
   initialValue: string | number
-  mutate(): any
+  mutate?(): any
   autofocus?: boolean
   apiRoute: string
   paramToUpdate: string
   onBlueNoChange?(): any
+  className?: string
 }
 
 // This Input can handle both string and number inputs.
@@ -23,6 +25,7 @@ const EditableCell: FC<EditableCellProps> = ({
   paramToUpdate,
   autofocus,
   onBlueNoChange,
+  className,
 }) => {
   const [value, setValue] = useState<string | number>(initialValue)
 
@@ -69,7 +72,10 @@ const EditableCell: FC<EditableCellProps> = ({
   }
   return (
     <Input
-      className="overflow-hidden text-ellipsis whitespace-nowrap w-[85%] flex-wrap"
+      className={cn(
+        'overflow-hidden text-ellipsis whitespace-nowrap w-[85%] flex-wrap',
+        className,
+      )}
       defaultValue={value}
       // For both int and string, this will set the Value to type string on change.
       onChangeCapture={(e) => setValue(e.currentTarget.value)}

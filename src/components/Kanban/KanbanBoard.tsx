@@ -15,92 +15,44 @@ import {
   rectIntersection,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { TaskStatusType, type Task, type User } from '@prisma/client'
+import type { TaskStatusType } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import type { Session } from 'next-auth'
 import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'
-import type { Board, BoardColumn } from '@src/lib/types'
+import type { Board } from '@src/lib/types'
 import { Card, CardTitle } from '@ui/card'
-
-function createBoards(tasks: GroupedContainerizedTasks | undefined): Board[] {
-  if (!tasks) return []
-  const { unparented, flattenedContainers } = tasks
-
-  // Helper function to create columns for a board
-  function createColumns(tasks: any[]): BoardColumn[] {
-    return Object.values(TaskStatusType).map((status) => ({
-      id: `container-${v4()}`,
-      title: status,
-      items: tasks
-        .filter((task) => task.status === status)
-        .map((task) => ({
-          id: `item-${task.id}`,
-          task,
-        })),
-    }))
-  }
-
-  // Create a board for the "Unparented" group
-  const unparentedBoard: Board = {
-    id: `board-${v4()}`,
-    title: 'Unparented Tasks',
-    columns: createColumns(unparented),
-  }
-
-  // Create boards for each root node in the flattened containers
-  const containerBoards: Board[] = flattenedContainers.map((container) => ({
-    id: `board-${v4()}`,
-    title: `Board: ${container.id}`,
-    columns: createColumns(container.subtasks),
-  }))
-
-  // Combine all boards
-  return [unparentedBoard, ...containerBoards]
-}
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { CircleOff } from 'lucide-react'
+import { Input } from '@ui/input'
+import { createBoards } from './createBoards'
+import { postResource } from '@src/lib/api/postResource'
 
 interface KanbanBoardProps {
   session: Session | null
   projectId: string
-  testTasks: GroupedContainerizedTasks
-  tasks: (Task & {
-    assignedTo: User | undefined
-    subtasks: (Task & { assignedTo: User | undefined })[]
-  })[]
+  containerGroupedTasks: GroupedContainerizedTasks
 }
-// KanBan Tutorial link: https://www.youtube.com/watch?v=IZ3w2PNh-hE
+
 const KanbanBoard: FC<KanbanBoardProps> = ({
-  testTasks,
+  containerGroupedTasks,
   projectId,
   session,
 }) => {
-  // const initCols = useMemo(() => {
-  //   return Object.values(TaskStatusType).map((status) => ({
-  //     id: `container-${v4()}`,
-  //     title: status,
-  //     items: tasks
-  //       .filter((task) => task.status === status)
-  //       .map((task) => ({
-  //         id: `item-${task.id}`,
-  //         task: task,
-  //       })),
-  //   }))
-  // }, [tasks])
-  const initBoards = useMemo(() => {
-    return createBoards(testTasks)
-  }, [testTasks])
+  const initBoards = createBoards(containerGroupedTasks)
+
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
   const [boards, setBoards] = useState<Board[]>(initBoards)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [_currentContainerId, setCurrentContainerId] =
-    useState<UniqueIdentifier | null>()
+  const [originalColumnId, setOriginalColumnId] =
+    useState<UniqueIdentifier | null>(null)
 
   // DnD Handlers
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 0.01,
+        distance: 0.5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -108,19 +60,35 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     }),
   )
 
-  const onAddItem = (containerId: UniqueIdentifier) => {
+  const [editingItemId, setEditingItemId] = useState<UniqueIdentifier | null>(
+    null,
+  )
+  const [newItemTitle, setNewItemTitle] = useState<string>('')
+
+  const onAddItem = (
+    columnId: UniqueIdentifier,
+    itemStatus: string,
+    boardId: string,
+  ) => {
     const id = `item-${v4()}`
-    const column = boards
-      .flatMap((board) => board.columns)
-      .find((item) => item.id === containerId)
+    const board = boards.find((board) => board.id === boardId)
+    if (!board) return
+
+    const column = board.columns.find((col) => col.id === columnId)
     if (!column) return
-    column.items.push({
+
+    let parentId: string | null = null
+    if (boardId.includes('board')) {
+      parentId = boardId.substring(6)
+    }
+
+    const newTask = {
       id,
       task: {
         id: v4(),
-        status: 'NEW',
+        status: itemStatus.toUpperCase() as TaskStatusType,
         priority: 'LOW',
-        title: 'New Task',
+        title: '', // Start with an empty title
         type: 'TASK',
         projectId: projectId,
         dateCreated: new Date(),
@@ -132,13 +100,15 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         description: null,
         categoryId: null,
         assignedToId: null,
-        parentId: null,
+        parentId: parentId,
         assignedTo: undefined,
       },
-    })
-    // setBoards([...containers])
-    //setItemName('')
-    //setShowAddItemModal(false)
+    }
+
+    column.items.push(newTask as any)
+    setEditingItemId(id) // Set the new item to be editable
+    setNewItemTitle('') // Clear any previous input
+    setBoards([...boards]) // Update the state
   }
 
   // Find the value of the items
@@ -151,9 +121,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         })
     }
     if (type === 'item') {
-      return boards
+      const container = boards
         .flatMap((board) => board.columns)
         .find((container) => container.items.find((item) => item.id === id))
+      return container
     }
   }
   const findItemTask = (id: UniqueIdentifier | undefined) => {
@@ -166,19 +137,31 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
-    const { id } = active
-    setActiveId(id)
+    setActiveId(active.id)
+
+    // Store the original column ID when drag starts
+    const activeItem = findItemTask(active.id)
+    if (activeItem) {
+      const originalColumn = findValueOfItems(active.id, 'item')
+      if (originalColumn) {
+        setOriginalColumnId(originalColumn.id)
+      }
+    }
   }
 
   const handleDragMove = (event: DragMoveEvent) => {
     const { active, over } = event
+
+    if (active.id === over?.id) {
+      return
+    }
 
     if (over?.data.current?.type === 'container') {
       // Hovering directly over a container
       setHoveredContainerId(over.id)
     } else if (over?.data.current?.type === 'item') {
       // Hovering over an item, find its container
-      const container = findValueOfItems(over.id, 'item') // Your helper function to locate the container
+      const container = findValueOfItems(over.id, 'item') // Helper function to locate the container
       if (container) {
         setHoveredContainerId(container.id)
       }
@@ -186,7 +169,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       setHoveredContainerId(null)
     }
 
-    // Handle Item sorting
     if (
       active.id.toString().includes('item') &&
       over?.id.toString().includes('item') &&
@@ -198,81 +180,82 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       const activeContainer = findValueOfItems(active.id, 'item')
       const overContainer = findValueOfItems(over.id, 'item')
 
-      // If active or over container is undefined return
       if (!activeContainer || !overContainer) return
 
-      // Find active and over container index
-      const activeContainerIndex = boards
-        .flatMap((board) => board.columns)
-        .findIndex((c) => c.id === activeContainer.id)
-      const overContainerIndex = boards
-        .flatMap((board) => board.columns)
-        .findIndex((c) => c.id === overContainer.id)
-      // Find the index of the active and over item
-      const activeItemIndex = activeContainer.items.findIndex(
+      const activeBoard = boards.find((board) =>
+        board.columns.some((column) => column.id === activeContainer.id),
+      )
+      const overBoard = boards.find((board) =>
+        board.columns.some((column) => column.id === overContainer.id),
+      )
+
+      if (!activeBoard || !overBoard) return
+
+      const activeColumn = activeBoard.columns.find(
+        (col) => col.id === activeContainer.id,
+      )
+      const overColumn = overBoard.columns.find(
+        (col) => col.id === overContainer.id,
+      )
+
+      if (!activeColumn || !overColumn) return
+
+      const activeItemIndex = activeColumn.items.findIndex(
         (item) => item.id === active.id,
       )
-      const overItemIndex = overContainer.items.findIndex(
+      const overItemIndex = overColumn.items.findIndex(
         (item) => item.id === over.id,
       )
 
-      // if (activeContainerIndex === overContainerIndex) {
-      //   const newItems = [...containers]
-      //   newItems[activeContainerIndex].items = arrayMove(
-      //     newItems[activeContainerIndex].items,
-      //     activeItemIndex,
-      //     overItemIndex,
-      //   )
-
-      //   setContainers(newItems)
-      // } else {
-      //   // In different containers
-      //   const newItems = [...containers]
-      //   const [removeditem] = newItems[activeContainerIndex].items.splice(
-      //     activeItemIndex,
-      //     1,
-      //   )
-      //   newItems[overContainerIndex].items.splice(overItemIndex, 0, removeditem)
-      //   setContainers(newItems)
-      // }
-
-      // Handling Item Drop Into a Container
-      if (
-        active.id.toString().includes('item') &&
-        over?.id.toString().includes('container') &&
-        active &&
-        over &&
-        active.id !== over.id
-      ) {
-        // Find the active and over container
-        const activeContainer = findValueOfItems(active.id, 'item')
-        const overContainer = findValueOfItems(over.id, 'container')
-
-        // If the active or over container is not found, return
-        if (!activeContainer || !overContainer) return
-
-        // Find the index of the active and over container
-        const activeContainerIndex = boards
-          .flatMap((board) => board.columns)
-          .findIndex((container) => container.id === activeContainer.id)
-        const overContainerIndex = boards
-          .flatMap((board) => board.columns)
-          .findIndex((container) => container.id === overContainer.id)
-
-        // Find the index of the active and over item
-        const activeitemIndex = activeContainer.items.findIndex(
-          (item) => item.id === active.id,
-        )
-
-        // // Remove the active item from the active container and add it to the over container
-        // const newItems = [...containers]
-        // const [removeditem] = newItems[activeContainerIndex].items.splice(
-        //   activeitemIndex,
-        //   1,
-        // )
-        // newItems[overContainerIndex].items.push(removeditem)
-        // setContainers(newItems)
+      if (activeColumn.id === overColumn.id) {
+        // Same column sorting
+        const updatedItems = [...activeColumn.items]
+        const movedItem = updatedItems.splice(activeItemIndex, 1)[0]
+        updatedItems.splice(overItemIndex, 0, movedItem)
+        activeColumn.items = updatedItems
+      } else {
+        // Different columns or boards
+        const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
+        overColumn.items.splice(overItemIndex, 0, movedItem)
       }
+    }
+
+    if (
+      active.id.toString().includes('item') &&
+      over?.id.toString().includes('container') &&
+      active &&
+      over &&
+      active.id !== over.id
+    ) {
+      const activeContainer = findValueOfItems(active.id, 'item')
+      const overContainer = findValueOfItems(over.id, 'container')
+
+      if (!activeContainer || !overContainer) return
+
+      const activeBoard = boards.find((board) =>
+        board.columns.some((column) => column.id === activeContainer.id),
+      )
+      const overBoard = boards.find((board) =>
+        board.columns.some((column) => column.id === overContainer.id),
+      )
+
+      if (!activeBoard || !overBoard) return
+
+      const activeColumn = activeBoard.columns.find(
+        (col) => col.id === activeContainer.id,
+      )
+      const overColumn = overBoard.columns.find(
+        (col) => col.id === overContainer.id,
+      )
+
+      if (!activeColumn || !overColumn) return
+
+      const activeItemIndex = activeColumn.items.findIndex(
+        (item) => item.id === active.id,
+      )
+
+      const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
+      overColumn.items.push(movedItem)
     }
   }
 
@@ -280,152 +263,181 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     setHoveredContainerId(null)
-    // Exit early if either `active` or `over` is null
-    if (!active?.id || !over?.id) return
 
-    const activeContainer = findValueOfItems(active.id, 'item')
+    if (!originalColumnId || !over?.id) return
+
+    const activeContainer = findValueOfItems(originalColumnId, 'container')
+
     const overContainer =
       findValueOfItems(over.id, 'container') ||
       findValueOfItems(over.id, 'item')
 
-    console.log(overContainer, over.id)
-    // If the active or over container is not found, exit early
     if (!activeContainer || !overContainer) return
 
-    // Extract task ID and new status
-    const activeContainerIndex = boards
-      .flatMap((board) => board.columns)
-      .findIndex((container) => container.id === activeContainer.id)
-    const activeItemIndex = activeContainer.items.findIndex(
+    const activeBoard = boards.find((board) =>
+      board.columns.some((column) => column.id === activeContainer.id),
+    )
+    const overBoard = boards.find((board) =>
+      board.columns.some((column) => column.id === overContainer.id),
+    )
+
+    if (!activeBoard || !overBoard) return
+
+    const activeItemIndex = overContainer.items.findIndex(
       (item) => item.id === active.id,
     )
-    const removedItem = activeContainer.items[activeItemIndex]
+    const removedItem = overContainer.items[activeItemIndex]
 
-    const taskId = removedItem.id.toString().substring(5) // remove 'item-' prefix to get the task ID
-    const newStatus = overContainer.title // This assumes the `overContainer` has a `title` that represents the status
+    if (activeContainer.id !== overContainer.id) {
+      // Determine the new parentId
+      let newParentId: string | null = null
 
-    // Call updateResourceById at the beginning before any UI updates
-    updateResourceById('task', taskId, { status: newStatus })
+      if (overBoard.title === 'Unparented Tasks') {
+        // If moved to the Unparented Tasks board, reset parentId to null
+        newParentId = null
+      } else if (overBoard.id.includes('board')) {
+        // Extract the container ID from the board title
+        const containerId = overBoard.id.substring(6)
+        newParentId = containerId
+      }
 
-    // Now handle sorting and moving items between containers
-    // Handling item Sorting (if moved between items within the same or different containers)
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('item') &&
-      active.id !== over.id
-    ) {
-      const overContainerIndex = boards
-        .flatMap((board) => board.columns)
-        .findIndex((container) => container.id === overContainer.id)
-      const overItemIndex = overContainer.items.findIndex(
-        (item) => item.id === over.id,
-      )
-
-      // if (activeContainerIndex === overContainerIndex) {
-      //   // Same container sorting
-      //   const newItems = [...containers]
-      //   newItems[activeContainerIndex].items = arrayMove(
-      //     newItems[activeContainerIndex].items,
-      //     activeItemIndex,
-      //     overItemIndex,
-      //   )
-      //   setContainers(newItems)
-      // } else {
-      //   // Moving to different containers
-      //   const newItems = [...containers]
-      //   const [removedItem] = newItems[activeContainerIndex].items.splice(
-      //     activeItemIndex,
-      //     1,
-      //   )
-      //   newItems[overContainerIndex].items.splice(overItemIndex, 0, removedItem)
-      //   setContainers(newItems)
-      // }
+      // Update the task's parentId and status
+      const taskId = removedItem.id.toString().substring(5) // Remove 'item-' prefix
+      const newStatus = overContainer.title // Assumes `overColumn` title represents the status
+      updateResourceById('task', taskId, {
+        status: newStatus,
+        parentId: newParentId,
+      })
     }
 
-    // Handling item drop into a container
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('container') &&
-      active.id !== over.id
-    ) {
-      const overContainerIndex = boards
-        .flatMap((board) => board.columns)
-        .findIndex((container) => container.id === overContainer.id)
-
-      // const newItems = [...containers]
-      // const [removedItem] = newItems[activeContainerIndex].items.splice(
-      //   activeItemIndex,
-      //   1,
-      // )
-      // newItems[overContainerIndex].items.push(removedItem)
-      // setContainers(newItems)
-    }
-
+    setBoards([...boards]) // Update the state with the modified boards
     setActiveId(null)
+    setOriginalColumnId(null)
+  }
+
+  const handleSaveOrCancel = (
+    itemId: UniqueIdentifier,
+    columnId: UniqueIdentifier,
+    boardId: string,
+  ) => {
+    if (newItemTitle.trim() === '') {
+      // Undo addition if the title is empty
+      const board = boards.find((board) => board.id === boardId)
+      if (!board) return
+
+      const column = board.columns.find((col) => col.id === columnId)
+      if (!column) return
+
+      column.items = column.items.filter((item) => item.id !== itemId)
+      setBoards([...boards])
+    } else {
+      // Save the new title
+      const board = boards.find((board) => board.id === boardId)
+      if (!board) return
+
+      const column = board.columns.find((col) => col.id === columnId)
+      if (!column) return
+
+      const item = column.items.find((item) => item.id === itemId)
+      if (item) {
+        item.task.title = newItemTitle.trim()
+        postResource('task', item.task)
+      }
+
+      setBoards([...boards])
+    }
+
+    setEditingItemId(null) // Exit editing mode
+    setNewItemTitle('') // Reset title state
   }
 
   return (
-    <div className="flex w-[1000px] overflow-x-scroll max-h-full justify-center ">
-      <div className="flex w-full gap-6">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={rectIntersection}
-          onDragStart={handleDragStart}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext items={boards.flatMap((board) => board.columns)}>
-            <div className="flex flex-col">
-              {boards.map((board) => (
-                <div className="display flex gap-2" key={`board-${board.id}`}>
-                  <Card className="w-[200px] h-[200px]">
-                    <CardTitle>{board.title} </CardTitle>
-                  </Card>
-                  <div className="flex">
-                    {board.columns.map((col) => (
-                      <KanbanContainer
-                        className={
-                          hoveredContainerId === col.id
-                            ? 'bg-blue-500/10'
-                            : undefined
-                        }
-                        key={col.id}
-                        title={col.title}
-                        itemAmount={col.items.length}
-                        id={col.id}
-                        onAddItem={() => {
-                          setCurrentContainerId(col.id)
-                          onAddItem(col.id)
-                        }}
-                      >
-                        <SortableContext items={col.items.map((i) => i.id)}>
-                          {col.items.map((item) => (
-                            <div key={item.id}>
-                              <KanbanItem
-                                key={`kanban-item-${item.id}`}
-                                id={item.id}
-                                task={item.task}
-                              />
-                            </div>
-                          ))}
-                        </SortableContext>
-                      </KanbanContainer>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </SortableContext>
-          <DragOverlay adjustScale={false}>
-            {activeId?.toString().includes('item') && (
-              <div className="opacity-70">
-                <KanbanItem id={activeId} task={findItemTask(activeId)} />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={rectIntersection}
+      onDragStart={handleDragStart}
+      onDragMove={handleDragMove}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={boards.flatMap((board) => board.columns)}>
+        <div className="flex flex-col gap-y-2">
+          {boards.map((board) => (
+            <div className="display flex gap-2" key={`board-${board.id}`}>
+              <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
+                <CardTitle>
+                  {board.containerTaskType ? (
+                    <div className="flex gap-2 items-center">
+                      {getTaskTypeIcon(board.containerTaskType)}
+                      {board.title}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 items-center">
+                      <CircleOff size={16} />
+                      {'Ungrouped'}
+                    </div>
+                  )}
+                </CardTitle>
+              </Card>
+              <div className="flex w-[100%] gap-2">
+                {board.columns.map((col) => (
+                  <KanbanContainer
+                    className={
+                      hoveredContainerId === col.id
+                        ? 'bg-blue-500/10'
+                        : undefined
+                    }
+                    key={col.id}
+                    title={col.title}
+                    itemAmount={col.items.length}
+                    id={col.id}
+                    onAddItem={() => {
+                      onAddItem(col.id, col.title, board.id)
+                    }}
+                  >
+                    <SortableContext items={col.items.map((i) => i.id)}>
+                      {col.items.map((item) => (
+                        <div key={item.id}>
+                          {editingItemId === item.id ? (
+                            <Input
+                              autoFocus
+                              type="text"
+                              className="w-full p-2 border rounded"
+                              placeholder="Enter a title"
+                              value={newItemTitle}
+                              onChange={(e) => setNewItemTitle(e.target.value)}
+                              onBlur={() =>
+                                handleSaveOrCancel(item.id, col.id, board.id)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter')
+                                  handleSaveOrCancel(item.id, col.id, board.id)
+                              }}
+                            />
+                          ) : (
+                            <KanbanItem
+                              key={`kanban-item-${item.id}`}
+                              id={item.id}
+                              task={item.task}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </SortableContext>
+                  </KanbanContainer>
+                ))}
               </div>
-            )}
-          </DragOverlay>
-        </DndContext>
-      </div>
-    </div>
+            </div>
+          ))}
+        </div>
+      </SortableContext>
+      <DragOverlay adjustScale={false}>
+        {activeId?.toString().includes('item') && (
+          <div className="opacity-70">
+            <KanbanItem id={activeId} task={findItemTask(activeId)} />
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
   )
 }
 

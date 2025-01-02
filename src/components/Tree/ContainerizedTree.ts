@@ -1,3 +1,4 @@
+import type { Task } from '@/prisma/zod'
 import type { TaskStatusType, TaskType } from '@prisma/client'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 
@@ -6,6 +7,8 @@ type ContainerizedTask = {
   type: TaskType
   subtasks: ContainerizedTask[]
   status: TaskStatusType
+  title: string
+  task: Task
 }
 
 export type GroupedContainerizedTasks = {

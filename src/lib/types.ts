@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { Role, Task, User } from '@prisma/client'
+import type { Role, Task, TaskType, User } from '@prisma/client'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -30,6 +30,7 @@ export interface SecondaryAppMenuItem {
 export type Board = {
   id: string
   title: string
+  containerTaskType: TaskType | null
   columns: BoardColumn[]
 }
 

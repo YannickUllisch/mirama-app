@@ -90,7 +90,7 @@ const AppMenu: AppMenuItem[] = [
   },
 ]
 
-const SecondaryAppMenu: SecondaryAppMenuItem[] = [
+const _SecondaryAppMenu: SecondaryAppMenuItem[] = [
   {
     href: '/app',
     title: 'Notifications',
@@ -147,7 +147,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
             tasks: p.tasks,
           }))}
         />
-        <SidebarSecondaryNav items={SecondaryAppMenu} className="mt-auto" />
+        {/* <SidebarSecondaryNav items={SecondaryAppMenu} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarUserNav user={user} />

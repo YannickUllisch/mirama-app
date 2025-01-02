@@ -99,7 +99,7 @@ const CreateTaskForm = ({
       projectId: defaultProjectId ?? '',
       status: TaskStatusType.NEW,
       tags: [],
-      subtasks: ['2523'],
+      subtasks: undefined,
       parentId:
         defaultParentId &&
         !isTaskTypeContainer(params.type.toUpperCase() as TaskType)
