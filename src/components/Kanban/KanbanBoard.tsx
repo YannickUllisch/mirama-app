@@ -1,4 +1,4 @@
-import { type FC, useMemo, useState, useEffect } from 'react'
+import { type FC, useMemo, useState, useEffect, useContext } from 'react'
 import { v4 } from 'uuid'
 import KanbanContainer from './KanbanContainer'
 import {
@@ -15,7 +15,7 @@ import {
   rectIntersection,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import type { TaskStatusType } from '@prisma/client'
+import { Role, TaskStatusType } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import type { Session } from 'next-auth'
@@ -27,6 +27,8 @@ import { CircleOff } from 'lucide-react'
 import { Input } from '@ui/input'
 import { createBoards } from './createBoards'
 import { postResource } from '@src/lib/api/postResource'
+import { deleteResources } from '@src/lib/api/deleteResource'
+import { ProjectDataContext } from '../Contexts/ProjectUsersContext'
 
 interface KanbanBoardProps {
   session: Session | null
@@ -39,31 +41,22 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
   projectId,
   session,
 }) => {
+  // Initializing boards based on given tasks, do be able to instantly change states without
+  // waiting for DB updates we simulate the changes through the boards state and update DB in the background
+
   const initBoards = createBoards(containerGroupedTasks)
+  const [boards, setBoards] = useState<Board[]>(initBoards)
 
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
-  const [boards, setBoards] = useState<Board[]>(initBoards)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [originalColumnId, setOriginalColumnId] =
     useState<UniqueIdentifier | null>(null)
-
-  // DnD Handlers
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 0.5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  )
-
   const [editingItemId, setEditingItemId] = useState<UniqueIdentifier | null>(
     null,
   )
   const [newItemTitle, setNewItemTitle] = useState<string>('')
+  const projectUsers = useContext(ProjectDataContext)
 
   const onAddItem = (
     columnId: UniqueIdentifier,
@@ -77,8 +70,8 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     const column = board.columns.find((col) => col.id === columnId)
     if (!column) return
 
-    let parentId: string | null = null
-    if (boardId.includes('board')) {
+    let parentId: string | undefined = undefined
+    if (boardId.includes('container')) {
       parentId = boardId.substring(6)
     }
 
@@ -290,15 +283,42 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
 
     if (activeContainer.id !== overContainer.id) {
       // Determine the new parentId
-      let newParentId: string | null = null
+      let newParentId: string | undefined = undefined
 
       if (overBoard.title === 'Unparented Tasks') {
         // If moved to the Unparented Tasks board, reset parentId to null
-        newParentId = null
+        newParentId = undefined
       } else if (overBoard.id.includes('board')) {
         // Extract the container ID from the board title
         const containerId = overBoard.id.substring(6)
         newParentId = containerId
+      }
+      let assignToSelf = false
+      if (
+        activeContainer.title === String(TaskStatusType.NEW) &&
+        !removedItem.task.assignedTo
+      ) {
+        overContainer.items = overContainer.items.filter(
+          (item) => item.id !== removedItem.id,
+        )
+        overContainer.items.push({
+          id: removedItem.id,
+          task: {
+            ...removedItem.task,
+            assignedTo: {
+              role: session?.user.role ?? Role.OBSERVER,
+              email: session?.user.email ?? '',
+              id: session?.user.id ?? '',
+              name: session?.user.name ?? '',
+              password: null,
+              emailVerified: null,
+              preferredDateType: '',
+              teamId: session?.user.teamId ?? null,
+            },
+          },
+        })
+
+        assignToSelf = true
       }
 
       // Update the task's parentId and status
@@ -307,6 +327,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       updateResourceById('task', taskId, {
         status: newStatus,
         parentId: newParentId,
+        assignedToId: assignToSelf ? session?.user?.id : undefined,
       })
     }
 
@@ -351,9 +372,35 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     setNewItemTitle('') // Reset title state
   }
 
+  const handleItemDelete = (id: string) => {
+    const boardItemId = `item-${id}`
+    const container = findValueOfItems(boardItemId, 'item')
+    if (!container) return
+    // Needed for potential fallback iff DB fails
+    const deletedItem = container.items.find((item) => item.id === boardItemId)
+    if (!deletedItem) return
+
+    deleteResources('task', [id]).then(() => {
+      // On Error we revert state
+      container.items = container.items.filter(
+        (item) => item.id !== boardItemId,
+      )
+      setBoards([...boards])
+    })
+  }
+
   return (
     <DndContext
-      sensors={sensors}
+      sensors={useSensors(
+        useSensor(PointerSensor, {
+          activationConstraint: {
+            distance: 0.5,
+          },
+        }),
+        useSensor(KeyboardSensor, {
+          coordinateGetter: sortableKeyboardCoordinates,
+        }),
+      )}
       collisionDetection={rectIntersection}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
@@ -418,6 +465,8 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
                               key={`kanban-item-${item.id}`}
                               id={item.id}
                               task={item.task}
+                              onDelete={handleItemDelete}
+                              users={projectUsers?.users}
                             />
                           )}
                         </div>

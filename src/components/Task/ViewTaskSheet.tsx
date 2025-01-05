@@ -1,4 +1,9 @@
-import React, { useState, type Dispatch, type SetStateAction } from 'react'
+import React, {
+  useContext,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react'
 import {
   Sheet,
   SheetClose,
@@ -44,6 +49,7 @@ import { SelectItem } from '../ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
 import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
+import { ProjectDataContext } from '../Contexts/ProjectUsersContext'
 
 interface ViewTaskSheet {
   open: boolean
@@ -69,6 +75,8 @@ const ViewTaskSheet = ({
       parent: Task
     }
   >(taskId ? `/api/db/task/${taskId}` : null)
+
+  const projectUsers = useContext(ProjectDataContext)
 
   // Tab definitions
   const taskSheetTabs: {
@@ -194,24 +202,23 @@ const ViewTaskSheet = ({
                       )
                     }
                   >
-                    {/* We iterate over project.users to only allow members connected to the current project
-                    {users
-                      ? users.map((user) => (
+                    {projectUsers
+                      ? projectUsers.users?.map((user) => (
                           <SelectItem
-                            value={user.user.id}
-                            key={`user-item-${user.user.id}`}
+                            value={user.id}
+                            key={`user-item-${user.id}`}
                           >
                             <div className="flex items-center gap-1">
                               <UserAvatar
                                 avatarSize={25}
                                 fontSize={10}
-                                username={user.user.name}
+                                username={user.name}
                               />
-                              {user.user.name}
+                              {user.name}
                             </div>
                           </SelectItem>
                         ))
-                      : null} */}
+                      : null}
                   </GeneralTableSelect>
                 </div>
 

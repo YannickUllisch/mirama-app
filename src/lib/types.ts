@@ -48,6 +48,8 @@ export interface BoardColumn {
 export type KanbanItemType = {
   id: UniqueIdentifier
   task?: Task & { assignedTo: User | undefined }
+  onDelete?: (id: string) => void
+  users?: User[]
 }
 
 export interface GoogleCalendarEvent {

@@ -77,7 +77,7 @@ export const POST = auth(async (req) => {
 
     // Creating Task
     try {
-      await db.task.create({
+      const newTask = await db.task.create({
         data: {
           ...task,
           id: newId,
@@ -94,15 +94,12 @@ export const POST = auth(async (req) => {
           },
         },
       })
+
+      return Response.json(newTask)
     } catch (err) {
       console.error('Error in creating Task', err)
       throw err
     }
-
-    return Response.json(
-      { ok: true, message: 'Task Successfully created' },
-      { status: 200 },
-    )
   } catch (err: any) {
     return Response.json(
       { ok: false, message: `Failed with Error ${err}` },
@@ -223,6 +220,8 @@ export const PUT = auth(async (req) => {
           },
           data: {
             ...task,
+            assignedToId:
+              task.assignedToId === 'removeLink' ? null : task.assignedToId,
             parentId: id !== task.parentId ? task.parentId : null, // Avoid self-parenting
             tags: undefined,
             subtasks: undefined,

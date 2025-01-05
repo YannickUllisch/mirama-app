@@ -11,6 +11,7 @@ import { fetchTaskCategoriesByProject } from '@src/lib/api/queries/TaskCategory/
 import { fetchAllTeamMembers } from '@src/lib/api/queries/Team/MemberQueries'
 import { fetchProjectUsersJoinedByProjectId } from '@src/lib/api/queries/Project/ProjectUserJoinQuerys'
 import { fetchMilestonesByProjectId } from '@src/lib/api/queries/Project/MilestoneQueries'
+import ProjectUsersContext from '@src/components/Contexts/ProjectUsersContext'
 
 export const metadata: Metadata = {
   title: 'Projects | Mirama',
@@ -77,7 +78,11 @@ const Layout = async ({
   }
 
   return (
-    <SWRFallbackWrapper fallback={fallbackData}>{children}</SWRFallbackWrapper>
+    <ProjectUsersContext users={projectUsers}>
+      <SWRFallbackWrapper fallback={fallbackData}>
+        {children}
+      </SWRFallbackWrapper>
+    </ProjectUsersContext>
   )
 }
 

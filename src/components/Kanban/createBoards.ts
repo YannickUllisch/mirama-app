@@ -11,7 +11,7 @@ export const createBoards = (
 
   // Create a board for the "Unparented" group
   const unparentedBoard: Board = {
-    id: `board-${v4()}`,
+    id: `unparented-${v4()}`,
     title: 'Unparented Tasks',
     containerTaskType: null,
     columns: createColumns(unparented),

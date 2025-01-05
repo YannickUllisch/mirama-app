@@ -2,14 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState, type FC } from 'react'
 import UserAvatar from '../Avatar/UserAvatar'
-import {
-  ClipboardCheck,
-  Edit,
-  Ellipsis,
-  Pencil,
-  Trash2,
-  UserIcon,
-} from 'lucide-react'
+import { Edit, Ellipsis, Pencil, Trash2, UserIcon } from 'lucide-react'
 import type { KanbanItemType } from '@src/lib/types'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -24,8 +17,9 @@ import {
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
 import EditableCell from '../Inputs/EditableCell'
+import { SelectItem } from '@ui/select'
 
-const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
+const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const path = usePathname()
   const {
@@ -69,7 +63,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
               onBlueNoChange={() => {
                 setIsEditing(false)
               }}
-              className="h-fit w-fit p-1"
+              className="h-fit w-fit p-1 text-xs"
             />
           </div>
         ) : (
@@ -123,7 +117,12 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
                     Edit Title
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (onDelete) {
+                        onDelete(task?.id ?? '')
+                      }
+                    }}
                     className="flex gap-2 items-center text-destructive"
                   >
                     <Trash2 size={16} />
@@ -139,7 +138,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
         <div className="flex items-center gap-1 mt-auto">
           <GeneralTableSelect
             key={'id'}
-            id={'user-select-kanban'}
+            id={task?.id ?? ''}
             apiRoute="task"
             paramToUpdate="assignedToId"
             stylingProps={{ triggerStyle: 'text-xs h-6 py-1' }}
@@ -162,7 +161,18 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task }) => {
               )
             }
           >
-            test
+            {users?.map((user) => (
+              <SelectItem value={user.id}>
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    username={user.name}
+                    avatarSize={22}
+                    fontSize={8}
+                  />
+                  {user.name}
+                </div>
+              </SelectItem>
+            ))}
           </GeneralTableSelect>
         </div>
       </div>

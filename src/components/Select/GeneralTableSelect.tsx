@@ -40,7 +40,7 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
       apiRoute,
       id,
       {
-        [paramToUpdate]: val === 'undefined' ? undefined : val,
+        [paramToUpdate]: val === 'undefined' ? 'removeLink' : val,
       },
       { mutate: mutate, onSuccess: onSuccess },
     )
