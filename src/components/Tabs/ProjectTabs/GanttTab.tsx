@@ -1,5 +1,5 @@
 'use client'
-import type { Tag, Milestone, Task, TaskCategory, User } from '@prisma/client'
+import type { Tag, Milestone, Task, User, Project } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
@@ -24,7 +24,7 @@ import {
 } from '@src/components/ui/roadmap-ui/gantt'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
-import { useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
 import get from 'lodash/get'
@@ -35,6 +35,7 @@ import { Label } from '@src/components/ui/label'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import dynamic from 'next/dynamic'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -52,12 +53,7 @@ const defaultMilestone: Milestone = {
   title: '',
 }
 
-type TaskKey =
-  | 'assignedTo.name'
-  | 'priority'
-  | 'category.title'
-  | 'status'
-  | 'type'
+type TaskKey = 'assignedTo.name' | 'priority' | 'status' | 'type'
 
 const groupOptions: {
   label: string
@@ -65,22 +61,14 @@ const groupOptions: {
 }[] = [
   { label: 'Assigned To', key: 'assignedTo.name' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Category', key: 'category.title' },
   { label: 'Status', key: 'status' },
   { label: 'Type', key: 'type' },
 ]
 
-const GanttTab = ({
-  projectId,
-  projectName,
-  pStartDate,
-  pEndDate,
-}: {
-  projectId: string
-  pStartDate?: Date
-  pEndDate?: Date
-  projectName: string
-}) => {
+const GanttTab = () => {
+  // Project context
+  const projectContext = useContext(ProjectDataContext)
+
   // General States
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
   const [rangeView, setRangeView] = useState<'daily' | 'monthly' | 'quarterly'>(
@@ -103,17 +91,21 @@ const GanttTab = ({
     (Task & {
       assignedTo: User
       subtasks: Task[]
-      category: TaskCategory | null
       tags: Tag[]
     })[]
   >(
-    projectId
-      ? `/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`
+    projectContext?.projectId
+      ? `/api/db/task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
       : null,
   )
 
+  // Fetching Project by name
+  const { data: project } = useSWR<Project>(
+    `/api/db/project/${projectContext?.projectId}`,
+  )
+
   const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
-    `/api/db/project/milestones?id=${projectId}`,
+    `/api/db/project/milestones?id=${projectContext?.projectId}`,
   )
 
   // Sorting and grouping Data
@@ -199,14 +191,14 @@ const GanttTab = ({
       <AddMilestoneDialog
         isOpen={isMilestoneDialogOpen}
         setIsOpen={setIsMilestoneDialogOpen}
-        projectId={projectId}
+        projectId={projectContext?.projectId ?? ''}
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
       />
       <div className="border border-border/50 dark:border-border rounded-md">
         <GanttProvider
-          endDate={pEndDate}
-          startDate={pStartDate}
+          endDate={new Date(project?.endDate ?? 0)}
+          startDate={new Date(project?.startDate ?? 0)}
           onAddItem={handleAddFeature}
           range={rangeView}
           zoom={50}
@@ -262,7 +254,7 @@ const GanttTab = ({
                         </ContextMenuTrigger>
                         <TaskContextContent
                           mutate={updateTasks}
-                          projectName={projectName}
+                          projectName={projectContext?.projectName ?? ''}
                           taskId={task.id}
                         />
                       </ContextMenu>
@@ -295,7 +287,7 @@ const GanttTab = ({
         open={isTaskOpen}
         setOpen={setIsTaskOpen}
         taskId={selectedTaskId ?? ''}
-        projectName={projectName}
+        projectName={projectContext?.projectName ?? ''}
         mutate={updateTasks}
       />
     </>

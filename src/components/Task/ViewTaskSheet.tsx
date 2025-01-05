@@ -16,7 +16,6 @@ import {
   TaskStatusType,
   type Tag,
   type Task,
-  type TaskCategory,
   type User,
 } from '@prisma/client'
 import { Separator } from '../ui/separator'
@@ -49,7 +48,7 @@ import { SelectItem } from '../ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
 import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
-import { ProjectDataContext } from '../Contexts/ProjectUsersContext'
+import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 
 interface ViewTaskSheet {
   open: boolean
@@ -71,13 +70,11 @@ const ViewTaskSheet = ({
       subtasks: Task[]
       tags: Tag[]
       assignedTo: User
-      category: TaskCategory
       parent: Task
     }
   >(taskId ? `/api/db/task/${taskId}` : null)
 
   const projectUsers = useContext(ProjectDataContext)
-
   // Tab definitions
   const taskSheetTabs: {
     id: string
@@ -312,24 +309,6 @@ const ViewTaskSheet = ({
                     ))}
                   </GeneralTableSelect>
                 </div>
-
-                {/* Entry 5 */}
-                <div className="grid grid-cols-2 gap-x-4">
-                  <div className="flex gap-2 items-center">
-                    <FolderSearch className="dark:text-neutral-400" size={15} />
-                    <span>Category</span>
-                  </div>
-                  {task?.category && (
-                    <Badge
-                      variant={'outline'}
-                      className="w-fit"
-                      style={{ backgroundColor: task?.category?.color }}
-                    >
-                      {task?.category?.title ?? ''}
-                    </Badge>
-                  )}
-                </div>
-
                 {/* Entry 6 */}
                 <div className="grid grid-cols-2 gap-x-4">
                   <div className="flex gap-2 items-center">

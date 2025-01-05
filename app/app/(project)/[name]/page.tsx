@@ -1,6 +1,6 @@
 'use client'
-import { type Project, type ProjectUser, Role, type User } from '@prisma/client'
-import React, { createContext, type JSX, useEffect, useState } from 'react'
+import { Role } from '@prisma/client'
+import React, { type JSX, useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -16,98 +16,75 @@ import {
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import useSWR from 'swr'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 import GanttTab from '@src/components/Tabs/ProjectTabs/GanttTab'
 import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
 import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 
-const ClientProjectPage = ({ params }: { params: { name: string } }) => {
+// Tab definitions
+const projectTabs: {
+  roles: Role[]
+  id: string
+  component: JSX.Element
+  headerComponent: JSX.Element
+}[] = [
+  {
+    id: 'overview',
+    roles: Object.values(Role),
+    component: <OverviewTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <MapIcon width={15} /> Overview
+      </div>
+    ),
+  },
+  {
+    id: 'table',
+    roles: Object.values(Role),
+    component: <ListTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <Table2 width={15} /> Table
+      </div>
+    ),
+  },
+  {
+    id: 'kanban',
+    roles: Object.values(Role),
+    component: <BoardTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <ClipboardList width={15} /> Board
+      </div>
+    ),
+  },
+  {
+    id: 'gantt',
+    roles: Object.values(Role),
+    component: <GanttTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <GanttChart width={15} /> Gantt
+      </div>
+    ),
+  },
+  {
+    id: 'settings',
+    roles: Object.values(Role),
+    component: <SettingsTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <Settings width={15} /> Settings
+      </div>
+    ),
+  },
+]
+
+const ClientProjectPage = () => {
   // Session
   const { data: session } = useSession({ required: true })
 
-  // Fetching Project by name
-  const { data: project } = useSWR<
-    Project & { users: (ProjectUser & { user: User })[] }
-  >(`/api/db/project/name/${params.name}`)
-
-  // Tab definitions
-  const projectTabs: {
-    roles: Role[]
-    id: string
-    component: JSX.Element
-    headerComponent: JSX.Element
-  }[] = [
-    {
-      id: 'overview',
-      roles: Object.values(Role),
-      component: (
-        <OverviewTab
-          projectName={project?.name ?? ''}
-          projectId={project?.id ?? ''}
-          session={session}
-        />
-      ),
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <MapIcon width={15} /> Overview
-        </div>
-      ),
-    },
-    {
-      id: 'table',
-      roles: Object.values(Role),
-      component: (
-        <ListTab
-          projectId={project?.id ?? ''}
-          projectName={project?.name ?? ''}
-        />
-      ),
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <Table2 width={15} /> Table
-        </div>
-      ),
-    },
-    {
-      id: 'kanban',
-      roles: Object.values(Role),
-      component: <BoardTab projectId={project?.id ?? ''} session={session} />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <ClipboardList width={15} /> Board
-        </div>
-      ),
-    },
-    {
-      id: 'gantt',
-      roles: Object.values(Role),
-      component: (
-        <GanttTab
-          projectId={project?.id ?? ''}
-          pEndDate={new Date(project?.endDate ?? '')}
-          pStartDate={new Date(project?.startDate ?? '')}
-          projectName={project?.name ?? ''}
-        />
-      ),
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <GanttChart width={15} /> Gantt
-        </div>
-      ),
-    },
-    {
-      id: 'settings',
-      roles: Object.values(Role),
-      component: <SettingsTab projectId={project?.id ?? ''} />,
-      headerComponent: (
-        <div className="flex justify-center gap-1 items-center">
-          <Settings width={15} /> Settings
-        </div>
-      ),
-    },
-  ]
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -125,7 +102,7 @@ const ClientProjectPage = ({ params }: { params: { name: string } }) => {
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
       <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-7 rounded-lg p-1">
-        <TabsList className="inline-flex items-center justify-start border overflow-x-auto whitespace-nowrap sm:justify-center sm:gap-2">
+        <TabsList className="inline-flex items-center justify-start border whitespace-nowrap sm:justify-center sm:gap-2">
           {projectTabs.map(
             (tabHeader) =>
               session &&

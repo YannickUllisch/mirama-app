@@ -4,7 +4,6 @@ import {
   type TaskTagJoin,
   type Tag,
   type Task,
-  type TaskCategory,
   type User,
 } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
@@ -26,12 +25,7 @@ import {
 import { SelectItem } from '@src/components/ui/tableSelect'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import {
-  adjustBrightness,
-  calculateBrightness,
-  capitalize,
-  getColorByTaskStatusType,
-} from '@src/lib/utils'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import {
   BetweenHorizonalStart,
@@ -39,9 +33,6 @@ import {
   ChevronUp,
   ClockArrowDown,
   Ellipsis,
-  FolderSearch,
-  Loader,
-  NotepadText,
   PanelBottomClose,
   Pencil,
   Tag as TagIcon,
@@ -66,7 +57,6 @@ export const ListTabColumns = ({
       assignedTo: User
       tags: (TaskTagJoin & { tag: Tag })[]
       subtasks: Task[]
-      category: TaskCategory | null
     })[]
   >
 }) => {
@@ -75,7 +65,6 @@ export const ListTabColumns = ({
       assignedTo: User | null
       tags: Tag[]
       subtasks: Task
-      category: TaskCategory | null
     }
   >[] = useMemo(
     () => [
@@ -198,36 +187,7 @@ export const ListTabColumns = ({
           )
         },
       },
-      {
-        accessorFn: (val) => val.category?.title ?? '',
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Category"
-            icon={<FolderSearch className="dark:text-neutral-400" size={15} />}
-          />
-        ),
-        id: 'Category',
-        cell: ({ getValue, row }) => {
-          const color = row.original.category?.color
-          if (!color) return null
-          const brightness = calculateBrightness(color)
 
-          const textColor =
-            brightness > 200
-              ? adjustBrightness(color, -200) // Darken text for bright backgrounds
-              : adjustBrightness(color, 200) // Brighten text for dark backgrounds
-          return (
-            <Badge
-              variant={'outline'}
-              style={{ backgroundColor: color, color: textColor }}
-            >
-              {getValue() as string}
-            </Badge>
-          )
-        },
-        enableSorting: false,
-      },
       {
         accessorKey: 'priority',
         header: ({ column }) => (

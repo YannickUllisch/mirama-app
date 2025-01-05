@@ -1,8 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useMemo, useState, type FC } from 'react'
+import React, { useContext, useMemo, useState, type FC } from 'react'
 import { Button } from '@src/components/ui/button'
-import type { Project, ProjectUser, TaskCategory, User } from '@prisma/client'
+import type { Project, ProjectUser, User } from '@prisma/client'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { useSession } from 'next-auth/react'
 import { Archive, Trash2 } from 'lucide-react'
@@ -14,35 +14,28 @@ import { Separator } from '@src/components/ui/separator'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import UserMultiSelect from '@src/components/Select/UserMultiSelect'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import AddTaskCategoryDialog from '@src/components/Dialogs/AddTaskCategoryDialog'
-import TaskCategoryItem from '@src/components/Task/TaskCategoryItem'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
-interface SettingsTabProps {
-  projectId: string
-}
-
-const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
-  // States
+const SettingsTab = () => {
+  // Project context
+  const projectContext = useContext(ProjectDataContext)
 
   // Fetching Data
-  const { data: project } = useSWR<Project>(`/api/db/project/${projectId}`)
-
-  const { data: taskCategories, mutate: updateCategories } = useSWR<
-    TaskCategory[]
-  >(`/api/db/project/taskCategories?projectId=${projectId}`)
+  const { data: project } = useSWR<Project>(
+    projectContext ? `/api/db/project/${projectContext.projectId}` : undefined,
+  )
 
   const { data: projectUsers, mutate: updateProjectUsers } = useSWR<
     (ProjectUser & { user: User })[]
-  >(`/api/db/projectuser?projectId=${projectId}`)
+  >(
+    projectContext
+      ? `/api/db/projectuser?projectId=${projectContext.projectId}`
+      : undefined,
+  )
 
   const [managerIds, setManagersIds] = useState<string[]>(
     projectUsers?.filter((user) => user.isManager).map((pu) => pu.userId) ?? [],
   )
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string | undefined
-  >(undefined)
-
-  const [categoryDialogOpen, setCategoryDialogOpen] = useState<boolean>(false)
 
   const [assignedUserIds, setAssignedUserIds] = useState<string[]>(
     projectUsers?.map((pu) => pu.userId) ?? [],
@@ -51,7 +44,7 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
   const onManagerSelectionUpdate = (ids: string[]) => {
     updateResourceById(
       'projectuser',
-      projectId,
+      projectContext?.projectId ?? '',
       {
         userIds: ids,
         setAsManagers: true,
@@ -63,20 +56,13 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
   const onAssignedUserSelectionUpdate = (ids: string[]) => {
     updateResourceById(
       'projectuser',
-      projectId,
+      projectContext?.projectId ?? '',
       {
         userIds: ids,
       },
       { mutate: updateProjectUsers },
     )
   }
-
-  const selectedTaskCategory = useMemo(() => {
-    if (selectedCategoryId && taskCategories) {
-      return taskCategories.find((cat) => cat.id === selectedCategoryId)
-    }
-    return undefined
-  }, [selectedCategoryId, taskCategories])
 
   const router = useRouter()
   const { data: session } = useSession({ required: true })
@@ -208,42 +194,6 @@ const SettingsTab: FC<SettingsTabProps> = ({ projectId }) => {
           </div>
         )}
       </>
-
-      <Separator className="mb-4 mt-4" />
-      <div className="flex flex-col">
-        <div className="flex justify-between">
-          <span className="text-xl">Task Categories</span>
-          <AddTaskCategoryDialog
-            mutate={updateCategories}
-            projectId={projectId}
-            key={'task-category-dialog'}
-            open={categoryDialogOpen}
-            setOpen={setCategoryDialogOpen}
-            defaultCategory={selectedTaskCategory}
-            onClose={() => setSelectedCategoryId(undefined)}
-          >
-            <Button
-              variant="link"
-              className="hover:bg-hover hover:no-underline hover:outline outline-none"
-            >
-              Add Task Category
-            </Button>
-          </AddTaskCategoryDialog>
-        </div>
-        <div className="flex gap-2">
-          {taskCategories?.map((category) => (
-            <TaskCategoryItem
-              color={category.color}
-              key={`category-item-${category.title}`}
-              title={category.title}
-              onClick={() => {
-                setSelectedCategoryId(category.id)
-                setCategoryDialogOpen(true)
-              }}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   )
 }

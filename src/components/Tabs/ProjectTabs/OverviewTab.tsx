@@ -1,24 +1,24 @@
 import type { Task } from '@prisma/client'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import TaskTree from '@src/components/Task/TaskTree'
-import type { Session } from 'next-auth'
-import React, { type FC } from 'react'
+import React, { useContext, type FC } from 'react'
 import useSWR from 'swr'
 
-interface OverviewTabProps {
-  projectId: string
-  projectName: string
-  session: Session | null
-}
+const OverviewTab = () => {
+  // Project context
+  const projectContext = useContext(ProjectDataContext)
 
-const OverviewTab: FC<OverviewTabProps> = ({ projectId, projectName }) => {
   // Fetching Tasks
   const { data: tasks } = useSWR<
     (Task & { subtasks: Task[]; comments: Comment[] })[]
-  >(`/api/db/task?id=${projectId}`)
+  >(projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined)
 
   return (
     <div className="flex">
-      <TaskTree tasks={tasks ?? []} projectName={projectName} />
+      <TaskTree
+        tasks={tasks ?? []}
+        projectName={projectContext?.projectName ?? ''}
+      />
     </div>
   )
 }

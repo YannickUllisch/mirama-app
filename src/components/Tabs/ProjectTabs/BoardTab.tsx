@@ -1,24 +1,22 @@
 'use client'
-import type { FC } from 'react'
-import type { KanbanColumn, Task, User } from '@prisma/client'
+import { useContext, type FC } from 'react'
+import type { Task, User } from '@prisma/client'
 import useSWR from 'swr'
-import type { Session } from 'next-auth'
 import KanbanBoard from '@src/components/Kanban/KanbanBoard'
 import { groupTasksByContainer } from '@src/components/Tree/ContainerizedTree'
 import { useTree } from '@src/hooks/useTree'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
-interface TabProps {
-  projectId: string
-  session: Session | null
-}
+const BoardTab = () => {
+  // Project context
+  const projectContext = useContext(ProjectDataContext)
 
-const BoardTab: FC<TabProps> = ({ projectId, session }) => {
   const { data: tasks } = useSWR<
     (Task & {
       assignedTo: User
       subtasks: (Task & { assignedTo: User | undefined })[]
     })[]
-  >(`/api/db/task?id=${projectId}`)
+  >(projectContext ? `/api/db/task?id=${projectContext.projectId}` : undefined)
 
   // Move to Server Side
   const tree = useTree(tasks ?? [], 'subtasks')
@@ -28,8 +26,7 @@ const BoardTab: FC<TabProps> = ({ projectId, session }) => {
   return (
     <KanbanBoard
       containerGroupedTasks={containerGroupedTasks}
-      projectId={projectId}
-      session={session}
+      projectId={projectContext?.projectId ?? ''}
     />
   )
 }

@@ -162,7 +162,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
             }
           >
             {users?.map((user) => (
-              <SelectItem value={user.id}>
+              <SelectItem value={user.id} key={`select-item-${user.id}`}>
                 <div className="flex items-center gap-1">
                   <UserAvatar
                     username={user.name}

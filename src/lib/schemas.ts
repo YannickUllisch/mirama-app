@@ -75,20 +75,12 @@ export const TaskSchema = z
     tags: z.string().array().optional(),
     subtasks: z.string().array().optional(),
     parentId: z.string().optional(),
-    categoryId: z.string().optional(),
     type: z.nativeEnum(TaskType),
   })
   .refine((data) => data.startDate <= data.dueDate, {
     message: 'Start Date must be before or equal to Due Date',
     path: ['startDate'],
   })
-
-export const TaskCategorySchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  projectId: z.string(),
-  color: z.string(),
-})
 
 export const ChangePasswordSchema = z
   .object({

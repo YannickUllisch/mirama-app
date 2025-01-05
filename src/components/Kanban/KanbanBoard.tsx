@@ -1,4 +1,4 @@
-import { type FC, useMemo, useState, useEffect, useContext } from 'react'
+import { type FC, useState, useContext } from 'react'
 import { v4 } from 'uuid'
 import KanbanContainer from './KanbanContainer'
 import {
@@ -28,10 +28,10 @@ import { Input } from '@ui/input'
 import { createBoards } from './createBoards'
 import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { ProjectDataContext } from '../Contexts/ProjectUsersContext'
+import { ProjectDataContext } from '../Contexts/ProjectDataContext'
+import { useSession } from 'next-auth/react'
 
 interface KanbanBoardProps {
-  session: Session | null
   projectId: string
   containerGroupedTasks: GroupedContainerizedTasks
 }
@@ -39,14 +39,13 @@ interface KanbanBoardProps {
 const KanbanBoard: FC<KanbanBoardProps> = ({
   containerGroupedTasks,
   projectId,
-  session,
 }) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
   // waiting for DB updates we simulate the changes through the boards state and update DB in the background
-
   const initBoards = createBoards(containerGroupedTasks)
   const [boards, setBoards] = useState<Board[]>(initBoards)
 
+  const { data: session } = useSession()
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
@@ -91,7 +90,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         startDate: new Date(),
         updatedAt: new Date(),
         description: null,
-        categoryId: null,
         assignedToId: null,
         parentId: parentId,
         assignedTo: undefined,

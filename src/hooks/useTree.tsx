@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 // Generic type definition
 type TreeNode<T> = T & { [key: string]: TreeNode<T>[] }
 
@@ -15,21 +13,42 @@ export const useTree = <T extends { id: string; parentId: string | null }>(
   items: T[],
   key: keyof T,
 ): TreeNode<T>[] => {
-  return useMemo(() => {
-    if (!items) return []
+  if (!items) return []
 
-    // Generic recursive function to build the tree
-    const buildTree = (item: T): TreeNode<T> => {
-      return {
-        ...item,
-        [key]: items
-          .filter((child) => child.parentId === item.id)
-          .map(buildTree),
-      } as TreeNode<T>
-    }
+  // Generic recursive function to build the tree
+  const buildTree = (item: T): TreeNode<T> => {
+    return {
+      ...item,
+      [key]: items.filter((child) => child.parentId === item.id).map(buildTree),
+    } as TreeNode<T>
+  }
 
-    // Get root nodes and build the tree structure
-    const rootNodes = items.filter((item) => !item.parentId) || []
-    return rootNodes.map(buildTree) // Build the tree for each root node
-  }, [items, key])
+  // Get root nodes and build the tree structure
+  const rootNodes = items.filter((item) => !item.parentId) || []
+  return rootNodes.map(buildTree) // Build the tree for each root node
 }
+
+// export const ClientUseTree = <
+//   T extends { id: string; parentId: string | null },
+// >(
+//   items: T[],
+//   key: keyof T,
+// ): TreeNode<T>[] => {
+//   return useMemo(() => {
+//     if (!items) return []
+
+//     // Generic recursive function to build the tree
+//     const buildTree = (item: T): TreeNode<T> => {
+//       return {
+//         ...item,
+//         [key]: items
+//           .filter((child) => child.parentId === item.id)
+//           .map(buildTree),
+//       } as TreeNode<T>
+//     }
+
+//     // Get root nodes and build the tree structure
+//     const rootNodes = items.filter((item) => !item.parentId) || []
+//     return rootNodes.map(buildTree) // Build the tree for each root node
+//   }, [items, key])
+// }

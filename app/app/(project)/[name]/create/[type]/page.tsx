@@ -19,7 +19,6 @@ import {
   type ProjectUser,
   type Tag,
   type Task,
-  type TaskCategory,
   TaskStatusType,
   type TaskType,
   type User,
@@ -33,7 +32,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useTransition } from 'react'
+import React, { useContext, useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { postResource } from '@src/lib/api/postResource'
@@ -61,6 +60,7 @@ import ClearButton from '@src/components/Buttons/ClearButton'
 import useSWR from 'swr'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
 const CreateTaskForm = ({
   params,
@@ -69,7 +69,7 @@ const CreateTaskForm = ({
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultParentId = searchParams.get('parentId')
-  const defaultProjectId = searchParams.get('projectId')
+  const projectContext = useContext(ProjectDataContext)
 
   // States
   const [isPending, startTransition] = useTransition()
@@ -78,11 +78,8 @@ const CreateTaskForm = ({
     Project & {
       users: (ProjectUser & { user: User })[]
       tasks: Task[]
-      taskCategories: TaskCategory[]
     }
-  >(`/api/db/project/name/${params.name}`)
-
-  const { data: assignedProjects } = useSWR<Project[]>('/api/db/project')
+  >(params.name ? `/api/db/project/name/${params.name}` : undefined)
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
@@ -96,7 +93,7 @@ const CreateTaskForm = ({
       dueDate: new Date(),
       startDate: new Date(),
       priority: PriorityType.LOW,
-      projectId: defaultProjectId ?? '',
+      projectId: projectContext?.projectId,
       status: TaskStatusType.NEW,
       tags: [],
       subtasks: undefined,
@@ -105,7 +102,6 @@ const CreateTaskForm = ({
         !isTaskTypeContainer(params.type.toUpperCase() as TaskType)
           ? defaultParentId
           : undefined,
-      categoryId: undefined,
       type: params.type.toUpperCase() as TaskType,
     },
   })
@@ -270,81 +266,6 @@ const CreateTaskForm = ({
                         </SelectItem>
                       ))}
                       <ClearButton onClick={() => field.onChange(undefined)} />
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    key={`category-select-${field.value}`}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full border dark:border-neutral-800">
-                        <SelectValue
-                          placeholder={
-                            <span className="text-text-secondary">
-                              Select Category
-                            </span>
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {project?.taskCategories.map((category) => (
-                        <SelectItem
-                          key={`category-item-${category.id}`}
-                          value={category.id}
-                        >
-                          {category.title}
-                        </SelectItem>
-                      ))}
-                      <ClearButton onClick={() => field.onChange(undefined)} />
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="projectId"
-              render={({ field }) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    key={`project-select-${field.value}`}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full border dark:border-neutral-800">
-                        <SelectValue
-                          placeholder={
-                            <span className="text-text-secondary">
-                              Select Project
-                            </span>
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assignedProjects?.map((project) => (
-                        <SelectItem
-                          key={`project-item-${project.id}`}
-                          value={project.id}
-                        >
-                          {project.name}
-                        </SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

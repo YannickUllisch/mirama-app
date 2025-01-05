@@ -19,7 +19,6 @@ import {
   type ProjectUser,
   type Tag,
   type Task,
-  type TaskCategory,
   TaskStatusType,
   type TaskTagJoin,
   type TaskType,
@@ -80,12 +79,9 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   const { data: project, mutate: updateProject } = useSWR<
     Project & {
       users: (ProjectUser & { user: User })[]
-      taskCategories: TaskCategory[]
       tasks: Task[]
     }
-  >(`/api/db/project/name/${params.name}`)
-
-  const { data: assignedProjects } = useSWR<Project[]>('/api/db/project')
+  >(params.name ? `/api/db/project/name/${params.name}` : undefined)
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
@@ -106,7 +102,6 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       status: task?.status ?? TaskStatusType.NEW,
       tags: task?.tags.map((tag) => tag.tagId),
       parentId: task?.parentId ?? undefined,
-      categoryId: task?.categoryId ?? undefined,
       type: task?.type ?? 'TASK',
     },
     defaultValues: {
@@ -120,7 +115,6 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       status: TaskStatusType.NEW,
       tags: [],
       parentId: undefined,
-      categoryId: undefined,
       type: 'TASK',
     },
   })
@@ -281,81 +275,6 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                         </SelectItem>
                       ))}
                       <ClearButton onClick={() => field.onChange(undefined)} />
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    key={`category-select-${field.value}`}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full border dark:border-neutral-800">
-                        <SelectValue
-                          placeholder={
-                            <span className="text-text-secondary">
-                              Select Category
-                            </span>
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {project?.taskCategories.map((category) => (
-                        <SelectItem
-                          key={`category-item-${category.id}`}
-                          value={category.id}
-                        >
-                          {category.title}
-                        </SelectItem>
-                      ))}
-                      <ClearButton onClick={() => field.onChange(undefined)} />
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="projectId"
-              render={({ field }) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    key={`project-select-${field.value}`}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full border dark:border-neutral-800">
-                        <SelectValue
-                          placeholder={
-                            <span className="text-text-secondary">
-                              Select Project
-                            </span>
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assignedProjects?.map((project) => (
-                        <SelectItem
-                          key={`project-item-${project.id}`}
-                          value={project.id}
-                        >
-                          {project.name}
-                        </SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

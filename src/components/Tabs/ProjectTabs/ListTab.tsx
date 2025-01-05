@@ -1,19 +1,14 @@
 'use client'
-import type { Tag, Task, TaskCategory, TaskTagJoin, User } from '@prisma/client'
+import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import type React from 'react'
-import { useState, type FC } from 'react'
+import { useContext, useState } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { ListTabColumns } from './helper/ListTabColumns'
 import { useTree } from '@src/hooks/useTree'
 import TaskTypeCreate from '@src/components/Task/TaskTypeCreate'
 import { Checkbox } from '@src/components/ui/checkbox'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@src/components/ui/popover'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +19,12 @@ import {
 } from '@src/components/ui/dropdown-menu'
 import { Settings2 } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
-interface TaskProps {
-  projectId: string
-  projectName: string
-}
+const ListTab = () => {
+  // Project context
+  const projectContext = useContext(ProjectDataContext)
 
-const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   // Personalizations
   const [viewFlattened, setViewFlattened] = useState(false)
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
@@ -45,12 +39,17 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
       assignedTo: User
       tags: (TaskTagJoin & { tag: Tag })[]
       subtasks: Task[]
-      category: TaskCategory | null
     })[]
-  >(`/api/db/task?id=${projectId}&ignoreCompleted=${ignoreCompleted}`)
+  >(
+    projectContext?.projectId
+      ? `/api/db/task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
+      : undefined,
+  )
 
   const { data: users } = useSWR<User[]>(
-    `/api/db/project/users?id=${projectId}`,
+    projectContext?.projectId
+      ? `/api/db/project/users?id=${projectContext?.projectId}`
+      : undefined,
   )
 
   // Table states
@@ -64,7 +63,10 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
   const ToolbarLeft = () => {
     return (
       <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-        <TaskTypeCreate projectId={projectId} projectName={projectName} />
+        <TaskTypeCreate
+          projectId={projectContext?.projectId ?? ''}
+          projectName={projectContext?.projectName ?? ''}
+        />
       </div>
     )
   }
@@ -109,7 +111,7 @@ const ListTab: FC<TaskProps> = ({ projectId, projectName }) => {
         tableIdentifier="task_tab_table"
         columns={ListTabColumns({
           mutate: updateTasks,
-          projectName: projectName,
+          projectName: projectContext?.projectName ?? '',
           users: users ?? [],
         })}
         data={viewFlattened ? tasks ?? [] : (taskTrees2 as any[]) ?? []}

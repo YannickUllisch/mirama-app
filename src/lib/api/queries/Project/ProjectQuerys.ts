@@ -16,7 +16,6 @@ export const fetchSingleProjectByName = async (name: string) => {
         include: {
           assignedTo: true,
           tags: true,
-          category: true,
         },
       },
       users: {
@@ -24,7 +23,6 @@ export const fetchSingleProjectByName = async (name: string) => {
           user: true,
         },
       },
-      taskCategories: true,
     },
   })
 
@@ -47,7 +45,6 @@ export const fetchSingleProjectById = async (id: string) => {
           assignedTo: true,
         },
       },
-      taskCategories: true,
     },
   })
 
