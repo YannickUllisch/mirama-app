@@ -18,8 +18,16 @@ import {
 } from '@ui/dropdown-menu'
 import EditableCell from '../Inputs/EditableCell'
 import { SelectItem } from '@ui/select'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+import { DateTime } from 'luxon'
 
-const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
+const KanbanItem: FC<KanbanItemType> = ({
+  id,
+  task,
+  onDelete,
+  users,
+  onItemUpdate,
+}) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const path = usePathname()
   const {
@@ -48,7 +56,7 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
       className={`h-[120px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer'
       ${isDragging && 'opacity-50'}`}
     >
-      <div className="flex flex-col h-full justify-between">
+      <div className="flex flex-col gap-y-2 justify-between">
         {/* Task title and link */}
         {isEditing ? (
           <div className="flex gap-1 mb-1 hover:underline">
@@ -61,6 +69,16 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
               paramToUpdate="title"
               autofocus
               onBlueNoChange={() => {
+                setIsEditing(false)
+              }}
+              executeOnBlur={(value) => {
+                if (onItemUpdate) {
+                  onItemUpdate({
+                    taskId: task?.id ?? '',
+                    title: value.toString(),
+                  })
+                }
+
                 setIsEditing(false)
               }}
               className="h-fit w-fit p-1 text-xs"
@@ -134,6 +152,23 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
           </div>
         )}
 
+        <div className="items-center flex justify-between text-xs">
+          <div className="flex gap-2 items-center ">
+            <div
+              className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
+                task?.status ?? '',
+              )}`}
+            />
+            {capitalize(task?.status ?? '')}
+          </div>
+          <div className="text-text-secondary">
+            <span>Due </span>
+            {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(
+              'dd/MM',
+            )}
+          </div>
+        </div>
+
         {/* GeneralTableSelect at the bottom */}
         <div className="flex items-center gap-1 mt-auto">
           <GeneralTableSelect
@@ -174,6 +209,9 @@ const KanbanItem: FC<KanbanItemType> = ({ id, task, onDelete, users }) => {
               </SelectItem>
             ))}
           </GeneralTableSelect>
+          <div className="text-xs text-text-secondary">
+            {capitalize(task?.priority ?? '')}
+          </div>
         </div>
       </div>
     </div>

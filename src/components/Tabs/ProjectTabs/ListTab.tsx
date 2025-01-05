@@ -6,7 +6,7 @@ import { useContext, useState } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { ListTabColumns } from './helper/ListTabColumns'
-import { useTree } from '@src/hooks/useTree'
+import { createMemoizedTree } from '@src/lib/data-structures/Tree'
 import TaskTypeCreate from '@src/components/Task/TaskTypeCreate'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
@@ -20,6 +20,7 @@ import {
 import { Settings2 } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { deleteResources } from '@src/lib/api/deleteResource'
 
 const ListTab = () => {
   // Project context
@@ -44,13 +45,10 @@ const ListTab = () => {
     projectContext?.projectId
       ? `/api/db/task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
       : undefined,
+    { revalidateOnMount: true },
   )
 
-  const { data: users } = useSWR<User[]>(
-    projectContext?.projectId
-      ? `/api/db/project/users?id=${projectContext?.projectId}`
-      : undefined,
-  )
+  const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
   // Table states
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -58,15 +56,24 @@ const ListTab = () => {
     { id: 'taskCode', desc: true },
   ])
 
-  const taskTrees2 = useTree(tasks ?? [], 'subtasks')
+  const deleteTask = (id: string) => {
+    // Create a set to ensure we get no duplicate IDs to remove
+    const selectedItems = Array.from(
+      new Set(Object.keys(rowSelection).flatMap((key) => key.split('.'))),
+    )
+    if (!selectedItems.includes(id)) {
+      selectedItems.push(id)
+    }
+
+    deleteResources('task', selectedItems, {
+      mutate: updateTasks,
+    })
+  }
 
   const ToolbarLeft = () => {
     return (
       <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-        <TaskTypeCreate
-          projectId={projectContext?.projectId ?? ''}
-          projectName={projectContext?.projectName ?? ''}
-        />
+        <TaskTypeCreate projectName={projectContext?.projectName ?? ''} />
       </div>
     )
   }
@@ -112,9 +119,10 @@ const ListTab = () => {
         columns={ListTabColumns({
           mutate: updateTasks,
           projectName: projectContext?.projectName ?? '',
-          users: users ?? [],
+          users: projectContext?.users ?? [],
+          onTaskDelete: deleteTask,
         })}
-        data={viewFlattened ? tasks ?? [] : (taskTrees2 as any[]) ?? []}
+        data={viewFlattened ? tasks ?? [] : (taskTree as any[]) ?? []}
         ignoreSubrows={viewFlattened}
         enableRowSelection
         dataLoading={tasksLoading}

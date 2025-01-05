@@ -33,7 +33,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useTransition } from 'react'
+import React, { useContext, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
@@ -44,7 +44,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
-
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -64,10 +63,12 @@ import ClearButton from '@src/components/Buttons/ClearButton'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import GeneralAccordion from '@src/components/GeneralAccordion'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
 const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   // Routing used to return to previous page.
   const router = useRouter()
+  const projectContext = useContext(ProjectDataContext)
 
   const { data: task, mutate: updateTask } = useSWR<
     Task & {
@@ -76,12 +77,9 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
     }
   >(`/api/db/task/${params.id}`)
 
-  const { data: project, mutate: updateProject } = useSWR<
-    Project & {
-      users: (ProjectUser & { user: User })[]
-      tasks: Task[]
-    }
-  >(params.name ? `/api/db/project/name/${params.name}` : undefined)
+  const { data: tasks, mutate: updateTasks } = useSWR<Task[]>(
+    projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined,
+  )
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
@@ -259,18 +257,18 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {project?.users.map((user) => (
+                      {projectContext?.users.map((user) => (
                         <SelectItem
-                          value={user.userId}
-                          key={`user-item-${user.userId}`}
+                          value={user.id}
+                          key={`user-item-${user.id}`}
                         >
                           <div className="flex items-center gap-4">
                             <UserAvatar
                               avatarSize={25}
                               fontSize={10}
-                              username={user.user.name}
+                              username={user.name}
                             />
-                            {user.user.name}
+                            {user.name}
                           </div>
                         </SelectItem>
                       ))}
@@ -475,8 +473,8 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {project?.tasks
-                            .filter((t) => t.id !== params.id)
+                          {tasks
+                            ?.filter((t) => t.id !== params.id)
                             .map((task) => (
                               <SelectItem
                                 value={task.id}
@@ -510,14 +508,14 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                 key={'link-subtask-dialog'}
                 parentId={params.id}
                 subTasks={
-                  project?.tasks?.filter(
+                  tasks?.filter(
                     (t) =>
                       t.parentId !== params.id && !isTaskTypeContainer(t.type),
                   ) ?? []
                 }
                 mutate={() => {
-                  updateProject()
                   updateTask()
+                  updateTasks()
                 }}
               >
                 <Button className="mt-5" size={'sm'} variant={'default'}>

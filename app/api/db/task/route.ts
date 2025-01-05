@@ -51,6 +51,7 @@ export const POST = auth(async (req) => {
     // This is done for security purposes.
     const task = (await req.json()) as Omit<Task, 'id'> & {
       tags?: string[]
+      subtasks?: string[]
     }
 
     if (!task) {
@@ -80,6 +81,11 @@ export const POST = auth(async (req) => {
         data: {
           ...task,
           id: newId,
+          subtasks: {
+            connect: task.subtasks?.map((subtaskId) => ({
+              id: subtaskId,
+            })),
+          },
           teamId: session?.user.teamId ?? 'undefined',
           parentId:
             task.parentId && !isTaskTypeContainer(task.type)

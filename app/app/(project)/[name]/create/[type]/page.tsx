@@ -61,6 +61,8 @@ import useSWR from 'swr'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import SubTasksGroup from '@src/components/Task/SubTasksGroup'
+import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
 
 const CreateTaskForm = ({
   params,
@@ -74,12 +76,9 @@ const CreateTaskForm = ({
   // States
   const [isPending, startTransition] = useTransition()
 
-  const { data: project } = useSWR<
-    Project & {
-      users: (ProjectUser & { user: User })[]
-      tasks: Task[]
-    }
-  >(params.name ? `/api/db/project/name/${params.name}` : undefined)
+  const { data: tasks } = useSWR<Task[]>(
+    projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined,
+  )
 
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
@@ -250,18 +249,18 @@ const CreateTaskForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {project?.users.map((user) => (
+                      {projectContext?.users.map((user) => (
                         <SelectItem
-                          value={user.userId}
-                          key={`user-item-${user.userId}`}
+                          value={user.id}
+                          key={`user-item-${user.id}`}
                         >
                           <div className="flex items-center gap-4">
                             <UserAvatar
                               avatarSize={25}
                               fontSize={10}
-                              username={user.user.name}
+                              username={user.name}
                             />
-                            {user.user.name}
+                            {user.name}
                           </div>
                         </SelectItem>
                       ))}
@@ -465,7 +464,7 @@ const CreateTaskForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {project?.tasks.map((task) => (
+                        {tasks?.map((task) => (
                           <SelectItem
                             value={task.id}
                             key={`task-item-${task.id}}`}
@@ -486,6 +485,31 @@ const CreateTaskForm = ({
                 )}
               />
             ) : null}
+            <div className="p-1 mt-2">
+              <SubTasksGroup
+                projectName={params.name}
+                tasks={
+                  tasks?.filter((task) =>
+                    form.getValues('subtasks')?.includes(task.id),
+                  ) ?? []
+                }
+              />
+            </div>
+            <AddSubtaskDialog
+              key={'link-subtask-dialog'}
+              parentId={''}
+              subTasks={
+                tasks?.filter(
+                  (t) =>
+                    !form.getValues('subtasks')?.includes(t.id) &&
+                    !isTaskTypeContainer(t.type),
+                ) ?? []
+              }
+            >
+              <Button className="mt-5" size={'sm'} variant={'default'}>
+                Link Subtask
+              </Button>
+            </AddSubtaskDialog>
           </GeneralAccordion>
         </div>
       </form>

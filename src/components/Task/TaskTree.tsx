@@ -6,7 +6,7 @@ import {
   Tree,
   CollapseButton,
 } from '@src/components/Tree/TreeViewAPI'
-import { useTree } from '@src/hooks/useTree'
+import { createTree } from '@src/lib/data-structures/Tree'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'
@@ -18,7 +18,7 @@ interface TaskTreeProps {
 }
 
 const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {
-  const taskTrees = useTree(tasks ?? [], 'subtasks')
+  const taskTrees = createTree(tasks ?? [], 'subtasks')
 
   const renderTreeElements = (elements: any[]) => {
     return elements.map((element) => {

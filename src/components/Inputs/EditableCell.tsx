@@ -14,6 +14,7 @@ interface EditableCellProps {
   paramToUpdate: string
   onBlueNoChange?(): any
   className?: string
+  executeOnBlur?: (value: string | number) => void
 }
 
 // This Input can handle both string and number inputs.
@@ -26,6 +27,7 @@ const EditableCell: FC<EditableCellProps> = ({
   autofocus,
   onBlueNoChange,
   className,
+  executeOnBlur,
 }) => {
   const [value, setValue] = useState<string | number>(initialValue)
 
@@ -42,6 +44,10 @@ const EditableCell: FC<EditableCellProps> = ({
     if (initialValue === value) {
       if (onBlueNoChange) onBlueNoChange()
       return
+    }
+
+    if (executeOnBlur) {
+      executeOnBlur(value)
     }
 
     // We do basic checks for the given input and the expected input format.

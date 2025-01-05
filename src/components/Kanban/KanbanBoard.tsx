@@ -1,4 +1,4 @@
-import { type FC, useState, useContext } from 'react'
+import { type FC, useState, useContext, useMemo, useEffect } from 'react'
 import { v4 } from 'uuid'
 import KanbanContainer from './KanbanContainer'
 import {
@@ -15,11 +15,16 @@ import {
   rectIntersection,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { Role, TaskStatusType } from '@prisma/client'
+import {
+  type PriorityType,
+  Role,
+  type Task,
+  TaskStatusType,
+  type User,
+} from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import type { Session } from 'next-auth'
-import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'
+import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import type { Board } from '@src/lib/types'
 import { Card, CardTitle } from '@ui/card'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
@@ -30,21 +35,32 @@ import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
+import { createTree } from '@src/lib/data-structures/Tree'
+import type { KeyedMutator } from 'swr'
 
 interface KanbanBoardProps {
   projectId: string
-  containerGroupedTasks: GroupedContainerizedTasks
+  tasks: (Task & {
+    assignedTo: User
+    subtasks: (Task & { assignedTo: User | undefined })[]
+  })[]
+  mutate: KeyedMutator<any>
 }
 
-const KanbanBoard: FC<KanbanBoardProps> = ({
-  containerGroupedTasks,
-  projectId,
-}) => {
+const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
   // waiting for DB updates we simulate the changes through the boards state and update DB in the background
-  const initBoards = createBoards(containerGroupedTasks)
-  const [boards, setBoards] = useState<Board[]>(initBoards)
 
+  const initBoards = useMemo(() => {
+    const tree = createTree(tasks ?? [], 'subtasks')
+    const groupedItems = groupTasksByContainer(tree)
+    return createBoards(groupedItems)
+  }, [tasks])
+
+  const [boards, setBoards] = useState<Board[]>(initBoards)
+  useEffect(() => {
+    setBoards(initBoards)
+  }, [initBoards])
   const { data: session } = useSession()
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
@@ -70,7 +86,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     if (!column) return
 
     let parentId: string | undefined = undefined
-    if (boardId.includes('container')) {
+    if (boardId.includes('board')) {
       parentId = boardId.substring(6)
     }
 
@@ -291,6 +307,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         const containerId = overBoard.id.substring(6)
         newParentId = containerId
       }
+      const newStatus = overContainer.title // Assumes `overColumn` title represents the status
       let assignToSelf = false
       if (
         activeContainer.title === String(TaskStatusType.NEW) &&
@@ -321,12 +338,16 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
 
       // Update the task's parentId and status
       const taskId = removedItem.id.toString().substring(5) // Remove 'item-' prefix
-      const newStatus = overContainer.title // Assumes `overColumn` title represents the status
-      updateResourceById('task', taskId, {
-        status: newStatus,
-        parentId: newParentId,
-        assignedToId: assignToSelf ? session?.user?.id : undefined,
-      })
+      updateResourceById(
+        'task',
+        taskId,
+        {
+          status: newStatus,
+          parentId: newParentId,
+          assignedToId: assignToSelf ? session?.user?.id : undefined,
+        },
+        { mutate },
+      )
     }
 
     setBoards([...boards]) // Update the state with the modified boards
@@ -360,7 +381,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       const item = column.items.find((item) => item.id === itemId)
       if (item) {
         item.task.title = newItemTitle.trim()
-        postResource('task', item.task)
+        postResource('task', item.task, { mutate })
       }
 
       setBoards([...boards])
@@ -387,6 +408,38 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     })
   }
 
+  const onItemUpdate = ({
+    taskId,
+    priority,
+    dueDate,
+    title,
+  }: {
+    taskId: string
+    priority?: PriorityType
+    dueDate?: Date
+    title?: string
+  }) => {
+    const boardItemId = `item-${taskId}`
+    const container = findValueOfItems(boardItemId, 'item')
+    if (!container) return
+    // Needed for potential fallback iff DB fails
+    const deletedItem = container.items.find((item) => item.id === boardItemId)
+    if (!deletedItem) return
+
+    container.items = container.items.filter((item) => item.id !== boardItemId)
+
+    container.items.push({
+      id: deletedItem.id,
+      task: {
+        ...deletedItem.task,
+        title: title ?? deletedItem.task.title,
+        dueDate: dueDate ?? deletedItem.task.dueDate,
+        priority: priority ?? deletedItem.task.priority,
+      },
+    })
+    setBoards([...boards])
+  }
+
   return (
     <DndContext
       sensors={useSensors(
@@ -411,12 +464,12 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
               <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
                 <CardTitle>
                   {board.containerTaskType ? (
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center text-xs">
                       {getTaskTypeIcon(board.containerTaskType)}
                       {board.title}
                     </div>
                   ) : (
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center text-xs">
                       <CircleOff size={16} />
                       {'Ungrouped'}
                     </div>
@@ -465,6 +518,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
                               task={item.task}
                               onDelete={handleItemDelete}
                               users={projectUsers?.users}
+                              onItemUpdate={onItemUpdate}
                             />
                           )}
                         </div>

@@ -20,13 +20,9 @@ import {
 
 interface TaskTypeCreateProps {
   projectName: string
-  projectId: string
 }
 
-const TaskTypeCreate: FC<TaskTypeCreateProps> = ({
-  projectName,
-  projectId,
-}) => {
+const TaskTypeCreate: FC<TaskTypeCreateProps> = ({ projectName }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,7 +44,7 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({
         {containerTaskTypes.map((type) => (
           <DropdownMenuItem key={`select-container-${type}`} asChild>
             <Link
-              href={`/app/${projectName}/create/${type.toLowerCase()}?projectId=${projectId}`}
+              href={`/app/${projectName}/create/${type.toLowerCase()}`}
               className="flex gap-2"
             >
               {getTaskTypeIcon(type)}
@@ -65,7 +61,7 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({
         {individualTaskTypes.map((type) => (
           <DropdownMenuItem key={`select-individual-${type}`} asChild>
             <Link
-              href={`/app/${projectName}/create/${type.toLowerCase()}?projectId=${projectId}`}
+              href={`/app/${projectName}/create/${type.toLowerCase()}`}
               className="flex gap-2"
             >
               {getTaskTypeIcon(type)}

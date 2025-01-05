@@ -23,7 +23,6 @@ import {
   HoverCardTrigger,
 } from '@src/components/ui/hover-card'
 import { SelectItem } from '@src/components/ui/tableSelect'
-import { deleteResources } from '@src/lib/api/deleteResource'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -49,9 +48,11 @@ export const ListTabColumns = ({
   projectName,
   users,
   mutate,
+  onTaskDelete,
 }: {
   projectName: string
   users: User[]
+  onTaskDelete: (id: string) => void
   mutate: KeyedMutator<
     (Task & {
       assignedTo: User
@@ -163,7 +164,7 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/app/${projectName}/create/${row.original.type}?parentId=${row.original.id}&projectId=${row.original.projectId}`}
+                      href={`/app/${projectName}/create/${row.original.type}?parentId=${row.original.id}`}
                       className="gap-3"
                     >
                       <BetweenHorizonalStart className="h-4 w-4 " />
@@ -172,11 +173,7 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="gap-3"
-                    onClick={() =>
-                      deleteResources('task', [row.original.id], {
-                        mutate: mutate,
-                      })
-                    }
+                    onClick={() => onTaskDelete(row.original.id)}
                   >
                     <Trash className="h-4 w-4 text-red-500" />
                     Delete
@@ -424,7 +421,7 @@ export const ListTabColumns = ({
         },
       },
     ],
-    [users, projectName, mutate],
+    [users, projectName, mutate, onTaskDelete],
   )
   return cols
 }
