@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { db } from '@src/lib/db'
+import db from '@db'
 import type { Comment } from '@prisma/client'
 import { fetchCommentsByTaskId } from '@src/lib/api/queries/Tasks/CommentQueries'
 

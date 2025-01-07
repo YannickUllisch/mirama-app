@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { db } from '@src/lib/db'
+import db from '@db'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { v4 } from 'uuid'
 import type { Task } from '@prisma/client'

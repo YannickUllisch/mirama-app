@@ -1,4 +1,4 @@
-import { db } from '@src/lib/db'
+import db from '@db'
 import { auth } from '@auth'
 import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'

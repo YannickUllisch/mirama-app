@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { db } from '@db'
+import db from '@db'
 import type { Project, User } from '@prisma/client'
 import { generateInclude, isTeamAdminOrOwner } from '@src/lib/utils'
 

@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 
 export const fetchCommentsByTaskId = async (id: string) => {
   const response = await db.comment.findMany({

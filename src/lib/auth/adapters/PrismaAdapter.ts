@@ -1,5 +1,5 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { db } from '@db'
+import db from '@db'
 import type { User } from '@prisma/client'
 import { getValidCompanyInvitation } from '@src/lib/api/queries/Invite/InviteQueries'
 

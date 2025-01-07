@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { db } from '@db'
+import db from '@db'
 
 export const fetchProjectUsersByProjectId = async (id: string) => {
   const session = await auth()

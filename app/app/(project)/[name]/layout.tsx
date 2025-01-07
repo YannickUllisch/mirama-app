@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { auth } from '@auth'
-import { db } from '@db'
+import db from '@db'
 import { fetchSingleProjectByName } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { redirect } from 'next/navigation'

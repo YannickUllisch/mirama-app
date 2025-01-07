@@ -4,7 +4,7 @@ import { auth } from '@auth'
 import { ChangePasswordSchema } from '@src/lib/schemas'
 import { getUserById } from '../api/queries/User/UserQueries'
 import bcryptjs from 'bcryptjs'
-import { db } from '@db'
+import db from '@db'
 
 export const changePassword = async (
   values: z.infer<typeof ChangePasswordSchema>,

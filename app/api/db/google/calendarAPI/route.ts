@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { db } from '@db'
+import db from '@db'
 import { Role } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
 import { google } from 'googleapis'

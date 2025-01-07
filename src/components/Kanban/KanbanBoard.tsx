@@ -30,13 +30,14 @@ import { Card, CardTitle } from '@ui/card'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { CircleOff } from 'lucide-react'
 import { Input } from '@ui/input'
-import { createBoards } from './createBoards'
+import { createBoards, createColumns } from './createBoards'
 import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
 import { createTree } from '@src/lib/data-structures/Tree'
 import type { KeyedMutator } from 'swr'
+import { Button } from '@ui/button'
 
 interface KanbanBoardProps {
   projectId: string
@@ -71,6 +72,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
     null,
   )
   const [newItemTitle, setNewItemTitle] = useState<string>('')
+  const [editingContainerId, setEditingContainerId] =
+    useState<UniqueIdentifier | null>(null)
+  const [newContainerTitle, setNewContainerTitle] = useState<string>('')
+
   const projectUsers = useContext(ProjectDataContext)
 
   const onAddItem = (
@@ -440,6 +445,19 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
     setBoards([...boards])
   }
 
+  const addBoard = () => {
+    const newBoard: Board = {
+      id: `board-${v4()}`,
+      title: 'NEW TITLE',
+      containerTaskType: 'EPIC',
+      columns: createColumns([]),
+    }
+
+    setEditingContainerId(newBoard.id)
+
+    setBoards([newBoard, ...boards])
+  }
+
   return (
     <DndContext
       sensors={useSensors(
@@ -459,6 +477,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
     >
       <SortableContext items={boards.flatMap((board) => board.columns)}>
         <div className="flex flex-col gap-y-2">
+          <Button onClick={() => addBoard()}>Add Container</Button>
           {boards.map((board) => (
             <div className="display flex gap-2" key={`board-${board.id}`}>
               <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
@@ -466,7 +485,25 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                   {board.containerTaskType ? (
                     <div className="flex gap-2 items-center text-xs">
                       {getTaskTypeIcon(board.containerTaskType)}
-                      {board.title}
+                      {editingContainerId === board.id ? (
+                        <Input
+                          autoFocus
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          placeholder="Enter a title"
+                          value={newContainerTitle}
+                          onChange={(e) => setNewContainerTitle(e.target.value)}
+                          // onBlur={() =>
+                          //   handleSaveOrCancel(item.id, col.id, board.id)
+                          // }
+                          // onKeyDown={(e) => {
+                          //   if (e.key === 'Enter')
+                          //     handleSaveOrCancel(item.id, col.id, board.id)
+                          // }}
+                        />
+                      ) : (
+                        <div> {board.title}</div>
+                      )}
                     </div>
                   ) : (
                     <div className="flex gap-2 items-center text-xs">

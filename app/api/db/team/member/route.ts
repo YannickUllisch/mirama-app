@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { db } from '@src/lib/db'
+import db from '@db'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type User } from '@prisma/client'
 import { isRoleHigher } from '@src/lib/utils'

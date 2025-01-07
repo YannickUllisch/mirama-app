@@ -30,7 +30,7 @@ export const createBoards = (
 }
 
 // Helper function to create columns for a board
-const createColumns = (tasks: any[]): BoardColumn[] => {
+export const createColumns = (tasks: any[]): BoardColumn[] => {
   return Object.values(TaskStatusType).map((status) => ({
     id: `container-${v4()}`,
     title: status,

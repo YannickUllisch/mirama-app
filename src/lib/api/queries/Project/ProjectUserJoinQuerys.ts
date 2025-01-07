@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 
 export const fetchProjectUsersJoinedByProjectId = async (id: string) => {
   const users = await db.projectUser.findMany({

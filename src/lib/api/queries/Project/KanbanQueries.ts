@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 import type { KanbanColumn } from '@prisma/client'
 
 const sortKanbanColumns = (columns: KanbanColumn[]) => {

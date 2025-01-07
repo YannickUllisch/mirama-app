@@ -1,7 +1,7 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchProjectUsersJoinedByProjectId } from '@src/lib/api/queries/Project/ProjectUserJoinQuerys'
-import { db } from '@db'
+import db from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const GET = auth(async (req) => {

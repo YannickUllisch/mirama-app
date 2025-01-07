@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 import type { Session } from 'next-auth'
 
 export const fetchAllPersonalTasks = async (session: Session | null) => {

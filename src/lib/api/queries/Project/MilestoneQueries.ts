@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 
 export const fetchMilestonesByProjectId = async (pid: string) => {
   const project = await db.milestone.findMany({

@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import { db } from '@src/lib/db'
+import db from '@db'
 import type { Role } from '@prisma/client'
 import authConfig from './auth.config'
 import ResendProvider from 'next-auth/providers/resend'

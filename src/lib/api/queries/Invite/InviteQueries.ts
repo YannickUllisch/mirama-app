@@ -1,4 +1,4 @@
-import { db } from '@db'
+import db from '@db'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 

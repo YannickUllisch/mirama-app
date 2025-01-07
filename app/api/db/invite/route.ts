@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { db } from '@db'
+import db from '@db'
 import { Role } from '@prisma/client'
 import { sendCompanyInvitationEmail } from '@src/email/mailer'
 import { fetchAllCompanyInvitations } from '@src/lib/api/queries/Invite/InviteQueries'
