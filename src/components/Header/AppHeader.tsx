@@ -54,14 +54,14 @@ const AppHeader = () => {
               {index < pathSegments.length - 1 ? (
                 <>
                   <BreadcrumbItem>
-                    <Link href={accumulatedPaths[index]} passHref>
-                      <span>
-                        {capitalize(
-                          segment
-                            .replace(/-/g, ' ')
-                            .replace('app', 'Dashboard'),
-                        )}
-                      </span>
+                    <Link
+                      href={accumulatedPaths[index]}
+                      passHref
+                      prefetch={false}
+                    >
+                      {capitalize(
+                        segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
+                      )}
                     </Link>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />

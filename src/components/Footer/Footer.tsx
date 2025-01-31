@@ -12,19 +12,23 @@ const Footer = () => {
           <div>{`Copyright © ${DateTime.now().year} Mirage Studio`}</div>
         </div>
         <div className="gap-4 justify-center md:gap-2 items-center flex">
-          <Link className="hover:underline" href="/about-us">
+          <Link className="hover:underline" href="/about-us" prefetch={false}>
             About Us
           </Link>
           <span>·</span>
-          <Link className="hover:underline" href="/privacy">
+          <Link className="hover:underline" href="/privacy" prefetch={false}>
             Privacy Policy
           </Link>
           <span>·</span>
-          <Link className="hover:underline" href="/termsofservice">
+          <Link
+            className="hover:underline"
+            href="/termsofservice"
+            prefetch={false}
+          >
             Terms of Service
           </Link>
           <span>·</span>
-          <Link className="hover:underline" href="/cookies">
+          <Link className="hover:underline" href="/cookies" prefetch={false}>
             Cookie Policy
           </Link>
         </div>
