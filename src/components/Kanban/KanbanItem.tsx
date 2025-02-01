@@ -53,8 +53,9 @@ const KanbanItem: FC<KanbanItemType> = ({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`h-[120px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer'
-      ${isDragging && 'opacity-50'}`}
+      className={`min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
+        isDragging && 'opacity-50'
+      }`}
     >
       <div className="flex flex-col gap-y-2 justify-between">
         {/* Task title and link */}

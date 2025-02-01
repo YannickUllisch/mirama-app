@@ -61,6 +61,16 @@ const projectTabs: {
     ),
   },
   {
+    id: 'sprint-board',
+    roles: Object.values(Role),
+    component: <BoardTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <Repeat width={15} /> Stage Board
+      </div>
+    ),
+  },
+  {
     id: 'gantt',
     roles: Object.values(Role),
     component: <GanttTab />,
@@ -77,16 +87,6 @@ const projectTabs: {
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
         <Settings width={15} /> Settings
-      </div>
-    ),
-  },
-  {
-    id: 'sprint-board',
-    roles: Object.values(Role),
-    component: <BoardTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <Repeat width={15} /> Sprint
       </div>
     ),
   },

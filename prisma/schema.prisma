@@ -303,3 +303,4 @@ model KanbanColumn {
   projectId     String
   project       Project @relation(fields: [projectId], references: [id])
 }
+

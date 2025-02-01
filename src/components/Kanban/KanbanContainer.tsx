@@ -10,8 +10,6 @@ import { Button } from '../ui/button'
 
 export interface KanbanContainerProps {
   id: UniqueIdentifier
-  title: string
-  itemAmount: number
   onAddItem?: () => void
   className?: string
 }
@@ -19,9 +17,7 @@ export interface KanbanContainerProps {
 const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   id,
   children,
-  title,
   onAddItem,
-  itemAmount,
   className,
 }) => {
   const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -39,20 +35,9 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'w-full h-full rounded-md border flex flex-col cursor-default',
+        'w-full min-w-0 flex-[1_1_0%] h-full rounded-md border flex flex-col cursor-default',
       )}
     >
-      <div className="sticky top-12 bg-hover dark:bg-neutral-950/50 p-2 border-b dark:border-neutral-800 z-10">
-        <div className="flex items-center justify-between mx-2">
-          <div className="flex items-center gap-2">
-            <h3 className="text-gray-800 text-sm dark:text-white">
-              {capitalize(title ?? '')}
-            </h3>
-            <span className="text-sm">{itemAmount}</span>
-          </div>
-        </div>
-      </div>
-      {/* Scrollable Children */}
       <div
         className={clsx(
           'overflow-y-auto w-full p-4 flex flex-col gap-2 h-full', // Adjust styles as needed

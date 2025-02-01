@@ -235,6 +235,7 @@ const Folder = forwardRef<
     isSelectable = true,
     isSelect,
     children,
+    personalizedIcon,
     ...rest
   } = props // Destructure props here
 
