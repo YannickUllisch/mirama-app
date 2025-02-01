@@ -37,6 +37,7 @@ import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
 import { createTree } from '@src/lib/data-structures/Tree'
 import type { KeyedMutator } from 'swr'
+import { capitalize } from '@src/lib/utils'
 
 interface KanbanBoardProps {
   projectId: string

@@ -45,30 +45,32 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
       <div className="sticky top-12 bg-hover dark:bg-neutral-950/50 p-2 border-b dark:border-neutral-800 z-10">
         <div className="flex items-center justify-between mx-2">
           <div className="flex items-center gap-2">
-            <h1 className="text-gray-800 text-lg dark:text-white">
+            <h3 className="text-gray-800 text-sm dark:text-white">
               {capitalize(title ?? '')}
-            </h1>
-            <span>{itemAmount}</span>
-          </div>
-          <div className="flex gap-2 items-center">
-            <Button
-              variant={'ghost'}
-              className="w-fit p-1 h-fit"
-              onClick={onAddItem}
-            >
-              <Plus className="cursor-pointer text-emerald-800 w-5 h-5" />
-            </Button>
+            </h3>
+            <span className="text-sm">{itemAmount}</span>
           </div>
         </div>
       </div>
       {/* Scrollable Children */}
       <div
         className={clsx(
-          'overflow-y-auto w-full p-4 flex flex-col gap-2 h-full ', // Adjust styles as needed
+          'overflow-y-auto w-full p-4 flex flex-col gap-2 h-full', // Adjust styles as needed
           className,
         )}
       >
-        {children}
+        <>
+          {children}
+          <div className="mt-auto flex gap-2 justify-end">
+            <Button
+              variant={'ghost'}
+              className="w-fit p-1 h-fit "
+              onClick={onAddItem}
+            >
+              <Plus className="cursor-pointer text-emerald-800 w-5 h-5 hover:bg-neutral-200 dark:hover:bg-hover rounded-sm" />
+            </Button>
+          </div>
+        </>
       </div>
     </div>
   )
