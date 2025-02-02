@@ -86,6 +86,7 @@ const SidebarProjectsNav = ({
                         className="flex justify-between"
                       >
                         <Link
+                          prefetch={false}
                           href={`/app/${item.original.name}/edit/${task.id}`}
                           className="flex justify-between items-center w-full"
                         >

@@ -11,6 +11,7 @@ import {
   ClipboardList,
   GanttChart,
   Map as MapIcon,
+  Repeat,
   Settings,
   Table2,
 } from 'lucide-react'
@@ -52,10 +53,20 @@ const projectTabs: {
   {
     id: 'kanban',
     roles: Object.values(Role),
-    component: <BoardTab />,
+    component: <></>,
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
         <ClipboardList width={15} /> Board
+      </div>
+    ),
+  },
+  {
+    id: 'sprint-board',
+    roles: Object.values(Role),
+    component: <BoardTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <Repeat width={15} /> Stage Board
       </div>
     ),
   },

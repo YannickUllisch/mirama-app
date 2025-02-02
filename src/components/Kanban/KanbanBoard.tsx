@@ -302,44 +302,47 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
 
     if (activeContainer.id !== overContainer.id) {
       // Determine the new parentId
-      let newParentId: string | undefined = undefined
+      let newParentId: string | null = null
 
       if (overBoard.title === 'Unparented Tasks') {
         // If moved to the Unparented Tasks board, reset parentId to null
-        newParentId = undefined
+        newParentId = null
       } else if (overBoard.id.includes('board')) {
         // Extract the container ID from the board title
         const containerId = overBoard.id.substring(6)
         newParentId = containerId
       }
       const newStatus = overContainer.title // Assumes `overColumn` title represents the status
-      let assignToSelf = false
-      if (
-        activeContainer.title === String(TaskStatusType.NEW) &&
-        !removedItem.task.assignedTo
-      ) {
-        overContainer.items = overContainer.items.filter(
-          (item) => item.id !== removedItem.id,
-        )
-        overContainer.items.push({
-          id: removedItem.id,
-          task: {
-            ...removedItem.task,
-            assignedTo: {
-              role: session?.user.role ?? Role.OBSERVER,
-              email: session?.user.email ?? '',
-              id: session?.user.id ?? '',
-              name: session?.user.name ?? '',
-              password: null,
-              emailVerified: null,
-              preferredDateType: '',
-              teamId: session?.user.teamId ?? null,
-            },
-          },
-        })
 
-        assignToSelf = true
-      }
+      const assignToSelf =
+        activeContainer.title === String(TaskStatusType.NEW) &&
+        overContainer.title === String(TaskStatusType.ACTIVE) &&
+        !removedItem.task.assignedTo
+
+      overContainer.items = overContainer.items.filter(
+        (item) => item.id !== removedItem.id,
+      )
+      overContainer.items.push({
+        id: removedItem.id,
+        task: {
+          ...removedItem.task,
+          status: overContainer.title as TaskStatusType,
+          parentId: newParentId ? newParentId : null,
+          assignedTo: {
+            role: session?.user.role ?? Role.OBSERVER,
+            email: session?.user.email ?? '',
+            id: session?.user.id ?? '',
+            name: session?.user.name ?? '',
+            password: null,
+            emailVerified: null,
+            preferredDateType: '',
+            teamId: session?.user.teamId ?? null,
+          },
+        },
+      })
+
+      // Optimistic Update of boards state
+      setBoards([...boards]) // Update the state with the modified boards
 
       // Update the task's parentId and status
       const taskId = removedItem.id.toString().substring(5) // Remove 'item-' prefix
@@ -355,7 +358,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       )
     }
 
-    setBoards([...boards]) // Update the state with the modified boards
     setActiveId(null)
     setOriginalColumnId(null)
   }
@@ -445,6 +447,19 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
     setBoards([...boards])
   }
 
+  const columnItemTotals = useMemo(() => {
+    return boards.reduce(
+      (acc, board) => {
+        // biome-ignore lint/complexity/noForEach: <simplest form for totals summation>
+        board.columns.forEach((col) => {
+          acc[col.title] = (acc[col.title] || 0) + col.items.length
+        })
+        return acc
+      },
+      {} as Record<string, number>,
+    )
+  }, [boards])
+
   const addBoard = () => {
     const newBoard: Board = {
       id: `board-${v4()}`,
@@ -463,7 +478,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       sensors={useSensors(
         useSensor(PointerSensor, {
           activationConstraint: {
-            distance: 0.5,
+            distance: 1.5,
           },
         }),
         useSensor(KeyboardSensor, {
@@ -475,14 +490,36 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={boards.flatMap((board) => board.columns)}>
-        <div className="flex flex-col gap-y-2">
-          <Button onClick={() => addBoard()}>Add Container</Button>
-          {boards.map((board) => (
-            <div className="display flex gap-2" key={`board-${board.id}`}>
-              <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
-                <CardTitle>
-                  {board.containerTaskType ? (
+      {/* Header (Single Instance) */}
+      <header className="sticky top-12 rounded-sm mb-2 bg-neutral-100 dark:bg-neutral-950/80 z-10">
+        <div className="flex w-full items-center">
+          <div className="w-[150px] p-2">Containers</div>
+          <div className="flex flex-1">
+            {Object.keys(TaskStatusType).map((type) => (
+              <div
+                key={`header-type-${type}`}
+                className="flex-1 text-sm text-start font-bold"
+              >
+                {type}
+                <span className="ml-2 text-sm font-bold">
+                  {columnItemTotals[type]}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* Kanban Boards */}
+      <div className="flex flex-col gap-y-2">
+        <Button onClick={() => addBoard()}>Add Container</Button>
+        {boards.map((board) => (
+          <div className="display flex gap-2" key={`board-${board.id}`}>
+            {/* Board Column Titles */}
+            <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
+              <CardTitle>
+                {board.containerTaskType ? (
+                  <div className="flex gap-2">
                     <div className="flex gap-2 items-center text-xs">
                       {getTaskTypeIcon(board.containerTaskType)}
                       {editingContainerId === board.id ? (
@@ -505,69 +542,74 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                         <div> {board.title}</div>
                       )}
                     </div>
-                  ) : (
-                    <div className="flex gap-2 items-center text-xs">
-                      <CircleOff size={16} />
-                      {'Ungrouped'}
+                    <div>
+                      {board.columns.reduce(
+                        (sum, col) => sum + col.items.length,
+                        0,
+                      )}
                     </div>
-                  )}
-                </CardTitle>
-              </Card>
-              <div className="flex w-[100%] gap-2">
-                {board.columns.map((col) => (
-                  <KanbanContainer
-                    className={
-                      hoveredContainerId === col.id
-                        ? 'bg-blue-500/10'
-                        : undefined
-                    }
-                    key={col.id}
-                    title={col.title}
-                    itemAmount={col.items.length}
-                    id={col.id}
-                    onAddItem={() => {
-                      onAddItem(col.id, col.title, board.id)
-                    }}
-                  >
-                    <SortableContext items={col.items.map((i) => i.id)}>
-                      {col.items.map((item) => (
-                        <div key={item.id}>
-                          {editingItemId === item.id ? (
-                            <Input
-                              autoFocus
-                              type="text"
-                              className="w-full p-2 border rounded"
-                              placeholder="Enter a title"
-                              value={newItemTitle}
-                              onChange={(e) => setNewItemTitle(e.target.value)}
-                              onBlur={() =>
+                  </div>
+                ) : (
+                  <div className="flex gap-2 items-center text-xs">
+                    <CircleOff size={16} />
+                    {'Ungrouped'}
+                  </div>
+                )}
+              </CardTitle>
+            </Card>
+
+            {/* Columns */}
+            <div className="flex w-full gap-2 overflow-auto">
+              {board.columns.map((col) => (
+                <KanbanContainer
+                  className={
+                    hoveredContainerId === col.id ? 'bg-blue-500/10' : undefined
+                  }
+                  key={col.id}
+                  id={col.id}
+                  onAddItem={() => {
+                    onAddItem(col.id, col.title, board.id)
+                  }}
+                >
+                  <SortableContext items={col.items.map((i) => i.id)}>
+                    {col.items.map((item) => (
+                      <div key={item.id}>
+                        {editingItemId === item.id ? (
+                          <Input
+                            autoFocus
+                            type="text"
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter a title"
+                            value={newItemTitle}
+                            onChange={(e) => setNewItemTitle(e.target.value)}
+                            onBlur={() =>
+                              handleSaveOrCancel(item.id, col.id, board.id)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter')
                                 handleSaveOrCancel(item.id, col.id, board.id)
-                              }
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter')
-                                  handleSaveOrCancel(item.id, col.id, board.id)
-                              }}
-                            />
-                          ) : (
-                            <KanbanItem
-                              key={`kanban-item-${item.id}`}
-                              id={item.id}
-                              task={item.task}
-                              onDelete={handleItemDelete}
-                              users={projectUsers?.users}
-                              onItemUpdate={onItemUpdate}
-                            />
-                          )}
-                        </div>
-                      ))}
-                    </SortableContext>
-                  </KanbanContainer>
-                ))}
-              </div>
+                            }}
+                          />
+                        ) : (
+                          <KanbanItem
+                            key={`kanban-item-${item.id}`}
+                            id={item.id}
+                            task={item.task}
+                            onDelete={handleItemDelete}
+                            users={projectUsers?.users}
+                            onItemUpdate={onItemUpdate}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </SortableContext>
+                </KanbanContainer>
+              ))}
             </div>
-          ))}
-        </div>
-      </SortableContext>
+          </div>
+        ))}
+      </div>
+
       <DragOverlay adjustScale={false}>
         {activeId?.toString().includes('item') && (
           <div className="opacity-70">
