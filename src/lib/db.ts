@@ -1,24 +1,14 @@
-// import { PrismaClient } from '@prisma/client'
-
-// declare global {
-//   var prisma: PrismaClient | undefined
-// }
-
-// export const db = globalThis.prisma || new PrismaClient()
-
-// if (process.env.NODE_ENV !== 'production') globalThis.prisma = db
-
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import SuperJSON from 'superjson'
 import { RedisAdapter } from './misc/prisma-redis-extension/Adapters/redis-adapter'
 import createPrismaRedisCache from './misc/prisma-redis-extension/index'
 
-export const redisClient = new Redis(process.env.REDIS_URL ?? '', {
-  tls: {
-    rejectUnauthorized: false,
-  },
-}) // Uses default options for Redis connection
+export const redisClient = new Redis(process.env.REDIS_URL ?? '') // Uses default options for Redis connection
+
+redisClient.on('error', (error) => {
+  console.dir(error)
+})
 
 const prismaClientSingleton = () => {
   const prismaClient = new PrismaClient()
@@ -79,7 +69,7 @@ const prismaClientSingleton = () => {
 let db: ReturnType<typeof prismaClientSingleton>
 
 // If we are in development mode (Next.js hot-reloading), reuse the Prisma client to avoid multiple instances
-if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+if (process.env.NODE_ENV === 'development') {
   if (!(global as unknown as any).prisma) {
     ;(global as unknown as any).prisma = prismaClientSingleton()
   }

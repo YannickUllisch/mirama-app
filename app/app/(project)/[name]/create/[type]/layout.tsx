@@ -24,7 +24,6 @@ const Layout = async ({
   const session = await auth()
 
   const project = await fetchSingleProjectByName(params.name)
-  const tags = await fetchAllTeamTags(session)
 
   // Handling invalid dynamic routes
   if (!session?.user) {
@@ -42,14 +41,7 @@ const Layout = async ({
     redirect('/app')
   }
 
-  const fallbackData = {
-    [`/api/db/project/name/${project.name}`]: project,
-    '/api/db/tag': tags,
-  }
-
-  return (
-    <SWRFallbackWrapper fallback={fallbackData}>{children}</SWRFallbackWrapper>
-  )
+  return children
 }
 
 export default Layout

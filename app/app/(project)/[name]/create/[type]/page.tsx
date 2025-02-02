@@ -15,8 +15,6 @@ import { TaskSchema } from '@src/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PriorityType,
-  type Project,
-  type ProjectUser,
   type Tag,
   type Task,
   TaskStatusType,
@@ -32,7 +30,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useContext, useEffect, useTransition } from 'react'
+import React, { useContext, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { postResource } from '@src/lib/api/postResource'

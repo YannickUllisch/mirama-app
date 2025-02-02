@@ -3,9 +3,9 @@ import db from '@db'
 import type { Role } from '@prisma/client'
 import authConfig from './auth.config'
 import ResendProvider from 'next-auth/providers/resend'
-import { getUserByEmail, getUserById } from '../api/queries/User/UserQueries'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
+import { getUserByEmail, getUserById } from './helpers/AuthQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {

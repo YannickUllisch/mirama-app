@@ -31,8 +31,7 @@ export class RedisAdapter extends BaseAdapter {
       // Try to get the value from the redis cache
       const result = await client.get(key)
 
-      if (!result) {
-        // If it is not found, log the miss and return null
+      if (!result || typeof result !== 'string') {
         onMiss?.(key.toString())
         return null
       }

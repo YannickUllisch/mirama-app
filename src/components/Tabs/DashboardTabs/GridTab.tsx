@@ -1,4 +1,3 @@
-import { gridProjectsinclude } from '@/app/app/shared'
 import type { Project, ProjectUser, User } from '@prisma/client'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import {
@@ -23,7 +22,6 @@ const GridTab = () => {
   >({
     url: '/api/db/project',
     archived: false,
-    include: gridProjectsinclude,
   })
 
   return (

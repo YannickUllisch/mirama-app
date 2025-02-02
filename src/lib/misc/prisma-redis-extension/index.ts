@@ -37,7 +37,8 @@ const createPrismaRedisCache = ({
             return fetchFromPrisma(queryArgs)
           }
 
-          let cacheKey = JSON.stringify(queryArgs).replaceAll('*', '-')
+          let cacheKey = JSON.stringify(queryArgs ?? {}).replaceAll('*', '-')
+
           const modelKey = `${prefix}${model}~${operation}`
 
           const customModel = models?.find(

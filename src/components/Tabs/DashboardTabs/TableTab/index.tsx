@@ -1,4 +1,3 @@
-import { tableProjectsInclude } from '@/app/app/shared'
 import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
@@ -24,7 +23,6 @@ const TableTab: FC<Props> = ({ users, session }) => {
   >({
     url: '/api/db/project',
     archived: false,
-    include: tableProjectsInclude,
   })
 
   const FooterRow = () => {

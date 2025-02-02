@@ -3,7 +3,7 @@ import type { NextAuthConfig } from 'next-auth'
 import { LoginSchema } from '@src/lib/schemas'
 import bcrypt from 'bcryptjs'
 import GoogleProvider from 'next-auth/providers/google'
-import { getUserByEmail } from '../api/queries/User/UserQueries'
+import { getUserByEmail } from './helpers/AuthQueries'
 
 export default {
   providers: [

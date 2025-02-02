@@ -15,14 +15,11 @@ import { TaskSchema } from '@src/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PriorityType,
-  type Project,
-  type ProjectUser,
   type Tag,
   type Task,
   TaskStatusType,
   type TaskTagJoin,
   type TaskType,
-  type User,
 } from '@prisma/client'
 import {
   BookCheck,
@@ -33,7 +30,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useContext, useTransition } from 'react'
+import React, { useContext, useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import type { z } from 'zod'
@@ -89,33 +86,41 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   // Form Logic and Functions
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
-    values: {
-      assignedToId: task?.assignedToId,
-      description: task?.description,
-      title: task?.title ?? '',
-      dueDate: new Date(task?.dueDate ?? ''),
-      startDate: new Date(task?.startDate ?? ''),
-      priority: task?.priority ?? PriorityType.LOW,
-      projectId: task?.projectId ?? '',
-      status: task?.status ?? TaskStatusType.NEW,
-      tags: task?.tags.map((tag) => tag.tagId),
-      parentId: task?.parentId ?? undefined,
-      type: task?.type ?? 'TASK',
-    },
-    defaultValues: {
-      assignedToId: undefined,
-      description: '',
-      title: '',
-      dueDate: new Date(),
-      startDate: new Date(),
-      priority: PriorityType.LOW,
-      projectId: task?.projectId,
-      status: TaskStatusType.NEW,
-      tags: [],
-      parentId: undefined,
-      type: 'TASK',
-    },
   })
+
+  useEffect(() => {
+    if (task) {
+      // Manually reset form values when defaultExpense changes
+      form.reset({
+        assignedToId: task?.assignedToId,
+        description: task?.description,
+        title: task?.title ?? '',
+        dueDate: new Date(task?.dueDate ?? ''),
+        startDate: new Date(task?.startDate ?? ''),
+        priority: task?.priority ?? PriorityType.LOW,
+        projectId: task?.projectId ?? '',
+        status: task?.status ?? TaskStatusType.NEW,
+        tags: task?.tags.map((tag) => tag.tagId),
+        parentId: task?.parentId ?? undefined,
+        type: task?.type ?? 'TASK',
+      })
+    } else {
+      // If defaultExpense is undefined, reset the form to initial values
+      form.reset({
+        assignedToId: undefined,
+        description: '',
+        title: '',
+        dueDate: new Date(),
+        startDate: new Date(),
+        priority: PriorityType.LOW,
+        projectId: '',
+        status: TaskStatusType.NEW,
+        tags: [],
+        parentId: undefined,
+        type: 'TASK',
+      })
+    }
+  }, [task, form.reset])
 
   // Functions
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
@@ -171,7 +176,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
             <Button
               type="submit"
               className={`flex items-cente text-text rounded-sm cursor-pointer gap-2 ${
-                form.watch().title.length < 1
+                form.watch().title?.length < 1
                   ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
                   : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
               }`}
@@ -185,7 +190,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
               <Save width={15} />
               <span
                 className={`disabled:bg-red-500 ${
-                  form.watch().title.length < 1
+                  form.watch().title?.length < 1
                     ? 'text-text dark:text-accent'
                     : 'text-white'
                 }`}
@@ -203,7 +208,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
               {getTaskTypeIcon(task?.type.toUpperCase() as TaskType)}
               {`${task?.type.toUpperCase()} ${task?.taskCode}`}
             </span>
-            {form.watch().title.length < 1 ? (
+            {form.watch().title?.length < 1 ? (
               <div className="flex items-center gap-2 text-red-500 ">
                 <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
                 {'Field "Title" cannot be empty.'}{' '}
@@ -359,7 +364,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                         <SelectTrigger>
                           <SelectValue
                             placeholder={capitalize(
-                              field.value.replace('_', ' '),
+                              field.value?.replace('_', ' ') ?? 'placeholder',
                             )}
                           />
                         </SelectTrigger>
@@ -394,7 +399,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                         <SelectTrigger>
                           <SelectValue
                             placeholder={capitalize(
-                              field.value.replace('_', ' '),
+                              field.value?.replace('_', ' ') ?? 'placeholder',
                             )}
                           />
                         </SelectTrigger>
