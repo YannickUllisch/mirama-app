@@ -1,5 +1,3 @@
-import { Suspense } from 'react'
-import Loading from '../loading'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import AppHeader from '@src/components/Header/AppHeader'
 import type { Metadata } from 'next'
@@ -59,9 +57,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           <SidebarInset>
             <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
               <AppHeader />
-              <Suspense fallback={<Loading />}>
-                <div className="flex-1 px-6 pt-5 min-h-screen">{children}</div>
-              </Suspense>
+              <div className="flex-1 px-6 pt-5 min-h-screen">{children}</div>
               <Footer />
             </div>
           </SidebarInset>

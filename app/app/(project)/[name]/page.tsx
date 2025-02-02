@@ -113,7 +113,11 @@ const ClientProjectPage = () => {
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
       <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-7 rounded-lg p-1">
-        <TabsList className="inline-flex items-center justify-start border whitespace-nowrap sm:justify-center sm:gap-2">
+        <TabsList
+          className={`inline-flex items-center justify-start whitespace-nowrap sm:justify-center sm:gap-2 ${
+            session && 'border'
+          }`}
+        >
           {projectTabs.map(
             (tabHeader) =>
               session &&
