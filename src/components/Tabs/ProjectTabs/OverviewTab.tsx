@@ -14,11 +14,17 @@ const OverviewTab = () => {
   >(projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined)
 
   return (
-    <div className="flex">
-      <TaskTree
-        tasks={tasks ?? []}
-        projectName={projectContext?.projectName ?? ''}
-      />
+    <div className="flex justify-between">
+      <div className="flex flex-col">
+        <span className="text-text-secondary text-xl font-bold">Task Tree</span>
+        <span className="text-text-secondary">
+          Quick overview over Project Task Structure
+        </span>
+        <TaskTree
+          tasks={tasks ?? []}
+          projectName={projectContext?.projectName ?? ''}
+        />
+      </div>
     </div>
   )
 }

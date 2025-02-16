@@ -36,6 +36,8 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import dynamic from 'next/dynamic'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { Loader2 } from 'lucide-react'
+import Loading from '@/app/loading'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -196,92 +198,96 @@ const GanttTab = () => {
         defaultMilestone={selectedMilestone}
       />
       <div className="border border-border/50 dark:border-border rounded-md">
-        <GanttProvider
-          endDate={new Date(project?.endDate ?? 0)}
-          startDate={new Date(project?.startDate ?? 0)}
-          onAddItem={handleAddFeature}
-          range={rangeView}
-          zoom={50}
-        >
-          <GanttSidebar>
-            {Object.entries(groupedTasks).map(([group, tasks]) => (
-              <GanttSidebarGroup
-                key={group}
-                name={capitalize(group.replace('_', ' ')).toString()}
-              >
-                {sortedTasks(tasks)?.map((task) => (
-                  <GanttSidebarItem
-                    key={task.id}
-                    feature={task}
-                    onSelectItem={handleViewFeature}
-                  />
-                ))}
-              </GanttSidebarGroup>
-            ))}
-          </GanttSidebar>
-          <GanttTimeline>
-            <GanttHeader />
-            <GanttFeatureList>
+        {project ? (
+          <GanttProvider
+            endDate={new Date(project?.endDate)}
+            startDate={new Date(project?.startDate)}
+            onAddItem={handleAddFeature}
+            range={rangeView}
+            zoom={50}
+          >
+            <GanttSidebar>
               {Object.entries(groupedTasks).map(([group, tasks]) => (
-                <GanttFeatureListGroup key={group}>
+                <GanttSidebarGroup
+                  key={group}
+                  name={capitalize(group.replace('_', ' ')).toString()}
+                >
                   {sortedTasks(tasks)?.map((task) => (
-                    <div className="flex" key={task.id}>
-                      <ContextMenu>
-                        <ContextMenuTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={() => handleViewFeature(task.id)}
-                          >
-                            <GanttFeatureItem
-                              onMove={handleMoveFeature}
-                              {...task}
-                              dueDate={new Date(task.dueDate)}
-                              startDate={new Date(task.startDate)}
-                            >
-                              {getTaskTypeIcon(task.type, 12)}
-                              <p className="flex-1 truncate text-xs">
-                                {task.title}
-                              </p>
-                              {task.assignedTo && (
-                                <UserAvatar
-                                  username={task.assignedTo.name}
-                                  avatarSize={17}
-                                  fontSize={8}
-                                />
-                              )}
-                            </GanttFeatureItem>
-                          </button>
-                        </ContextMenuTrigger>
-                        <TaskContextContent
-                          mutate={updateTasks}
-                          projectName={projectContext?.projectName ?? ''}
-                          taskId={task.id}
-                        />
-                      </ContextMenu>
-                    </div>
+                    <GanttSidebarItem
+                      key={task.id}
+                      feature={task}
+                      onSelectItem={handleViewFeature}
+                    />
                   ))}
-                </GanttFeatureListGroup>
+                </GanttSidebarGroup>
               ))}
-            </GanttFeatureList>
-            {milestones?.map((milestone) => (
-              <GanttMarker
-                key={milestone.id}
-                date={new Date(milestone.date)}
-                id={milestone.id}
-                label={milestone.title}
-                backgroundHex={milestone.colors}
-                onRemove={() =>
-                  deleteResources('project/milestones', [milestone.id], {
-                    mutate: updateMilestones,
-                  })
-                }
-                onInteract={handleInteractMarker}
-              />
-            ))}
-            <GanttToday />
-            <GanttCreateMarkerTrigger onCreateMarker={handleCreateMarker} />
-          </GanttTimeline>
-        </GanttProvider>
+            </GanttSidebar>
+            <GanttTimeline>
+              <GanttHeader />
+              <GanttFeatureList>
+                {Object.entries(groupedTasks).map(([group, tasks]) => (
+                  <GanttFeatureListGroup key={group}>
+                    {sortedTasks(tasks)?.map((task) => (
+                      <div className="flex" key={task.id}>
+                        <ContextMenu>
+                          <ContextMenuTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => handleViewFeature(task.id)}
+                            >
+                              <GanttFeatureItem
+                                onMove={handleMoveFeature}
+                                {...task}
+                                dueDate={new Date(task.dueDate)}
+                                startDate={new Date(task.startDate)}
+                              >
+                                {getTaskTypeIcon(task.type, 12)}
+                                <p className="flex-1 truncate text-xs">
+                                  {task.title}
+                                </p>
+                                {task.assignedTo && (
+                                  <UserAvatar
+                                    username={task.assignedTo.name}
+                                    avatarSize={17}
+                                    fontSize={8}
+                                  />
+                                )}
+                              </GanttFeatureItem>
+                            </button>
+                          </ContextMenuTrigger>
+                          <TaskContextContent
+                            mutate={updateTasks}
+                            projectName={projectContext?.projectName ?? ''}
+                            taskId={task.id}
+                          />
+                        </ContextMenu>
+                      </div>
+                    ))}
+                  </GanttFeatureListGroup>
+                ))}
+              </GanttFeatureList>
+              {milestones?.map((milestone) => (
+                <GanttMarker
+                  key={milestone.id}
+                  date={new Date(milestone.date)}
+                  id={milestone.id}
+                  label={milestone.title}
+                  backgroundHex={milestone.colors}
+                  onRemove={() =>
+                    deleteResources('project/milestones', [milestone.id], {
+                      mutate: updateMilestones,
+                    })
+                  }
+                  onInteract={handleInteractMarker}
+                />
+              ))}
+              <GanttToday />
+              <GanttCreateMarkerTrigger onCreateMarker={handleCreateMarker} />
+            </GanttTimeline>
+          </GanttProvider>
+        ) : (
+          <Loading />
+        )}
       </div>
       <ViewTaskSheet
         open={isTaskOpen}

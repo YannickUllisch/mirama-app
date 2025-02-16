@@ -47,7 +47,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
                 key={header.id}
                 className="relative"
                 style={{
-                  width: header.getSize(),
+                  width: header.getSize() === 0 ? undefined : header.getSize(),
                 }}
               >
                 {header.isPlaceholder

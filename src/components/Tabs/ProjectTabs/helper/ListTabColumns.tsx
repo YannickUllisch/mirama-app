@@ -70,6 +70,7 @@ export const ListTabColumns = ({
   >[] = useMemo(
     () => [
       {
+        size: 50,
         id: 'select',
         header: ({ table }) => (
           <Checkbox
@@ -83,7 +84,6 @@ export const ListTabColumns = ({
             aria-label="Select all"
           />
         ),
-        size: 30,
         enableHiding: false,
         enableSorting: false,
         enableResizing: false,
@@ -124,7 +124,6 @@ export const ListTabColumns = ({
           />
         ),
         id: 'title',
-        size: 170,
         cell: ({ getValue, row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
           return (
@@ -355,7 +354,6 @@ export const ListTabColumns = ({
           )
         },
         filterFn: 'equalsString',
-        size: 200,
       },
       {
         accessorKey: 'tags',
@@ -368,7 +366,6 @@ export const ListTabColumns = ({
             icon={<TagIcon className="dark:text-neutral-400" size={15} />}
           />
         ),
-        size: 50,
         cell: ({ row, getValue }) => {
           const tasks = getValue() as (TaskTagJoin & { tag: Tag })[]
           const taskCount = tasks.length

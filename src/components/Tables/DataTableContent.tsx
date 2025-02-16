@@ -26,7 +26,7 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
   enableRowSelection,
 }: DataTableContentProps<TData, TValue>) => {
   return (
-    <TableBody>
+    <TableBody className="overflow-auto">
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
           <React.Fragment key={`cell${row.id}`}>

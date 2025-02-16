@@ -53,20 +53,10 @@ const projectTabs: {
   {
     id: 'kanban',
     roles: Object.values(Role),
-    component: <></>,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <ClipboardList width={15} /> Board
-      </div>
-    ),
-  },
-  {
-    id: 'sprint-board',
-    roles: Object.values(Role),
     component: <BoardTab />,
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
-        <Repeat width={15} /> Stage Board
+        <ClipboardList width={15} /> Board
       </div>
     ),
   },
@@ -111,7 +101,7 @@ const ClientProjectPage = () => {
   }, [tab, currentTab, pathname, searchParams, router])
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
+    <Tabs value={tab} onValueChange={setTab} className="w-full">
       <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-7 rounded-lg p-1">
         <TabsList
           className={`inline-flex items-center justify-start whitespace-nowrap sm:justify-center sm:gap-2 ${

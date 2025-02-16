@@ -47,20 +47,22 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
     <SessionWrapper>
       <SwrProvider>
         <SidebarProvider>
-          <AppSidebar
-            projects={projects}
-            user={user}
-            session={session}
-            className="bg-neutral-950"
-            team={null}
-          />
-          <SidebarInset>
-            <div className="m-2 flex flex-col p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover">
+          <div className="flex min-h-screen w-full">
+            <AppSidebar
+              projects={projects}
+              user={user}
+              session={session}
+              className="bg-neutral-950 flex-shrink-0" // Fixed width sidebar
+              team={null}
+            />
+            <div className="flex-1 overflow-hidden h-[100vh]">
               <AppHeader />
-              <div className="flex-1 px-6 pt-5 min-h-screen">{children}</div>
-              <Footer />
+              <main className="m-2 flex flex-col h-[100vh] overflow-y-auto w-full p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover overflow-auto">
+                <div className="flex-1 px-6 pt-5">{children}</div>
+              </main>
+              {/* <Footer /> */}
             </div>
-          </SidebarInset>
+          </div>
         </SidebarProvider>
       </SwrProvider>
     </SessionWrapper>

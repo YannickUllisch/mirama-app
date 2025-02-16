@@ -209,7 +209,7 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
       sorting: sortingState ? sortingState : sorting,
     },
     defaultColumn: {
-      size: 25,
+      minSize: 0,
       maxSize: 600,
     },
   })
@@ -224,18 +224,20 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
         setGlobalFilter={setGlobalFilter}
         table={table}
       />
-      <Table>
-        <DataTableHeader table={table} />
-        <DataTableContent
-          columns={columns}
-          table={table}
-          dataLoading={dataLoading}
-          enableRowSelection={enableRowSelection}
-          expandedContent={expandedContent}
-          onRowSelectionChange={onRowSelectionChange}
-        />
-        {footerOptions?.addFooterRow}
-      </Table>
+      <div className="overflow-x-auto border-r ">
+        <Table>
+          <DataTableHeader table={table} />
+          <DataTableContent
+            columns={columns}
+            table={table}
+            dataLoading={dataLoading}
+            enableRowSelection={enableRowSelection}
+            expandedContent={expandedContent}
+            onRowSelectionChange={onRowSelectionChange}
+          />
+          {footerOptions?.addFooterRow}
+        </Table>
+      </div>
       <DataTablePagination
         table={table}
         enableRowSelection={enableRowSelection}

@@ -490,124 +490,134 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
+      <div className="flex p-2 justify-self-end w-fit">
+        <Button variant={'auth'} onClick={() => addBoard()}>
+          Add Container
+        </Button>
+      </div>
       {/* Header (Single Instance) */}
-      <header className="sticky top-12 rounded-sm mb-2 bg-neutral-100 dark:bg-neutral-950/80 z-10">
-        <div className="flex w-full items-center">
-          <div className="w-[150px] p-2">Containers</div>
-          <div className="flex flex-1">
-            {Object.keys(TaskStatusType).map((type) => (
-              <div
-                key={`header-type-${type}`}
-                className="flex-1 text-sm text-start font-bold"
-              >
-                {type}
-                <span className="ml-2 text-sm font-bold">
-                  {columnItemTotals[type]}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </header>
-
-      {/* Kanban Boards */}
-      <div className="flex flex-col gap-y-2">
-        <Button onClick={() => addBoard()}>Add Container</Button>
-        {boards.map((board) => (
-          <div className="display flex gap-2" key={`board-${board.id}`}>
-            {/* Board Column Titles */}
-            <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
-              <CardTitle>
-                {board.containerTaskType ? (
-                  <div className="flex gap-2">
-                    <div className="flex gap-2 items-center text-xs">
-                      {getTaskTypeIcon(board.containerTaskType)}
-                      {editingContainerId === board.id ? (
-                        <Input
-                          autoFocus
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          placeholder="Enter a title"
-                          value={newContainerTitle}
-                          onChange={(e) => setNewContainerTitle(e.target.value)}
-                          // onBlur={() =>
-                          //   handleSaveOrCancel(item.id, col.id, board.id)
-                          // }
-                          // onKeyDown={(e) => {
-                          //   if (e.key === 'Enter')
-                          //     handleSaveOrCancel(item.id, col.id, board.id)
-                          // }}
-                        />
-                      ) : (
-                        <div> {board.title}</div>
-                      )}
-                    </div>
-                    <div>
-                      {board.columns.reduce(
-                        (sum, col) => sum + col.items.length,
-                        0,
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex gap-2 items-center text-xs">
-                    <CircleOff size={16} />
-                    {'Ungrouped'}
-                  </div>
-                )}
-              </CardTitle>
-            </Card>
-
-            {/* Columns */}
-            <div className="flex w-full gap-2 overflow-auto">
-              {board.columns.map((col) => (
-                <KanbanContainer
-                  className={
-                    hoveredContainerId === col.id ? 'bg-blue-500/10' : undefined
-                  }
-                  key={col.id}
-                  id={col.id}
-                  onAddItem={() => {
-                    onAddItem(col.id, col.title, board.id)
-                  }}
+      <div className="overflow-auto">
+        <header className="sticky top-0 rounded-sm bg-neutral-100 dark:bg-neutral-950/80 z-10">
+          <div className="flex w-full items-center">
+            <div className="w-[150px] p-2">Containers</div>
+            <div className="flex flex-1">
+              {Object.keys(TaskStatusType).map((type) => (
+                <div
+                  key={`header-type-${type}`}
+                  className="flex-1 text-sm text-start font-bold"
                 >
-                  <SortableContext items={col.items.map((i) => i.id)}>
-                    {col.items.map((item) => (
-                      <div key={item.id}>
-                        {editingItemId === item.id ? (
+                  {type}
+                  <span className="ml-2 text-sm font-bold">
+                    {columnItemTotals[type]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </header>
+
+        {/* Kanban Boards */}
+        <div className="flex flex-col h-[70vh] gap-y-2 pt-1 overflow-y-scroll border-b">
+          {boards.map((board) => (
+            <div className="display flex gap-2" key={`board-${board.id}`}>
+              {/* Board Column Titles */}
+              <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
+                <CardTitle>
+                  {board.containerTaskType ? (
+                    <div className="flex gap-2">
+                      <div className="flex gap-2 items-center text-xs">
+                        {getTaskTypeIcon(board.containerTaskType)}
+                        {editingContainerId === board.id ? (
                           <Input
                             autoFocus
                             type="text"
                             className="w-full p-2 border rounded"
                             placeholder="Enter a title"
-                            value={newItemTitle}
-                            onChange={(e) => setNewItemTitle(e.target.value)}
-                            onBlur={() =>
-                              handleSaveOrCancel(item.id, col.id, board.id)
+                            value={newContainerTitle}
+                            onChange={(e) =>
+                              setNewContainerTitle(e.target.value)
                             }
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter')
-                                handleSaveOrCancel(item.id, col.id, board.id)
-                            }}
+                            // onBlur={() =>
+                            //   handleSaveOrCancel(item.id, col.id, board.id)
+                            // }
+                            // onKeyDown={(e) => {
+                            //   if (e.key === 'Enter')
+                            //     handleSaveOrCancel(item.id, col.id, board.id)
+                            // }}
                           />
                         ) : (
-                          <KanbanItem
-                            key={`kanban-item-${item.id}`}
-                            id={item.id}
-                            task={item.task}
-                            onDelete={handleItemDelete}
-                            users={projectUsers?.users}
-                            onItemUpdate={onItemUpdate}
-                          />
+                          <div> {board.title}</div>
                         )}
                       </div>
-                    ))}
-                  </SortableContext>
-                </KanbanContainer>
-              ))}
+                      <div>
+                        {board.columns.reduce(
+                          (sum, col) => sum + col.items.length,
+                          0,
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 items-center text-xs">
+                      <CircleOff size={16} />
+                      {'Ungrouped'}
+                    </div>
+                  )}
+                </CardTitle>
+              </Card>
+
+              {/* Columns */}
+              <div className="flex w-full gap-2 overflow-auto">
+                {board.columns.map((col) => (
+                  <KanbanContainer
+                    className={
+                      hoveredContainerId === col.id
+                        ? 'bg-blue-500/10'
+                        : undefined
+                    }
+                    key={col.id}
+                    id={col.id}
+                    onAddItem={() => {
+                      onAddItem(col.id, col.title, board.id)
+                    }}
+                  >
+                    <SortableContext items={col.items.map((i) => i.id)}>
+                      {col.items.map((item) => (
+                        <div key={item.id}>
+                          {editingItemId === item.id ? (
+                            <Input
+                              autoFocus
+                              type="text"
+                              className="w-full p-2 border rounded"
+                              placeholder="Enter a title"
+                              value={newItemTitle}
+                              onChange={(e) => setNewItemTitle(e.target.value)}
+                              onBlur={() =>
+                                handleSaveOrCancel(item.id, col.id, board.id)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter')
+                                  handleSaveOrCancel(item.id, col.id, board.id)
+                              }}
+                            />
+                          ) : (
+                            <KanbanItem
+                              key={`kanban-item-${item.id}`}
+                              id={item.id}
+                              task={item.task}
+                              onDelete={handleItemDelete}
+                              users={projectUsers?.users}
+                              onItemUpdate={onItemUpdate}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </SortableContext>
+                  </KanbanContainer>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <DragOverlay adjustScale={false}>
