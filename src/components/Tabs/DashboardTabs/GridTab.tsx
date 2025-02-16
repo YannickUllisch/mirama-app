@@ -26,7 +26,7 @@ const GridTab = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-y-5 overflow-auto sm:overflow-visible place-content-center ">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-7 gap-y-5 overflow-auto sm:overflow-visible place-content-center ">
         {projects ? (
           projects?.map((project) => (
             <Card

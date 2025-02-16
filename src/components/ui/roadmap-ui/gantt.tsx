@@ -1118,12 +1118,12 @@ export const GanttProvider: FC<GanttProviderProps> = ({
   const headerHeight = 60
   const sidebarWidth = sidebarElement ? 300 : 0
   const rowHeight = 36
-  let columnWidth = 50
+  let columnWidth = 100
 
   if (range === 'monthly') {
-    columnWidth = 150
+    columnWidth = 250
   } else if (range === 'quarterly') {
-    columnWidth = 100
+    columnWidth = 300
   }
 
   const cssVariables = {

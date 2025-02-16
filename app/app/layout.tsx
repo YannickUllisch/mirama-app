@@ -52,13 +52,15 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
               projects={projects}
               user={user}
               session={session}
-              className="bg-neutral-950 flex-shrink-0" // Fixed width sidebar
+              className="bg-inherit flex-shrink-0"
               team={null}
             />
             <div className="flex-1 overflow-hidden h-[100vh]">
               <AppHeader />
-              <main className="m-2 flex flex-col h-[100vh] overflow-y-auto w-full p-1 rounded-lg shadow-sm dark:shadow-neutral-900 bg-white dark:bg-neutral-900 border border-hover overflow-auto">
-                <div className="flex-1 px-6 pt-5">{children}</div>
+              <main className="flex flex-col h-[100vh] overflow-y-auto w-full rounded-lg border border-hover overflow-auto">
+                <div className="bg-white dark:bg-neutral-900 flex-1 px-6 pt-5">
+                  {children}
+                </div>
               </main>
               {/* <Footer /> */}
             </div>

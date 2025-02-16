@@ -39,7 +39,7 @@ const AppHeader = () => {
   return (
     <header
       style={{ zIndex: 50 }}
-      className={`sticky top-0 w-full flex gap-2 h-[${APP_HEADER_HEIGHT}px] p-4 justify-between bg-inherit dark:border-neutral-800/40 border-neutral-100/60`}
+      className={`sticky top-0 w-full bg-sidebar flex gap-2 h-[${APP_HEADER_HEIGHT}px] p-4 justify-between `}
     >
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
