@@ -48,6 +48,8 @@ const ListTab = () => {
     { revalidateOnMount: true },
   )
 
+  const { data: users } = useSWR<User[]>('/api/db/team/member')
+
   const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
   // Table states
@@ -119,7 +121,7 @@ const ListTab = () => {
         columns={ListTabColumns({
           mutate: updateTasks,
           projectName: projectContext?.projectName ?? '',
-          users: projectContext?.users ?? [],
+          users: users ?? [],
           onTaskDelete: deleteTask,
         })}
         data={viewFlattened ? tasks ?? [] : (taskTree as any[]) ?? []}

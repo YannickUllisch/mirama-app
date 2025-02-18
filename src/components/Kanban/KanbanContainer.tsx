@@ -3,9 +3,7 @@ import type { FC, PropsWithChildren } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import clsx from 'clsx'
-import { capitalize } from '@src/lib/utils'
-import { TaskStatusType } from '@prisma/client'
-import { Ellipsis, Plus, SquarePlus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '../ui/button'
 
 export interface KanbanContainerProps {

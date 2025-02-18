@@ -36,7 +36,6 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import dynamic from 'next/dynamic'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import { Loader2 } from 'lucide-react'
 import Loading from '@/app/loading'
 
 // Dynamically import ViewTaskSheet
@@ -160,7 +159,7 @@ const GanttTab = () => {
 
   return (
     <>
-      <div className="flex pb-4 gap-2 items-center ">
+      <div className="flex pb-1 gap-2 items-center ">
         <GeneralSelect
           value={rangeView}
           setValue={setRangeView}
@@ -197,7 +196,7 @@ const GanttTab = () => {
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
       />
-      <div className="border border-border/50 dark:border-border rounded-md">
+      <div className="border border-border/50 dark:border-border rounded-md pb-5 h-[50vh]">
         {project ? (
           <GanttProvider
             endDate={new Date(project?.endDate)}

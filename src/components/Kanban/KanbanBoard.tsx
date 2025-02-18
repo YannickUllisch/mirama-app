@@ -38,6 +38,7 @@ import { useSession } from 'next-auth/react'
 import { createTree } from '@src/lib/data-structures/Tree'
 import type { KeyedMutator } from 'swr'
 import { Button } from '@ui/button'
+import useSWR from 'swr'
 
 interface KanbanBoardProps {
   projectId: string
@@ -51,7 +52,9 @@ interface KanbanBoardProps {
 const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
   // waiting for DB updates we simulate the changes through the boards state and update DB in the background
+  const { data: session } = useSession()
 
+  // Board Initialization
   const initBoards = useMemo(() => {
     const tree = createTree(tasks ?? [], 'subtasks')
     const groupedItems = groupTasksByContainer(tree)
@@ -59,15 +62,16 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
   }, [tasks])
 
   const [boards, setBoards] = useState<Board[]>(initBoards)
+
   useEffect(() => {
     setBoards(initBoards)
   }, [initBoards])
-  const { data: session } = useSession()
+
+  // States
+
   const [hoveredContainerId, setHoveredContainerId] =
     useState<UniqueIdentifier | null>(null)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [originalColumnId, setOriginalColumnId] =
-    useState<UniqueIdentifier | null>(null)
   const [editingItemId, setEditingItemId] = useState<UniqueIdentifier | null>(
     null,
   )
@@ -76,7 +80,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
     useState<UniqueIdentifier | null>(null)
   const [newContainerTitle, setNewContainerTitle] = useState<string>('')
 
-  const projectUsers = useContext(ProjectDataContext)
+  // Data
+  const { data: users } = useSWR<User[]>(
+    projectId ? `/api/db/project/users?id=${projectId}` : '',
+  )
 
   const onAddItem = (
     columnId: UniqueIdentifier,
@@ -150,136 +157,35 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
     setActiveId(active.id)
-
-    // Store the original column ID when drag starts
-    const activeItem = findItemTask(active.id)
-    if (activeItem) {
-      const originalColumn = findValueOfItems(active.id, 'item')
-      if (originalColumn) {
-        setOriginalColumnId(originalColumn.id)
-      }
-    }
   }
 
   const handleDragMove = (event: DragMoveEvent) => {
     const { active, over } = event
 
-    if (active.id === over?.id) {
-      return
-    }
+    if (active.id === over?.id) return
 
+    // Handle hovering logic for styling
     if (over?.data.current?.type === 'container') {
-      // Hovering directly over a container
       setHoveredContainerId(over.id)
     } else if (over?.data.current?.type === 'item') {
-      // Hovering over an item, find its container
-      const container = findValueOfItems(over.id, 'item') // Helper function to locate the container
+      const container = findValueOfItems(over.id, 'item')
       if (container) {
         setHoveredContainerId(container.id)
       }
     } else {
       setHoveredContainerId(null)
     }
-
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('item') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find active and over container
-      const activeContainer = findValueOfItems(active.id, 'item')
-      const overContainer = findValueOfItems(over.id, 'item')
-
-      if (!activeContainer || !overContainer) return
-
-      const activeBoard = boards.find((board) =>
-        board.columns.some((column) => column.id === activeContainer.id),
-      )
-      const overBoard = boards.find((board) =>
-        board.columns.some((column) => column.id === overContainer.id),
-      )
-
-      if (!activeBoard || !overBoard) return
-
-      const activeColumn = activeBoard.columns.find(
-        (col) => col.id === activeContainer.id,
-      )
-      const overColumn = overBoard.columns.find(
-        (col) => col.id === overContainer.id,
-      )
-
-      if (!activeColumn || !overColumn) return
-
-      const activeItemIndex = activeColumn.items.findIndex(
-        (item) => item.id === active.id,
-      )
-      const overItemIndex = overColumn.items.findIndex(
-        (item) => item.id === over.id,
-      )
-
-      if (activeColumn.id === overColumn.id) {
-        // Same column sorting
-        const updatedItems = [...activeColumn.items]
-        const movedItem = updatedItems.splice(activeItemIndex, 1)[0]
-        updatedItems.splice(overItemIndex, 0, movedItem)
-        activeColumn.items = updatedItems
-      } else {
-        // Different columns or boards
-        const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
-        overColumn.items.splice(overItemIndex, 0, movedItem)
-      }
-    }
-
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      const activeContainer = findValueOfItems(active.id, 'item')
-      const overContainer = findValueOfItems(over.id, 'container')
-
-      if (!activeContainer || !overContainer) return
-
-      const activeBoard = boards.find((board) =>
-        board.columns.some((column) => column.id === activeContainer.id),
-      )
-      const overBoard = boards.find((board) =>
-        board.columns.some((column) => column.id === overContainer.id),
-      )
-
-      if (!activeBoard || !overBoard) return
-
-      const activeColumn = activeBoard.columns.find(
-        (col) => col.id === activeContainer.id,
-      )
-      const overColumn = overBoard.columns.find(
-        (col) => col.id === overContainer.id,
-      )
-
-      if (!activeColumn || !overColumn) return
-
-      const activeItemIndex = activeColumn.items.findIndex(
-        (item) => item.id === active.id,
-      )
-
-      const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
-      overColumn.items.push(movedItem)
-    }
   }
 
   // This is the function that handles the sorting of the containers and items when the user is done dragging.
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
     setHoveredContainerId(null)
 
-    if (!originalColumnId || !over?.id) return
+    if (!over?.id || active.id === over.id) return
 
-    const activeContainer = findValueOfItems(originalColumnId, 'container')
-
+    // Find active and over containers
+    const activeContainer = findValueOfItems(active.id, 'item')
     const overContainer =
       findValueOfItems(over.id, 'container') ||
       findValueOfItems(over.id, 'item')
@@ -295,71 +201,64 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
 
     if (!activeBoard || !overBoard) return
 
-    const activeItemIndex = overContainer.items.findIndex(
+    const activeColumn = activeBoard.columns.find(
+      (col) => col.id === activeContainer.id,
+    )
+    const overColumn = overBoard.columns.find(
+      (col) => col.id === overContainer.id,
+    )
+
+    if (!activeColumn || !overColumn) return
+
+    const activeItemIndex = activeColumn.items.findIndex(
       (item) => item.id === active.id,
     )
-    const removedItem = overContainer.items[activeItemIndex]
+    const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
 
-    if (activeContainer.id !== overContainer.id) {
-      // Determine the new parentId
-      let newParentId: string | null = null
+    // If the item was dropped in the same container, return
+    if (activeColumn.id === overColumn.id) {
+      return
+    }
 
-      if (overBoard.title === 'Unparented Tasks') {
-        // If moved to the Unparented Tasks board, reset parentId to null
-        newParentId = null
-      } else if (overBoard.id.includes('board')) {
-        // Extract the container ID from the board title
-        const containerId = overBoard.id.substring(6)
-        newParentId = containerId
-      }
-      const newStatus = overContainer.title // Assumes `overColumn` title represents the status
+    // Add loading state to the moved item
+    overColumn.items.push({ ...movedItem })
 
-      const assignToSelf =
-        activeContainer.title === String(TaskStatusType.NEW) &&
-        overContainer.title === String(TaskStatusType.ACTIVE) &&
-        !removedItem.task.assignedTo
+    setBoards([...boards]) // Optimistic update
 
-      overContainer.items = overContainer.items.filter(
-        (item) => item.id !== removedItem.id,
-      )
-      overContainer.items.push({
-        id: removedItem.id,
-        task: {
-          ...removedItem.task,
-          status: overContainer.title as TaskStatusType,
-          parentId: newParentId ? newParentId : null,
-          assignedTo: {
-            role: session?.user.role ?? Role.OBSERVER,
-            email: session?.user.email ?? '',
-            id: session?.user.id ?? '',
-            name: session?.user.name ?? '',
-            password: null,
-            emailVerified: null,
-            preferredDateType: '',
-            teamId: session?.user.teamId ?? null,
-          },
-        },
-      })
+    // Determine new parentId
+    let newParentId: string | null = null
+    if (overBoard.title === 'Unparented Tasks') {
+      newParentId = null
+    } else if (overBoard.id.includes('board')) {
+      newParentId = overBoard.id.substring(6)
+    }
 
-      // Optimistic Update of boards state
-      setBoards([...boards]) // Update the state with the modified boards
+    const newStatus = overColumn.title // Assumes `overColumn` title represents the status
 
-      // Update the task's parentId and status
-      const taskId = removedItem.id.toString().substring(5) // Remove 'item-' prefix
-      updateResourceById(
+    try {
+      // Update the task's parentId and status in the database
+      const taskId = movedItem.id.toString().substring(5) // Remove 'item-' prefix
+      await updateResourceById(
         'task',
         taskId,
         {
           status: newStatus,
           parentId: newParentId,
-          assignedToId: assignToSelf ? session?.user?.id : undefined,
         },
         { mutate },
       )
+      // Remove loading state once updated
+      overColumn.items = overColumn.items.map((item) =>
+        item.id === movedItem.id ? { ...item, loading: false } : item,
+      )
+
+      setBoards([...boards]) // Final state update
+    } catch (error) {
+      console.error('Failed to update item:', error)
+      // Handle error (e.g., show a notification or revert state)
     }
 
     setActiveId(null)
-    setOriginalColumnId(null)
   }
 
   const handleSaveOrCancel = (
@@ -443,6 +342,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
         dueDate: dueDate ?? deletedItem.task.dueDate,
         priority: priority ?? deletedItem.task.priority,
       },
+      loading: false,
     })
     setBoards([...boards])
   }
@@ -517,7 +417,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
         </header>
 
         {/* Kanban Boards */}
-        <div className="flex flex-col h-[70vh] gap-y-2 pt-1 overflow-y-scroll border-b">
+        <div className="flex flex-col h-[70vh] gap-y-2 pt-1 pb-5 overflow-y-scroll border-b">
           {boards.map((board) => (
             <div className="display flex gap-2" key={`board-${board.id}`}>
               {/* Board Column Titles */}
@@ -605,8 +505,9 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                               id={item.id}
                               task={item.task}
                               onDelete={handleItemDelete}
-                              users={projectUsers?.users}
+                              users={users ?? []}
                               onItemUpdate={onItemUpdate}
+                              loading={false}
                             />
                           )}
                         </div>

@@ -16,8 +16,8 @@ const OverviewTab = () => {
   return (
     <div className="flex justify-between">
       <div className="flex flex-col">
-        <span className="text-text-secondary text-xl font-bold">Task Tree</span>
-        <span className="text-text-secondary">
+        <span className="text-text-secondary  font-bold">Task Tree</span>
+        <span className="text-text-secondary text-xs">
           Quick overview over Project Task Structure
         </span>
         <TaskTree

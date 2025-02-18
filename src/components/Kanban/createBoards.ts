@@ -39,6 +39,7 @@ export const createColumns = (tasks: any[]): BoardColumn[] => {
       .map((task) => ({
         id: `item-${task.id}`,
         task,
+        loading: false,
       })),
   }))
 }

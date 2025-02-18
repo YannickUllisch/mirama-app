@@ -43,12 +43,14 @@ export interface BoardColumn {
     task: Task & {
       assignedTo: User | undefined
     }
+    loading: boolean
   }[]
 }
 
 export type KanbanItemType = {
   id: UniqueIdentifier
   task?: Task & { assignedTo: User | undefined }
+  loading?: boolean
   onDelete?: (id: string) => void
   users?: User[]
   onItemUpdate?: ({

@@ -74,7 +74,13 @@ const ViewTaskSheet = ({
     }
   >(taskId ? `/api/db/task/${taskId}` : null)
 
-  const projectUsers = useContext(ProjectDataContext)
+  const projectInfo = useContext(ProjectDataContext)
+
+  // Data
+  const { data: users } = useSWR<User[]>(
+    projectInfo ? `/api/db/project/users?id=${projectInfo?.projectId}` : '',
+  )
+
   // Tab definitions
   const taskSheetTabs: {
     id: string
@@ -199,8 +205,8 @@ const ViewTaskSheet = ({
                       )
                     }
                   >
-                    {projectUsers
-                      ? projectUsers.users?.map((user) => (
+                    {users
+                      ? users?.map((user) => (
                           <SelectItem
                             value={user.id}
                             key={`user-item-${user.id}`}

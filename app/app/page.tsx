@@ -79,28 +79,30 @@ const ClientProjectPage = () => {
           }`}
         >
           {dashboardTabs.map(
-            (tabHeader) =>
-              session &&
-              tabHeader.roles.includes(session.user.role) && (
-                <TabsTrigger
-                  style={{ fontSize: 12 }}
-                  value={tabHeader.id}
-                  key={tabHeader.id}
-                >
-                  {tabHeader.headerComponent}
-                </TabsTrigger>
-              ),
+            (tabHeader) => (
+              // session &&
+              // tabHeader.roles.includes(session.user.role) && (
+              <TabsTrigger
+                style={{ fontSize: 12 }}
+                value={tabHeader.id}
+                key={tabHeader.id}
+              >
+                {tabHeader.headerComponent}
+              </TabsTrigger>
+            ),
+            // ),
           )}
         </TabsList>
       </div>
       {dashboardTabs.map(
-        (tab) =>
-          session &&
-          tab.roles.includes(session.user.role) && (
-            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-              {tab.component}
-            </TabsContent>
-          ),
+        (tab) => (
+          // session &&
+          // tab.roles.includes(session.user.role) && (
+          <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+            {tab.component}
+          </TabsContent>
+        ),
+        // ),
       )}
     </Tabs>
   )

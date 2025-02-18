@@ -1121,9 +1121,9 @@ export const GanttProvider: FC<GanttProviderProps> = ({
   let columnWidth = 100
 
   if (range === 'monthly') {
-    columnWidth = 250
+    columnWidth = 350
   } else if (range === 'quarterly') {
-    columnWidth = 300
+    columnWidth = 400
   }
 
   const cssVariables = {

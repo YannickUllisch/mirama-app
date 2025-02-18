@@ -1,8 +1,8 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState, type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import UserAvatar from '../Avatar/UserAvatar'
-import { Edit, Ellipsis, Pencil, Trash2, UserIcon } from 'lucide-react'
+import { Edit, Ellipsis, Loader2, Pencil, Trash2, UserIcon } from 'lucide-react'
 import type { KanbanItemType } from '@src/lib/types'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -24,6 +24,7 @@ import { DateTime } from 'luxon'
 const KanbanItem: FC<KanbanItemType> = ({
   id,
   task,
+  loading,
   onDelete,
   users,
   onItemUpdate,
@@ -53,10 +54,22 @@ const KanbanItem: FC<KanbanItemType> = ({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
+      className={`relative min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
         isDragging && 'opacity-50'
-      }`}
+      } ${loading ? 'pointer-events-none' : ''}`}
     >
+      {loading && (
+        <>
+          <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 opacity-50 rounded-sm" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2
+              className="animate-spin text-neutral-600 dark:text-neutral-300"
+              size={24}
+            />
+          </div>
+        </>
+      )}
+
       <div className="flex flex-col gap-y-2 justify-between">
         {/* Task title and link */}
         {isEditing ? (
@@ -79,7 +92,6 @@ const KanbanItem: FC<KanbanItemType> = ({
                     title: value.toString(),
                   })
                 }
-
                 setIsEditing(false)
               }}
               className="h-fit w-fit p-1 text-xs"

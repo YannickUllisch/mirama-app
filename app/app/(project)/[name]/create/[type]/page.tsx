@@ -78,6 +78,11 @@ const CreateTaskForm = ({
     projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined,
   )
 
+  const { data: users } = useSWR<User[]>(
+    projectContext
+      ? `/api/db/project/users?id=${projectContext?.projectId}`
+      : '',
+  )
   const { data: tags } = useSWR<Tag[]>('/api/db/tag')
 
   // Form Logic and Functions
@@ -247,7 +252,7 @@ const CreateTaskForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {projectContext?.users.map((user) => (
+                      {users?.map((user) => (
                         <SelectItem
                           value={user.id}
                           key={`user-item-${user.id}`}

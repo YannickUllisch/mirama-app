@@ -42,14 +42,8 @@ const Layout = async ({
     redirect('/app')
   }
 
-  const projectUsers = await fetchProjectUsersByProjectId(project.id)
-
   return (
-    <ProjectUsersContext
-      users={projectUsers}
-      projectId={project.id}
-      projectName={project.name}
-    >
+    <ProjectUsersContext projectId={project.id} projectName={project.name}>
       {children}
     </ProjectUsersContext>
   )

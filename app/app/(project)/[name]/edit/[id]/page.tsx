@@ -20,6 +20,7 @@ import {
   TaskStatusType,
   type TaskTagJoin,
   type TaskType,
+  type User,
 } from '@prisma/client'
 import {
   BookCheck,
@@ -66,6 +67,12 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   // Routing used to return to previous page.
   const router = useRouter()
   const projectContext = useContext(ProjectDataContext)
+  // Data
+  const { data: users } = useSWR<User[]>(
+    projectContext
+      ? `/api/db/project/users?id=${projectContext?.projectId}`
+      : '',
+  )
 
   const { data: task, mutate: updateTask } = useSWR<
     Task & {
@@ -262,7 +269,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {projectContext?.users.map((user) => (
+                      {users?.map((user) => (
                         <SelectItem
                           value={user.id}
                           key={`user-item-${user.id}`}
