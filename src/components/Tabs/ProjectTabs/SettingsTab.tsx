@@ -1,27 +1,56 @@
 'use client'
+
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import React, { useContext, useMemo, useState, type FC } from 'react'
-import { Button } from '@src/components/ui/button'
-import type { Project, ProjectUser, User } from '@prisma/client'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useSession } from 'next-auth/react'
-import { Archive, Trash2 } from 'lucide-react'
+import useSWR from 'swr'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import useSWR from 'swr'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import {
+  PriorityType,
+  StatusType,
+  type Project,
+  type ProjectUser,
+  type User,
+} from '@prisma/client'
+
+import { Button } from '@src/components/ui/button'
+import { Input } from '@src/components/ui/input'
+import { Label } from '@src/components/ui/label'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@src/components/ui/dropdown-menu'
+import { ScrollArea } from '@src/components/ui/scroll-area'
 import { Separator } from '@src/components/ui/separator'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import {
+  Archive,
+  Trash2,
+  Settings,
+  Users,
+  ChevronRight,
+  MoreVertical,
+  Crown,
+  UserMinus,
+} from 'lucide-react'
+import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import UserMultiSelect from '@src/components/Select/UserMultiSelect'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 
 const SettingsTab = () => {
-  // Project context
   const projectContext = useContext(ProjectDataContext)
+  const router = useRouter()
+  const { data: session } = useSession({ required: true })
 
-  // Fetching Data
-  const { data: project } = useSWR<Project>(
+  const { data: project, mutate: mutateProject } = useSWR<Project>(
     projectContext ? `/api/db/project/${projectContext.projectId}` : undefined,
   )
 
@@ -33,13 +62,68 @@ const SettingsTab = () => {
       : undefined,
   )
 
-  const [managerIds, setManagersIds] = useState<string[]>(
-    projectUsers?.filter((user) => user.isManager).map((pu) => pu.userId) ?? [],
-  )
+  const [activeTab, setActiveTab] = useState('general')
+  const [editMode, setEditMode] = useState(false)
+  const [editedProject, setEditedProject] = useState<
+    Partial<Project> | undefined
+  >(undefined)
 
-  const [assignedUserIds, setAssignedUserIds] = useState<string[]>(
-    projectUsers?.map((pu) => pu.userId) ?? [],
-  )
+  useEffect(() => {
+    if (!editedProject && project) {
+      setEditedProject({
+        archived: project?.archived,
+        priority: project?.priority,
+        status: project?.status,
+        name: project?.name,
+      })
+    }
+  }, [project, editedProject])
+
+  const canEdit = useMemo(() => {
+    const isSessionProjectManager = projectUsers?.some(
+      (user) => user.userId === session?.user.id && user.isManager,
+    )
+    return isTeamAdminOrOwner(session) || isSessionProjectManager
+  }, [session, projectUsers])
+
+  const [assignedUserIds, setAssignedUserIds] = useState<string[] | null>(null)
+  const [managerIds, setManagersIds] = useState<string[] | null>(null)
+
+  useEffect(() => {
+    if (projectUsers) {
+      const userIds = projectUsers.map((pu) => pu.userId)
+      setAssignedUserIds(userIds)
+    }
+  }, [projectUsers])
+
+  useEffect(() => {
+    if (projectUsers) {
+      const managerIds = projectUsers
+        .filter((pu) => pu.isManager)
+        .map((pu) => pu.userId)
+      setManagersIds(managerIds)
+    }
+  }, [projectUsers])
+
+  const handleSave = () => {
+    updateResourceById('project', project?.id ?? '', editedProject, {
+      mutate: mutateProject as any,
+    })
+    setEditMode(false)
+  }
+
+  const handleArchive = () => {
+    updateResourceById(
+      'project',
+      project?.id ?? '',
+      {
+        archived: !project?.archived,
+      },
+      {
+        mutate: mutateProject as any,
+      },
+    )
+  }
 
   const onManagerSelectionUpdate = (ids: string[]) => {
     updateResourceById(
@@ -64,136 +148,227 @@ const SettingsTab = () => {
     )
   }
 
-  const router = useRouter()
-  const { data: session } = useSession({ required: true })
-
-  const isSessionProjectManager = useMemo(() => {
-    return projectUsers?.find((user) => user.id === session?.user.id)?.isManager
-  }, [projectUsers, session])
-
-  return (
-    <div className="flex justify-between mb-5 flex-col">
-      <div className="flex justify-between pb-10">
-        <div className="flex flex-col">
-          <span className="font-medium text-3xl">General</span>
-          <span>{project?.name}</span>
-          <span>{project?.priority}</span>
-          <span>{project?.status}</span>
-        </div>
-
-        {isTeamAdminOrOwner(session) || isSessionProjectManager ? (
-          <div className="flex justify-start gap-2">
-            <Button
-              onClick={() =>
-                updateResourceById('project', project?.id ?? '', {
-                  archived: !project?.archived,
-                })
+  const tabContent = {
+    general: (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="projectName">Project Name</Label>
+          <Input
+            id="projectName"
+            value={editMode ? editedProject?.name : project?.name}
+            onChange={(e) => {
+              if (editedProject) {
+                setEditedProject({ ...editedProject, name: e.target.value })
               }
-              className="gap-2 hover:text-orange-500 hover:no-underline hover:bg-hover"
-              variant={'link'}
-            >
-              <Archive className="w-3.5 h-3.5 cursor-pointer" />
-              <span key={'archive-button'}>
-                {project?.archived ? 'Unarchive' : 'Archive'}
-              </span>
-            </Button>
-
-            <ConfirmationDialog
-              dialogTitle={'Are you sure?'}
-              dialogDesc={'Deleting a project can not be undone!'}
-              submitButtonText={'Delete'}
-              onConfirmation={() =>
-                deleteResources('project', [project?.id ?? '']).then(() =>
-                  router.push('/app'),
-                )
-              }
-            >
-              <Button
-                className="gap-2 hover:text-red-500 hover:no-underline hover:bg-hover"
-                variant={'link'}
-              >
-                <Trash2 className="w-3.5 h-3.5 cursor-pointer" />
-                <span>Delete</span>
-              </Button>
-            </ConfirmationDialog>
-          </div>
-        ) : (
-          <div className="w-full h-[50px]" />
-        )}
-      </div>
-      <Separator className="mb-4" />
-
-      <>
-        <span className="text-xl">Project managers</span>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 pb-5">
-          {projectUsers?.map((u) =>
-            u.isManager ? (
-              <div
-                className="flex items-center gap-2 p-2"
-                key={`manager-${u.userId}`}
-              >
-                <UserAvatar
-                  avatarSize={40}
-                  username={u.user.name}
-                  fontSize={15}
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm">{u.user.name}</span>
-                  <span className="text-xs text-text-secondary">
-                    {u.user.email}
-                  </span>
-                </div>
-              </div>
-            ) : null,
-          )}
-        </div>
-        {isTeamAdminOrOwner(session) && (
-          <div className="flex items-center">
-            <UserMultiSelect
-              selectedUserIds={managerIds}
-              setSelectedUserIds={setManagersIds}
-              onSelectionChange={onManagerSelectionUpdate}
-            >
-              <Button
-                variant="link"
-                className="hover:bg-hover hover:no-underline hover:outline"
-              >
-                Assign Managers
-              </Button>
-            </UserMultiSelect>
-          </div>
-        )}
-      </>
-
-      <Separator className="mb-4 mt-4" />
-
-      <>
-        <span className="text-xl flex flex-col">Assigned to project</span>
-        <div className="p-4">
-          <AvatarGroup
-            usernames={projectUsers?.map((u) => u.user.name ?? '') ?? []}
-            avatarSize={9}
-            previewAmount={4}
-            fontSize={12}
+            }}
+            disabled={!editMode}
           />
         </div>
-        {isTeamAdminOrOwner(session) && (
-          <div className="flex items-center">
-            <UserMultiSelect
-              selectedUserIds={assignedUserIds}
-              setSelectedUserIds={setAssignedUserIds}
-              onSelectionChange={onAssignedUserSelectionUpdate}
+        <div className="space-y-2">
+          <Label>Priority</Label>
+          <RadioGroup
+            disabled={!editMode}
+            value={editMode ? editedProject?.priority : project?.priority}
+            onValueChange={(value) => {
+              if (editedProject) {
+                setEditedProject({
+                  ...editedProject,
+                  priority: value as PriorityType,
+                })
+              }
+            }}
+          >
+            {Object.keys(PriorityType).map((type) => (
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value={type} id={type} />
+                <Label>{capitalize(type)}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+        <div className="space-y-2">
+          <Label>Status</Label>
+
+          <RadioGroup
+            disabled={!editMode}
+            value={editMode ? editedProject?.status : project?.status}
+            onValueChange={(value) => {
+              if (editedProject) {
+                setEditedProject({
+                  ...editedProject,
+                  status: value as StatusType,
+                })
+              }
+            }}
+          >
+            {Object.keys(StatusType).map((type) => (
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value={type} id={type} />
+                <Label>{(capitalize(type) as string).replace('_', ' ')}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    ),
+    users: (
+      <ScrollArea className="h-[400px] pr-4">
+        <div className="space-y-4">
+          {projectUsers?.map((user) => (
+            <div
+              key={user.userId}
+              className="flex items-center justify-between p-2 border rounded-lg"
             >
-              <Button
-                variant="link"
-                className="hover:bg-hover hover:no-underline hover:outline"
-              >
-                Assign Users
+              <div className="flex items-center space-x-3">
+                <UserAvatar
+                  avatarSize={40}
+                  username={user.user.name}
+                  fontSize={15}
+                />
+                <div>
+                  <p className="font-medium">{user.user.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {user.user.email}
+                  </p>
+                </div>
+              </div>
+              {canEdit && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    ),
+  }
+
+  return (
+    <div className="container mx-auto px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Project Settings</h1>
+        {canEdit && (
+          <div className="flex">
+            <div className="flex gap-1">
+              <>
+                <UserMultiSelect
+                  selectedUserIds={managerIds}
+                  setSelectedUserIds={setManagersIds}
+                  onSelectionChange={onManagerSelectionUpdate}
+                >
+                  <Button
+                    variant="link"
+                    className="hover:bg-hover hover:no-underline hover:outline"
+                  >
+                    Assign Managers
+                  </Button>
+                </UserMultiSelect>
+              </>
+              <>
+                <UserMultiSelect
+                  selectedUserIds={assignedUserIds}
+                  setSelectedUserIds={setAssignedUserIds}
+                  onSelectionChange={onAssignedUserSelectionUpdate}
+                >
+                  <Button
+                    variant="link"
+                    className="hover:bg-hover hover:no-underline hover:outline"
+                  >
+                    Assign Users
+                  </Button>
+                </UserMultiSelect>
+              </>
+              <Button onClick={() => setEditMode(!editMode)}>
+                {editMode ? 'Cancel' : 'Edit'}
               </Button>
-            </UserMultiSelect>
+            </div>
           </div>
         )}
-      </>
+      </div>
+      <div className="flex space-x-8">
+        <div className="w-64">
+          <nav className="space-y-2">
+            <Button
+              variant={activeTab === 'general' ? 'default' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveTab('general')}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              General
+              <ChevronRight className="ml-auto h-4 w-4" />
+            </Button>
+            <Button
+              variant={activeTab === 'users' ? 'default' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveTab('users')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Users
+              <ChevronRight className="ml-auto h-4 w-4" />
+            </Button>
+          </nav>
+          {canEdit && (
+            <>
+              <Separator className="my-4" />
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-yellow-600"
+                  onClick={handleArchive}
+                >
+                  <Archive className="mr-2 h-4 w-4" />
+                  {project?.archived ? 'Unarchive' : 'Archive'}
+                </Button>
+                <ConfirmationDialog
+                  dialogTitle={'Are you sure?'}
+                  dialogDesc={'Deleting a project can not be undone!'}
+                  submitButtonText={'Delete'}
+                  onConfirmation={() =>
+                    deleteResources('project', [project?.id ?? '']).then(() =>
+                      router.push('/app'),
+                    )
+                  }
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-destructive"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Project
+                  </Button>
+                </ConfirmationDialog>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="flex-1">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {tabContent[activeTab]}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+      {editMode && (
+        <div className="mt-8 flex justify-end">
+          <Button onClick={handleSave}>Save Changes</Button>
+        </div>
+      )}
     </div>
   )
 }

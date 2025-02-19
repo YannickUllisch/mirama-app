@@ -30,3 +30,27 @@ export const updateResourceById = async <T, U>(
     throw error.response?.statusText ?? error
   }
 }
+
+export const updateResourceByIdNoToast = async <T, U>(
+  route: string,
+  id: string,
+  params: T,
+  options?: {
+    mutate?: KeyedMutator<U[]>
+    onSuccess?: () => void
+  },
+) => {
+  try {
+    return await api.put(`${route}?id=${id}`, params).then(() => {
+      if (options?.mutate) {
+        options.mutate()
+      }
+      if (options?.onSuccess) {
+        options.onSuccess
+      }
+    })
+  } catch (error: any) {
+    toast.error(error)
+    throw error.response?.statusText ?? error
+  }
+}

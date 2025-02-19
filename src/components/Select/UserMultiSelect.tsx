@@ -12,8 +12,8 @@ import useSWR from 'swr'
 import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
 
 interface UserMultiSelectProps {
-  selectedUserIds: string[]
-  setSelectedUserIds: Dispatch<SetStateAction<string[]>>
+  selectedUserIds: string[] | null
+  setSelectedUserIds: Dispatch<SetStateAction<string[] | null>>
   onSelectionChange?: (ids: string[]) => void
 }
 
@@ -29,12 +29,13 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
   return (
     <MultiSelector
       className="col-span-3 flex-grow"
-      values={selectedUserIds}
+      values={selectedUserIds ?? []}
       onValuesChange={(updated) => {
         const updatedUserIds =
           users
             ?.filter((user) => updated.includes(user.id))
             .map((user) => user.id) ?? []
+
         setSelectedUserIds(updatedUserIds)
         // Running some function on selection change
         // Might have to change this to avoid a bunch of API requests

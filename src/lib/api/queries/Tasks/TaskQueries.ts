@@ -27,7 +27,7 @@ export const fetchTasksByProjectId = async (
       comments: true,
     },
     orderBy: {
-      priority: 'asc',
+      status: 'asc',
     },
   })
 
