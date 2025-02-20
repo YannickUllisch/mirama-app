@@ -13,9 +13,8 @@ const ClientTeamPage = () => {
   const { data: session, update } = useSession()
 
   // Fetching Data
-  const { data: teamMembers, mutate: updateMembers } = useSWR<User[]>(
-    '/api/db/team/member',
-  )
+  const { data: teamMembers, mutate: updateMembers } =
+    useSWR<User[]>('team/member')
 
   return (
     <>

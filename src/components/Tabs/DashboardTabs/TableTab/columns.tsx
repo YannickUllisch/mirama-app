@@ -146,18 +146,6 @@ export const ProjectColumns = ({
               )
               .map((u) => u.name as string) ?? []
 
-          if (isTeamAdminOrOwner(session)) {
-            return (
-              managerNames && (
-                <AvatarGroup
-                  usernames={managerNames ?? []}
-                  avatarSize={7}
-                  previewAmount={2}
-                  fontSize={10}
-                />
-              )
-            )
-          }
           return (
             managerNames && (
               <AvatarGroup

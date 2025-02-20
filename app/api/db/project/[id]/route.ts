@@ -2,6 +2,8 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
 import type { NextRequest } from 'next/server'
+import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
+import db from '@db'
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -11,9 +13,9 @@ export const GET = async (req: NextRequest) => {
     if (validatedRequest) {
       return validatedRequest
     }
+    const { searchParams } = new URL(req.url)
 
     // Extracting name from dynamic route
-    // TODO: find better way to do this
     const id = req.nextUrl.pathname.split('/').pop()
 
     if (!id) {
@@ -22,7 +24,24 @@ export const GET = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-    const response = await fetchSingleProjectById(id)
+
+    const selectQuery = searchParams.getAll('select[]')
+
+    // Extract select fields from select object format and parse all selections
+    const prismaSelection = reconstructPrismaSelect({
+      prismaModel: 'Project',
+      rawSelectQuery: selectQuery,
+    })
+
+    const response = await db.project.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        ...prismaSelection,
+        id: true,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

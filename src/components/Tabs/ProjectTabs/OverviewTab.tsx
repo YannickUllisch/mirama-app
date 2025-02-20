@@ -22,6 +22,7 @@ import { Progress } from '@ui/progress'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import MilestoneTimeline from '@src/components/Milestone/MilestoneTimeline'
 
 const OverviewTab = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -29,19 +30,19 @@ const OverviewTab = () => {
 
   // Data
   const { data: project } = useSWR<Project>(
-    projectContext ? `/api/db/project/${projectContext?.projectId}` : undefined,
+    projectContext ? `project/${projectContext?.projectId}` : undefined,
   )
   const { data: tasks } = useSWR<
     (Task & { subtasks: Task[]; comments: Comment[] })[]
-  >(projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined)
+  >(projectContext ? `task?id=${projectContext?.projectId}` : undefined)
   const { data: milestones } = useSWR<Milestone[]>(
     projectContext
-      ? `/api/db/project/milestones?id=${projectContext?.projectId}`
+      ? `project/milestones?id=${projectContext?.projectId}`
       : undefined,
   )
   const { data: projectUsers } = useSWR<(ProjectUser & { user: User })[]>(
     projectContext
-      ? `/api/db/projectuser?projectId=${projectContext.projectId}`
+      ? `projectuser?projectId=${projectContext.projectId}`
       : undefined,
   )
 
@@ -247,6 +248,7 @@ const OverviewTab = () => {
           </CardContent>
         </Card>
       )}
+      <MilestoneTimeline milestones={milestones ?? []} />
     </div>
   )
 }

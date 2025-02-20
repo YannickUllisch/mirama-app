@@ -37,28 +37,36 @@ import {
   Users,
   ChevronRight,
   MoreVertical,
-  Crown,
-  UserMinus,
 } from 'lucide-react'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import UserMultiSelect from '@src/components/Select/UserMultiSelect'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 
+interface TabContentProps {
+  [key: string]: JSX.Element
+}
+
 const SettingsTab = () => {
   const projectContext = useContext(ProjectDataContext)
   const router = useRouter()
   const { data: session } = useSession({ required: true })
 
-  const { data: project, mutate: mutateProject } = useSWR<Project>(
-    projectContext ? `/api/db/project/${projectContext.projectId}` : undefined,
-  )
+  const { data: project, mutate: mutateProject } = useSWR<Project>({
+    url: projectContext ? `project/${projectContext.projectId}` : '',
+    select: {
+      name: true,
+      status: true,
+      priority: true,
+      archived: true,
+    },
+  })
 
   const { data: projectUsers, mutate: updateProjectUsers } = useSWR<
     (ProjectUser & { user: User })[]
   >(
     projectContext
-      ? `/api/db/projectuser?projectId=${projectContext.projectId}`
+      ? `projectuser?projectId=${projectContext.projectId}`
       : undefined,
   )
 
@@ -148,7 +156,7 @@ const SettingsTab = () => {
     )
   }
 
-  const tabContent = {
+  const tabContent: TabContentProps = {
     general: (
       <div className="space-y-6">
         <div className="space-y-2">

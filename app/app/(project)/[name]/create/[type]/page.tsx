@@ -75,15 +75,13 @@ const CreateTaskForm = ({
   const [isPending, startTransition] = useTransition()
 
   const { data: tasks } = useSWR<Task[]>(
-    projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined,
+    projectContext ? `task?id=${projectContext?.projectId}` : undefined,
   )
 
   const { data: users } = useSWR<User[]>(
-    projectContext
-      ? `/api/db/project/users?id=${projectContext?.projectId}`
-      : '',
+    projectContext ? `project/users?id=${projectContext?.projectId}` : '',
   )
-  const { data: tags } = useSWR<Tag[]>('/api/db/tag')
+  const { data: tags } = useSWR<Tag[]>('tag')
 
   // Form Logic and Functions
   const form = useForm<z.infer<typeof TaskSchema>>({

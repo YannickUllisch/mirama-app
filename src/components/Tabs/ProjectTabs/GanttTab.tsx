@@ -96,17 +96,20 @@ const GanttTab = () => {
     })[]
   >(
     projectContext?.projectId
-      ? `/api/db/task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
+      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
       : null,
   )
 
-  // Fetching Project by name
-  const { data: project } = useSWR<Project>(
-    `/api/db/project/${projectContext?.projectId}`,
-  )
+  const { data: project } = useSWR<Project>({
+    url: projectContext ? `project/${projectContext?.projectId}` : '',
+    select: {
+      endDate: true,
+      startDate: true,
+    },
+  })
 
   const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
-    `/api/db/project/milestones?id=${projectContext?.projectId}`,
+    `project/milestones?id=${projectContext?.projectId}`,
   )
 
   // Sorting and grouping Data

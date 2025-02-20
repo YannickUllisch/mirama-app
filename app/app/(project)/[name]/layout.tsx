@@ -3,7 +3,6 @@ import { auth } from '@auth'
 import db from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { redirect } from 'next/navigation'
-import { fetchProjectUsersByProjectId } from '@src/lib/api/queries/Project/UserQuerys'
 import ProjectUsersContext from '@src/components/Contexts/ProjectDataContext'
 
 export const metadata: Metadata = {

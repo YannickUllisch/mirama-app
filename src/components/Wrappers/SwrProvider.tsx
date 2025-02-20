@@ -1,4 +1,5 @@
 'use client'
+import { api } from '@api'
 import React, { type FC, type PropsWithChildren } from 'react'
 import { toast } from 'sonner'
 import { SWRConfig } from 'swr'
@@ -7,15 +8,36 @@ const SwrProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <SWRConfig
       value={{
-        fetcher: (resource, init) => {
-          if (typeof resource === 'object' && resource.url) {
-            return fetch(resource.url, {
-              ...init,
-              method: resource.method || 'GET', // default to 'GET' if not provided
-            }).then((res) => res.json())
+        fetcher: async (key) => {
+          if (typeof key === 'string') {
+            const response = await api.get(`/${key}`)
+            return response.data
           }
-          // Otherwise, handle it as a regular URL string
-          return fetch(resource, init).then((res) => res.json())
+
+          const { url, cacheKey, ...rest } = key
+
+          if (!url) {
+            throw new Error(
+              'When providing an object as a key, the url property is required',
+            )
+          }
+
+          const params = Object.entries(rest).reduce<Record<string, any>>(
+            (acc, [key, value]) => {
+              if (typeof value === 'object' && value !== null) {
+                acc[`${key}[]`] = Object.keys(value).filter(
+                  (k) => (value as Record<string, boolean>)[k],
+                )
+              } else {
+                acc[key] = value
+              }
+              return acc
+            },
+            {},
+          )
+
+          const response = await api.get(`/${url}`, { params })
+          return response.data
         },
         errorRetryCount: 1,
         onErrorRetry: (error, key) => {

@@ -20,8 +20,13 @@ const GridTab = () => {
       users: (ProjectUser & { user: User })[]
     })[]
   >({
-    url: '/api/db/project',
-    archived: false,
+    url: 'project',
+    archived: 'false',
+    select: {
+      name: true,
+      startDate: true,
+      endDate: true,
+    },
   })
 
   return (
@@ -51,14 +56,14 @@ const GridTab = () => {
                       className="flex gap-2 items-center mb-2"
                     >
                       Managed By:{' '}
-                      <AvatarGroup
+                      {/* <AvatarGroup
                         usernames={
                           project?.users?.map((u) => u.user.name ?? '') ?? []
                         }
                         avatarSize={6}
                         previewAmount={2}
                         fontSize={8}
-                      />
+                      /> */}
                     </div>
                     <div
                       style={{ fontSize: 11 }}

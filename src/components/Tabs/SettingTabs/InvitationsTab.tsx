@@ -15,7 +15,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
     data: invitations,
     isLoading,
     mutate,
-  } = useSWR<CompanyInvitation[]>('/api/db/invite')
+  } = useSWR<CompanyInvitation[]>('invite')
 
   // Problem is that DataTable expects an ID which is not given in the
   // CompanyInvitation type.

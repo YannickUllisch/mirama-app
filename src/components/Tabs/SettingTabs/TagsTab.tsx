@@ -10,7 +10,7 @@ import { Button } from '@src/components/ui/button'
 import { DataTable } from '@src/components/Tables/DataTable'
 
 const TagsTab = () => {
-  const { data: tags, isLoading, mutate } = useSWR<Tag[]>('/api/db/tag')
+  const { data: tags, isLoading, mutate } = useSWR<Tag[]>('tag')
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 

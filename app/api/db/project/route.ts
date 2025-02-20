@@ -1,10 +1,11 @@
 import db from '@db'
 import { auth } from '@auth'
-import { type ProjectUser, Role, type Project } from '@prisma/client'
+import { Prisma, type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'
-import { fetchAllAssignedProjects } from '@src/lib/api/queries/Project/ProjectQuerys'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 
 export const GET = auth(async (req) => {
   try {
@@ -13,18 +14,38 @@ export const GET = auth(async (req) => {
     if (validatedRequest) {
       return validatedRequest
     }
-    // const include = JSON.parse(
-    //   req.nextUrl.searchParams.get('include') as string,
-    // )
+    const { searchParams } = new URL(req.url)
 
-    // We often only want to fetch either archived or non-archived projects.
-    // Optionally this can be given in the request URL.
-    const archivedStatus = JSON.parse(
-      req.nextUrl.searchParams.get('archived') as string,
-    )
+    // Extracting Archived status
+    const archivedStatus = (searchParams.get('archived') as string) === 'true'
+    const selectQuery = searchParams.getAll('select[]')
+
+    // Extract select fields from select object format and parse all selections
+    const prismaSelection = reconstructPrismaSelect({
+      prismaModel: 'Project',
+      rawSelectQuery: selectQuery,
+    })
+
     // If Team Owner or Admin, all projects should be returned.
-
-    const response = await fetchAllAssignedProjects(archivedStatus)
+    const response = await db.project.findMany({
+      where: {
+        teamId: session?.user.teamId,
+        archived: archivedStatus ? archivedStatus : false,
+        ...(isTeamAdminOrOwner(session)
+          ? {} // Admins should see all projects, so remove the `users` filter
+          : {
+              users: {
+                some: {
+                  userId: session?.user.id,
+                },
+              },
+            }),
+      },
+      select: {
+        ...prismaSelection,
+        id: true,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

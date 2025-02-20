@@ -6,7 +6,7 @@ import FullCalender from '@src/components/Calendar/full-calender'
 import useSWR from 'swr'
 
 const CalendarClientPage = () => {
-  const { data: projects } = useSWR<Project[]>('/api/db/project?archived=false')
+  const { data: projects } = useSWR<Project[]>('project?archived=false')
 
   // const events: CalendarEvent[] = useMemo(() => {
   //   return (

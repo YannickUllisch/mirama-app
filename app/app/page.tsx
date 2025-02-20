@@ -19,7 +19,7 @@ const ClientProjectPage = () => {
   // Session
   const { data: session } = useSession({ required: true })
 
-  const { data: users } = useSWR<User[]>('/api/db/team/member')
+  const { data: users } = useSWR<User[]>('team/member')
 
   // Tab definitions
   const dashboardTabs: {

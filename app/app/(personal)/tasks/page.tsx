@@ -77,8 +77,12 @@ const TasksPage = () => {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   // Data fetches
-  const { data: projects, isLoading: isProjectsLoading } =
-    useSWR<Project[]>('/api/db/project')
+  const { data: projects, isLoading: isProjectsLoading } = useSWR<Project[]>({
+    url: 'project',
+    select: {
+      name: true,
+    },
+  })
 
   const {
     data: tasks,
@@ -86,7 +90,7 @@ const TasksPage = () => {
     isLoading: isTasksLoading,
   } = useSWR<(Task & { assignedTo: User; parent: Task })[]>(
     selectedProjectId
-      ? `/api/db/task/personal/${selectedProjectId}?showAll=${showAllTasks}`
+      ? `task/personal/${selectedProjectId}?showAll=${showAllTasks}`
       : null,
   )
 

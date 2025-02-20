@@ -4,12 +4,16 @@ import { CSS } from '@dnd-kit/utilities'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import clsx from 'clsx'
 import { Plus } from 'lucide-react'
-import { Button } from '../ui/button'
+import { Button } from '@src/components/ui/button'
+import { ScrollArea } from '@src/components/ui/scroll-area'
+import { Card } from '@src/components/ui/card'
 
 export interface KanbanContainerProps {
   id: UniqueIdentifier
   onAddItem?: () => void
   className?: string
+  title?: string
+  count?: number
 }
 
 const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
@@ -17,6 +21,8 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   children,
   onAddItem,
   className,
+  title,
+  count,
 }) => {
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: id,
@@ -24,8 +30,9 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
       type: 'container',
     },
   })
+
   return (
-    <div
+    <Card
       {...attributes}
       ref={setNodeRef}
       style={{
@@ -33,29 +40,38 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'w-full min-w-0 flex-[1_1_0%] h-full rounded-md border flex flex-col cursor-default',
+        'flex-1 h-full min-w-[300px] bg-background/50 backdrop-blur-sm',
+        'border border-border/50 shadow-sm',
+        className,
       )}
     >
-      <div
-        className={clsx(
-          'overflow-y-auto w-full p-4 flex flex-col gap-2 h-full', // Adjust styles as needed
-          className,
-        )}
-      >
-        <>
-          {children}
-          <div className="mt-auto flex gap-2 justify-end">
-            <Button
-              variant={'ghost'}
-              className="w-fit p-1 h-fit "
-              onClick={onAddItem}
-            >
-              <Plus className="cursor-pointer text-emerald-800 w-5 h-5 hover:bg-neutral-200 dark:hover:bg-hover rounded-sm" />
-            </Button>
+      {title && (
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-medium">{title}</h3>
+            {typeof count === 'number' && (
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-muted">
+                {count}
+              </span>
+            )}
           </div>
-        </>
-      </div>
-    </div>
+        </div>
+      )}
+      <ScrollArea className="h-full">
+        <div className={clsx('p-3 space-y-3', className)}>
+          {children}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            onClick={onAddItem}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add item
+          </Button>
+        </div>
+      </ScrollArea>
+    </Card>
   )
 }
 

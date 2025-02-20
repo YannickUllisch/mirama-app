@@ -21,8 +21,17 @@ const TableTab: FC<Props> = ({ users, session }) => {
       users: ProjectUser[]
     })[]
   >({
-    url: '/api/db/project',
+    url: 'project',
     archived: false,
+    select: {
+      name: true,
+      users: true,
+      startDate: true,
+      endDate: true,
+      priority: true,
+      status: true,
+      budget: true,
+    },
   })
 
   const FooterRow = () => {

@@ -22,7 +22,7 @@ import {
   TaskStatusType,
   type User,
 } from '@prisma/client'
-import KanbanItem from './KanbanItem'
+import KanbanItem from './ItemNewTmp'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import type { Board } from '@src/lib/types'
@@ -33,12 +33,11 @@ import { Input } from '@ui/input'
 import { createBoards, createColumns } from './createBoards'
 import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
 import { createTree } from '@src/lib/data-structures/Tree'
 import type { KeyedMutator } from 'swr'
-import { Button } from '@ui/button'
 import useSWR from 'swr'
+import { KanbanHeader } from './KanbanHeader'
 
 interface KanbanBoardProps {
   projectId: string
@@ -82,7 +81,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
 
   // Data
   const { data: users } = useSWR<User[]>(
-    projectId ? `/api/db/project/users?id=${projectId}` : '',
+    projectId ? `project/users?id=${projectId}` : '',
   )
 
   const onAddItem = (
@@ -390,11 +389,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex p-2 justify-self-end w-fit">
-        <Button variant={'auth'} onClick={() => addBoard()}>
-          Add Container
-        </Button>
-      </div>
+      <KanbanHeader />
       {/* Header (Single Instance) */}
       <div className="overflow-auto">
         <header className="sticky top-0 rounded-sm bg-neutral-100 dark:bg-neutral-950/80 z-10">

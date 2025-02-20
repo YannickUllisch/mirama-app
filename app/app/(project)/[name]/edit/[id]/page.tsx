@@ -69,9 +69,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   const projectContext = useContext(ProjectDataContext)
   // Data
   const { data: users } = useSWR<User[]>(
-    projectContext
-      ? `/api/db/project/users?id=${projectContext?.projectId}`
-      : '',
+    projectContext ? `project/users?id=${projectContext?.projectId}` : '',
   )
 
   const { data: task, mutate: updateTask } = useSWR<
@@ -79,13 +77,13 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
       subtasks: Task[]
       tags: (TaskTagJoin & { tag: Tag })[]
     }
-  >(`/api/db/task/${params.id}`)
+  >(`task/${params.id}`)
 
   const { data: tasks, mutate: updateTasks } = useSWR<Task[]>(
-    projectContext ? `/api/db/task?id=${projectContext?.projectId}` : undefined,
+    projectContext ? `task?id=${projectContext?.projectId}` : undefined,
   )
 
-  const { data: tags } = useSWR<Tag[]>('/api/db/tag')
+  const { data: tags } = useSWR<Tag[]>('tag')
 
   // States
   const [isPending, startTransition] = useTransition()

@@ -72,13 +72,13 @@ const ViewTaskSheet = ({
       assignedTo: User
       parent: Task
     }
-  >(taskId ? `/api/db/task/${taskId}` : null)
+  >(taskId ? `task/${taskId}` : null)
 
   const projectInfo = useContext(ProjectDataContext)
 
   // Data
   const { data: users } = useSWR<User[]>(
-    projectInfo ? `/api/db/project/users?id=${projectInfo?.projectId}` : '',
+    projectInfo ? `project/users?id=${projectInfo?.projectId}` : '',
   )
 
   // Tab definitions

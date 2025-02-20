@@ -78,7 +78,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   } as Project & { users: (ProjectUser & { user: User })[] })
 
   // Fetching Data
-  const { data: users } = useSWR<User[]>('/api/db/team/member')
+  const { data: users } = useSWR<User[]>('team/member')
 
   const createProject = () => {
     postResource('project', project, { mutate: props.mutate }).then(() => {

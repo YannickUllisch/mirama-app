@@ -23,17 +23,13 @@ import type { KeyedMutator } from 'swr'
 export const ArchiveColumns = ({
   mutate,
   session,
+  users,
 }: {
   session: Session | null
-  mutate: KeyedMutator<
-    (Project & {
-      users: (ProjectUser & { user: User })[]
-    })[]
-  >
+  mutate: KeyedMutator<(Project & { users: ProjectUser[] })[]>
+  users: User[]
 }) => {
-  const cols: ColumnDef<
-    Project & { users: (ProjectUser & { user: User })[] }
-  >[] = useMemo(
+  const cols: ColumnDef<Project & { users: ProjectUser[] }>[] = useMemo(
     () => [
       {
         accessorKey: 'id',
@@ -67,19 +63,22 @@ export const ArchiveColumns = ({
         id: 'Managed By',
         cell: ({ row }) => {
           const managedBy = row.original.users.filter((user) => user.isManager)
-          const managerNames = managedBy.map(
-            (manager) => manager.user.name ?? '',
-          )
+          const managerNames =
+            users
+              ?.filter((user) =>
+                managedBy.some((manager) => manager.userId === user.id),
+              )
+              .map((u) => u.name as string) ?? []
 
-          return managerNames ? (
-            <AvatarGroup
-              usernames={managerNames ?? []}
-              avatarSize={7}
-              previewAmount={2}
-              fontSize={10}
-            />
-          ) : (
-            ''
+          return (
+            managerNames && (
+              <AvatarGroup
+                usernames={managerNames ?? []}
+                avatarSize={7}
+                previewAmount={2}
+                fontSize={10}
+              />
+            )
           )
         },
       },
@@ -209,7 +208,7 @@ export const ArchiveColumns = ({
         },
       },
     ],
-    [mutate, session],
+    [mutate, session, users],
   )
   return cols
 }

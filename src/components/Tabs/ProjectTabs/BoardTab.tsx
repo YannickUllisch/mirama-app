@@ -14,7 +14,7 @@ const BoardTab = () => {
       assignedTo: User
       subtasks: (Task & { assignedTo: User | undefined })[]
     })[]
-  >(projectContext ? `/api/db/task?id=${projectContext.projectId}` : undefined)
+  >(projectContext ? `task?id=${projectContext.projectId}` : undefined)
 
   return (
     <KanbanBoard

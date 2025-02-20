@@ -14,9 +14,23 @@ const ArchivePage = () => {
     isLoading: projectsLoading,
   } = useSWR<
     (Project & {
-      users: (ProjectUser & { user: User })[]
+      users: ProjectUser[]
     })[]
-  >('/api/db/project?archived=true')
+  >({
+    url: 'project',
+    archived: true,
+    select: {
+      name: true,
+      users: true,
+      startDate: true,
+      endDate: true,
+      priority: true,
+      status: true,
+      budget: true,
+    },
+  })
+
+  const { data: users } = useSWR<User[]>('team/member')
 
   return (
     <DataTable
@@ -27,7 +41,11 @@ const ArchivePage = () => {
       }}
       footerOptions={{ showPagination: true }}
       expandedContent
-      columns={ArchiveColumns({ mutate: updateProjects, session: session })}
+      columns={ArchiveColumns({
+        mutate: updateProjects,
+        session: session,
+        users: users ?? [],
+      })}
       data={projects ?? []}
       dataLoading={projectsLoading}
     />

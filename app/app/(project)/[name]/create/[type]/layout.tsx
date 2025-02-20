@@ -1,13 +1,9 @@
 import type { Metadata } from 'next'
 import { auth } from '@auth'
-import SWRFallbackWrapper from '@src/components/Wrappers/SWRFallbackWrapper'
 import { redirect } from 'next/navigation'
-import {
-  fetchSingleProjectById,
-  fetchSingleProjectByName,
-} from '@src/lib/api/queries/Project/ProjectQuerys'
-import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'
+import { fetchSingleProjectByName } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { TaskType } from '@prisma/client'
+import db from '@db'
 
 export const metadata: Metadata = {
   title: 'Create Task',
@@ -23,7 +19,15 @@ const Layout = async ({
 }) => {
   const session = await auth()
 
-  const project = await fetchSingleProjectByName(params.name)
+  const project = await db.project.findFirst({
+    where: {
+      name: params.name,
+      teamId: session?.user.teamId ?? 'undef',
+    },
+    select: {
+      id: true,
+    },
+  })
 
   // Handling invalid dynamic routes
   if (!session?.user) {

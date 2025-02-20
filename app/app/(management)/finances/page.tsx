@@ -22,7 +22,7 @@ const BudgetPage = () => {
     (Project & {
       expenses: Expense[]
     })[]
-  >('/api/db/project')
+  >('project')
 
   const selectedProject = useMemo(() => {
     if (projects && selectedProjectId !== '') {

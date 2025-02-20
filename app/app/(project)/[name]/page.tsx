@@ -11,7 +11,6 @@ import {
   ClipboardList,
   GanttChart,
   Map as MapIcon,
-  Repeat,
   Settings,
   Table2,
 } from 'lucide-react'
@@ -110,8 +109,6 @@ const ClientProjectPage = () => {
         >
           {projectTabs.map(
             (tabHeader) => (
-              // session &&
-              // tabHeader.roles.includes(session.user.role) && (
               <TabsTrigger
                 style={{ fontSize: 12 }}
                 value={tabHeader.id}
@@ -126,8 +123,6 @@ const ClientProjectPage = () => {
       </div>
       {projectTabs.map(
         (tab) => (
-          // session &&
-          // tab.roles.includes(session.user.role) && (
           <TabsContent value={tab.id} key={`${tab.id}-tab`}>
             {tab.component}
           </TabsContent>

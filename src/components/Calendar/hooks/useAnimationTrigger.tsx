@@ -1,21 +1,24 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from 'react'
 
 export const useAnimationTrigger = (animationDuration: number) => {
-    const [isAnimating, setIsAnimating] = useState(false);
-    const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false)
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    const triggerAnimation = useCallback((updateState: () => void) => {
-        setIsAnimating(true);
+  const triggerAnimation = useCallback(
+    (updateState: () => void) => {
+      setIsAnimating(true)
 
-        if (animationTimeoutRef.current) {
-            clearTimeout(animationTimeoutRef.current);
-        }
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current)
+      }
 
-        animationTimeoutRef.current = setTimeout(() => {
-            updateState();
-            setIsAnimating(false);
-        }, animationDuration);
-    }, [animationDuration]);
+      animationTimeoutRef.current = setTimeout(() => {
+        updateState()
+        setIsAnimating(false)
+      }, animationDuration)
+    },
+    [animationDuration],
+  )
 
-    return { isAnimating, triggerAnimation };
-};
+  return { isAnimating, triggerAnimation }
+}

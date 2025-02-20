@@ -22,22 +22,26 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
     where: { id: session?.user.id ?? 'undef' },
   })
 
-  const projectQ = db.project.findMany({
+  const project = await db.project.findMany({
     where: {
       teamId: session?.user.teamId,
       archived: false,
-      users: {
-        some: {
-          userId: isTeamAdminOrOwner(session) ? undefined : session?.user.id,
-        },
-      },
+      ...(isTeamAdminOrOwner(session)
+        ? {} // Admins should see all projects, so remove the `users` filter
+        : {
+            users: {
+              some: {
+                userId: session?.user.id,
+              },
+            },
+          }),
     },
     include: {
       tasks: true,
     },
   })
 
-  const [user, projects] = await Promise.all([userQ, projectQ])
+  const [user, projects] = await Promise.all([userQ, project])
 
   if (!session || !user) {
     return redirect('/auth/login?callbackUrl=/app')
@@ -62,7 +66,6 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
                   {children}
                 </div>
               </main>
-              {/* <Footer /> */}
             </div>
           </div>
         </SidebarProvider>

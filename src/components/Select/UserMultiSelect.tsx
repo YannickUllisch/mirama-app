@@ -24,7 +24,7 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
   children,
 }) => {
   // Fetching users depending on scope.
-  const { data: users } = useSWR<User[]>('/api/db/team/member')
+  const { data: users } = useSWR<User[]>('team/member')
 
   return (
     <MultiSelector

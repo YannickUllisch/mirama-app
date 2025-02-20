@@ -43,12 +43,12 @@ const ListTab = () => {
     })[]
   >(
     projectContext?.projectId
-      ? `/api/db/task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
+      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
       : undefined,
     { revalidateOnMount: true },
   )
 
-  const { data: users } = useSWR<User[]>('/api/db/team/member')
+  const { data: users } = useSWR<User[]>('team/member')
 
   const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
