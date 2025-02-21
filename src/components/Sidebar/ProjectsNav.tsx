@@ -14,7 +14,7 @@ import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
 import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import { ChevronRight, PlusSquare } from 'lucide-react'
+import { ChevronRight, PlusSquare, Router } from 'lucide-react'
 import type { Project, Task } from '@prisma/client'
 import {
   Collapsible,

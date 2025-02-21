@@ -126,13 +126,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarTeamSwitcher
-          team={{
-            logo: Component,
-            name: team?.name ?? 'No Team',
-            plan: 'Enterprise',
-          }}
-        />
+        <SidebarTeamSwitcher />
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
         <SidebarMainNav items={AppMenu} session={session} />
@@ -147,7 +141,6 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
             tasks: p.tasks,
           }))}
         />
-        {/* <SidebarSecondaryNav items={SecondaryAppMenu} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarUserNav user={user} />

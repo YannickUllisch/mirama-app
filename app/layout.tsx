@@ -3,6 +3,13 @@ import './globals.css'
 import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
 import NextTopLoader from 'nextjs-toploader'
+import { DM_Mono } from 'next/font/google'
+
+const dmMono = DM_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'], // Adjust weights as needed
+  variable: '--font-dm-mono',
+})
 
 export const metadata: Metadata = {
   title: 'Start | Mirama',
@@ -11,10 +18,10 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang="en" className={dmMono.variable}>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <body className="bg-neutral-50 dark:bg-neutral-900/40">
-        <NextTopLoader zIndex={99999} color="#F43F5E" showSpinner={false} />
+      <body className="bg-background dark:bg-neutral-900/20">
+        <NextTopLoader zIndex={99999} color="#FF5F46" showSpinner={false} />
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}

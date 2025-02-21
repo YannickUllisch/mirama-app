@@ -261,9 +261,9 @@ const SettingsTab = () => {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="px-[5%] ">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Project Settings</h1>
+        <div />
         {canEdit && (
           <div className="flex">
             <div className="flex gap-1">

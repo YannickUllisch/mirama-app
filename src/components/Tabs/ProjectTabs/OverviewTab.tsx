@@ -1,6 +1,5 @@
 'use client'
-
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
@@ -22,7 +21,6 @@ import { Progress } from '@ui/progress'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import MilestoneTimeline from '@src/components/Milestone/MilestoneTimeline'
 
 const OverviewTab = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -248,7 +246,6 @@ const OverviewTab = () => {
           </CardContent>
         </Card>
       )}
-      <MilestoneTimeline milestones={milestones ?? []} />
     </div>
   )
 }
