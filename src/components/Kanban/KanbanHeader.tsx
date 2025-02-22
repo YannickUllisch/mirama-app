@@ -26,7 +26,7 @@ export function KanbanHeader({
 }: KanbanHeaderProps) {
   return (
     <div className="sticky top-0 z-10 bg-inherit">
-      <div className="flex flex-col gap-4 p-4 border-b">
+      <div className="flex flex-col gap-4 p-4">
         <div className="flex items-center justify-between">
           <div />
           <Button>Create Task</Button>

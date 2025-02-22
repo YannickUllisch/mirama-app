@@ -35,7 +35,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
     <TableHeader
       ref={headerRef}
       style={{ zIndex: 4 }}
-      className={`dark:bg-neutral-900 bg-neutral-50 ${
+      className={`dark:bg-background bg-neutral-50 ${
         isSticky ? `sticky top-[${APP_HEADER_HEIGHT - 3}px]` : ''
       }`}
     >

@@ -10,6 +10,7 @@ import {
   Pencil,
   Trash2,
   User,
+  UserIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -28,6 +29,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
 import { cn } from '@src/lib/utils'
 import { Task } from '@prisma/client'
 import type { KanbanItemType } from '@src/lib/types'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
+import UserAvatar from '../Avatar/UserAvatar'
+import { SelectItem } from '@ui/select'
+import EditableCell from '../Inputs/EditableCell'
 
 const KanbanItem: FC<KanbanItemType> = ({
   id,
@@ -76,8 +81,8 @@ const KanbanItem: FC<KanbanItemType> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={cn(
-        'relative group p-4 hover:shadow-md transition-all',
-        'border border-border/50 hover:border-border',
+        'relative group p-4 hover:shadow-md transition-all bg-background',
+        'border border-border/50 hover:border-secondary',
         isDragging && 'opacity-50',
         loading && 'pointer-events-none',
       )}
@@ -92,16 +97,26 @@ const KanbanItem: FC<KanbanItemType> = ({
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             {isEditing ? (
-              <input
-                className="w-full px-2 py-1 text-sm border rounded"
-                value={task?.title}
-                onChange={(e) =>
-                  onItemUpdate?.({
-                    taskId: task?.id ?? '',
-                    title: e.target.value,
-                  })
-                }
-                onBlur={() => setIsEditing(false)}
+              <EditableCell
+                key={`title-${task?.id}`}
+                apiRoute="task"
+                id={task?.id ?? ''}
+                initialValue={task?.title ?? ''}
+                paramToUpdate="title"
+                autofocus
+                onBlueNoChange={() => {
+                  setIsEditing(false)
+                }}
+                executeOnBlur={(value) => {
+                  if (onItemUpdate) {
+                    onItemUpdate({
+                      taskId: task?.id ?? '',
+                      title: value.toString(),
+                    })
+                  }
+                  setIsEditing(false)
+                }}
+                className="block text-sm font-medium hover:underline focus:border-primary"
               />
             ) : (
               <Link
@@ -168,18 +183,44 @@ const KanbanItem: FC<KanbanItemType> = ({
         </div>
 
         <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            {task?.assignedTo ? (
-              <Avatar className="w-6 h-6">
-                <AvatarFallback>
-                  {task.assignedTo.name?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            ) : (
-              <User className="w-4 h-4" />
-            )}
-            <span>{task?.assignedTo?.name ?? 'Unassigned'}</span>
-          </div>
+          <GeneralTableSelect
+            key={'id'}
+            id={task?.id ?? ''}
+            apiRoute="task"
+            paramToUpdate="assignedToId"
+            stylingProps={{ triggerStyle: 'text-xs h-6 py-1 w-fit' }}
+            clearable
+            initialValue={
+              task?.assignedTo ? (
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    username={task.assignedTo.name}
+                    avatarSize={22}
+                    fontSize={8}
+                  />
+                  {task.assignedTo.name}
+                </div>
+              ) : (
+                <div className="flex items-center gap-4 ml-1">
+                  <UserIcon className="w-[18px]" />
+                  <span>Unassigned</span>
+                </div>
+              )
+            }
+          >
+            {users?.map((user) => (
+              <SelectItem value={user.id} key={`select-item-${user.id}`}>
+                <div className="flex items-center gap-1">
+                  <UserAvatar
+                    username={user.name}
+                    avatarSize={22}
+                    fontSize={8}
+                  />
+                  {user.name}
+                </div>
+              </SelectItem>
+            ))}
+          </GeneralTableSelect>
           <span>
             Due{' '}
             {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(

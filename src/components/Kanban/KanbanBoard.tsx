@@ -392,7 +392,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       <KanbanHeader />
       {/* Header (Single Instance) */}
       <div className="overflow-auto">
-        <header className="sticky top-0 rounded-sm bg-neutral-100 dark:bg-neutral-950/80 z-10">
+        <header className="sticky top-0 rounded-sm bg-neutral-100 dark:bg-background z-10">
           <div className="flex w-full items-center">
             <div className="w-[150px] p-2">Containers</div>
             <div className="flex flex-1">
@@ -466,7 +466,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                   <KanbanContainer
                     className={
                       hoveredContainerId === col.id
-                        ? 'bg-blue-500/10'
+                        ? 'bg-muted dark:bg-secondary'
                         : undefined
                     }
                     key={col.id}
@@ -474,6 +474,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                     onAddItem={() => {
                       onAddItem(col.id, col.title, board.id)
                     }}
+                    title={col.title}
                   >
                     <SortableContext items={col.items.map((i) => i.id)}>
                       {col.items.map((item) => (

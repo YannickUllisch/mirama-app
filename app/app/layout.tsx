@@ -10,7 +10,7 @@ import db from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'App Dashboard | Mirama',
+  title: 'Dashboard | Mirama',
   description: 'App Dashboard',
 }
 

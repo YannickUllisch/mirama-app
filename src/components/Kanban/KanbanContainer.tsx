@@ -22,7 +22,6 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
   onAddItem,
   className,
   title,
-  count,
 }) => {
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: id,
@@ -40,35 +39,25 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        'flex-1 h-full min-w-[300px] bg-background/50 backdrop-blur-sm',
+        'flex-1 h-full min-w-[300px] bg-background/50',
         'border border-border/50 shadow-sm',
         className,
       )}
     >
-      {title && (
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium">{title}</h3>
-            {typeof count === 'number' && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-muted">
-                {count}
-              </span>
-            )}
-          </div>
-        </div>
-      )}
       <ScrollArea className="h-full">
         <div className={clsx('p-3 space-y-3', className)}>
           {children}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
-            onClick={onAddItem}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add item
-          </Button>
+          {title === 'NEW' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
+              onClick={onAddItem}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add item
+            </Button>
+          )}
         </div>
       </ScrollArea>
     </Card>
