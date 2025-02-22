@@ -4,6 +4,7 @@ import React from 'react'
 import image from '@public/test.png'
 import Image from 'next/image'
 import Link from 'next/link'
+import { AuthSocial } from '@src/components/auth/Socials'
 
 const RegisterPage = () => {
   return (
@@ -25,6 +26,7 @@ const RegisterPage = () => {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <RegisterForm />
+            <AuthSocial />
           </div>
         </div>
       </div>

@@ -3,8 +3,8 @@ import React from 'react'
 
 const Loading = () => {
   return (
-    <div className="w-full flex justify-center items-center min-h-[650px]">
-      <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
+    <div className="w-full flex justify-center items-center h-[100vh]">
+      <Loader2 className="h-6 w-6 animate-spin ml-2 m-1" />
     </div>
   )
 }

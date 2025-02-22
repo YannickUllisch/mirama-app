@@ -18,7 +18,6 @@ import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { login } from '@src/lib/auth/login'
 import { useSearchParams } from 'next/navigation'
 import { Label } from '../ui/label'
-import { AuthSocial } from './Socials'
 import { PasswordInput } from './PasswordInput'
 import { Loader2 } from 'lucide-react'
 
@@ -62,8 +61,10 @@ const LoginForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-4xl font-bold font-serif">Welcome Back</h1>
-          <p className="text-balance text-sm text-muted-foreground">
+          <h1 className="text-4xl md:text-5xl max-w-4xl tracking-tighter font-regular">
+            Welcome Back
+          </h1>
+          <p className="text-balance text-sm tracking-tighter text-muted-foreground">
             Enter your email below to login to your account
           </p>
         </div>
@@ -109,6 +110,7 @@ const LoginForm = () => {
                       {...field}
                       autoComplete="current-password"
                       id="password"
+                      placeholder="*********"
                       disabled={isPending}
                       className="focus-visible:ring-black dark:focus-visible:ring-white"
                     />
@@ -121,7 +123,7 @@ const LoginForm = () => {
             <FormError message={error || urlError} />
           </div>
 
-          <Button disabled={isPending} type="submit" variant={'auth'}>
+          <Button disabled={isPending} type="submit" variant={'default'}>
             {!isPending ? (
               'Login'
             ) : (
@@ -130,7 +132,7 @@ const LoginForm = () => {
               </div>
             )}
           </Button>
-          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-input">
             <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
               Or continue with
             </span>

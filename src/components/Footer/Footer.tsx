@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 
 const Footer = () => {
   return (
-    <div className="bg-secondary dark:bg-neutral-900/10 mx-auto flex h-[60px] text-muted dark:text-white/80 w-full ">
+    <div className="bg-secondary mx-auto flex h-[60px] text-muted dark:text-white/80 w-full ">
       <div className="w-full mx-[5%] text-xs align-center justify-center md:justify-between flex">
         <div className="items-center  dark:text-white/80 hidden md:flex">
           <div>{`Copyright © ${DateTime.now().year} Mirage Studio`}</div>

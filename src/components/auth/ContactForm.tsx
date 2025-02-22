@@ -159,7 +159,7 @@ const RegisterForm = () => {
               />
             </div>
 
-            <Button disabled={isPending} type="submit" variant={'auth'}>
+            <Button disabled={isPending} type="submit" variant={'default'}>
               Send Message
             </Button>
           </div>

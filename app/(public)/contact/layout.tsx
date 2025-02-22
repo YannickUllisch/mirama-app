@@ -1,3 +1,4 @@
+import ContactFooter from '@src/components/Footer/ContactFooter'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -6,7 +7,12 @@ export const metadata: Metadata = {
 }
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  return children
+  return (
+    <>
+      {children}
+      <ContactFooter />
+    </>
+  )
 }
 
 export default Layout

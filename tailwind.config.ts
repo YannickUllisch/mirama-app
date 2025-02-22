@@ -18,10 +18,6 @@ const config = {
       },
     },
     extend: {
-      backgroundImage: {
-        'light-gradient': 'linear-gradient(19deg, #cccccc 0%, #ffffff 100%)',
-        'dark-gradient': 'linear-gradient(19deg, #1e1e1e 0%, #10101010 100%)',
-      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

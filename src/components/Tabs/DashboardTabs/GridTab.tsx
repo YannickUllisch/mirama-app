@@ -1,5 +1,4 @@
 import type { Project, ProjectUser, User } from '@prisma/client'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import {
   Card,
   CardContent,

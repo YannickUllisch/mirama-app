@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react'
 import { Badge } from '@src/components/ui/badge'
 import {
   Accordion,
@@ -6,29 +5,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@src/components/ui/accordion'
-import { Button } from '@src/components/ui/button'
 
 export const LandingFAQ = () => (
-  <div className="w-full py-20 lg:py-40">
+  <div className="w-full py-20 lg:py-40 bg-background">
     <div className="container mx-auto">
       <div className="flex flex-col gap-10">
         <div className="flex text-center justify-center items-center gap-4 flex-col">
           <Badge variant={'secondary'}>FAQs</Badge>
           <div className="flex gap-2 flex-col">
-            <h4 className="text-3xl md:text-5xl tracking-tighter max-w-xl text-center font-regular">
+            <h4 className="text-3xl md:text-5xl  tracking-tighter max-w-xl text-center font-regular">
               Everything You Need to Know
             </h4>
             <p className="text-lg leading-relaxed tracking-tight text-muted-foreground max-w-xl text-center">
-              Have questions? Find answers to the most common inquiries about
-              our project and task management platform.
+              Have questions? Find answers to the most common inquiries the app.
             </p>
           </div>
-          <div className="bg-background/50 rounded-md text-secondary p-3 px-3">
+          <div className="bg-secondary rounded-md text-white/70 dark:text-secondary dark:bg-white p-3 px-3">
             <span className="gap-1 flex flex-col sm:flex-row">
               Reach out to us manually at
               <a
                 href="mailto:info@mirage-studio.xyz"
-                className="font-light text-secondary hover:underline underline-offset-4"
+                className="font-light text-white/80 dark:text-secondary hover:underline underline-offset-4"
               >
                 info@mirage-studio.xyz
               </a>

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { MoveRight, CheckCircle } from 'lucide-react'
+import { MoveRight, CheckCircle, Lock, LockOpen } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
+import Link from 'next/link'
 
 export const LandingView = () => {
   const [titleNumber, setTitleNumber] = useState(0)
@@ -19,19 +20,17 @@ export const LandingView = () => {
   }, [titleNumber, titles])
 
   return (
-    <div className="w-full pb-48">
+    <div className="w-full pb-48 bg-background">
       <div className="container mx-auto">
         <div className="flex gap-8 pt-20 lg:pt-36 items-center justify-center flex-col text-center">
           <div>
             <Button variant="secondary" size="sm" className="gap-4">
-              See what’s new <MoveRight className="w-4 h-4" />
+              Open to public soon <LockOpen className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex gap-4 flex-col items-center">
-            <h1 className="text-5xl md:text-7xl max-w-3xl tracking-tighter font-regular">
-              <span className="text-spektr-cyan-50">
-                Take control & supercharge your projects
-              </span>
+            <h1 className="text-5xl md:text-7xl max-w-4xl tracking-tighter font-regular">
+              <span>Take control & supercharge your projects</span>
               <span className="relative flex w-full justify-center overflow-hidden md:pb-4 md:pt-1">
                 &nbsp;
                 {titles.map((title, index) => (
@@ -62,9 +61,11 @@ export const LandingView = () => {
             <Button size="lg" className="gap-4" variant="outline">
               Get a Demo <CheckCircle className="w-4 h-4" />
             </Button>
-            <Button size="lg" className="gap-4">
-              Get Started Free <MoveRight className="w-4 h-4" />
-            </Button>
+            <Link href={'/auth/login'}>
+              <Button size="lg" className="gap-4">
+                Get Started <MoveRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

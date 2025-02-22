@@ -41,7 +41,7 @@
     --chart-2: 197 35% 17%; /* Navy 800 */
   }
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 0 0% 7.6%;
     --foreground: 249 7% 96%; /* Oat Light */
     --card: 197 65% 10%; /* Dark Navy */
     --card-foreground: 249 7% 96%; /* Oat Light */
@@ -57,13 +57,13 @@
     --accent-foreground: 249 7% 96%; /* Oat Light */
     --destructive: 6 100% 56%; /* Lava 600 */
     --destructive-foreground: 249 7% 96%; /* Oat Light */
-    --border: 197 35% 20%; /* Slightly lighter Navy */
-    --input: 197 35% 20%;
+    --border: 0 0% 18%; /* Slightly lighter Navy */
+    --input: 0 0% 18%;
     --ring: 6 100% 56%; /* Lava 600 */
     --text: 249 7% 96%; /* Oat Light */
     --text-inverted: 11 32% 15%; /* Navy 900 */
     --text-secondary: 249 7% 70%; /* Faded Oat */
-    --hover: 197 35% 15%; /* Dark Muted Navy */
+    --hover: 0 0% 18%;
     --sidebar-background: 0 0% 7.9%; /* Dark Navy */
     --sidebar-foreground: 249 7% 96%; /* Oat Light */
     --sidebar-primary: 6 100% 56%; /* Lava 600 */
@@ -75,6 +75,9 @@
     --chart-1: 6 100% 56%; /* Lava 600 */
     --chart-2: 197 35% 17%; /* Navy 800 */
   }
+}
+body {
+  font-family: var(--font-dm-sans);
 }
 
 @keyframes inAnimation {
