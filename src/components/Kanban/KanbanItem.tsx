@@ -1,234 +1,212 @@
-// import { useSortable } from '@dnd-kit/sortable'
-// import { CSS } from '@dnd-kit/utilities'
-// import { useEffect, useState, type FC } from 'react'
-// import UserAvatar from '../Avatar/UserAvatar'
-// import { Edit, Ellipsis, Loader2, Pencil, Trash2, UserIcon } from 'lucide-react'
-// import type { KanbanItemType } from '@src/lib/types'
-// import Link from 'next/link'
-// import { usePathname } from 'next/navigation'
-// import GeneralTableSelect from '../Select/GeneralTableSelect'
-// import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-// import { Button } from '@ui/button'
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from '@ui/dropdown-menu'
-// import EditableCell from '../Inputs/EditableCell'
-// import { SelectItem } from '@ui/select'
-// import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
-// import { DateTime } from 'luxon'
+'use client'
 
-// const KanbanItem: FC<KanbanItemType> = ({
-//   id,
-//   task,
-//   loading,
-//   onDelete,
-//   users,
-//   onItemUpdate,
-// }) => {
-//   const [isEditing, setIsEditing] = useState<boolean>(false)
-//   const path = usePathname()
-//   const {
-//     attributes,
-//     listeners,
-//     setNodeRef,
-//     transform,
-//     transition,
-//     isDragging,
-//   } = useSortable({
-//     id: id,
-//     data: {
-//       type: 'item',
-//     },
-//   })
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useState, type FC } from 'react'
+import {
+  MoreHorizontal,
+  Loader2,
+  Trash2,
+  UserIcon,
+  ArrowUpRight,
+  PenBoxIcon,
+  FolderTree,
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { DateTime } from 'luxon'
+import { Card } from '@src/components/ui/card'
+import { Button } from '@src/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@src/components/ui/dropdown-menu'
+import { Badge } from '@src/components/ui/badge'
+import { capitalize, cn, getColorByTaskStatusType } from '@src/lib/utils'
+import type { KanbanItemType } from '@src/lib/types'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
+import UserAvatar from '../Avatar/UserAvatar'
+import { SelectItem } from '@ui/select'
+import ViewTaskSheet from '../Task/ViewTaskSheet'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 
-//   return (
-//     <div
-//       ref={setNodeRef}
-//       {...attributes}
-//       {...listeners}
-//       style={{
-//         transition,
-//         transform: CSS.Translate.toString(transform),
-//       }}
-//       className={`relative min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
-//         isDragging && 'opacity-50'
-//       } ${loading ? 'pointer-events-none' : ''}`}
-//     >
-//       {loading && (
-//         <>
-//           <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 opacity-50 rounded-sm" />
-//           <div className="absolute inset-0 flex items-center justify-center">
-//             <Loader2
-//               className="animate-spin text-neutral-600 dark:text-neutral-300"
-//               size={24}
-//             />
-//           </div>
-//         </>
-//       )}
+const KanbanItem: FC<KanbanItemType> = ({
+  id,
+  task,
+  loading,
+  onDelete,
+  mutate,
+  users,
+}) => {
+  const path = usePathname()
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: id,
+    data: {
+      type: 'item',
+    },
+  })
 
-//       <div className="flex flex-col gap-y-2 justify-between">
-//         {/* Task title and link */}
-//         {isEditing ? (
-//           <div className="flex gap-1 mb-1 hover:underline">
-//             {getTaskTypeIcon(task?.type ?? 'TASK')}
-//             <EditableCell
-//               key={`title-${task?.id}`}
-//               apiRoute="task"
-//               id={task?.id ?? ''}
-//               initialValue={task?.title ?? ''}
-//               paramToUpdate="title"
-//               autofocus
-//               onBlueNoChange={() => {
-//                 setIsEditing(false)
-//               }}
-//               executeOnBlur={(value) => {
-//                 if (onItemUpdate) {
-//                   onItemUpdate({
-//                     taskId: task?.id ?? '',
-//                     title: value.toString(),
-//                   })
-//                 }
-//                 setIsEditing(false)
-//               }}
-//               className="h-fit w-fit p-1 text-xs"
-//             />
-//           </div>
-//         ) : (
-//           <div className="flex justify-between items-center">
-//             <div className="flex gap-1 mb-1 hover:underline">
-//               {getTaskTypeIcon(task?.type ?? 'TASK')}
-//               <Link href={`${path}/edit/${task?.id}`} prefetch={false}>
-//                 <div
-//                   style={{ fontSize: 11 }}
-//                   className="flex items-center justify-between"
-//                 >
-//                   {task?.title}
-//                 </div>
-//               </Link>
-//             </div>
-//             <div className="group-hover:visible invisible">
-//               <DropdownMenu>
-//                 <DropdownMenuTrigger asChild>
-//                   <Button
-//                     variant={'outline'}
-//                     onClick={(e) => e.stopPropagation()}
-//                     className="w-fit h-fit p-1"
-//                   >
-//                     <Ellipsis size={15} />
-//                   </Button>
-//                 </DropdownMenuTrigger>
+  const [isOpen, setIsOpen] = useState(false)
 
-//                 <DropdownMenuContent onClick={(e) => e.preventDefault()}>
-//                   <DropdownMenuItem asChild>
-//                     <Link
-//                       href={`${path}/edit/${task?.id}`}
-//                       prefetch={false}
-//                       onClick={(e) => e.stopPropagation()}
-//                     >
-//                       <div className="flex gap-2 items-center">
-//                         <Edit size={16} />
-//                         Edit Task
-//                       </div>
-//                     </Link>
-//                   </DropdownMenuItem>
-//                   <DropdownMenuSeparator />
-//                   <DropdownMenuItem
-//                     className="flex gap-2 items-center "
-//                     onMouseDown={(e) => e.preventDefault()}
-//                     onClick={(e) => {
-//                       e.stopPropagation()
-//                       setIsEditing(true)
-//                     }}
-//                   >
-//                     <Pencil size={16} />
-//                     Edit Title
-//                   </DropdownMenuItem>
-//                   <DropdownMenuItem
-//                     onClick={(e) => {
-//                       e.stopPropagation()
-//                       if (onDelete) {
-//                         onDelete(task?.id ?? '')
-//                       }
-//                     }}
-//                     className="flex gap-2 items-center text-destructive"
-//                   >
-//                     <Trash2 size={16} />
-//                     Delete Task
-//                   </DropdownMenuItem>
-//                 </DropdownMenuContent>
-//               </DropdownMenu>
-//             </div>
-//           </div>
-//         )}
+  return (
+    <>
+      <Card
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={{
+          transition,
+          transform: CSS.Translate.toString(transform),
+        }}
+        className={cn(
+          'relative group p-4 hover:shadow-md dark:shadow-secondary transition-all bg-background',
+          'border border-border/50 hover:border-secondary ',
+          isDragging && 'opacity-50',
+          loading && 'pointer-events-none',
+        )}
+      >
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+            <Loader2 className="animate-spin" />
+          </div>
+        )}
 
-//         <div className="items-center flex justify-between text-xs">
-//           <div className="flex gap-2 items-center ">
-//             <div
-//               className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
-//                 task?.status ?? '',
-//               )}`}
-//             />
-//             {capitalize(task?.status ?? '')}
-//           </div>
-//           <div className="text-text-secondary">
-//             <span>Due </span>
-//             {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(
-//               'dd/MM',
-//             )}
-//           </div>
-//         </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => setIsOpen((open) => !open)}
+                variant={'link'}
+                className="block w-full text-text text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none break-words whitespace-normal"
+              >
+                <div className="flex items-center gap-1">{task?.title}</div>
+              </Button>
+            </div>
 
-//         {/* GeneralTableSelect at the bottom */}
-//         <div className="flex items-center gap-1 mt-auto">
-//           <GeneralTableSelect
-//             key={'id'}
-//             id={task?.id ?? ''}
-//             apiRoute="task"
-//             paramToUpdate="assignedToId"
-//             stylingProps={{ triggerStyle: 'text-xs h-6 py-1' }}
-//             clearable
-//             initialValue={
-//               task?.assignedTo ? (
-//                 <div className="flex items-center gap-1">
-//                   <UserAvatar
-//                     username={task.assignedTo.name}
-//                     avatarSize={22}
-//                     fontSize={8}
-//                   />
-//                   {task.assignedTo.name}
-//                 </div>
-//               ) : (
-//                 <div className="flex items-center gap-4 ml-1">
-//                   <UserIcon className="w-[18px]" />
-//                   <span>Unassigned</span>
-//                 </div>
-//               )
-//             }
-//           >
-//             {users?.map((user) => (
-//               <SelectItem value={user.id} key={`select-item-${user.id}`}>
-//                 <div className="flex items-center gap-1">
-//                   <UserAvatar
-//                     username={user.name}
-//                     avatarSize={22}
-//                     fontSize={8}
-//                   />
-//                   {user.name}
-//                 </div>
-//               </SelectItem>
-//             ))}
-//           </GeneralTableSelect>
-//           <div className="text-xs text-text-secondary">
-//             {capitalize(task?.priority ?? '')}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-8 h-8 p-0 opacity-0 group-hover:opacity-100"
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setIsOpen((open) => !open)}>
+                  <PenBoxIcon className="w-4 h-4 mr-2" />
+                  Open Quick Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`${path}/edit/${task?.id}`}>
+                    <ArrowUpRight className="w-4 h-4 mr-2" />
+                    Go to Task
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`${path}/create/task?parentId=${task?.id}`}>
+                    <FolderTree className="w-4 h-4 mr-2" />
+                    Add Subtask
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => onDelete?.(task?.id ?? '')}
+                  className="text-red-600"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete task
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-// export default KanbanItem
+            {getTaskTypeIcon(task?.type ?? 'TASK')}
+          </div>
+
+          <div className="flex items-center gap-2 text-xs">
+            <Badge
+              variant="secondary"
+              className={cn(
+                'px-2 py-0.5 rounded-full bg-secondary',
+                // getColorByTaskStatusType(task?.status ?? ''),
+              )}
+            >
+              {capitalize(task?.status ?? '')}
+            </Badge>
+            <Badge variant="outline" className={cn('px-2 py-0.5 rounded-full')}>
+              {capitalize(task?.priority ?? '')}
+            </Badge>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+            <GeneralTableSelect
+              key={'id'}
+              id={task?.id ?? ''}
+              apiRoute="task"
+              paramToUpdate="assignedToId"
+              stylingProps={{ triggerStyle: 'text-xs h-6 py-1 w-fit' }}
+              clearable
+              initialValue={
+                task?.assignedTo ? (
+                  <div className="flex items-center gap-1">
+                    <UserAvatar
+                      username={task.assignedTo.name}
+                      avatarSize={22}
+                      fontSize={8}
+                    />
+                    {task.assignedTo.name}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 ml-1">
+                    <UserIcon className="w-[18px]" />
+                    <span>Unassigned</span>
+                  </div>
+                )
+              }
+            >
+              {users?.map((user) => (
+                <SelectItem value={user.id} key={`select-item-${user.id}`}>
+                  <div className="flex items-center gap-1">
+                    <UserAvatar
+                      username={user.name}
+                      avatarSize={22}
+                      fontSize={8}
+                    />
+                    {user.name}
+                  </div>
+                </SelectItem>
+              ))}
+            </GeneralTableSelect>
+            <span>
+              Due{' '}
+              {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(
+                'MMM d',
+              )}
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      <ViewTaskSheet
+        open={isOpen}
+        projectName="Mirama"
+        setOpen={setIsOpen}
+        taskId={task?.id ?? ''}
+        mutate={mutate}
+      />
+    </>
+  )
+}
+
+export default KanbanItem

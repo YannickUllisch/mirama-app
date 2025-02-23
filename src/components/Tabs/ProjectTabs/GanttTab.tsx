@@ -15,13 +15,12 @@ import {
   GanttHeader,
   GanttMarker,
   GanttProvider,
-  GanttRangeEnum,
   GanttSidebar,
   GanttSidebarGroup,
   GanttSidebarItem,
   GanttTimeline,
   GanttToday,
-} from '@src/components/ui/roadmap-ui/gantt'
+} from '@src/components/Gantt/gantt'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import groupBy from 'lodash.groupby'
 import { useContext, useMemo, useState } from 'react'
@@ -37,6 +36,7 @@ import dynamic from 'next/dynamic'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import Loading from '@/app/loading'
+import { ViewControls } from '@src/components/Gantt/ViewOptions'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -162,15 +162,8 @@ const GanttTab = () => {
 
   return (
     <>
-      <div className="flex pb-1 gap-2 items-center ">
-        <GeneralSelect
-          value={rangeView}
-          setValue={setRangeView}
-          items={Object.keys(GanttRangeEnum).map((range) => ({
-            label: capitalize(range),
-            value: range,
-          }))}
-        />
+      <div className="flex pb-1 gap-2 items-center pt-5">
+        <ViewControls view={rangeView} onViewChange={setRangeView} />
 
         <GeneralSelect
           value={groupKey}

@@ -22,7 +22,7 @@ import {
   TaskStatusType,
   type User,
 } from '@prisma/client'
-import KanbanItem from './ItemNewTmp'
+import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import type { Board } from '@src/lib/types'
@@ -38,6 +38,7 @@ import { createTree } from '@src/lib/data-structures/Tree'
 import type { KeyedMutator } from 'swr'
 import useSWR from 'swr'
 import { KanbanHeader } from './KanbanHeader'
+import { ContainerHeader } from './KanbanContainerItem'
 
 interface KanbanBoardProps {
   projectId: string
@@ -81,8 +82,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     null,
   )
   const [newItemTitle, setNewItemTitle] = useState<string>('')
-  const [editingContainerId, setEditingContainerId] =
-    useState<UniqueIdentifier | null>(null)
 
   // Data
   const { data: users } = useSWR<User[]>(
@@ -328,39 +327,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     })
   }
 
-  const onItemUpdate = ({
-    taskId,
-    priority,
-    dueDate,
-    title,
-  }: {
-    taskId: string
-    priority?: PriorityType
-    dueDate?: Date
-    title?: string
-  }) => {
-    const boardItemId = `item-${taskId}`
-    const container = findValueOfItems(boardItemId, 'item')
-    if (!container) return
-    // Needed for potential fallback iff DB fails
-    const deletedItem = container.items.find((item) => item.id === boardItemId)
-    if (!deletedItem) return
-
-    container.items = container.items.filter((item) => item.id !== boardItemId)
-
-    container.items.push({
-      id: deletedItem.id,
-      task: {
-        ...deletedItem.task,
-        title: title ?? deletedItem.task.title,
-        dueDate: dueDate ?? deletedItem.task.dueDate,
-        priority: priority ?? deletedItem.task.priority,
-      },
-      loading: false,
-    })
-    setBoards([...boards])
-  }
-
   const columnItemTotals = useMemo(() => {
     return boards.reduce(
       (acc, board) => {
@@ -374,18 +340,18 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     )
   }, [boards])
 
-  const addBoard = () => {
-    const newBoard: Board = {
-      id: `board-${v4()}`,
-      title: 'NEW TITLE',
-      containerTaskType: 'EPIC',
-      columns: createColumns([]),
-    }
+  // const addBoard = () => {
+  //   const newBoard: Board = {
+  //     id: `board-${v4()}`,
+  //     title: 'NEW TITLE',
+  //     containerTaskType: 'EPIC',
+  //     columns: createColumns([]),
+  //   }
 
-    setEditingContainerId(newBoard.id)
+  //   setEditingContainerId(newBoard.id)
 
-    setBoards([newBoard, ...boards])
-  }
+  //   setBoards([newBoard, ...boards])
+  // }
 
   return (
     <DndContext
@@ -407,7 +373,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       <KanbanHeader />
       {/* Header (Single Instance) */}
       <div className="overflow-auto">
-        <header className="sticky top-0 rounded-sm bg-neutral-100 dark:bg-background z-10">
+        <header className="sticky top-0 rounded-sm bg-background z-10">
           <div className="flex w-full items-center">
             <div className="w-[150px] p-2">Containers</div>
             <div className="flex flex-1">
@@ -427,34 +393,19 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         </header>
 
         {/* Kanban Boards */}
-        <div className="flex flex-col h-[70vh] gap-y-2 pt-1 pb-5 overflow-y-scroll border-b">
+        <div className="flex flex-col h-[70vh] gap-y-2 pt-1 pb-5 overflow-y-scroll">
           {boards.map((board) => (
             <div className="display flex gap-2" key={`board-${board.id}`}>
               {/* Board Column Titles */}
-              <Card className="w-[150px] h-[100px] p-3 rounded-sm bg-inherit shadow-none">
-                <CardTitle>
-                  {board.containerTaskType ? (
-                    <div className="flex gap-2">
-                      <div className="flex gap-2 items-center text-xs">
-                        {getTaskTypeIcon(board.containerTaskType)}
-
-                        <> {board.title}</>
-                      </div>
-                      <div>
-                        {board.columns.reduce(
-                          (sum, col) => sum + col.items.length,
-                          0,
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2 items-center text-xs">
-                      <CircleOff size={16} />
-                      {'Ungrouped'}
-                    </div>
-                  )}
-                </CardTitle>
-              </Card>
+              <ContainerHeader
+                title={board.title}
+                taskType={board.containerTaskType}
+                itemCount={board.columns.reduce(
+                  (sum, col) => sum + col.items.length,
+                  0,
+                )}
+                className="rounded-sm"
+              />
 
               {/* Columns */}
               <div className="flex w-full gap-2 overflow-auto">

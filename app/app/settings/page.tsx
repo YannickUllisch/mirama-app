@@ -73,11 +73,12 @@ const ProjectPage = () => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="flex items-center gap-4 dark:text-white mb-2  rounded-lg p-1 w-fit">
-        <Settings strokeWidth={1.5} width={20} />
-        <span style={{ fontSize: 20 }}>Settings</span>
-        <span>|</span>
-        <TabsList className="justify-start flex">
+      <div className="items-center flex gap-2 pb-1">
+        <Settings strokeWidth={1.5} width={16} />
+        <span style={{ fontSize: 16 }}>Settings</span>
+      </div>
+      <div className="flex items-center  dark:text-white rounded-lg h-10 relative overflow-x-auto">
+        <TabsList className="justify-stretch absolute flex">
           {settingsTabs.map(
             (tabHeader) =>
               session &&

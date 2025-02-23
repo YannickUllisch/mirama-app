@@ -1,16 +1,13 @@
-import React, {
-  useContext,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from 'react'
+'use client'
+
+import { useContext, useState, type Dispatch, type SetStateAction } from 'react'
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetFooter,
   SheetTitle,
-} from '@src/components/ui/sheet'
+} from '@ui/sheet'
 import {
   PriorityType,
   TaskStatusType,
@@ -18,14 +15,13 @@ import {
   type Task,
   type User,
 } from '@prisma/client'
-import { Separator } from '../ui/separator'
+import { Separator } from '@ui/separator'
 import {
   CalendarClock,
   CheckSquare,
   ChevronsRight,
-  ClockArrowDown,
+  ClockIcon as ClockArrowDown,
   Folders,
-  FolderSearch,
   Loader2,
   MessagesSquareIcon,
   PanelBottomClose,
@@ -35,20 +31,19 @@ import {
   UserCheckIcon,
   UserIcon,
 } from 'lucide-react'
-import { Button } from '../ui/button'
+import { Button } from '@ui/button'
 import { DateTime } from 'luxon'
 import UserAvatar from '../Avatar/UserAvatar'
-import { Badge } from '../ui/badge'
+import { Badge } from '@ui/badge'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import useSWR, { type KeyedMutator } from 'swr'
 import Link from 'next/link'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
-import { SelectItem } from '../ui/tableSelect'
+import { SelectItem } from '@ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
-import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
+import { CommentTab, RelatedWorkTab, TimelineTab } from '../Tabs/ViewTaskTabs'
 
 interface ViewTaskSheet {
   open: boolean
@@ -65,7 +60,7 @@ const ViewTaskSheet = ({
   projectName,
   mutate,
 }: ViewTaskSheet) => {
-  const { data: task } = useSWR<
+  const { data: task, mutate: updateTask } = useSWR<
     Task & {
       subtasks: Task[]
       tags: Tag[]
@@ -82,11 +77,17 @@ const ViewTaskSheet = ({
   )
 
   // Tab definitions
-  const taskSheetTabs: {
-    id: string
-    component: JSX.Element
-    headerComponent: JSX.Element
-  }[] = [
+  const taskSheetTabs = [
+    {
+      id: 'timeline',
+      headerComponent: (
+        <div className="flex justify-center gap-1 items-center">
+          <CalendarClock size={18} />
+          Timeline
+        </div>
+      ),
+      component: <TimelineTab task={task} />,
+    },
     {
       id: 'related_work',
       headerComponent: (
@@ -101,50 +102,48 @@ const ViewTaskSheet = ({
     },
     {
       id: 'comments',
-
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
           <MessagesSquareIcon size={18} />
           Comments
         </div>
       ),
-      component: <CommentTab />,
+      component: <CommentTab taskId={task?.id} />,
     },
   ]
-  const [tab, setTab] = useState('related_work')
+
+  // Update the default selected tab
+  const [tab, setTab] = useState('timeline')
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent
-        hideSheetClose
-        className="p-0 w-[800px] overflow-y-scroll dark:bg-neutral-900"
-      >
+      <SheetContent hideSheetClose className="p-0 w-[800px] overflow-y-scroll ">
         {!task ? (
-          <div className="w-full flex justify-center items-center min-h-[650px]">
+          <div className="w-full flex justify-center items-center min-h-[100vh]">
             <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
           </div>
         ) : (
           <>
-            <header className="flex justify-between h-[50px] sticky w-full top-0 bg-hover dark:bg-neutral-950 p-2">
+            <header className="z-10 flex justify-between h-[50px] sticky w-full top-0 bg-secondary dark:bg-secondary p-2">
               <div className="flex gap-2 items-center mt-1.5 ">
                 <SheetClose asChild>
                   <Button variant={'ghost'} className="p-1 h-fit">
-                    <ChevronsRight className="text-text-secondary" size={18} />
+                    <ChevronsRight className="text-white" size={18} />
                   </Button>
                 </SheetClose>
                 <Button variant={'ghost'} className="p-1 h-fit" asChild>
                   <Link href={`/app/${projectName}/edit/${task.id}`}>
-                    <Pencil className="text-text-secondary" size={15} />
+                    <Pencil className="text-white" size={15} />
                   </Link>
                 </Button>
                 <Button variant={'ghost'} className="p-1 h-fit">
-                  <Star className="text-text-secondary" size={15} />
+                  <Star className="text-white" size={15} />
                 </Button>
               </div>
               {task.status !== 'DONE' && (
                 <div className="flex gap-2 items-center mt-1.5">
                   <Button
-                    variant={'outline'}
+                    variant={'default'}
                     onClick={() => {
                       if (task.status !== 'DONE') {
                         updateResourceById(
@@ -155,7 +154,7 @@ const ViewTaskSheet = ({
                         )
                       }
                     }}
-                    className="text-xs p-1 h-fit text-text-secondary flex gap-2 items-center"
+                    className="text-xs p-1 px-2 h-fit text-white flex gap-2 items-center"
                   >
                     <CheckSquare size={15} />
                     Mark as Complete
@@ -180,7 +179,12 @@ const ViewTaskSheet = ({
                   <GeneralTableSelect
                     key={'assignedTo-select'}
                     id={task.id}
-                    mutate={mutate}
+                    mutate={() => {
+                      updateTask()
+                      if (mutate) {
+                        mutate()
+                      }
+                    }}
                     apiRoute="task"
                     paramToUpdate="assignedToId"
                     clearable
@@ -329,18 +333,18 @@ const ViewTaskSheet = ({
                 </div>
               </div>
 
-              <div className="w-full p-3 rounded-md bg-hover text-xs flex flex-col gap-y-1 mt-4">
+              <div className="w-full p-3 rounded-md bg-secondary dark:bg-secondary text-white text-xs flex flex-col gap-y-1 mt-4">
                 <span className="font-semibold">Task Description</span>
 
-                <span className="text-text-secondary">
-                  {task?.description === ''
+                <span className="text-hover dark:text-text/70">
+                  {!task?.description || task.description === ''
                     ? 'No Description given.'
                     : task?.description}
                 </span>
               </div>
             </div>
             <Separator />
-            <SheetFooter className=" h-full justify-start p-3">
+            <SheetFooter className="justify-start p-3">
               <Tabs value={tab} onValueChange={setTab} className="w-full pb-10">
                 <TabsList className="inline-flex items-center justify-start border overflow-x-auto whitespace-nowrap sm:justify-center sm:gap-2">
                   {taskSheetTabs.map((tabHeader) => (

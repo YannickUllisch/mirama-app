@@ -60,12 +60,12 @@ const projectTabs: {
     ),
   },
   {
-    id: 'gantt',
+    id: 'timeline',
     roles: Object.values(Role),
     component: <GanttTab />,
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
-        <GanttChart width={15} /> Gantt
+        <GanttChart width={15} /> Timeline
       </div>
     ),
   },
@@ -101,9 +101,9 @@ const ClientProjectPage = () => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="flex w-full items-center gap-4 dark:text-white mb-2 pb-3 rounded-lg p-1">
+      <div className="flex w-full items-center gap-4 dark:text-white rounded-lg h-10 relative overflow-x-auto">
         <TabsList
-          className={`inline-flex items-center justify-start whitespace-nowrap sm:justify-center sm:gap-2 ${
+          className={`absolute justify-stretch inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 ${
             session && 'border'
           }`}
         >
