@@ -18,6 +18,7 @@ const BoardTab = () => {
 
   return (
     <KanbanBoard
+      projectName={projectContext?.projectName ?? ''}
       tasks={tasks ?? []}
       projectId={projectContext?.projectId ?? ''}
       mutate={updateTasks}

@@ -14,6 +14,7 @@ interface EditableCellProps {
   paramToUpdate: string
   onBlueNoChange?(): any
   className?: string
+  ref?: any
   executeOnBlur?: (value: string | number) => void
 }
 
@@ -27,6 +28,7 @@ const EditableCell: FC<EditableCellProps> = ({
   autofocus,
   onBlueNoChange,
   className,
+  ref,
   executeOnBlur,
 }) => {
   const [value, setValue] = useState<string | number>(initialValue)
@@ -82,6 +84,7 @@ const EditableCell: FC<EditableCellProps> = ({
         'overflow-hidden text-ellipsis whitespace-nowrap w-[85%] flex-wrap',
         className,
       )}
+      ref={ref}
       defaultValue={value}
       // For both int and string, this will set the Value to type string on change.
       onChangeCapture={(e) => setValue(e.currentTarget.value)}

@@ -4,13 +4,12 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState, type FC } from 'react'
 import {
-  Edit,
   MoreHorizontal,
   Loader2,
-  Pencil,
   Trash2,
-  User,
   UserIcon,
+  ArrowUpRight,
+  PenBoxIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -25,24 +24,22 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { Badge } from '@src/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
-import { cn } from '@src/lib/utils'
-import { Task } from '@prisma/client'
+import { capitalize, cn, getColorByTaskStatusType } from '@src/lib/utils'
 import type { KanbanItemType } from '@src/lib/types'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import UserAvatar from '../Avatar/UserAvatar'
 import { SelectItem } from '@ui/select'
-import EditableCell from '../Inputs/EditableCell'
+import ViewTaskSheet from '../Task/ViewTaskSheet'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 
 const KanbanItem: FC<KanbanItemType> = ({
   id,
   task,
   loading,
   onDelete,
+  mutate,
   users,
-  onItemUpdate,
 }) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false)
   const path = usePathname()
   const {
     attributes,
@@ -58,178 +55,151 @@ const KanbanItem: FC<KanbanItemType> = ({
     },
   })
 
-  const statusColors = {
-    TODO: 'bg-slate-400',
-    IN_PROGRESS: 'bg-blue-400',
-    DONE: 'bg-green-400',
-    BLOCKED: 'bg-red-400',
-  }
-
-  const priorityColors = {
-    LOW: 'bg-slate-100 text-slate-700',
-    MEDIUM: 'bg-yellow-100 text-yellow-700',
-    HIGH: 'bg-red-100 text-red-700',
-  }
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <Card
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={{
-        transition,
-        transform: CSS.Translate.toString(transform),
-      }}
-      className={cn(
-        'relative group p-4 hover:shadow-md transition-all bg-background',
-        'border border-border/50 hover:border-secondary',
-        isDragging && 'opacity-50',
-        loading && 'pointer-events-none',
-      )}
-    >
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-          <Loader2 className="animate-spin" />
-        </div>
-      )}
+    <>
+      <Card
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={{
+          transition,
+          transform: CSS.Translate.toString(transform),
+        }}
+        className={cn(
+          'relative group p-4 hover:shadow-md transition-all bg-background',
+          'border border-border/50 hover:border-secondary',
+          isDragging && 'opacity-50',
+          loading && 'pointer-events-none',
+        )}
+      >
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+            <Loader2 className="animate-spin" />
+          </div>
+        )}
 
-      <div className="space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            {isEditing ? (
-              <EditableCell
-                key={`title-${task?.id}`}
-                apiRoute="task"
-                id={task?.id ?? ''}
-                initialValue={task?.title ?? ''}
-                paramToUpdate="title"
-                autofocus
-                onBlueNoChange={() => {
-                  setIsEditing(false)
-                }}
-                executeOnBlur={(value) => {
-                  if (onItemUpdate) {
-                    onItemUpdate({
-                      taskId: task?.id ?? '',
-                      title: value.toString(),
-                    })
-                  }
-                  setIsEditing(false)
-                }}
-                className="block text-sm font-medium hover:underline focus:border-primary"
-              />
-            ) : (
-              <Link
-                href={`${path}/edit/${task?.id}`}
-                className="block text-sm font-medium hover:underline"
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <Button
+                onClick={() => setIsOpen((open) => !open)}
+                variant={'link'}
+                className="block w-full text-text text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none break-words whitespace-normal"
               >
-                {task?.title}
-              </Link>
-            )}
+                <div className="flex items-center gap-1">
+                  {getTaskTypeIcon(task?.type ?? 'TASK')}
+                  {task?.title}
+                </div>
+              </Button>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-8 h-8 p-0 opacity-0 group-hover:opacity-100"
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setIsOpen((open) => !open)}>
+                  <PenBoxIcon className="w-4 h-4 mr-2" />
+                  Open Quick Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`${path}/edit/${task?.id}`}>
+                    <ArrowUpRight className="w-4 h-4 mr-2" />
+                    Go to Task
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => onDelete?.(task?.id ?? '')}
+                  className="text-red-600"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete task
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-8 h-8 p-0 opacity-0 group-hover:opacity-100"
-              >
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                <Pencil className="w-4 h-4 mr-2" />
-                Edit title
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href={`${path}/edit/${task?.id}`}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit task
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete?.(task?.id ?? '')}
-                className="text-red-600"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete task
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+          <div className="flex items-center gap-2 text-xs">
+            <Badge
+              variant="secondary"
+              className={cn(
+                'px-2 py-0.5 rounded-full',
+                getColorByTaskStatusType(task?.status ?? ''),
+              )}
+            >
+              {capitalize(task?.status ?? '')}
+            </Badge>
+            <Badge variant="outline" className={cn('px-2 py-0.5 rounded-full')}>
+              {capitalize(task?.priority ?? '')}
+            </Badge>
+          </div>
 
-        <div className="flex items-center gap-2 text-xs">
-          <Badge
-            variant="secondary"
-            className={cn(
-              'px-2 py-0.5 rounded-full',
-              statusColors[task?.status as keyof typeof statusColors],
-            )}
-          >
-            {task?.status?.toLowerCase()}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className={cn(
-              'px-2 py-0.5 rounded-full',
-              priorityColors[task?.priority as keyof typeof priorityColors],
-            )}
-          >
-            {task?.priority?.toLowerCase()}
-          </Badge>
+          <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+            <GeneralTableSelect
+              key={'id'}
+              id={task?.id ?? ''}
+              apiRoute="task"
+              paramToUpdate="assignedToId"
+              stylingProps={{ triggerStyle: 'text-xs h-6 py-1 w-fit' }}
+              clearable
+              initialValue={
+                task?.assignedTo ? (
+                  <div className="flex items-center gap-1">
+                    <UserAvatar
+                      username={task.assignedTo.name}
+                      avatarSize={22}
+                      fontSize={8}
+                    />
+                    {task.assignedTo.name}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 ml-1">
+                    <UserIcon className="w-[18px]" />
+                    <span>Unassigned</span>
+                  </div>
+                )
+              }
+            >
+              {users?.map((user) => (
+                <SelectItem value={user.id} key={`select-item-${user.id}`}>
+                  <div className="flex items-center gap-1">
+                    <UserAvatar
+                      username={user.name}
+                      avatarSize={22}
+                      fontSize={8}
+                    />
+                    {user.name}
+                  </div>
+                </SelectItem>
+              ))}
+            </GeneralTableSelect>
+            <span>
+              Due{' '}
+              {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(
+                'MMM d',
+              )}
+            </span>
+          </div>
         </div>
+      </Card>
 
-        <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
-          <GeneralTableSelect
-            key={'id'}
-            id={task?.id ?? ''}
-            apiRoute="task"
-            paramToUpdate="assignedToId"
-            stylingProps={{ triggerStyle: 'text-xs h-6 py-1 w-fit' }}
-            clearable
-            initialValue={
-              task?.assignedTo ? (
-                <div className="flex items-center gap-1">
-                  <UserAvatar
-                    username={task.assignedTo.name}
-                    avatarSize={22}
-                    fontSize={8}
-                  />
-                  {task.assignedTo.name}
-                </div>
-              ) : (
-                <div className="flex items-center gap-4 ml-1">
-                  <UserIcon className="w-[18px]" />
-                  <span>Unassigned</span>
-                </div>
-              )
-            }
-          >
-            {users?.map((user) => (
-              <SelectItem value={user.id} key={`select-item-${user.id}`}>
-                <div className="flex items-center gap-1">
-                  <UserAvatar
-                    username={user.name}
-                    avatarSize={22}
-                    fontSize={8}
-                  />
-                  {user.name}
-                </div>
-              </SelectItem>
-            ))}
-          </GeneralTableSelect>
-          <span>
-            Due{' '}
-            {DateTime.fromJSDate(new Date(task?.dueDate ?? 0)).toFormat(
-              'MMM d',
-            )}
-          </span>
-        </div>
-      </div>
-    </Card>
+      <ViewTaskSheet
+        open={isOpen}
+        projectName="Mirama"
+        setOpen={setIsOpen}
+        taskId={task?.id ?? ''}
+        mutate={mutate}
+      />
+    </>
   )
 }
 

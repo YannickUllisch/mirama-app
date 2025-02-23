@@ -41,6 +41,7 @@ import { KanbanHeader } from './KanbanHeader'
 
 interface KanbanBoardProps {
   projectId: string
+  projectName: string
   tasks: (Task & {
     assignedTo: User
     subtasks: (Task & { assignedTo: User | undefined })[]
@@ -48,7 +49,12 @@ interface KanbanBoardProps {
   mutate: KeyedMutator<any>
 }
 
-const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
+const KanbanBoard: FC<KanbanBoardProps> = ({
+  tasks,
+  projectId,
+  mutate,
+  projectName,
+}) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
   // waiting for DB updates we simulate the changes through the boards state and update DB in the background
   const { data: session } = useSession()
@@ -77,7 +83,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
   const [newItemTitle, setNewItemTitle] = useState<string>('')
   const [editingContainerId, setEditingContainerId] =
     useState<UniqueIdentifier | null>(null)
-  const [newContainerTitle, setNewContainerTitle] = useState<string>('')
 
   // Data
   const { data: users } = useSWR<User[]>(
@@ -183,7 +188,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
 
     if (!over?.id || active.id === over.id) return
 
-    // Find active and over containers
     const activeContainer = findValueOfItems(active.id, 'item')
     const overContainer =
       findValueOfItems(over.id, 'container') ||
@@ -209,22 +213,38 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
 
     if (!activeColumn || !overColumn) return
 
-    const activeItemIndex = activeColumn.items.findIndex(
+    // Ensure immutable update for React reactivity
+    const activeItemsCopy = [...activeColumn.items]
+    const activeItemIndex = activeItemsCopy.findIndex(
       (item) => item.id === active.id,
     )
-    const [movedItem] = activeColumn.items.splice(activeItemIndex, 1)
+    const [movedItem] = activeItemsCopy.splice(activeItemIndex, 1)
 
-    // If the item was dropped in the same container, return
+    // If item was dropped in the same column, return early
     if (activeColumn.id === overColumn.id) {
       return
     }
 
-    // Add loading state to the moved item
-    overColumn.items.push({ ...movedItem })
+    // Add item to the new column
+    const overItemsCopy = [...overColumn.items, movedItem]
 
-    setBoards([...boards]) // Optimistic update
+    // Update state properly
+    const updatedBoards = boards.map((board) => ({
+      ...board,
+      columns: board.columns.map((column) => {
+        if (column.id === activeColumn.id) {
+          return { ...column, items: activeItemsCopy }
+        }
+        if (column.id === overColumn.id) {
+          return { ...column, items: overItemsCopy }
+        }
+        return column
+      }),
+    }))
 
-    // Determine new parentId
+    setBoards(updatedBoards)
+
+    // Update database
     let newParentId: string | null = null
     if (overBoard.title === 'Unparented Tasks') {
       newParentId = null
@@ -232,29 +252,24 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       newParentId = overBoard.id.substring(6)
     }
 
-    const newStatus = overColumn.title // Assumes `overColumn` title represents the status
+    const newStatus = overColumn.title
 
     try {
-      // Update the task's parentId and status in the database
-      const taskId = movedItem.id.toString().substring(5) // Remove 'item-' prefix
+      const taskId = movedItem.id.toString().startsWith('item-')
+        ? movedItem.id.toString().substring(5)
+        : movedItem.id
+
       await updateResourceById(
         'task',
-        taskId,
+        taskId.toString(),
         {
           status: newStatus,
           parentId: newParentId,
         },
         { mutate },
       )
-      // Remove loading state once updated
-      overColumn.items = overColumn.items.map((item) =>
-        item.id === movedItem.id ? { ...item, loading: false } : item,
-      )
-
-      setBoards([...boards]) // Final state update
     } catch (error) {
       console.error('Failed to update item:', error)
-      // Handle error (e.g., show a notification or revert state)
     }
 
     setActiveId(null)
@@ -422,27 +437,8 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                     <div className="flex gap-2">
                       <div className="flex gap-2 items-center text-xs">
                         {getTaskTypeIcon(board.containerTaskType)}
-                        {editingContainerId === board.id ? (
-                          <Input
-                            autoFocus
-                            type="text"
-                            className="w-full p-2 border rounded"
-                            placeholder="Enter a title"
-                            value={newContainerTitle}
-                            onChange={(e) =>
-                              setNewContainerTitle(e.target.value)
-                            }
-                            // onBlur={() =>
-                            //   handleSaveOrCancel(item.id, col.id, board.id)
-                            // }
-                            // onKeyDown={(e) => {
-                            //   if (e.key === 'Enter')
-                            //     handleSaveOrCancel(item.id, col.id, board.id)
-                            // }}
-                          />
-                        ) : (
-                          <div> {board.title}</div>
-                        )}
+
+                        <> {board.title}</>
                       </div>
                       <div>
                         {board.columns.reduce(
@@ -502,8 +498,9 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
                               task={item.task}
                               onDelete={handleItemDelete}
                               users={users ?? []}
-                              onItemUpdate={onItemUpdate}
                               loading={false}
+                              projectName={projectName}
+                              mutate={mutate}
                             />
                           )}
                         </div>
@@ -520,7 +517,11 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, mutate }) => {
       <DragOverlay adjustScale={false}>
         {activeId?.toString().includes('item') && (
           <div className="opacity-70">
-            <KanbanItem id={activeId} task={findItemTask(activeId)} />
+            <KanbanItem
+              projectName={projectName}
+              id={activeId}
+              task={findItemTask(activeId)}
+            />
           </div>
         )}
       </DragOverlay>

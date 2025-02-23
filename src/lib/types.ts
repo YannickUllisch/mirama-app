@@ -53,17 +53,8 @@ export type KanbanItemType = {
   loading?: boolean
   onDelete?: (id: string) => void
   users?: User[]
-  onItemUpdate?: ({
-    taskId,
-    priority,
-    dueDate,
-    title,
-  }: {
-    taskId: string
-    priority?: PriorityType
-    dueDate?: Date
-    title?: string
-  }) => void
+  projectName: string
+  mutate?: KeyedMutator<unknown>
 }
 
 export interface GoogleCalendarEvent {
