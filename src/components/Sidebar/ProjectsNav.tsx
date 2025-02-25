@@ -1,31 +1,28 @@
 'use client'
+
+import * as React from 'react'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
+import { ChevronDown, List, PlusSquare } from 'lucide-react'
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  useSidebar,
-} from '@src/components/ui/sidebar'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
-import type { Session } from 'next-auth'
-import Link from 'next/link'
-import AddProjectDialog from '@src/components/Dialogs/AddProjectDialog'
-import { ChevronRight, PlusSquare, Router } from 'lucide-react'
-import type { Project, Task } from '@prisma/client'
+} from '@ui/sidebar'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@src/components/ui/collapsible'
+} from '@ui/collapsible'
+import { Button } from '@ui/button'
+import { cn } from '@src/lib/utils'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import type { Project, Task } from '@prisma/client'
+import type { Session } from 'next-auth'
+import AddProjectDialog from '../Dialogs/AddProjectDialog'
 
-const SidebarProjectsNav = ({
-  projects,
-  session,
-}: {
+interface ProjectsNavProps {
   projects: {
     href: string
     original: Project
@@ -33,85 +30,77 @@ const SidebarProjectsNav = ({
     tasks: Task[]
   }[]
   session: Session | null
-}) => {
-  return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>
-        <div className="flex w-full justify-between items-center">
-          <span>Projects</span>
-          {isTeamAdminOrOwner(session) && (
-            <AddProjectDialog
-              key={'Project Dialog'}
-              button={
-                <PlusSquare className="w-4 cursor-pointer hover:text-white" />
-              }
-            />
-          )}
-        </div>
-      </SidebarGroupLabel>
-      <SidebarMenu>
-        {projects.map((item) => (
-          <Collapsible
-            key={item.original.name}
-            asChild
-            defaultOpen={false}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem key={item.original.name}>
-              <div className="flex items-center gap-1">
-                <CollapsibleTrigger>
-                  <ChevronRight
-                    width={14}
-                    className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-                  />
-                </CollapsibleTrigger>
-
-                <SidebarMenuButton asChild>
-                  <Link prefetch={false} href={item.href}>
-                    <span>{item.original.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </div>
-
-              <div>{item.isActive}</div>
-
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.tasks?.map((task) => (
-                    <SidebarMenuSubItem
-                      key={`${task.title}-${task.dateCreated}`}
-                    >
-                      <SidebarMenuSubButton
-                        asChild
-                        className="flex justify-between"
-                      >
-                        <Link
-                          prefetch={false}
-                          href={`/app/${item.original.name}/edit/${task.id}`}
-                          className="flex justify-between items-center w-full"
-                        >
-                          <span className="truncate max-w-[calc(100%-1rem)] text-ellipsis overflow-hidden whitespace-nowrap">
-                            {task.title}
-                          </span>
-                          <div
-                            className={`rounded-full w-2 h-2 ${
-                              task.assignedToId === session?.user.id
-                                ? 'bg-green-500'
-                                : 'invisible'
-                            }`}
-                          />
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
-      </SidebarMenu>
-    </SidebarGroup>
-  )
 }
 
-export default SidebarProjectsNav
+export function ProjectsNav({ projects, session }: ProjectsNavProps) {
+  const [isOpen, setIsOpen] = React.useState(true)
+  const pathname = usePathname()
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <div className="flex items-center justify-between px-2 py-1">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="p-0 hover:bg-transparent">
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 shrink-0 transition-transform duration-200',
+                  !isOpen && '-rotate-90',
+                )}
+              />
+              <span className="ml-2 text-text/80">Projects</span>
+            </Button>
+          </CollapsibleTrigger>
+          <div className="flex items-center gap-1">
+            {isTeamAdminOrOwner(session) && (
+              <AddProjectDialog
+                key="Project Dialog"
+                button={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 hover:bg-accent"
+                  >
+                    <PlusSquare className="h-4 w-4" />
+                    <span className="sr-only">Add project</span>
+                  </Button>
+                }
+              />
+            )}
+          </div>
+        </div>
+        <CollapsibleContent>
+          <SidebarMenu>
+            {projects.map((project) => (
+              <SidebarMenuItem>
+                <div className="flex items-center w-full gap-2 px-2">
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      'flex-1 justify-between',
+                      pathname.includes(project.original.name) && 'bg-accent',
+                    )}
+                  >
+                    <Link prefetch={false} href={project.href}>
+                      <div className="flex gap-2 items-center">
+                        <List size={14} className="h-4 w-4 mr-1" />
+                        <span className="truncate">
+                          {project.original.name}
+                        </span>
+                      </div>
+                      {project.isActive && (
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          {project.tasks.length}
+                        </span>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                </div>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </CollapsibleContent>
+      </SidebarGroup>
+    </Collapsible>
+  )
+}

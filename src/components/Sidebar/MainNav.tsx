@@ -7,7 +7,6 @@ import {
 } from '@src/components/ui/collapsible'
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -30,7 +29,7 @@ interface MainNavProps
 const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
   return (
     <SidebarGroup {...props}>
-      <SidebarGroupLabel>App</SidebarGroupLabel>
+      {/* <SidebarGroupLabel>App</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map(
           (item) =>

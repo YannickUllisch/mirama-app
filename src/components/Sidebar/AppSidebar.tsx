@@ -1,11 +1,13 @@
 'use client'
 import {
-  LayoutGrid,
   Home,
   BookAIcon,
   Bell,
   HelpCircleIcon,
-  Component,
+  Folders,
+  ClipboardList,
+  Calendar,
+  Users,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -25,12 +27,11 @@ import {
 } from '@prisma/client'
 import type { AppMenuItem, SecondaryAppMenuItem } from '@src/lib/types'
 import SidebarMainNav from './MainNav'
-import SidebarProjectsNav from './ProjectsNav'
-import SidebarSecondaryNav from './SecondaryNav'
 import SidebarUserNav from './UserNav'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
-import Link from 'next/link'
+import FavoritesNav from './FavouritesNav'
+import { ProjectsNav } from './ProjectsNav'
 
 const AppMenu: AppMenuItem[] = [
   {
@@ -41,23 +42,32 @@ const AppMenu: AppMenuItem[] = [
     roles: Object.values(Role) as Role[], // Allow all roles on Dashboard
   },
   {
-    title: 'Personal',
-    icon: LayoutGrid,
-    isCollapsible: true,
-    isActive: true,
+    title: 'Projects',
+    icon: Folders,
+    href: '/app/projects',
+    isCollapsible: false,
     roles: Object.values(Role) as Role[],
-    items: [
-      {
-        title: 'Tasks',
-        href: '/app/tasks',
-        roles: Object.values(Role) as Role[],
-      },
-      {
-        title: 'Calendar',
-        href: '/app/calendar',
-        roles: Object.values(Role) as Role[],
-      },
-    ],
+  },
+  {
+    title: 'My Tasks',
+    icon: ClipboardList,
+    href: '/app/tasks',
+    isCollapsible: false,
+    roles: Object.values(Role) as Role[],
+  },
+  {
+    title: 'Calendar',
+    icon: Calendar,
+    href: '/app/calendar',
+    isCollapsible: false,
+    roles: Object.values(Role) as Role[],
+  },
+  {
+    title: 'Teams',
+    icon: Users,
+    href: '/app/team',
+    isCollapsible: false,
+    roles: Object.values(Role) as Role[],
   },
   {
     title: 'Management',
@@ -70,11 +80,6 @@ const AppMenu: AppMenuItem[] = [
         title: 'Company',
         href: '/app/company',
         roles: [Role.ADMIN, Role.OWNER],
-      },
-      {
-        title: 'Team',
-        href: '/app/team',
-        roles: Object.values(Role) as Role[],
       },
       {
         title: 'Finances',
@@ -130,7 +135,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
         <SidebarMainNav items={AppMenu} session={session} />
-        <SidebarProjectsNav
+        <FavoritesNav
+          favorites={[
+            { id: '1', name: 'Dashboard', href: '/app/dashboard' },
+            { id: '2', name: 'Recent Tasks', href: '/app/tasks' },
+          ]}
+        />
+        <ProjectsNav
           session={session}
           projects={projects.map((p) => ({
             href: `/app/${p.name}`,

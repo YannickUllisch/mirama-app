@@ -4,17 +4,37 @@ import { LandingBentoBox } from '@src/components/Landing/BentoBox'
 import { CallToAction } from '@src/components/Landing/CallToAction'
 import { LandingView } from '@src/components/Landing/LandingView'
 import { LandingFAQ } from '@src/components/Landing/FAQ'
+import { FeaturesShowcase } from '@src/components/Landing/FeaturesView'
+import { ScrollAnimationWrapper } from '@src/components/Landing/ScrollWrapper'
+import { ThemeShowcase } from '@src/components/Landing/ThemeShowcase'
+import { LandingThemeSlider } from '@src/components/Landing/ThemeSlide'
 
 const LandingPage: FC = () => {
   return (
     <>
-      <LandingView />
+      <ScrollAnimationWrapper>
+        <LandingView />
+      </ScrollAnimationWrapper>
 
-      <LandingBentoBox />
+      <ScrollAnimationWrapper>
+        <LandingBentoBox />
+      </ScrollAnimationWrapper>
 
-      <LandingFAQ />
+      <ScrollAnimationWrapper>
+        <FeaturesShowcase />
+      </ScrollAnimationWrapper>
 
-      <CallToAction />
+      <ScrollAnimationWrapper>
+        <ThemeShowcase />
+      </ScrollAnimationWrapper>
+
+      <ScrollAnimationWrapper>
+        <LandingFAQ />
+      </ScrollAnimationWrapper>
+
+      <ScrollAnimationWrapper>
+        <CallToAction />
+      </ScrollAnimationWrapper>
     </>
   )
 }
