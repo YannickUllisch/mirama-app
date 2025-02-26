@@ -19,6 +19,7 @@ import type { AppMenuItem } from '@src/lib/types'
 import type { FC } from 'react'
 import type { Session } from 'next-auth'
 import { Role } from '@prisma/client'
+import { usePathname } from 'next/navigation'
 
 interface MainNavProps
   extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {
@@ -27,9 +28,9 @@ interface MainNavProps
 }
 
 const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
+  const pathname = usePathname()
   return (
     <SidebarGroup {...props}>
-      {/* <SidebarGroupLabel>App</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map(
           (item) =>
@@ -43,7 +44,10 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
                 <SidebarMenuItem>
                   {!item.isCollapsible && item.href ? (
                     <Link href={item.href} prefetch>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        className={item.href === pathname ? 'bg-secondary' : ''}
+                      >
                         {item.icon && <item.icon />}
 
                         <span>{item.title}</span>
@@ -66,8 +70,20 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
                           subItem.roles?.includes(
                             session?.user.role ?? Role.USER,
                           ) && (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild>
+                            <SidebarMenuSubItem
+                              key={subItem.title}
+                              className={
+                                item.href === pathname ? 'bg-secondary' : ''
+                              }
+                            >
+                              <SidebarMenuSubButton
+                                asChild
+                                className={
+                                  subItem.href === pathname
+                                    ? 'bg-secondary'
+                                    : ''
+                                }
+                              >
                                 <Link href={subItem.href} prefetch>
                                   <span>{subItem.title}</span>
                                 </Link>

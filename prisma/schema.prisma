@@ -70,8 +70,9 @@ model User {
   preferredDateType String    @default("dd-MM-yyyy")
 
   projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
-  comments      Comment[]
-  notifications   Notification[]
+  comments          Comment[]
+  notifications     Notification[]
+  favourites        Favourite[]
 
   @@index([teamId, id], map: "user_team_project_idx")
 }
@@ -291,4 +292,20 @@ model Notification {
   resourceId      String
 
   createdAt       DateTime  @default(now())
+}
+
+enum FavouriteType {
+  PROJECT
+  TASK
+  ROUTE
+}
+
+model Favourite {
+    id    String    @id @default(cuid())
+
+    userId          String?
+    user            User?     @relation(fields: [userId], references: [id])
+
+    type            FavouriteType
+    data            String
 }

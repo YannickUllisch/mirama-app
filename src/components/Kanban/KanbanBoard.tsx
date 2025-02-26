@@ -1,4 +1,4 @@
-import { type FC, useState, useContext, useMemo, useEffect } from 'react'
+import { type FC, useState, useMemo, useEffect } from 'react'
 import { v4 } from 'uuid'
 import KanbanContainer from './KanbanContainer'
 import {
@@ -15,22 +15,13 @@ import {
   rectIntersection,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import {
-  type PriorityType,
-  Role,
-  type Task,
-  TaskStatusType,
-  type User,
-} from '@prisma/client'
+import { type Task, TaskStatusType, type User } from '@prisma/client'
 import KanbanItem from './KanbanItem'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import type { Board } from '@src/lib/types'
-import { Card, CardTitle } from '@ui/card'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import { CircleOff } from 'lucide-react'
 import { Input } from '@ui/input'
-import { createBoards, createColumns } from './createBoards'
+import { createBoards } from './createBoards'
 import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { useSession } from 'next-auth/react'

@@ -5,34 +5,12 @@ import {
   CardFooter,
   CardHeader,
 } from '@src/components/ui/card'
-import TaskPriorityWidget from '@src/components/Widgets/MyTasksWidget'
 import { getColorByName } from '@src/lib/utils'
 import { CalendarDays, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React from 'react'
 import useSWR from 'swr'
-
-// Sample data
-const tasks = [
-  {
-    id: '1',
-    title: 'Complete project proposal',
-    description: 'Write and submit the Q4 project proposal',
-    status: 'NEW',
-    dueDate: new Date('2024-03-01'),
-    priority: 'HIGH',
-  },
-  {
-    id: '2',
-    title: 'Review pull requests',
-    description: 'Review and merge outstanding PRs',
-    status: 'NEW',
-    dueDate: new Date('2024-02-28'),
-    priority: 'MEDIUM',
-  },
-  // Add more sample tasks...
-] as const
 
 const GridTab = () => {
   // Fetching Project Data
@@ -112,17 +90,6 @@ const GridTab = () => {
           You are not assigned to any projects
         </div>
       ) : null}
-      <div className="p-4">
-        <TaskPriorityWidget
-          tasks={tasks}
-          initialVisibleCount={3}
-          onTaskUpdate={async (taskId, status) => {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-            console.log('Updated task:', taskId, status)
-          }}
-        />
-      </div>
     </div>
   )
 }

@@ -9,17 +9,20 @@ import type { Task, TaskStatusType } from '@prisma/client'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
+import { Badge } from '@ui/badge'
 
 interface TaskPriorityWidgetProps {
   tasks: Task[]
   initialVisibleCount?: number
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
+  maxHeight?: number
 }
 
 export default function TaskPriorityWidget({
   tasks: initialTasks,
   initialVisibleCount = 5,
   onTaskUpdate,
+  maxHeight = 320, // Default fixed height
 }: TaskPriorityWidgetProps) {
   const [expanded, setExpanded] = React.useState(false)
   const [tasks, setTasks] = React.useState(initialTasks)
@@ -27,12 +30,31 @@ export default function TaskPriorityWidget({
     null,
   )
 
-  // Sort tasks by due date
+  // Sort tasks by due date and priority
   const sortedTasks = React.useMemo(() => {
-    return [...tasks].sort(
-      (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
-    )
+    return [...tasks].sort((a, b) => {
+      // First sort by due date
+      const dateComparison =
+        new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      if (dateComparison !== 0) return dateComparison
+
+      // If dates are the same, sort by priority (HIGH > MEDIUM > LOW)
+      const priorityOrder = { HIGH: 0, MEDIUM: 1, LOW: 2 }
+      return priorityOrder[a.priority] - priorityOrder[b.priority]
+    })
   }, [tasks])
+
+  // Filter tasks due today
+  const todayTasks = React.useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    return sortedTasks.filter((task) => {
+      const taskDate = new Date(task.dueDate)
+      taskDate.setHours(0, 0, 0, 0)
+      return taskDate.getTime() === today.getTime()
+    })
+  }, [sortedTasks])
 
   const visibleTasks = expanded
     ? sortedTasks
@@ -59,18 +81,46 @@ export default function TaskPriorityWidget({
     }
   }
 
+  // Get counts for statistics
+  const totalTasks = tasks.length
+  const completedTasks = tasks.filter((t) => t.status === 'DONE').length
+  const todayTasksCount = todayTasks.length
+  const overdueTasks = sortedTasks.filter((task) => {
+    const now = new Date()
+    const dueDate = new Date(task.dueDate)
+    return dueDate < now && task.status !== 'DONE'
+  }).length
+
   return (
     <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Priority Tasks</CardTitle>
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-center">
+          <CardTitle>Priority Tasks</CardTitle>
+          <div className="flex gap-2">
+            <Badge variant="outline" className="bg-primary/10">
+              Today: {todayTasksCount}
+            </Badge>
+            <Badge
+              variant="outline"
+              className="bg-destructive/10 text-destructive"
+            >
+              Overdue: {overdueTasks}
+            </Badge>
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground mt-1">
+          {completedTasks} of {totalTasks} tasks completed
+        </div>
       </CardHeader>
-      <CardContent>
-        <motion.div
-          layout
-          className="space-y-4"
-          animate={{ height: expanded ? 'auto' : 'auto' }}
+      <CardContent className="p-0">
+        {/* Fixed height container */}
+        <div
+          className="h-[var(--task-widget-height)]"
+          style={
+            { '--task-widget-height': `${maxHeight}px` } as React.CSSProperties
+          }
         >
-          <ScrollArea className={expanded ? 'h-[400px]' : 'h-auto'}>
+          <ScrollArea className="h-full px-6 py-2">
             <AnimatePresence initial={false}>
               {visibleTasks.map((task) => (
                 <motion.div
@@ -79,7 +129,7 @@ export default function TaskPriorityWidget({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="group py-3"
+                  className="group py-3 border-b border-border last:border-0"
                 >
                   <div className="flex items-center space-x-3">
                     <motion.div
@@ -147,7 +197,7 @@ export default function TaskPriorityWidget({
                     <div className="flex-grow flex items-center justify-between">
                       <div className="flex flex-col">
                         <span
-                          className={`text-sm ${
+                          className={`text-sm font-medium ${
                             task.status === 'DONE'
                               ? 'line-through text-muted-foreground'
                               : ''
@@ -155,14 +205,34 @@ export default function TaskPriorityWidget({
                         >
                           {task.title}
                         </span>
-                        <span className="text-xs text-muted-foreground">
-                          Due {format(new Date(task.dueDate), 'MMM d')}
-                        </span>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-muted-foreground">
+                            Due {format(new Date(task.dueDate), 'MMM d')}
+                          </span>
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] px-1 py-0 h-4 ${
+                              task.priority === 'HIGH'
+                                ? 'bg-destructive/10 text-destructive border-destructive/20'
+                                : task.priority === 'MEDIUM'
+                                  ? 'bg-warning/10 text-warning border-warning/20'
+                                  : 'bg-muted text-muted-foreground'
+                            }`}
+                          >
+                            {task.priority.toLowerCase()}
+                          </Badge>
+                          {task.taskCode && (
+                            <span className="text-[10px] text-muted-foreground">
+                              {task.taskCode}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="View task details"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Button>
@@ -170,17 +240,31 @@ export default function TaskPriorityWidget({
                   </div>
                 </motion.div>
               ))}
+              {visibleTasks.length === 0 && (
+                <div className="py-8 text-center text-muted-foreground">
+                  No tasks to display
+                </div>
+              )}
             </AnimatePresence>
           </ScrollArea>
-        </motion.div>
+        </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-between pt-2">
+        <div className="text-xs text-muted-foreground">
+          {expanded
+            ? `Showing all ${sortedTasks.length} tasks`
+            : `Showing ${Math.min(
+                initialVisibleCount,
+                sortedTasks.length,
+              )} of ${sortedTasks.length} tasks`}
+        </div>
         <Button
           variant="ghost"
-          className="w-full justify-between"
+          size="sm"
+          className="gap-1"
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? 'Show Less' : 'All Tasks'}
+          {expanded ? 'Show Less' : 'Show All'}
           <ChevronDown
             className={`h-4 w-4 transition-transform ${
               expanded ? 'rotate-180' : ''

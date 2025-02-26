@@ -38,7 +38,7 @@ export function ProjectsNav({ projects, session }: ProjectsNavProps) {
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden p-0 px-2">
         <div className="flex items-center justify-between px-2 py-1">
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="p-0 hover:bg-transparent">

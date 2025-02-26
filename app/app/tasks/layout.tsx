@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Personal Tasks | Mirama',
+  title: 'My Tasks',
   description: 'Overview of Personal Tasks',
 }
 

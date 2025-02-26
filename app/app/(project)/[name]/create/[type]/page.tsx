@@ -55,7 +55,7 @@ import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import { capitalize } from '@src/lib/utils'
 import { Label } from '@src/components/ui/label'
 import ClearButton from '@src/components/Buttons/ClearButton'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -108,12 +108,22 @@ const CreateTaskForm = ({
 
   const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
     startTransition(() => {
-      if (vals.assignedToId === 'undefined' || vals.assignedToId === '')
+      if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
         vals.assignedToId = null
+      }
+
+      // Optimistically update SWR cache globally
+      const taskKey = `task?id=${projectContext?.projectId}&ignoreCompleted=false`
+
       // To make returning to unassigned state possible, we have to reset the undefined string
-      postResource('task', vals).then(() => {
-        router.back()
-      })
+      postResource('task', vals)
+        .then(() => {
+          mutate(taskKey)
+          router.back()
+        })
+        .catch(() => {
+          mutate(taskKey)
+        })
     })
   }
   return (

@@ -13,11 +13,24 @@ import Link from 'next/link'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 import { Button } from '../ui/button'
-import { Ellipsis } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { APP_HEADER_HEIGHT } from '@src/lib/constants'
+import useSWR, { mutate } from 'swr'
+import { type Favourite, FavouriteType } from '@prisma/client'
+import { postResource } from '@src/lib/api/postResource'
+import { deleteResources } from '@src/lib/api/deleteResource'
 
 const AppHeader = () => {
   const pathname = usePathname()
+
+  const { data: favs, mutate: updateFavs } = useSWR<Favourite[]>({
+    url: 'favourite',
+    type: FavouriteType.ROUTE,
+  })
+
+  const currFav = useMemo(() => {
+    return favs?.find((fav) => fav.data === pathname)
+  }, [favs, pathname])
 
   // We extract all segments from the URL for breadcrumbs.
   // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
@@ -83,12 +96,58 @@ const AppHeader = () => {
       </div>
       <div className="flex justify-center items-center md:hidden">
         <Link href={'/app'}>
-          <span className="font-semibold text-lg">MIRAGE.</span>
+          <span className="font-semibold text-lg">.mirage</span>
         </Link>
       </div>
-      <div className="flex justify-center items-center md:hidden">
-        <Button variant={'ghost'}>
-          <Ellipsis size={18} />
+      <div
+        className={`flex justify-center items-center ${
+          currFav ? 'text-yellow-500' : ''
+        }`}
+      >
+        <Button
+          variant={'ghost'}
+          onClick={() => {
+            if (!currFav) {
+              const newFav = {
+                id: Date.now().toString(),
+                type: FavouriteType.ROUTE,
+                data: pathname,
+                userId: '',
+              }
+
+              updateFavs((existingFavs: Favourite[] = []) => [
+                ...existingFavs,
+                newFav,
+              ])
+
+              postResource('favourite', {
+                type: FavouriteType.ROUTE,
+                data: pathname,
+              })
+                .then(() => {
+                  mutate({ url: 'favourite', type: FavouriteType.ROUTE })
+                })
+                .catch(() => {
+                  // Rollback if the request fails
+                  mutate({ url: 'favourite', type: FavouriteType.ROUTE }, favs)
+                })
+            } else {
+              updateFavs((existingFavs?: Favourite[]) => {
+                if (!existingFavs) return []
+                return existingFavs.filter((fav) => fav.id !== currFav?.id)
+              })
+
+              deleteResources('favourite', [currFav.id])
+                .then(() => {
+                  mutate({ url: 'favourite', type: FavouriteType.ROUTE })
+                })
+                .catch(() => {
+                  mutate({ url: 'favourite', type: FavouriteType.ROUTE }, favs)
+                })
+            }
+          }}
+        >
+          <Star size={18} />
         </Button>
       </div>
     </header>

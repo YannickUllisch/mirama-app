@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu'
 
-const SidebarTeamSwitcher = () => {
+const SidebarHeader = () => {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -36,4 +36,4 @@ const SidebarTeamSwitcher = () => {
   )
 }
 
-export default SidebarTeamSwitcher
+export default SidebarHeader

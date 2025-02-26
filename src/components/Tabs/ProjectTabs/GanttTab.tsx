@@ -88,11 +88,13 @@ const GanttTab = () => {
     useState<Milestone>(defaultMilestone)
 
   // Fetching Data
+  // Update the type definition for tasks to include the isEditing property
   const { data: tasks, mutate: updateTasks } = useSWR<
     (Task & {
       assignedTo: User
       subtasks: Task[]
       tags: Tag[]
+      isEditing?: boolean
     })[]
   >(
     projectContext?.projectId
@@ -192,7 +194,7 @@ const GanttTab = () => {
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
       />
-      <div className="border border-border/50 dark:border-border rounded-md pb-5 h-[50vh]">
+      <div className="border border-border/50 dark:border-border rounded-md pb-5 h-[80vh]">
         {project ? (
           <GanttProvider
             endDate={new Date(project?.endDate)}

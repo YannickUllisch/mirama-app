@@ -45,7 +45,6 @@ const ListTab = () => {
     projectContext?.projectId
       ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
       : undefined,
-    { revalidateOnMount: true },
   )
 
   const { data: users } = useSWR<User[]>('team/member')
@@ -66,9 +65,13 @@ const ListTab = () => {
     if (!selectedItems.includes(id)) {
       selectedItems.push(id)
     }
-
-    deleteResources('task', selectedItems, {
-      mutate: updateTasks,
+    updateTasks(
+      (existingTasks = []) =>
+        existingTasks.filter((task) => !selectedItems.includes(task.id)),
+      false,
+    )
+    deleteResources('task', selectedItems).catch(() => {
+      updateTasks()
     })
   }
 

@@ -17,7 +17,7 @@ import {
   SidebarMenuAction,
   SidebarRail,
 } from '@src/components/ui/sidebar'
-import SidebarTeamSwitcher from './TeamSwitcher'
+import SelfSidebarHeader from './SidebarHeader'
 import {
   Role,
   type Project,
@@ -131,16 +131,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarTeamSwitcher />
+        <SelfSidebarHeader />
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
         <SidebarMainNav items={AppMenu} session={session} />
-        <FavoritesNav
-          favorites={[
-            { id: '1', name: 'Dashboard', href: '/app/dashboard' },
-            { id: '2', name: 'Recent Tasks', href: '/app/tasks' },
-          ]}
-        />
+        <FavoritesNav />
         <ProjectsNav
           session={session}
           projects={projects.map((p) => ({

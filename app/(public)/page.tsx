@@ -7,7 +7,6 @@ import { LandingFAQ } from '@src/components/Landing/FAQ'
 import { FeaturesShowcase } from '@src/components/Landing/FeaturesView'
 import { ScrollAnimationWrapper } from '@src/components/Landing/ScrollWrapper'
 import { ThemeShowcase } from '@src/components/Landing/ThemeShowcase'
-import { LandingThemeSlider } from '@src/components/Landing/ThemeSlide'
 
 const LandingPage: FC = () => {
   return (
@@ -24,9 +23,9 @@ const LandingPage: FC = () => {
         <FeaturesShowcase />
       </ScrollAnimationWrapper>
 
-      <ScrollAnimationWrapper>
+      {/* <ScrollAnimationWrapper>
         <ThemeShowcase />
-      </ScrollAnimationWrapper>
+      </ScrollAnimationWrapper> */}
 
       <ScrollAnimationWrapper>
         <LandingFAQ />
