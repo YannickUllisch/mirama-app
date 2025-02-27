@@ -46,7 +46,11 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
                     <Link href={item.href} prefetch>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        className={item.href === pathname ? 'bg-secondary' : ''}
+                        className={
+                          item.href === pathname
+                            ? 'bg-muted dark:bg-secondary'
+                            : ''
+                        }
                       >
                         {item.icon && <item.icon />}
 
@@ -73,7 +77,9 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
                             <SidebarMenuSubItem
                               key={subItem.title}
                               className={
-                                item.href === pathname ? 'bg-secondary' : ''
+                                item.href === pathname
+                                  ? 'bg-background dark:bg-secondary'
+                                  : ''
                               }
                             >
                               <SidebarMenuSubButton

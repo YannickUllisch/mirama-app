@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
 import { Button } from '../ui/button'
-import { Star } from 'lucide-react'
+import { Ellipsis, Share2, Star } from 'lucide-react'
 import { APP_HEADER_HEIGHT } from '@src/lib/constants'
 import useSWR, { mutate } from 'swr'
 import { type Favourite, FavouriteType } from '@prisma/client'
@@ -52,7 +52,7 @@ const AppHeader = () => {
   return (
     <header
       style={{ zIndex: 50 }}
-      className={`sticky top-0 w-full bg-sidebar flex gap-2 h-[${APP_HEADER_HEIGHT}px] p-4 justify-between `}
+      className={`sticky top-0 w-full bg-white/70 dark:bg-neutral-900 border-b flex gap-2 h-[${APP_HEADER_HEIGHT}px] p-2 justify-between `}
     >
       <div className="flex items-center justify-start gap-4 pl-2">
         <SidebarTrigger className="-ml-1" />
@@ -100,12 +100,13 @@ const AppHeader = () => {
         </Link>
       </div>
       <div
-        className={`flex justify-center items-center ${
+        className={`flex justify-center items-center md:block gap-0 ${
           currFav ? 'text-yellow-500' : ''
         }`}
       >
         <Button
           variant={'ghost'}
+          className="p-2"
           onClick={() => {
             if (!currFav) {
               const newFav = {
@@ -147,7 +148,13 @@ const AppHeader = () => {
             }
           }}
         >
-          <Star size={18} />
+          <Star size={14} />
+        </Button>
+        <Button className="p-2" variant={'ghost'}>
+          <Share2 size={14} />
+        </Button>
+        <Button className="p-2" variant={'ghost'}>
+          <Ellipsis size={14} />
         </Button>
       </div>
     </header>

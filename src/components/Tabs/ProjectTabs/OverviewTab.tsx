@@ -21,6 +21,7 @@ import { Progress } from '@ui/progress'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import { TaskDistributionChart } from '@src/components/Widgets/TaskDistWidget'
 
 const OverviewTab = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -44,33 +45,10 @@ const OverviewTab = () => {
       : undefined,
   )
 
-  const tasksScheduledToday = useMemo(() => {
-    return tasks?.filter(
-      (task) =>
-        DateTime.fromJSDate(new Date(task.dueDate))
-          .startOf('day')
-          .equals(DateTime.now().startOf('day')) &&
-        task.assignedToId === session?.user.id,
-    )
-  }, [tasks, session])
-
   const completedTasks =
     tasks?.filter((task) => task.status === 'DONE').length || 0
   const totalTasks = tasks?.length || 0
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
-
-  const nextMilestone = useMemo(() => {
-    return milestones?.sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    )[0]
-  }, [milestones])
-
-  const taskStatusData = [
-    { name: 'Completed', value: completedTasks },
-    { name: 'Remaining', value: totalTasks - completedTasks },
-  ]
-
-  const COLORS = ['#f43f5e', '#8884d8']
 
   return (
     <div className="space-y-6">
@@ -159,93 +137,13 @@ const OverviewTab = () => {
           </CardContent>
         </Card>
       </div>
-
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 border">
-          <TabsTrigger value="overview">Task Overview</TabsTrigger>
-          <TabsTrigger value="today">Today's Tasks</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview">
-          <Card className="bg-neutral-50 dark:bg-neutral-950/40">
-            <CardHeader>
-              <CardTitle>Task Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="w-2/3">
-                  <TaskTree
-                    tasks={tasks ?? []}
-                    projectName={projectContext?.projectName ?? ''}
-                  />
-                </div>
-                <div className="w-1/3">
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie
-                        data={taskStatusData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {taskStatusData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${entry.name}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex justify-center space-x-4">
-                    {taskStatusData.map((entry, index) => (
-                      <div
-                        key={`legend-${entry.name}`}
-                        className="flex items-center"
-                      >
-                        <div
-                          className="w-3 h-3 mr-1"
-                          style={{ backgroundColor: COLORS[index] }}
-                        />
-                        <span className="text-sm">{entry.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="today">
-          <Card className="bg-neutral-50 dark:bg-neutral-950/40">
-            <CardHeader>
-              <CardTitle>Today's Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CheckboxTaskList tasks={tasksScheduledToday} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {nextMilestone && (
-        <Card className="bg-neutral-50 dark:bg-neutral-950/40 pb-5">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>Next Milestone</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{nextMilestone.title}</div>
-            <p className="text-sm text-muted-foreground mt-2">
-              {DateTime.fromJSDate(new Date(nextMilestone.date)).toFormat(
-                'LLL dd, yyyy',
-              )}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <div className="flex w-full gap-2">
+        <TaskTree
+          projectName={projectContext?.projectName ?? ''}
+          tasks={tasks ?? []}
+        />
+        <TaskDistributionChart />
+      </div>
     </div>
   )
 }

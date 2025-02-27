@@ -82,9 +82,6 @@ const projectTabs: {
 ]
 
 const ClientProjectPage = () => {
-  // Session
-  const { data: session } = useSession({ required: true })
-
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -103,9 +100,9 @@ const ClientProjectPage = () => {
     <Tabs value={tab} onValueChange={setTab} className="w-full">
       <div className="flex w-full items-center gap-4 dark:text-white rounded-lg h-10 relative overflow-x-auto">
         <TabsList
-          className={`absolute justify-stretch inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 ${
-            session && 'border'
-          }`}
+          className={
+            'absolute justify-stretch inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2'
+          }
         >
           {projectTabs.map(
             (tabHeader) => (

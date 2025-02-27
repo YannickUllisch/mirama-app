@@ -72,7 +72,7 @@ export function ProjectsNav({ projects, session }: ProjectsNavProps) {
         <CollapsibleContent>
           <SidebarMenu>
             {projects.map((project) => (
-              <SidebarMenuItem>
+              <SidebarMenuItem key={project.href}>
                 <div className="flex items-center w-full gap-2 px-2">
                   <SidebarMenuButton
                     asChild

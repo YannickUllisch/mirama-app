@@ -10,22 +10,24 @@ import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
 import { Badge } from '@ui/badge'
+import type { KeyedMutator } from 'swr'
+import { useMemo } from 'react'
+import Link from 'next/link'
 
 interface TaskPriorityWidgetProps {
-  tasks: Task[]
   initialVisibleCount?: number
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
-  maxHeight?: number
+  tasks: Task[]
+  updatePersonalTasks: KeyedMutator<Task[]>
 }
 
-export default function TaskPriorityWidget({
-  tasks: initialTasks,
+const TaskPriorityWidget = ({
   initialVisibleCount = 5,
   onTaskUpdate,
-  maxHeight = 320, // Default fixed height
-}: TaskPriorityWidgetProps) {
+  updatePersonalTasks,
+  tasks,
+}: TaskPriorityWidgetProps) => {
   const [expanded, setExpanded] = React.useState(false)
-  const [tasks, setTasks] = React.useState(initialTasks)
   const [updatingTaskId, setUpdatingTaskId] = React.useState<string | null>(
     null,
   )
@@ -33,7 +35,11 @@ export default function TaskPriorityWidget({
   // Sort tasks by due date and priority
   const sortedTasks = React.useMemo(() => {
     return [...tasks].sort((a, b) => {
-      // First sort by due date
+      // First sort by completion status (incomplete tasks first)
+      if (a.status === 'DONE' && b.status !== 'DONE') return 1
+      if (a.status !== 'DONE' && b.status === 'DONE') return -1
+
+      // If both tasks have the same completion status, sort by due date
       const dateComparison =
         new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
       if (dateComparison !== 0) return dateComparison
@@ -45,7 +51,7 @@ export default function TaskPriorityWidget({
   }, [tasks])
 
   // Filter tasks due today
-  const todayTasks = React.useMemo(() => {
+  const todayTasks = useMemo(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -69,7 +75,7 @@ export default function TaskPriorityWidget({
 
     try {
       await onTaskUpdate(taskId, newStatus as TaskStatusType)
-      setTasks(
+      updatePersonalTasks(
         tasks.map((t) =>
           t.id === taskId ? { ...t, status: newStatus as TaskStatusType } : t,
         ),
@@ -82,9 +88,7 @@ export default function TaskPriorityWidget({
   }
 
   // Get counts for statistics
-  const totalTasks = tasks.length
   const completedTasks = tasks.filter((t) => t.status === 'DONE').length
-  const todayTasksCount = todayTasks.length
   const overdueTasks = sortedTasks.filter((task) => {
     const now = new Date()
     const dueDate = new Date(task.dueDate)
@@ -92,13 +96,13 @@ export default function TaskPriorityWidget({
   }).length
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md bg-background">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center overflow-hidden">
           <CardTitle>Priority Tasks</CardTitle>
-          <div className="flex gap-2">
+          <div className="md:flex gap-2">
             <Badge variant="outline" className="bg-primary/10">
-              Today: {todayTasksCount}
+              Today: {todayTasks.length}
             </Badge>
             <Badge
               variant="outline"
@@ -109,17 +113,12 @@ export default function TaskPriorityWidget({
           </div>
         </div>
         <div className="text-xs text-muted-foreground mt-1">
-          {completedTasks} of {totalTasks} tasks completed
+          {completedTasks} of {tasks.length} tasks completed
         </div>
       </CardHeader>
       <CardContent className="p-0">
         {/* Fixed height container */}
-        <div
-          className="h-[var(--task-widget-height)]"
-          style={
-            { '--task-widget-height': `${maxHeight}px` } as React.CSSProperties
-          }
-        >
+        <div className="h-[400px]">
           <ScrollArea className="h-full px-6 py-2">
             <AnimatePresence initial={false}>
               {visibleTasks.map((task) => (
@@ -132,24 +131,12 @@ export default function TaskPriorityWidget({
                   className="group py-3 border-b border-border last:border-0"
                 >
                   <div className="flex items-center space-x-3">
-                    <motion.div
+                    <div
                       className="w-5 h-5 flex-shrink-0 relative"
-                      animate={
-                        updatingTaskId === task.id
-                          ? { rotate: 360 }
-                          : { rotate: 0 }
-                      }
-                      transition={
-                        updatingTaskId === task.id
-                          ? {
-                              duration: 1,
-                              repeat: Number.POSITIVE_INFINITY,
-                              ease: 'linear',
-                            }
-                          : { duration: 0 }
-                      }
                       onClick={() => toggleTaskCompletion(task.id)}
+                      onKeyUp={() => toggleTaskCompletion(task.id)}
                     >
+                      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -171,18 +158,6 @@ export default function TaskPriorityWidget({
                           `}
                           strokeWidth="2"
                         />
-                        {updatingTaskId === task.id && (
-                          <path
-                            d="M12 2C13.3132 2 14.6136 2.25866 15.8268 2.7612C17.0401 3.26375 18.1425 4.00035 19.0711 4.92893C19.9997 5.85752 20.7362 6.95991 21.2388 8.17317C21.7413 9.38642 22 10.6868 22 12"
-                            className={
-                              task.status === 'DONE'
-                                ? 'stroke-primary'
-                                : 'stroke-primary-foreground'
-                            }
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        )}
                         {task.status === 'DONE' && !updatingTaskId && (
                           <path
                             d="M8 12L11 15L16 9"
@@ -193,7 +168,31 @@ export default function TaskPriorityWidget({
                           />
                         )}
                       </svg>
-                    </motion.div>
+                      {updatingTaskId === task.id && (
+                        // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+                        <svg
+                          className="absolute inset-0 animate-spin"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            className="opacity-75 stroke-primary"
+                            d="M12 2C13.3132 2 14.6136 2.25866 15.8268 2.7612C17.0401 3.26375 18.1425 4.00035 19.0711 4.92893C19.9997 5.85752 20.7362 6.95991 21.2388 8.17317C21.7413 9.38642 22 10.6868 22 12"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      )}
+                    </div>
                     <div className="flex-grow flex items-center justify-between">
                       <div className="flex flex-col">
                         <span
@@ -228,14 +227,14 @@ export default function TaskPriorityWidget({
                           )}
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      <Link
+                        className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary"
                         aria-label="View task details"
+                        href={''}
+                        prefetch={false}
                       >
                         <ExternalLink className="h-4 w-4" />
-                      </Button>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
@@ -275,3 +274,5 @@ export default function TaskPriorityWidget({
     </Card>
   )
 }
+
+export default TaskPriorityWidget

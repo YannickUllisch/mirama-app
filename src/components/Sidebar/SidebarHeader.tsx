@@ -2,7 +2,7 @@
 import type * as React from 'react'
 import Link from 'next/link'
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@ui/sidebar'
-import { Unlink2 } from 'lucide-react'
+import { ClipboardCheck, Unlink2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -18,8 +18,8 @@ const SidebarHeader = () => {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary-light/20 text-primary">
-                <Unlink2 size={18} />
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-text text-text-inverted">
+                <ClipboardCheck size={18} />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <div className="flex items-center">

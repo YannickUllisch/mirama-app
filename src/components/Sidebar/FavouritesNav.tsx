@@ -47,7 +47,7 @@ const FavoritesNav = () => {
         <CollapsibleContent>
           <SidebarMenu>
             {favs?.map((favorite) => (
-              <SidebarMenuItem>
+              <SidebarMenuItem key={favorite.id}>
                 <div className="flex items-center w-full gap-2 px-2">
                   <SidebarMenuButton
                     asChild
