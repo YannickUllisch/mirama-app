@@ -25,7 +25,7 @@ const UserAvatar: FC<UserAvatarProps> = ({
         <GeneralTooltip tipText={username ?? 'Unassigned'}>
           <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
             <AvatarFallback
-              className={`${username ? userColor : ''}`}
+              className={`${username ? userColor : ''} text-white`}
               style={fontSize ? { fontSize: fontSize } : {}}
             >
               {username ? (
@@ -45,7 +45,9 @@ const UserAvatar: FC<UserAvatarProps> = ({
             color: 'white',
           }}
         >
-          <AvatarFallback className={`${username ? userColor : ''} `}>
+          <AvatarFallback
+            className={`${username ? userColor : ''} text-white `}
+          >
             {username ? (
               extractFirstLetters(username)
             ) : (

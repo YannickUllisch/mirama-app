@@ -26,11 +26,12 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({ projectName }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer px-2">
+        <div className="flex items-center border-dashed border-2  hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer px-2">
           <Plus width={15} />
           <Button
             style={{ fontSize: 11, textDecoration: 'none' }}
             variant="link"
+            size={'sm'}
           >
             New Task
           </Button>

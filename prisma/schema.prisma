@@ -97,6 +97,7 @@ model CompanyInvitation {
 model Project {
   id          String       @id @default(cuid())
   name        String
+  description String?
   startDate   DateTime
   endDate     DateTime
   priority    PriorityType @default(LOW)

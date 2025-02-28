@@ -24,7 +24,9 @@ const SidebarHeader = () => {
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <div className="flex items-center">
                   <Link href="/" className="flex items-center gap-2">
-                    <span className="text-2xl font-bold">.mirage</span>
+                    <span className="text-2xl font-bold tracking-tighter">
+                      .mirage
+                    </span>
                   </Link>
                 </div>
               </div>

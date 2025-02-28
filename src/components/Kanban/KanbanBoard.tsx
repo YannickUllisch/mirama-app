@@ -366,7 +366,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       <div className="overflow-auto">
         <header className="sticky top-0 rounded-sm bg-background z-10">
           <div className="flex w-full items-center">
-            <div className="w-[150px] p-2">Containers</div>
+            <div className="w-[150px] p-2">Grouping</div>
             <div className="flex flex-1">
               {Object.keys(TaskStatusType).map((type) => (
                 <div

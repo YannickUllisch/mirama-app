@@ -1,92 +1,43 @@
 'use client'
-import { Role } from '@prisma/client'
-import React, { type JSX, useEffect, useState } from 'react'
+import type { Milestone, Project, User } from '@prisma/client'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import {
-  ClipboardList,
-  GanttChart,
-  Map as MapIcon,
-  Settings,
-  Table2,
-} from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
-import GanttTab from '@src/components/Tabs/ProjectTabs/GanttTab'
-import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
-import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
-import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
-
-// Tab definitions
-const projectTabs: {
-  roles: Role[]
-  id: string
-  component: JSX.Element
-  headerComponent: JSX.Element
-}[] = [
-  {
-    id: 'overview',
-    roles: Object.values(Role),
-    component: <OverviewTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <MapIcon width={15} /> Overview
-      </div>
-    ),
-  },
-  {
-    id: 'table',
-    roles: Object.values(Role),
-    component: <ListTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <Table2 width={15} /> Table
-      </div>
-    ),
-  },
-  {
-    id: 'kanban',
-    roles: Object.values(Role),
-    component: <BoardTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <ClipboardList width={15} /> Board
-      </div>
-    ),
-  },
-  {
-    id: 'timeline',
-    roles: Object.values(Role),
-    component: <GanttTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <GanttChart width={15} /> Timeline
-      </div>
-    ),
-  },
-  {
-    id: 'settings',
-    roles: Object.values(Role),
-    component: <SettingsTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <Settings width={15} /> Settings
-      </div>
-    ),
-  },
-]
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import useSWR from 'swr'
+import { projectTabs } from './tabs'
+import ProjectHeader from '@src/components/Header/ProjectHeader'
 
 const ClientProjectPage = () => {
+  const projectContext = useContext(ProjectDataContext)
+
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentTab = searchParams.get('tab')
   const [tab, setTab] = useState(currentTab ?? 'overview')
+
+  const { data: project } = useSWR<Project & { milestones: Milestone[] }>({
+    url: projectContext ? `project/${projectContext.projectId}` : undefined,
+    select: {
+      startDate: true,
+      endDate: true,
+      priority: true,
+      status: true,
+      archived: true,
+      name: true,
+      milestones: true,
+    },
+  })
+
+  const { data: users } = useSWR<User[]>(
+    projectContext ? `project/users?id=${projectContext.projectId}` : undefined,
+  )
 
   useEffect(() => {
     if (currentTab !== tab) {
@@ -96,16 +47,25 @@ const ClientProjectPage = () => {
     }
   }, [tab, currentTab, pathname, searchParams, router])
 
+  const upcomingMilestone = useMemo(() => {
+    return project?.milestones
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) // Sort by date ascending
+      .find((milestone) => new Date(milestone.date) >= new Date())
+  }, [project?.milestones])
+
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="flex w-full items-center gap-4 dark:text-white rounded-lg h-10 relative overflow-x-auto">
-        <TabsList
-          className={
-            'absolute justify-stretch inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2'
-          }
-        >
-          {projectTabs.map(
-            (tabHeader) => (
+    <>
+      <ProjectHeader
+        project={project}
+        users={users}
+        upcomingMilestone={upcomingMilestone}
+      />
+
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <div className="flex w-full items-center gap-4 dark:text-white rounded-lg h-10 relative overflow-x-auto">
+          {/* Tabs List */}
+          <TabsList className="absolute  inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
+            {projectTabs.map((tabHeader) => (
               <TabsTrigger
                 style={{ fontSize: 12 }}
                 value={tabHeader.id}
@@ -113,20 +73,17 @@ const ClientProjectPage = () => {
               >
                 {tabHeader.headerComponent}
               </TabsTrigger>
-            ),
-            // ),
-          )}
-        </TabsList>
-      </div>
-      {projectTabs.map(
-        (tab) => (
+            ))}
+          </TabsList>
+        </div>
+        {/* Tab Content */}
+        {projectTabs.map((tab) => (
           <TabsContent value={tab.id} key={`${tab.id}-tab`}>
             {tab.component}
           </TabsContent>
-        ),
-        // ),
-      )}
-    </Tabs>
+        ))}
+      </Tabs>
+    </>
   )
 }
 

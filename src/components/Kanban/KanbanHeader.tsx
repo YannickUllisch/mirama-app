@@ -27,10 +27,6 @@ export function KanbanHeader({
   return (
     <div className="sticky top-0 z-10 bg-inherit">
       <div className="flex flex-col gap-4 p-4">
-        <div className="flex items-center justify-between">
-          <Button variant={'secondary'}>Create Container</Button>
-        </div>
-
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />

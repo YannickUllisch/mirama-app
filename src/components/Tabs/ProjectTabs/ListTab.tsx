@@ -75,14 +75,6 @@ const ListTab = () => {
     })
   }
 
-  const ToolbarLeft = () => {
-    return (
-      <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-        <TaskTypeCreate projectName={projectContext?.projectName ?? ''} />
-      </div>
-    )
-  }
-
   const ToolbarRight = () => {
     return (
       <DropdownMenu>
@@ -139,7 +131,6 @@ const ListTab = () => {
           refresh: { mutate: updateTasks },
           showFilterOption: true,
           filterOptionType: 'TASK',
-          addToolbarleft: <ToolbarLeft />,
           addToolbarright: <ToolbarRight />,
         }}
         footerOptions={{ showPagination: true }}

@@ -48,7 +48,7 @@ const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
                         tooltip={item.title}
                         className={
                           item.href === pathname
-                            ? 'bg-muted dark:bg-secondary'
+                            ? 'bg-muted dark:bg-secondary tracking-tighter'
                             : ''
                         }
                       >
