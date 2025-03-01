@@ -6,7 +6,7 @@ export const ProjectDataContext = createContext<
   { projectId: string; projectName: string } | undefined
 >(undefined)
 
-const ProjectUsersContext = ({
+export const ProjectUsersContext = ({
   projectId,
   projectName,
   children,

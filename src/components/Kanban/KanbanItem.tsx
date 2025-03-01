@@ -25,13 +25,21 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { Badge } from '@src/components/ui/badge'
-import { capitalize, cn, getColorByTaskStatusType } from '@src/lib/utils'
+import { capitalize, cn } from '@src/lib/utils'
 import type { KanbanItemType } from '@src/lib/types'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 import UserAvatar from '../Avatar/UserAvatar'
 import { SelectItem } from '@ui/select'
-import ViewTaskSheet from '../Task/ViewTaskSheet'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import dynamic from 'next/dynamic'
+
+// Dynamically import ViewTaskSheet
+const ViewTaskSheet = dynamic(
+  () => import('@src/components/Task/ViewTaskSheet'),
+  {
+    ssr: false, // Ensure it's only loaded on the client side
+  },
+)
 
 const KanbanItem: FC<KanbanItemType> = ({
   id,

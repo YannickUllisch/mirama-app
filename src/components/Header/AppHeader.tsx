@@ -99,14 +99,10 @@ const AppHeader = () => {
           <span className="font-semibold text-lg">.mirage</span>
         </Link>
       </div>
-      <div
-        className={`flex justify-center items-center md:block gap-0 ${
-          currFav ? 'text-yellow-500' : ''
-        }`}
-      >
+      <div className="flex justify-center items-center md:block gap-0 ">
         <Button
           variant={'ghost'}
-          className="p-2"
+          className={`p-2 ${currFav ? 'text-yellow-500' : ''}`}
           onClick={() => {
             if (!currFav) {
               const newFav = {

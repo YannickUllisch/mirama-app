@@ -31,16 +31,27 @@ export function ViewControls({ view, onViewChange }: ViewControlsProps) {
         size="icon"
         onClick={handleZoomOut}
         disabled={view === 'quarterly'}
-        className="h-8 w-8"
+        className="h-8 w-8 border-2 border-dashed"
       >
-        <ZoomOut className="h-4 w-4" />
+        <ZoomOut className="h-4 w-4 " />
         <span className="sr-only">Zoom Out</span>
+      </Button>
+
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={handleZoomIn}
+        disabled={view === 'daily'}
+        className="h-8 w-8 border-2 border-dashed"
+      >
+        <ZoomIn className="h-4 w-4" />
+        <span className="sr-only">Zoom In</span>
       </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="outline"
+            variant="secondary"
             className="h-8 px-3 flex items-center gap-2"
           >
             <Calendar className="h-4 w-4" />
@@ -59,17 +70,6 @@ export function ViewControls({ view, onViewChange }: ViewControlsProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleZoomIn}
-        disabled={view === 'daily'}
-        className="h-8 w-8"
-      >
-        <ZoomIn className="h-4 w-4" />
-        <span className="sr-only">Zoom In</span>
-      </Button>
     </div>
   )
 }

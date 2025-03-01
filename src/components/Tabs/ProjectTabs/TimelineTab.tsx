@@ -197,13 +197,11 @@ const GanttTab = () => {
       <div className="border border-border/50 dark:border-border rounded-md pb-5 h-[80vh]">
         {project ? (
           <GanttProvider
-            endDate={new Date(project?.endDate)}
-            startDate={new Date(project?.startDate)}
             onAddItem={handleAddFeature}
             range={rangeView}
             zoom={50}
           >
-            <GanttSidebar>
+            <GanttSidebar defaultWidth={280} maxWidth={400} minWidth={60}>
               {Object.entries(groupedTasks).map(([group, tasks]) => (
                 <GanttSidebarGroup
                   key={group}
@@ -212,7 +210,17 @@ const GanttTab = () => {
                   {sortedTasks(tasks)?.map((task) => (
                     <GanttSidebarItem
                       key={task.id}
-                      feature={task}
+                      feature={{
+                        endAt: new Date(task.dueDate),
+                        id: task.id,
+                        name: task.title,
+                        startAt: new Date(task.startDate),
+                        status: {
+                          color: '#000000',
+                          id: task.id,
+                          name: task.status,
+                        },
+                      }}
                       onSelectItem={handleViewFeature}
                     />
                   ))}
@@ -234,9 +242,15 @@ const GanttTab = () => {
                             >
                               <GanttFeatureItem
                                 onMove={handleMoveFeature}
-                                {...task}
-                                dueDate={new Date(task.dueDate)}
-                                startDate={new Date(task.startDate)}
+                                endAt={new Date(task.dueDate)}
+                                name={task.title}
+                                startAt={new Date(task.startDate)}
+                                status={{
+                                  color: '#000000',
+                                  id: task.id,
+                                  name: task.status,
+                                }}
+                                id={task.id}
                               >
                                 {getTaskTypeIcon(task.type, 12)}
                                 <p className="flex-1 truncate text-xs">

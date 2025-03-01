@@ -63,6 +63,7 @@
     "framer-motion": "^11.14.4",
     "googleapis": "105",
     "ioredis": "^5.4.2",
+    "jotai": "^2.12.1",
     "lodash.groupby": "^4.6.0",
     "lodash.throttle": "^4.1.1",
     "lucide-react": "^0.469.0",

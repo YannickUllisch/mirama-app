@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { Button } from '@src/components/ui/button'
 
 export interface KanbanHeaderProps {
   onSearch?: (value: string) => void

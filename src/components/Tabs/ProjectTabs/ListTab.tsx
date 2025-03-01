@@ -1,140 +1,352 @@
 'use client'
-import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
-import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import type React from 'react'
-import { useContext, useState } from 'react'
-import useSWR from 'swr'
-import { DataTable } from '@src/components/Tables/DataTable'
-import { ListTabColumns } from './helper/ListTabColumns'
-import { createMemoizedTree } from '@src/lib/data-structures/Tree'
-import TaskTypeCreate from '@src/components/Task/TaskTypeCreate'
-import { Checkbox } from '@src/components/ui/checkbox'
+
 import {
-  DropdownMenu,
-  DropdownMenuContent,
+  ListGroup,
+  ListHeader,
+  ListItem,
+  ListItems,
+  ListProvider,
+} from '@src/components/ui/roadmap-ui/list'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  PriorityType,
+  type Project,
+  type Task,
+  TaskStatusType,
+  type TaskType,
+  type User,
+} from '@prisma/client'
+import useSWR from 'swr'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Input } from '@ui/input'
+import { postResource } from '@src/lib/api/postResource'
+import GeneralSelect from '@src/components/Select/GeneralSelect'
+import { useSession } from 'next-auth/react'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
+import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import {
+  individualTaskTypes,
+  isTaskTypeContainer,
+} from '@src/lib/helpers/TaskTypeHelpers'
+import TaskContextContent from '@src/components/Task/TaskContextContent'
+import {
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@src/components/ui/dropdown-menu'
-import { Settings2 } from 'lucide-react'
-import { Button } from '@src/components/ui/button'
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '@ui/dropdown-menu'
+import { DateTime } from 'luxon'
+import { Checkbox } from '@ui/checkbox'
+import dynamic from 'next/dynamic'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import { deleteResources } from '@src/lib/api/deleteResource'
+
+// Dynamically import ViewTaskSheet
+const ViewTaskSheet = dynamic(
+  () => import('@src/components/Task/ViewTaskSheet'),
+  {
+    ssr: false, // Ensure it's only loaded on the client side
+  },
+)
 
 const ListTab = () => {
-  // Project context
-  const projectContext = useContext(ProjectDataContext)
-
-  // Personalizations
-  const [viewFlattened, setViewFlattened] = useState(false)
-  const [ignoreCompleted, setIgnoreCompleted] = useState(false)
-
-  // We fetch tasks instead of passing from parent to have more specific control.
-  const {
-    data: tasks,
-    mutate: updateTasks,
-    isLoading: tasksLoading,
-  } = useSWR<
-    (Task & {
-      assignedTo: User
-      tags: (TaskTagJoin & { tag: Tag })[]
-      subtasks: Task[]
-    })[]
-  >(
-    projectContext?.projectId
-      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
-      : undefined,
+  // States
+  const { data: session } = useSession()
+  const [showAllTasks, setShowAllTasks] = useState(true)
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState<boolean>(false)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(
+    undefined,
   )
 
-  const { data: users } = useSWR<User[]>('team/member')
+  const projectContext = useContext(ProjectDataContext)
 
-  const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
+  const [newItem, setNewItem] = useState<{
+    status: string
+    title: string
+    type: TaskType
+    parentId: string | undefined
+  } | null>(null)
 
-  // Table states
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [sortingState, setSortingState] = useState<SortingState>([
-    { id: 'taskCode', desc: true },
-  ])
+  // Refs for creating new Items
+  const inputContainerRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const deleteTask = (id: string) => {
-    // Create a set to ensure we get no duplicate IDs to remove
-    const selectedItems = Array.from(
-      new Set(Object.keys(rowSelection).flatMap((key) => key.split('.'))),
-    )
-    if (!selectedItems.includes(id)) {
-      selectedItems.push(id)
+  const {
+    data: tasks,
+    mutate,
+    isLoading: isTasksLoading,
+  } = useSWR<(Task & { assignedTo: User; parent: Task })[]>(
+    projectContext
+      ? `task/personal/${projectContext.projectId}?showAll=${showAllTasks}`
+      : null,
+  )
+
+  // Functions
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over) {
+      return
     }
-    updateTasks(
-      (existingTasks = []) =>
-        existingTasks.filter((task) => !selectedItems.includes(task.id)),
-      false,
+    const status = Object.values(TaskStatusType).find(
+      (status) => status === over.id,
     )
-    deleteResources('task', selectedItems).catch(() => {
-      updateTasks()
-    })
+    if (!status) {
+      return
+    }
+
+    const existingTask = tasks?.find((task) => active.id.toString() === task.id)
+    if (existingTask?.status === status) {
+      return
+    }
+
+    updateResourceById('task', active.id.toString(), { status }, { mutate })
   }
 
-  const ToolbarRight = () => {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className=" border-none  hidden h-8 lg:flex bg-inherit gap-2"
-          >
-            <Settings2 className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>View Options</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex gap-2 text-xs">
-            <Checkbox
-              checked={viewFlattened}
-              onCheckedChange={(e) => setViewFlattened(Boolean(e))}
-            />
-            Flatten Tasks
-          </DropdownMenuItem>
-          <DropdownMenuItem className="flex gap-2 text-xs">
-            <Checkbox
-              checked={ignoreCompleted}
-              onCheckedChange={(e) => setIgnoreCompleted(Boolean(e))}
-            />
-            Hide Completed
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
+  const onAddItem = (
+    status: string,
+    type: TaskType,
+    parentId: string | undefined,
+  ) => {
+    setNewItem({ status, title: '', type, parentId })
   }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewItem((prev) => prev && { ...prev, title: event.target.value })
+  }
+
+  const handleInputSave = () => {
+    if (newItem?.title.trim()) {
+      postResource(
+        'task',
+        {
+          type: newItem.type,
+          title: newItem.title.trim(),
+          status: newItem.status,
+          priority: PriorityType.LOW,
+          projectId: projectContext?.projectId,
+          assignedToId: session?.user.id,
+          parentId: newItem.parentId,
+          dueDate: DateTime.now().plus({ week: 1 }).toJSDate(),
+        },
+        { mutate },
+      )
+      // Call the final save function here
+      setNewItem(null)
+    }
+  }
+
+  const handleInputCancel = () => {
+    setNewItem(null)
+  }
+
+  const onListItemClick = (taskId: string) => {
+    setSelectedTaskId(taskId)
+    setIsTaskSheetOpen(true)
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Handling Functions will never change>
+  useEffect(() => {
+    if (newItem) {
+      setTimeout(() => inputRef.current?.focus(), 200)
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputContainerRef.current &&
+        !inputContainerRef.current.contains(event.target as Node)
+      ) {
+        if (newItem?.title.trim()) {
+          handleInputSave()
+        } else {
+          handleInputCancel()
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [newItem])
 
   return (
-    <div className="rounded-sm outline-none">
-      <DataTable
-        tableIdentifier="task_tab_table"
-        columns={ListTabColumns({
-          mutate: updateTasks,
-          projectName: projectContext?.projectName ?? '',
-          users: users ?? [],
-          onTaskDelete: deleteTask,
-        })}
-        data={viewFlattened ? tasks ?? [] : (taskTree as any[]) ?? []}
-        ignoreSubrows={viewFlattened}
-        enableRowSelection
-        dataLoading={tasksLoading}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-        sortingState={sortingState}
-        setSortingState={setSortingState}
-        toolbarOptions={{
-          refresh: { mutate: updateTasks },
-          showFilterOption: true,
-          filterOptionType: 'TASK',
-          addToolbarright: <ToolbarRight />,
-        }}
-        footerOptions={{ showPagination: true }}
+    <div className="flex flex-col gap-5">
+      <div className="flex gap-2 text-text-secondary items-center">
+        <Checkbox
+          checked={showAllTasks}
+          onCheckedChange={(e) => setShowAllTasks(Boolean(e))}
+        />
+        Show all Tasks
+      </div>
+      <ViewTaskSheet
+        projectName={projectContext?.projectName ?? ''}
+        open={isTaskSheetOpen}
+        setOpen={setIsTaskSheetOpen}
+        taskId={selectedTaskId ?? ''}
+        mutate={mutate}
       />
+      <div className="h-[75vh] overflow-y-scroll rounded-xl border">
+        <ListProvider onDragEnd={handleDragEnd}>
+          {Object.keys(TaskStatusType).map((status) => (
+            <ListGroup key={status} id={status}>
+              <ListHeader
+                className="sticky top-0"
+                name={status}
+                addItem
+                dropdownContent={
+                  <>
+                    <DropdownMenuLabel className="text-xs">
+                      Select Group & Type
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      {tasks
+                        ?.filter((task) => isTaskTypeContainer(task.type))
+                        .map((task) => (
+                          <DropdownMenuSub key={`dropdown-sub-${task.id}`}>
+                            <DropdownMenuSubTrigger
+                              key={`task-container-${task.id}`}
+                              className="flex gap-2 items-center"
+                            >
+                              {getTaskTypeIcon(task.type)}
+                              {task.title}
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent>
+                                {individualTaskTypes.map((type) => (
+                                  <DropdownMenuItem
+                                    key={`tasktype-select-parented-${type}-${status}`}
+                                    onClick={() =>
+                                      onAddItem(status, type, task.id)
+                                    }
+                                    className="flex gap-2 items-center"
+                                  >
+                                    {getTaskTypeIcon(type)}
+                                    {capitalize(type)}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+                        ))}
+                    </DropdownMenuGroup>
+                    <DropdownMenuSub key={'dropdown-sub-no-parent'}>
+                      <DropdownMenuSubTrigger className="flex gap-2 items-center">
+                        <CircleOff size={16} />
+                        Ungrouped
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          {individualTaskTypes.map((type) => (
+                            <DropdownMenuItem
+                              onClick={() => onAddItem(status, type, undefined)}
+                              key={`tasktype-select-${type}-${status}`}
+                              className="flex gap-2 items-center"
+                            >
+                              {getTaskTypeIcon(type)}
+                              {capitalize(type)}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </>
+                }
+                color={getColorByTaskStatusType(status) as string}
+              />
+
+              {isTasksLoading ? (
+                <div className="w-full flex justify-center items-center min-h-[100px]">
+                  <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
+                </div>
+              ) : (
+                <ListItems>
+                  {tasks
+                    ?.filter(
+                      (feature) =>
+                        feature.status === status &&
+                        !isTaskTypeContainer(feature.type),
+                    )
+                    .map((feature, index) => (
+                      <ContextMenu key={`item-list-${feature.id}`}>
+                        <ContextMenuTrigger>
+                          <ListItem
+                            key={feature.id}
+                            id={feature.id}
+                            name={feature.title}
+                            parent={feature.status}
+                            index={index}
+                            onClick={() => onListItemClick(feature.id)}
+                          >
+                            {getTaskTypeIcon(feature.type)}
+                            <p className="m-0 flex-1 font-medium text-xs">
+                              {feature.title}
+                            </p>
+                            {feature.parent && (
+                              <div className="items-center flex gap-2 text-text-secondary text-sm">
+                                <CornerDownRight size={12} />
+                                {getTaskTypeIcon(feature.parent.type, 12)}
+                                {feature.parent.title}
+                              </div>
+                            )}
+
+                            {feature.assignedTo && (
+                              <UserAvatar
+                                avatarSize={19}
+                                fontSize={8}
+                                username={feature.assignedTo.name}
+                              />
+                            )}
+                          </ListItem>
+                        </ContextMenuTrigger>
+                        <TaskContextContent
+                          mutate={mutate}
+                          projectName={projectContext?.projectName ?? ''}
+                          taskId={feature.id}
+                        />
+                      </ContextMenu>
+                    ))}
+                  {newItem?.status === status && (
+                    <div
+                      className={
+                        'flex cursor-grab justify-between items-center gap-2 rounded-md border bg-inherit p-2 shadow-sm'
+                      }
+                    >
+                      <div className="gap-2 items-center flex">
+                        {getTaskTypeIcon(newItem.type)}
+                        <div ref={inputContainerRef}>
+                          <Input
+                            ref={inputRef}
+                            className="w-fit border rounded p-1 h-[21px]"
+                            value={newItem.title}
+                            onChange={handleInputChange}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleInputSave()
+                              if (e.key === 'Escape') handleInputCancel()
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <UserAvatar
+                        avatarSize={19}
+                        fontSize={8}
+                        username={session?.user.name ?? ''}
+                      />
+                    </div>
+                  )}
+                </ListItems>
+              )}
+            </ListGroup>
+          ))}
+        </ListProvider>
+      </div>
     </div>
   )
 }

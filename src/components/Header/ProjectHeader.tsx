@@ -27,9 +27,9 @@ const ProjectHeader: FC<HeaderInterface> = ({
   upcomingMilestone,
 }) => {
   return (
-    <header className="mb-2 bg-background border rounded-lg p-5 h-[140px]">
+    <header className="mb-2 bg-background border rounded-lg p-5 pb-1 overflow-hidden">
       {!project ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="w-full h-full pb-5 flex justify-center items-center">
           <Loader2 className="h-6 w-6 animate-spin ml-2 m-2" />
         </div>
       ) : (
@@ -58,7 +58,7 @@ const ProjectHeader: FC<HeaderInterface> = ({
                 </Badge>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3 ">
               <AvatarGroup
                 usernames={users?.map((u) => u.name) ?? []}
                 avatarSize={7}

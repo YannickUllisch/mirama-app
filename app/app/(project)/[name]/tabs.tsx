@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 import GanttTab from '@src/components/Tabs/ProjectTabs/TimelineTab'
-import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
+import TableTab from '@src/components/Tabs/ProjectTabs/TableTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
 import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 import {
@@ -10,7 +10,9 @@ import {
   ClipboardList,
   GanttChart,
   Settings,
+  ListTodo,
 } from 'lucide-react'
+import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 
 // Tab definitions
 export const projectTabs: {
@@ -32,10 +34,20 @@ export const projectTabs: {
   {
     id: 'table',
     roles: Object.values(Role),
-    component: <ListTab />,
+    component: <TableTab />,
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
         <Table2 width={15} /> Table
+      </div>
+    ),
+  },
+  {
+    id: 'list',
+    roles: Object.values(Role),
+    component: <ListTab />,
+    headerComponent: (
+      <div className="flex justify-center gap-1 items-center">
+        <ListTodo width={15} /> List
       </div>
     ),
   },
