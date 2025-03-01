@@ -1,41 +1,27 @@
 'use client'
-import { addDays } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import TaskPriorityWidget from '@src/components/Widgets/MyTasksWidget'
 import useSWR from 'swr'
-import type {
-  Project,
-  ProjectUser,
-  Task,
+import {
+  type Project,
+  type ProjectUser,
+  type Task,
   TaskStatusType,
-  User,
+  type User,
 } from '@prisma/client'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
-
-import UpcomingMilestoneWidget from '@src/components/Widgets/UpcomingMilestoneWidget'
-
-const mockMilestones = [
-  {
-    id: 'milestone1',
-    date: addDays(new Date(), 3),
-    title: 'Design Phase Complete',
-    colors: 'bg-blue-500',
-    projectId: '1',
-  },
-  {
-    id: 'milestone2',
-    date: addDays(new Date(), 7),
-    title: 'Alpha Release',
-    colors: 'bg-green-500',
-    projectId: '2',
-  },
-  {
-    id: 'milestone3',
-    date: addDays(new Date(), 14),
-    title: 'Beta Testing',
-    colors: 'bg-purple-500',
-    projectId: '2',
-  },
-]
+import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/dropdown-menu'
+import { Button } from '@ui/button'
+import { ChevronRight, Clock, MoreHorizontal, Plus } from 'lucide-react'
+import { DateTime } from 'luxon'
+import { Progress } from '@ui/progress'
+import { Avatar, AvatarFallback } from '@ui/avatar'
 
 const Dashboard = () => {
   const { data: projects } = useSWR<
@@ -66,30 +52,165 @@ const Dashboard = () => {
     return Promise.resolve()
   }
 
+  const getDaysRemaining = (endDate: Date) => {
+    const today = new Date()
+    return differenceInDays(endDate, today)
+  }
+
+  const calculateProjectProgress = (project: Project & { tasks: Task[] }) => {
+    if (!project.tasks || project.tasks.length === 0) return 0
+    const completed = project.tasks.filter(
+      (task) => task.status === TaskStatusType.DONE,
+    ).length
+    return Math.round((completed / project.tasks.length) * 100)
+  }
+
   return (
-    <div className="flex ">
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Main dashboard content - fixed height */}
-        <div className="flex-1 grid md:grid-cols-12 gap-4 p-4 ">
-          {/* Left column - Project overview and stats */}
-          <div className="col-span-8 grid grid-rows-[auto_1fr] gap-4">
-            {/* Projects and milestones */}
-            <div className="flex flex-col gap-4 h-full">
-              {/* Upcoming milestones */}
-              <UpcomingMilestoneWidget milestones={mockMilestones} />
-            </div>
-          </div>
-          {/* Right column - Task priority widget */}
-          <div className="col-span-4 h-full">
-            <TaskPriorityWidget
-              tasks={personalTasks ?? []}
-              initialVisibleCount={6}
-              onTaskUpdate={handleTaskUpdate}
-              updatePersonalTasks={updatePersonalTasks}
-            />
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 w-full  pb-3">
+      {/* Left Section - Takes 2/3 of the width */}
+      <div className="col-span-2 p-4 grid-rows-3 h-full flex flex-col">
+        {/* Upper Div */}
+        <div className="h-[500px] w-full border rounded-lg flex-grow" />
+
+        {/* Cards Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 pt-3 flex-grow">
+          {[0, 1, 2].map((index) => {
+            const existingProj =
+              projects && projects.length > index ? projects[index] : undefined
+
+            return (
+              <Card
+                key={index}
+                className={` ${
+                  existingProj ? 'border-solid' : 'border-dashed'
+                }  h-full flex flex-col`}
+              >
+                {existingProj ? (
+                  <>
+                    <CardHeader className="border-b flex flex-row items-center justify-between p-3 space-y-0">
+                      <div className="flex items-center">
+                        <div className={'w-2 h-2 rounded-full mr-2'} />
+                        <h3 className="font-medium text-sm">
+                          {existingProj.name}
+                        </h3>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>View details</DropdownMenuItem>
+                          <DropdownMenuItem>Edit project</DropdownMenuItem>
+                          <DropdownMenuItem>Archive project</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </CardHeader>
+                    <CardContent className="p-3 flex-grow">
+                      <div className="text-xs text-muted-foreground mb-3">
+                        {DateTime.fromJSDate(
+                          new Date(existingProj.startDate),
+                        ).toFormat('MMM d, yyyy')}{' '}
+                        -{' '}
+                        {DateTime.fromJSDate(
+                          new Date(existingProj.endDate),
+                        ).toFormat('MMM d, yyyy')}
+                      </div>
+
+                      <div className="mb-3">
+                        <div className="flex justify-between items-center mb-1 text-xs">
+                          <span>Progress</span>
+                          <span>{calculateProjectProgress(existingProj)}%</span>
+                        </div>
+                        <Progress
+                          value={calculateProjectProgress(existingProj)}
+                          className="h-1.5"
+                        />
+                      </div>
+
+                      <div className="text-xs mb-3">
+                        <p className="line-clamp-2 text-muted-foreground">
+                          {existingProj.description}
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center text-xs">
+                        <div className="flex -space-x-2">
+                          {existingProj.users?.slice(0, 3).map((user) => (
+                            <Avatar
+                              key={user.id}
+                              className="h-6 w-6 border-2 border-background"
+                            >
+                              <AvatarFallback className="text-[10px]">
+                                {user.userId
+                                  .split(' ')
+                                  .map((n) => n[0])
+                                  .join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                          {(existingProj.users?.length || 0) > 3 && (
+                            <Avatar className="h-6 w-6 border-2 border-background">
+                              <AvatarFallback className="text-[10px] bg-muted">
+                                +{(existingProj.users?.length || 0) - 3}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-3 w-3 mr-1 text-muted-foreground" />
+                          <span>
+                            {getDaysRemaining(existingProj.endDate)} days left
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="p-3 pt-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs"
+                      >
+                        View Project <ChevronRight className="ml-1 h-3 w-3" />
+                      </Button>
+                    </CardFooter>
+                  </>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    className="h-full w-full flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+                  >
+                    <div className="rounded-full bg-muted p-3">
+                      <Plus className="h-6 w-6" />
+                    </div>
+                    <span>Add New Project</span>
+                  </Button>
+                )}
+              </Card>
+            )
+          })}
         </div>
+
+        {/* Bottom Grid Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 pt-3 gap-2 h-full">
+          <div className="col-span-2 border rounded-lg h-full" />
+          <div className="col-span-1 border rounded-lg h-full" />
+        </div>
+      </div>
+
+      {/* Right Section - Takes 1/3 of the width */}
+      <div className="col-span-1  p-3">
+        <TaskPriorityWidget
+          tasks={personalTasks ?? []}
+          initialVisibleCount={6}
+          onTaskUpdate={handleTaskUpdate}
+          updatePersonalTasks={updatePersonalTasks}
+        />
       </div>
     </div>
   )

@@ -96,12 +96,12 @@ const TaskPriorityWidget = ({
   }).length
 
   return (
-    <Card className="w-full max-w-md bg-background">
+    <Card className="w-full h-full bg-background">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center overflow-hidden">
           <CardTitle>Priority Tasks</CardTitle>
           <div className="md:flex gap-2">
-            <Badge variant="outline" className="bg-primary/10">
+            <Badge variant="outline" className="">
               Today: {todayTasks.length}
             </Badge>
             <Badge
@@ -118,7 +118,7 @@ const TaskPriorityWidget = ({
       </CardHeader>
       <CardContent className="p-0">
         {/* Fixed height container */}
-        <div className="h-[400px]">
+        <div className="h-[70vh]">
           <ScrollArea className="h-full px-6 py-2">
             <AnimatePresence initial={false}>
               {visibleTasks.map((task) => (

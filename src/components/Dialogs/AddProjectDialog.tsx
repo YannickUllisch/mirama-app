@@ -73,6 +73,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
     priority: 'LOW',
     status: 'ACTIVE',
     startDate: new Date(),
+    description: '',
     teamId: session?.user.teamId,
     users: [],
   } as Project & { users: (ProjectUser & { user: User })[] })
@@ -89,6 +90,7 @@ const AddProjectDialog: FC<AddProjectDialogProps> = (props) => {
   const handleClose = () => {
     setProject({
       id: v4(),
+      description: '',
       budget: 0,
       archived: false,
       endDate: new Date(),
