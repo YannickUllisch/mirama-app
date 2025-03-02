@@ -1,6 +1,7 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchAllPersonalTasks } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
+import db from '@db'
+import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 
 export const GET = auth(async (req) => {
   try {
@@ -11,7 +12,27 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await fetchAllPersonalTasks(session)
+    const { searchParams } = new URL(req.url)
+
+    // Extracting Archived status
+    const selectQuery = searchParams.getAll('select[]')
+
+    // Extract select fields from select object format and parse all selections
+    const prismaSelection = reconstructPrismaSelect({
+      prismaModel: 'Task',
+      rawSelectQuery: selectQuery,
+    })
+
+    const response = await db.task.findMany({
+      where: {
+        assignedToId: session?.user.id,
+        teamId: session?.user.teamId ?? 'undefined',
+      },
+      select: {
+        ...prismaSelection,
+        id: true,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

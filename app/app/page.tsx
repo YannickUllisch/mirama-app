@@ -1,6 +1,6 @@
 'use client'
 import { differenceInDays } from 'date-fns'
-import TaskPriorityWidget from '@src/components/Widgets/MyTasksWidget'
+import TaskPriorityWidget from '@src/components/Widgets/CheckboxTaskOverview'
 import useSWR from 'swr'
 import {
   type Project,
@@ -18,10 +18,19 @@ import {
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
 import { Button } from '@ui/button'
-import { ChevronRight, Clock, MoreHorizontal, Plus } from 'lucide-react'
+import {
+  Calendar,
+  CalendarClock,
+  ChevronRight,
+  Clock,
+  FolderOpen,
+  MoreHorizontal,
+  Plus,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import { Progress } from '@ui/progress'
 import { Avatar, AvatarFallback } from '@ui/avatar'
+import Link from 'next/link'
 
 const Dashboard = () => {
   const { data: projects } = useSWR<
@@ -40,17 +49,6 @@ const Dashboard = () => {
       tasks: true,
     },
   })
-
-  const { data: personalTasks, mutate: updatePersonalTasks } = useSWR<Task[]>({
-    url: 'task/personal',
-  })
-
-  // Mock function for task update
-  const handleTaskUpdate = async (taskId: string, status: TaskStatusType) => {
-    // Simulate API call delay
-    await updateResourceByIdNoToast('task', taskId, { status })
-    return Promise.resolve()
-  }
 
   const getDaysRemaining = (endDate: Date) => {
     const today = new Date()
@@ -83,14 +81,15 @@ const Dashboard = () => {
                 key={index}
                 className={` ${
                   existingProj ? 'border-solid' : 'border-dashed'
-                }  h-full flex flex-col`}
+                }  h-full flex flex-col bg-white  border-b border-r border-l`}
               >
                 {existingProj ? (
                   <>
-                    <CardHeader className="border-b flex flex-row items-center justify-between p-3 space-y-0">
+                    <CardHeader className="border-2 border-dashed bg-card dark:bg-neutral-900 rounded-lg flex flex-row items-center justify-between p-3 space-y-0">
                       <div className="flex items-center">
                         <div className={'w-2 h-2 rounded-full mr-2'} />
-                        <h3 className="font-medium text-sm">
+                        <h3 className="font-medium text-sm flex gap-1 items-center">
+                          <FolderOpen size={14} />
                           {existingProj.name}
                         </h3>
                       </div>
@@ -111,8 +110,9 @@ const Dashboard = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </CardHeader>
-                    <CardContent className="p-3 flex-grow">
-                      <div className="text-xs text-muted-foreground mb-3">
+                    <CardContent className="p-3 flex-grow  ">
+                      <div className="text-xs text-muted-foreground mb-3 gap-3 items-center flex">
+                        <span>Est.</span>
                         {DateTime.fromJSDate(
                           new Date(existingProj.startDate),
                         ).toFormat('MMM d, yyyy')}{' '}
@@ -129,14 +129,8 @@ const Dashboard = () => {
                         </div>
                         <Progress
                           value={calculateProjectProgress(existingProj)}
-                          className="h-1.5"
+                          className="h-1.5 "
                         />
-                      </div>
-
-                      <div className="text-xs mb-3">
-                        <p className="line-clamp-2 text-muted-foreground">
-                          {existingProj.description}
-                        </p>
                       </div>
 
                       <div className="flex justify-between items-center text-xs">
@@ -171,13 +165,18 @@ const Dashboard = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="p-3 pt-0">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-xs"
+                      <Link
+                        className="w-full"
+                        href={`/app/${existingProj.name}`}
                       >
-                        View Project <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="w-full text-xs"
+                        >
+                          View Project <ChevronRight className="ml-1 h-3 w-3" />
+                        </Button>
+                      </Link>
                     </CardFooter>
                   </>
                 ) : (
@@ -204,14 +203,7 @@ const Dashboard = () => {
       </div>
 
       {/* Right Section - Takes 1/3 of the width */}
-      <div className="col-span-1  p-3">
-        <TaskPriorityWidget
-          tasks={personalTasks ?? []}
-          initialVisibleCount={6}
-          onTaskUpdate={handleTaskUpdate}
-          updatePersonalTasks={updatePersonalTasks}
-        />
-      </div>
+      <div className="col-span-1 p-3 w-full h-full border" />
     </div>
   )
 }

@@ -19,6 +19,17 @@ import type {
 import { Progress } from '@ui/progress'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import { TaskDistributionChart } from '@src/components/Widgets/TaskDistWidget'
+import {
+  Timeline,
+  TimelineContent,
+  TimelineDate,
+  TimelineHeader,
+  TimelineIndicator,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineTitle,
+} from '@ui/timeline'
+import Component from '@src/components/comp-540'
 
 const OverviewTab = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -42,19 +53,30 @@ const OverviewTab = () => {
       : undefined,
   )
 
-  const completedTasks =
-    tasks?.filter((task) => task.status === 'DONE').length || 0
-  const totalTasks = tasks?.length || 0
-  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-10">
       <div className="flex w-full gap-2">
         <TaskTree
           projectName={projectContext?.projectName ?? ''}
           tasks={tasks ?? []}
         />
-        <TaskDistributionChart />
+        <Timeline defaultValue={3} orientation="horizontal">
+          {milestones?.map((item, index) => (
+            <TimelineItem key={item.id} step={index}>
+              <TimelineHeader>
+                <TimelineSeparator className="bg-text" />
+                <TimelineDate>
+                  {DateTime.fromJSDate(new Date(item.date)).toFormat(
+                    'LLL dd, yyyy',
+                  )}
+                </TimelineDate>
+                <TimelineTitle>{item.title}</TimelineTitle>
+                <TimelineIndicator className="border-text" />
+              </TimelineHeader>
+              <TimelineContent>Description</TimelineContent>
+            </TimelineItem>
+          ))}
+        </Timeline>
       </div>
     </div>
   )

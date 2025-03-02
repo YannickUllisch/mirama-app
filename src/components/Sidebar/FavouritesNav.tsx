@@ -16,7 +16,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@ui/collapsible'
-import { cn } from '@src/lib/utils'
+import { capitalize, cn } from '@src/lib/utils'
 import useSWR from 'swr'
 import { type Favourite, FavouriteType } from '@prisma/client'
 
@@ -46,26 +46,34 @@ const FavoritesNav = () => {
         </div>
         <CollapsibleContent>
           <SidebarMenu>
-            {favs?.map((favorite) => (
-              <SidebarMenuItem key={favorite.id}>
-                <div className="flex items-center w-full gap-2 px-2">
-                  <SidebarMenuButton
-                    asChild
-                    className={cn('flex-1 justify-between')}
-                  >
-                    <Link prefetch={false} href={favorite.data}>
-                      <div className="flex gap-2 items-center">
-                        <Star
-                          size={14}
-                          className="h-4 w-4 mr-2 text-yellow-500"
-                        />
-                        <span className="truncate">{favorite.data}</span>
-                      </div>
-                    </Link>
-                  </SidebarMenuButton>
-                </div>
-              </SidebarMenuItem>
-            ))}
+            {favs?.map((favorite) => {
+              const previewName = favorite.data
+                .replace('app', 'Dashboard')
+                .split('/')
+                .at(-1)
+              return (
+                <SidebarMenuItem key={favorite.id}>
+                  <div className="flex items-center w-full gap-2 px-2">
+                    <SidebarMenuButton
+                      asChild
+                      className={cn('flex-1 justify-between')}
+                    >
+                      <Link prefetch={false} href={favorite.data}>
+                        <div className="flex gap-2 items-center">
+                          <Star
+                            size={14}
+                            className="h-4 w-4 mr-2 text-yellow-500"
+                          />
+                          <span className="truncate">
+                            {capitalize(previewName ?? '')}
+                          </span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </div>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </CollapsibleContent>
       </SidebarGroup>

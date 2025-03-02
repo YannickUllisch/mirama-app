@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronDown, List, PlusSquare } from 'lucide-react'
+import { ChevronDown, Folder, FolderOpen, List, PlusSquare } from 'lucide-react'
 import {
   SidebarGroup,
   SidebarMenu,
@@ -83,7 +83,7 @@ export function ProjectsNav({ projects, session }: ProjectsNavProps) {
                   >
                     <Link prefetch={false} href={project.href}>
                       <div className="flex gap-2 items-center">
-                        <List size={14} className="h-4 w-4 mr-1" />
+                        <FolderOpen size={14} className="h-4 w-4 mr-1" />
                         <span className="truncate">
                           {project.original.name}
                         </span>

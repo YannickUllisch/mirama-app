@@ -82,11 +82,11 @@ const ListTab = () => {
     data: tasks,
     mutate,
     isLoading: isTasksLoading,
-  } = useSWR<(Task & { assignedTo: User; parent: Task })[]>(
-    projectContext
+  } = useSWR<(Task & { assignedTo: User; parent: Task })[]>({
+    url: projectContext
       ? `task/personal/${projectContext.projectId}?showAll=${showAllTasks}`
       : null,
-  )
+  })
 
   // Functions
   const handleDragEnd = (event: DragEndEvent) => {
@@ -192,158 +192,162 @@ const ListTab = () => {
         taskId={selectedTaskId ?? ''}
         mutate={mutate}
       />
-      <div className="h-[75vh] overflow-y-scroll rounded-xl border">
+      <div className="flex flex-col flex-grow min-h-0 rounded-xl border">
         <ListProvider onDragEnd={handleDragEnd}>
           {Object.keys(TaskStatusType).map((status) => (
-            <ListGroup key={status} id={status}>
-              <ListHeader
-                className="sticky top-0"
-                name={status}
-                addItem
-                dropdownContent={
-                  <>
-                    <DropdownMenuLabel className="text-xs">
-                      Select Group & Type
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      {tasks
-                        ?.filter((task) => isTaskTypeContainer(task.type))
-                        .map((task) => (
-                          <DropdownMenuSub key={`dropdown-sub-${task.id}`}>
-                            <DropdownMenuSubTrigger
-                              key={`task-container-${task.id}`}
-                              className="flex gap-2 items-center"
-                            >
-                              {getTaskTypeIcon(task.type)}
-                              {task.title}
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                              <DropdownMenuSubContent>
-                                {individualTaskTypes.map((type) => (
-                                  <DropdownMenuItem
-                                    key={`tasktype-select-parented-${type}-${status}`}
-                                    onClick={() =>
-                                      onAddItem(status, type, task.id)
-                                    }
-                                    className="flex gap-2 items-center"
-                                  >
-                                    {getTaskTypeIcon(type)}
-                                    {capitalize(type)}
-                                  </DropdownMenuItem>
-                                ))}
-                              </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                          </DropdownMenuSub>
-                        ))}
-                    </DropdownMenuGroup>
-                    <DropdownMenuSub key={'dropdown-sub-no-parent'}>
-                      <DropdownMenuSubTrigger className="flex gap-2 items-center">
-                        <CircleOff size={16} />
-                        Ungrouped
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          {individualTaskTypes.map((type) => (
-                            <DropdownMenuItem
-                              onClick={() => onAddItem(status, type, undefined)}
-                              key={`tasktype-select-${type}-${status}`}
-                              className="flex gap-2 items-center"
-                            >
-                              {getTaskTypeIcon(type)}
-                              {capitalize(type)}
-                            </DropdownMenuItem>
+            <div className="flex flex-col flex-grow overflow-y-auto">
+              <ListGroup key={status} id={status}>
+                <ListHeader
+                  className="sticky top-0"
+                  name={status}
+                  addItem
+                  dropdownContent={
+                    <>
+                      <DropdownMenuLabel className="text-xs">
+                        Select Group & Type
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        {tasks
+                          ?.filter((task) => isTaskTypeContainer(task.type))
+                          .map((task) => (
+                            <DropdownMenuSub key={`dropdown-sub-${task.id}`}>
+                              <DropdownMenuSubTrigger
+                                key={`task-container-${task.id}`}
+                                className="flex gap-2 items-center"
+                              >
+                                {getTaskTypeIcon(task.type)}
+                                {task.title}
+                              </DropdownMenuSubTrigger>
+                              <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                  {individualTaskTypes.map((type) => (
+                                    <DropdownMenuItem
+                                      key={`tasktype-select-parented-${type}-${status}`}
+                                      onClick={() =>
+                                        onAddItem(status, type, task.id)
+                                      }
+                                      className="flex gap-2 items-center"
+                                    >
+                                      {getTaskTypeIcon(type)}
+                                      {capitalize(type)}
+                                    </DropdownMenuItem>
+                                  ))}
+                                </DropdownMenuSubContent>
+                              </DropdownMenuPortal>
+                            </DropdownMenuSub>
                           ))}
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  </>
-                }
-                color={getColorByTaskStatusType(status) as string}
-              />
+                      </DropdownMenuGroup>
+                      <DropdownMenuSub key={'dropdown-sub-no-parent'}>
+                        <DropdownMenuSubTrigger className="flex gap-2 items-center">
+                          <CircleOff size={16} />
+                          Ungrouped
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            {individualTaskTypes.map((type) => (
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  onAddItem(status, type, undefined)
+                                }
+                                key={`tasktype-select-${type}-${status}`}
+                                className="flex gap-2 items-center"
+                              >
+                                {getTaskTypeIcon(type)}
+                                {capitalize(type)}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                    </>
+                  }
+                  color={getColorByTaskStatusType(status) as string}
+                />
 
-              {isTasksLoading ? (
-                <div className="w-full flex justify-center items-center min-h-[100px]">
-                  <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
-                </div>
-              ) : (
-                <ListItems>
-                  {tasks
-                    ?.filter(
-                      (feature) =>
-                        feature.status === status &&
-                        !isTaskTypeContainer(feature.type),
-                    )
-                    .map((feature, index) => (
-                      <ContextMenu key={`item-list-${feature.id}`}>
-                        <ContextMenuTrigger>
-                          <ListItem
-                            key={feature.id}
-                            id={feature.id}
-                            name={feature.title}
-                            parent={feature.status}
-                            index={index}
-                            onClick={() => onListItemClick(feature.id)}
-                          >
-                            {getTaskTypeIcon(feature.type)}
-                            <p className="m-0 flex-1 font-medium text-xs">
-                              {feature.title}
-                            </p>
-                            {feature.parent && (
-                              <div className="items-center flex gap-2 text-text-secondary text-sm">
-                                <CornerDownRight size={12} />
-                                {getTaskTypeIcon(feature.parent.type, 12)}
-                                {feature.parent.title}
-                              </div>
-                            )}
+                {isTasksLoading ? (
+                  <div className="w-full flex justify-center items-center min-h-[100px]">
+                    <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
+                  </div>
+                ) : (
+                  <ListItems>
+                    {tasks
+                      ?.filter(
+                        (feature) =>
+                          feature.status === status &&
+                          !isTaskTypeContainer(feature.type),
+                      )
+                      .map((feature, index) => (
+                        <ContextMenu key={`item-list-${feature.id}`}>
+                          <ContextMenuTrigger>
+                            <ListItem
+                              key={feature.id}
+                              id={feature.id}
+                              name={feature.title}
+                              parent={feature.status}
+                              index={index}
+                              onClick={() => onListItemClick(feature.id)}
+                            >
+                              {getTaskTypeIcon(feature.type)}
+                              <p className="m-0 flex-1 font-medium text-xs">
+                                {feature.title}
+                              </p>
+                              {feature.parent && (
+                                <div className="items-center flex gap-2 text-text-secondary text-sm">
+                                  <CornerDownRight size={12} />
+                                  {getTaskTypeIcon(feature.parent.type, 12)}
+                                  {feature.parent.title}
+                                </div>
+                              )}
 
-                            {feature.assignedTo && (
-                              <UserAvatar
-                                avatarSize={19}
-                                fontSize={8}
-                                username={feature.assignedTo.name}
-                              />
-                            )}
-                          </ListItem>
-                        </ContextMenuTrigger>
-                        <TaskContextContent
-                          mutate={mutate}
-                          projectName={projectContext?.projectName ?? ''}
-                          taskId={feature.id}
-                        />
-                      </ContextMenu>
-                    ))}
-                  {newItem?.status === status && (
-                    <div
-                      className={
-                        'flex cursor-grab justify-between items-center gap-2 rounded-md border bg-inherit p-2 shadow-sm'
-                      }
-                    >
-                      <div className="gap-2 items-center flex">
-                        {getTaskTypeIcon(newItem.type)}
-                        <div ref={inputContainerRef}>
-                          <Input
-                            ref={inputRef}
-                            className="w-fit border rounded p-1 h-[21px]"
-                            value={newItem.title}
-                            onChange={handleInputChange}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') handleInputSave()
-                              if (e.key === 'Escape') handleInputCancel()
-                            }}
+                              {feature.assignedTo && (
+                                <UserAvatar
+                                  avatarSize={19}
+                                  fontSize={8}
+                                  username={feature.assignedTo.name}
+                                />
+                              )}
+                            </ListItem>
+                          </ContextMenuTrigger>
+                          <TaskContextContent
+                            mutate={mutate}
+                            projectName={projectContext?.projectName ?? ''}
+                            taskId={feature.id}
                           />
+                        </ContextMenu>
+                      ))}
+                    {newItem?.status === status && (
+                      <div
+                        className={
+                          'flex cursor-grab justify-between items-center gap-2 rounded-md border bg-inherit p-2 shadow-sm'
+                        }
+                      >
+                        <div className="gap-2 items-center flex">
+                          {getTaskTypeIcon(newItem.type)}
+                          <div ref={inputContainerRef}>
+                            <Input
+                              ref={inputRef}
+                              className="w-fit border rounded p-1 h-[21px]"
+                              value={newItem.title}
+                              onChange={handleInputChange}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleInputSave()
+                                if (e.key === 'Escape') handleInputCancel()
+                              }}
+                            />
+                          </div>
                         </div>
+                        <UserAvatar
+                          avatarSize={19}
+                          fontSize={8}
+                          username={session?.user.name ?? ''}
+                        />
                       </div>
-                      <UserAvatar
-                        avatarSize={19}
-                        fontSize={8}
-                        username={session?.user.name ?? ''}
-                      />
-                    </div>
-                  )}
-                </ListItems>
-              )}
-            </ListGroup>
+                    )}
+                  </ListItems>
+                )}
+              </ListGroup>
+            </div>
           ))}
         </ListProvider>
       </div>

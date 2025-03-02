@@ -3,31 +3,26 @@
 import * as React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { format } from 'date-fns'
-import { ChevronDown, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import type { Task, TaskStatusType } from '@prisma/client'
-
-import { Button } from '@ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
 import { Badge } from '@ui/badge'
 import type { KeyedMutator } from 'swr'
 import { useMemo } from 'react'
 import Link from 'next/link'
 
-interface MyTasksProps {
-  initialVisibleCount?: number
+interface TaskPriorityWidgetProps {
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
   tasks: Task[]
   updatePersonalTasks: KeyedMutator<Task[]>
 }
 
-const CheckboxTaskOverview = ({
-  initialVisibleCount = 5,
+const TaskPriorityWidget = ({
   onTaskUpdate,
   updatePersonalTasks,
   tasks,
-}: MyTasksProps) => {
-  const [expanded, setExpanded] = React.useState(false)
+}: TaskPriorityWidgetProps) => {
   const [updatingTaskId, setUpdatingTaskId] = React.useState<string | null>(
     null,
   )
@@ -61,10 +56,6 @@ const CheckboxTaskOverview = ({
       return taskDate.getTime() === today.getTime()
     })
   }, [sortedTasks])
-
-  const visibleTasks = expanded
-    ? sortedTasks
-    : sortedTasks.slice(0, initialVisibleCount)
 
   const toggleTaskCompletion = async (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId)
@@ -116,12 +107,12 @@ const CheckboxTaskOverview = ({
           {completedTasks} of {tasks.length} tasks completed
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 border-b-2">
         {/* Fixed height container */}
-        <div className="h-[70vh]">
+        <div className="h-[75vh]">
           <ScrollArea className="h-full px-6 py-2">
             <AnimatePresence initial={false}>
-              {visibleTasks.map((task) => (
+              {sortedTasks.map((task) => (
                 <motion.div
                   key={task.id}
                   layout
@@ -239,7 +230,7 @@ const CheckboxTaskOverview = ({
                   </div>
                 </motion.div>
               ))}
-              {visibleTasks.length === 0 && (
+              {sortedTasks.length === 0 && (
                 <div className="py-8 text-center text-muted-foreground">
                   No tasks to display
                 </div>
@@ -248,31 +239,8 @@ const CheckboxTaskOverview = ({
           </ScrollArea>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between pt-2">
-        <div className="text-xs text-muted-foreground">
-          {expanded
-            ? `Showing all ${sortedTasks.length} tasks`
-            : `Showing ${Math.min(
-                initialVisibleCount,
-                sortedTasks.length,
-              )} of ${sortedTasks.length} tasks`}
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-1"
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? 'Show Less' : 'Show All'}
-          <ChevronDown
-            className={`h-4 w-4 transition-transform ${
-              expanded ? 'rotate-180' : ''
-            }`}
-          />
-        </Button>
-      </CardFooter>
     </Card>
   )
 }
 
-export default CheckboxTaskOverview
+export default TaskPriorityWidget
