@@ -4,9 +4,6 @@ import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
 import { DateTime } from 'luxon'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Badge } from '@ui/badge'
-import { Clock, DollarSign, Flag, Users } from 'lucide-react'
 import TaskTree from '@src/components/Task/TaskTree'
 import type {
   Project,
@@ -16,9 +13,6 @@ import type {
   ProjectUser,
   User,
 } from '@prisma/client'
-import { Progress } from '@ui/progress'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import { TaskDistributionChart } from '@src/components/Widgets/TaskDistWidget'
 import {
   Timeline,
   TimelineContent,
@@ -29,7 +23,6 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@ui/timeline'
-import Component from '@src/components/comp-540'
 
 const OverviewTab = () => {
   const projectContext = useContext(ProjectDataContext)
