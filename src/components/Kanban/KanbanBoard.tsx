@@ -389,6 +389,9 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
             <div className="display flex gap-2" key={`board-${board.id}`}>
               {/* Board Column Titles */}
               <ContainerHeader
+                mutate={mutate}
+                projectName={projectName}
+                id={board.id}
                 title={board.title}
                 taskType={board.containerTaskType}
                 itemCount={board.columns.reduce(

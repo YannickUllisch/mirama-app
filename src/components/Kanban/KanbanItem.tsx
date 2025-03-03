@@ -48,6 +48,7 @@ const KanbanItem: FC<KanbanItemType> = ({
   onDelete,
   mutate,
   users,
+  projectName,
 }) => {
   const path = usePathname()
   const {
@@ -95,9 +96,11 @@ const KanbanItem: FC<KanbanItemType> = ({
               <Button
                 onClick={() => setIsOpen((open) => !open)}
                 variant={'link'}
-                className="block w-full text-text text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none break-words whitespace-normal"
+                className="block w-full text-text h-full text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none break-words whitespace-normal"
               >
-                <div className="flex items-center gap-1">{task?.title}</div>
+                <div className="flex items-center  overflow-hidden text-ellipsis gap-1">
+                  {task?.title}
+                </div>
               </Button>
             </div>
 
@@ -208,7 +211,7 @@ const KanbanItem: FC<KanbanItemType> = ({
 
       <ViewTaskSheet
         open={isOpen}
-        projectName="Mirama"
+        projectName={projectName}
         setOpen={setIsOpen}
         taskId={task?.id ?? ''}
         mutate={mutate}
