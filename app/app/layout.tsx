@@ -61,7 +61,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
             <div className="flex-1 overflow-hidden min-h-[100vh] ">
               <AppHeader />
               <main className="flex flex-col overflow-y-auto w-full h-[100%] rounded-lg border border-hover">
-                <div className="bg-white/70 h-[100%] dark:bg-neutral-900 flex-1 px-6 pt-5">
+                <div className="bg-white h-[100%] dark:bg-neutral-900 flex-1 px-6 pt-5">
                   {children}
                 </div>
               </main>

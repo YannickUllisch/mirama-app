@@ -107,7 +107,7 @@ const TaskPriorityWidget = ({
           {completedTasks} of {tasks.length} tasks completed
         </div>
       </CardHeader>
-      <CardContent className="p-0 border-b-2">
+      <CardContent className="p-0">
         {/* Fixed height container */}
         <div className="h-[75vh]">
           <ScrollArea className="h-full px-6 py-2">

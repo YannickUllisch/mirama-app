@@ -31,6 +31,7 @@ import { DateTime } from 'luxon'
 import { Progress } from '@ui/progress'
 import { Avatar, AvatarFallback } from '@ui/avatar'
 import Link from 'next/link'
+import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
 
 const Dashboard = () => {
   const { data: projects } = useSWR<
@@ -64,7 +65,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 w-full  pb-3">
+    <div className="grid grid-cols-1 lg:grid-cols-3 w-full h-full">
       {/* Left Section - Takes 2/3 of the width */}
       <div className="col-span-2 p-4 grid-rows-3 h-full flex flex-col">
         {/* Upper Div */}
@@ -203,7 +204,9 @@ const Dashboard = () => {
       </div>
 
       {/* Right Section - Takes 1/3 of the width */}
-      <div className="col-span-1 p-3 w-full h-full border" />
+      <div className="col-span-1 w-full h-full mb-5 border-l pl-5">
+        <ProjectTimeline projects={projects ?? []} />
+      </div>
     </div>
   )
 }

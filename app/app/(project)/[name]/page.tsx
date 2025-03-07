@@ -60,29 +60,32 @@ const ClientProjectPage = () => {
         users={users}
         upcomingMilestone={upcomingMilestone}
       />
-
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <div className="flex w-full items-center gap-4 dark:text-white rounded-lg h-10 relative overflow-x-auto">
-          {/* Tabs List */}
-          <TabsList className="absolute  inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
-            {projectTabs.map((tabHeader) => (
-              <TabsTrigger
-                style={{ fontSize: 12 }}
-                value={tabHeader.id}
-                key={tabHeader.id}
-              >
-                {tabHeader.headerComponent}
-              </TabsTrigger>
+      <div className="rounded-lg">
+        <Tabs value={tab} onValueChange={setTab} className="w-full ">
+          <div className="flex w-full items-center shadow-md dark:shadow-neutral-800  bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
+            {/* Tabs List */}
+            <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
+              {projectTabs.map((tabHeader) => (
+                <TabsTrigger
+                  style={{ fontSize: 12 }}
+                  value={tabHeader.id}
+                  key={tabHeader.id}
+                >
+                  {tabHeader.headerComponent}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          <div className="p-3">
+            {/* Tab Content */}
+            {projectTabs.map((tab) => (
+              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+                {tab.component}
+              </TabsContent>
             ))}
-          </TabsList>
-        </div>
-        {/* Tab Content */}
-        {projectTabs.map((tab) => (
-          <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-            {tab.component}
-          </TabsContent>
-        ))}
-      </Tabs>
+          </div>
+        </Tabs>
+      </div>
     </>
   )
 }

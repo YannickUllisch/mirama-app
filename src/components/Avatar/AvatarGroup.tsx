@@ -18,7 +18,7 @@ const AvatarGroup: FC<AvatarGroupProps> = ({
   const remainingUsersCount = usernames.length - previewAmount
 
   return (
-    <div className={'flex items-center -space-x-2'}>
+    <div className={'flex items-center -space-x-4'}>
       {shownUsers.map((username, index) => (
         <div
           key={username}

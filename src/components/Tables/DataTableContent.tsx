@@ -9,6 +9,7 @@ import type { TableData } from '@src/components/Tables/DataTable'
 import { TableBody, TableCell, TableRow } from '@src/components/ui/table'
 import { Loader2 } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
+import { Spinner } from '@ui/spinner'
 
 interface DataTableContentProps<TData extends TableData<TData>, TValue> {
   table: Table<TData>
@@ -83,7 +84,7 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
           <TableCell colSpan={columns.length} className="h-24 text-center">
             {dataLoading ? (
               <div className="flex w-full align-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin dark:text-white" />
+                <Spinner className="bg-text" size={'md'} />
               </div>
             ) : (
               'No results.'
