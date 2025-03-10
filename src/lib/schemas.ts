@@ -1,4 +1,8 @@
-import { PriorityTypeSchema, TaskStatusTypeSchema } from '@/prisma/zod'
+import {
+  PriorityTypeSchema,
+  StatusTypeSchema,
+  TaskStatusTypeSchema,
+} from '@/prisma/zod'
 import { Role, TaskType } from '@prisma/client'
 import * as z from 'zod'
 
@@ -54,13 +58,23 @@ export const InvitationSchema = z.object({
   role: RoleTypes.default('USER'),
 })
 
-export const ProjectSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: 'Name needs to contain at least 1 character' }),
-  startDate: z.date(),
-  endDate: z.date(),
-})
+export const ProjectSchema = z
+  .object({
+    name: z.string().min(1, { message: 'Name cannot be empty.' }),
+    description: z.string().nullable().optional(),
+    startDate: z.date({ message: 'Start Date has to be defined' }),
+    endDate: z.date({ message: 'End Date has to be defined' }),
+    priority: PriorityTypeSchema.default('LOW'),
+    status: StatusTypeSchema.default('ACTIVE'),
+    budget: z.number().nullable().optional(),
+    teamId: z.string().min(10, { message: 'Please Choose a valid Team' }),
+    tags: z.string().array().optional(),
+    users: z.string().array().optional(),
+  })
+  .refine((data) => data.startDate <= data.endDate, {
+    message: 'Start Date must be before or equal to End Date',
+    path: ['startDate'],
+  })
 
 export const TaskSchema = z
   .object({

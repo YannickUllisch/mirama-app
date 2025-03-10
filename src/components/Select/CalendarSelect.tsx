@@ -13,7 +13,7 @@ import { cn } from '@src/lib/utils'
 
 interface CalendarSelectProps {
   value: Date | undefined | null
-  onChange: () => void
+  onChange: (date?: Date) => void
   styling?: {
     triggerClassname: string
     calendarClassname: string
