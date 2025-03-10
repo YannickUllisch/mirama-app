@@ -2,6 +2,8 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import db from '@db'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
+import { getParams } from '@api'
+import type { Prisma, Task } from '@prisma/client'
 
 export const GET = auth(async (req) => {
   try {

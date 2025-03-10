@@ -1,6 +1,5 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchSingleProjectById } from '@src/lib/api/queries/Project/ProjectQuerys'
 import type { NextRequest } from 'next/server'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 import db from '@db'

@@ -2,7 +2,6 @@ import db from '@db'
 import { auth } from '@auth'
 import { Role, type Expense } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchExpensesByProjectId } from '@src/lib/api/queries/Project/ExpenseQuerys'
 
 export const GET = auth(async (req) => {
   try {
@@ -17,7 +16,18 @@ export const GET = auth(async (req) => {
 
     const projectId = req.nextUrl.searchParams.get('projectid') as string
 
-    const response = await fetchExpensesByProjectId(projectId)
+    if (!projectId) {
+      return Response.json(
+        { ok: false, message: 'valid project id required at this endpoint' },
+        { status: 400 },
+      )
+    }
+
+    const response = await db.expense.findMany({
+      where: {
+        projectId,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

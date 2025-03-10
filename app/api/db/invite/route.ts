@@ -2,7 +2,6 @@ import { auth } from '@auth'
 import db from '@db'
 import { Role } from '@prisma/client'
 import { sendCompanyInvitationEmail } from '@src/email/mailer'
-import { fetchAllCompanyInvitations } from '@src/lib/api/queries/Invite/InviteQueries'
 import type { InvitationSchema } from '@src/lib/schemas'
 import { isRoleHigher } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
@@ -21,7 +20,11 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await fetchAllCompanyInvitations({ session })
+    const response = await db.companyInvitation.findMany({
+      where: {
+        teamId: session?.user.teamId ?? 'undef',
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

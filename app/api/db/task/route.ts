@@ -4,7 +4,6 @@ import db from '@db'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { v4 } from 'uuid'
 import type { Task } from '@prisma/client'
-import { fetchTasksByProjectId } from '@src/lib/api/queries/Tasks/TaskQueries'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 
 export const GET = auth(async (req) => {
@@ -27,7 +26,32 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await fetchTasksByProjectId(id, ignoreCompleted)
+    const response = await db.task.findMany({
+      where: {
+        project: {
+          id,
+        },
+        ...(ignoreCompleted && {
+          status: {
+            not: 'DONE',
+          },
+        }),
+      },
+
+      include: {
+        assignedTo: true,
+        subtasks: true,
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+        comments: true,
+      },
+      orderBy: {
+        status: 'asc',
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

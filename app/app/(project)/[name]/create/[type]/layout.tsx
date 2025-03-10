@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { auth } from '@auth'
 import { redirect } from 'next/navigation'
-import { fetchSingleProjectByName } from '@src/lib/api/queries/Project/ProjectQuerys'
 import { TaskType } from '@prisma/client'
 import db from '@db'
 

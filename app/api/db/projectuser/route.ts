@@ -1,6 +1,5 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchProjectUsersJoinedByProjectId } from '@src/lib/api/queries/Project/ProjectUserJoinQuerys'
 import db from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 
@@ -13,8 +12,21 @@ export const GET = auth(async (req) => {
     }
 
     const projectId = req.nextUrl.searchParams.get('projectId') as string
+    if (!projectId) {
+      return Response.json(
+        { ok: false, message: 'Project ID needs to be defined in request' },
+        { status: 400 },
+      )
+    }
 
-    const response = await fetchProjectUsersJoinedByProjectId(projectId)
+    const response = await db.projectUser.findMany({
+      where: {
+        projectId,
+      },
+      include: {
+        user: true,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

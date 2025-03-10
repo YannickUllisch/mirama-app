@@ -1,22 +1,5 @@
 import db from '@db'
 import { DateTime } from 'luxon'
-import type { Session } from 'next-auth'
-
-export const fetchAllCompanyInvitations = async ({
-  session,
-}: { session: Session | null }) => {
-  try {
-    const invitations = await db.companyInvitation.findMany({
-      where: {
-        teamId: session?.user.teamId ?? 'undef',
-      },
-    })
-
-    return invitations
-  } catch {
-    return null
-  }
-}
 
 export const getValidCompanyInvitation = async ({
   email,

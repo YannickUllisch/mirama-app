@@ -2,7 +2,6 @@ import db from '@db'
 import { auth } from '@auth'
 import { type Milestone, Role } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchMilestonesByProjectId } from '@src/lib/api/queries/Project/MilestoneQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -12,7 +11,19 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
     const projectId = req.nextUrl.searchParams.get('id') as string
-    const response = await fetchMilestonesByProjectId(projectId)
+
+    if (!projectId) {
+      return Response.json(
+        { ok: false, message: 'valid project id required at this endpoint' },
+        { status: 400 },
+      )
+    }
+
+    const response = await db.milestone.findMany({
+      where: {
+        projectId: projectId,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

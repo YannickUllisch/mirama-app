@@ -2,7 +2,6 @@ import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
 import { Role, type Tag } from '@prisma/client'
 import db from '@db'
-import { fetchAllTeamTags } from '@src/lib/api/queries/Tags/TagQueries'
 
 export const GET = auth(async (req) => {
   try {
@@ -13,7 +12,11 @@ export const GET = auth(async (req) => {
       return validatedRequest
     }
 
-    const response = await fetchAllTeamTags(session)
+    const response = await db.tag.findMany({
+      where: {
+        teamId: session?.user.teamId,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err: any) {

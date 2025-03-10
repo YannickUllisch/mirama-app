@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import { validateRequest } from '@src/lib/validateRequest'
-import { fetchPersonalTasksByProjectId } from '@src/lib/api/queries/Tasks/PersonalTaskQueries'
+import db from '@db'
 
 export const GET = auth(async (req) => {
   try {
@@ -22,11 +22,17 @@ export const GET = auth(async (req) => {
       )
     }
 
-    const response = await fetchPersonalTasksByProjectId(
-      projectId,
-      session,
-      showAll,
-    )
+    const response = await db.task.findMany({
+      where: {
+        projectId,
+        assignedToId: showAll ? undefined : session?.user.id,
+        teamId: session?.user.teamId ?? 'undefined',
+      },
+      include: {
+        assignedTo: true,
+        parent: true,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {

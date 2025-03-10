@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { fetchProjectUsersByProjectId } from '@src/lib/api/queries/Project/UserQuerys'
+import db from '@db'
 import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
@@ -19,7 +19,16 @@ export const GET = auth(async (req) => {
         { status: 400 },
       )
     }
-    const response = await fetchProjectUsersByProjectId(id)
+    const response = await db.user.findMany({
+      where: {
+        projects: {
+          some: {
+            projectId: id,
+          },
+        },
+        teamId: session?.user.teamId,
+      },
+    })
 
     return Response.json(response, { status: 200 })
   } catch (err) {
