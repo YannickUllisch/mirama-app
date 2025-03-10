@@ -19,9 +19,9 @@ const LandingPage: FC = () => {
         <LandingBentoBox />
       </ScrollAnimationWrapper>
 
-      <ScrollAnimationWrapper>
+      {/* <ScrollAnimationWrapper>
         <FeaturesShowcase />
-      </ScrollAnimationWrapper>
+      </ScrollAnimationWrapper> */}
 
       {/* <ScrollAnimationWrapper>
         <ThemeShowcase />
@@ -31,9 +31,7 @@ const LandingPage: FC = () => {
         <LandingFAQ />
       </ScrollAnimationWrapper>
 
-      <ScrollAnimationWrapper>
-        <CallToAction />
-      </ScrollAnimationWrapper>
+      <CallToAction />
     </>
   )
 }
