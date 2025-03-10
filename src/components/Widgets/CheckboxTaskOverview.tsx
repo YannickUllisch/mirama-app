@@ -18,7 +18,7 @@ interface TaskPriorityWidgetProps {
   updatePersonalTasks: KeyedMutator<Task[]>
 }
 
-const TaskPriorityWidget = ({
+const CheckboxTaskOverview = ({
   onTaskUpdate,
   updatePersonalTasks,
   tasks,
@@ -243,4 +243,4 @@ const TaskPriorityWidget = ({
   )
 }
 
-export default TaskPriorityWidget
+export default CheckboxTaskOverview

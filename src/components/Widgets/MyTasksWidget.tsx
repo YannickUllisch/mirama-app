@@ -3,8 +3,8 @@
 import * as React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { format } from 'date-fns'
-import { ChevronDown, ExternalLink } from 'lucide-react'
-import type { Task, TaskStatusType } from '@prisma/client'
+import { ChevronDown, ClockArrowUp, ExternalLink } from 'lucide-react'
+import { type Task, TaskStatusType } from '@prisma/client'
 
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
@@ -13,17 +13,25 @@ import { Badge } from '@ui/badge'
 import type { KeyedMutator } from 'swr'
 import { useMemo } from 'react'
 import Link from 'next/link'
+import { DateTime } from 'luxon'
+import { capitalize, getColorByName, getColorByPriority } from '@src/lib/utils'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { Spinner } from '@ui/spinner'
+import { Skeleton } from '@ui/skeleton'
+import MyTaskWidgetSkeleton from '../Skeletons/MyTaskWidgetSkeleton'
 
 interface MyTasksProps {
   initialVisibleCount?: number
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
   tasks: Task[]
+  isTasksLoading?: boolean
   updatePersonalTasks: KeyedMutator<Task[]>
 }
 
-const CheckboxTaskOverview = ({
-  initialVisibleCount = 5,
+const MyTasksWidget = ({
+  initialVisibleCount = 4,
   onTaskUpdate,
+  isTasksLoading,
   updatePersonalTasks,
   tasks,
 }: MyTasksProps) => {
@@ -96,7 +104,7 @@ const CheckboxTaskOverview = ({
   }).length
 
   return (
-    <Card className="w-full h-full bg-inherit border-none">
+    <Card className="w-full bg-inherit">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center overflow-hidden">
           <CardTitle className="text-4xl tracking-tighter">My Tasks</CardTitle>
@@ -116,10 +124,10 @@ const CheckboxTaskOverview = ({
           {completedTasks} of {tasks.length} tasks completed
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 overflow-auto px-6 py-2 h-[250px] overflow-y-auto w-full">
         {/* Fixed height container */}
-        <div className="h-[70vh]">
-          <ScrollArea className="h-full px-6 py-2">
+        <div className="flex flex-grow w-full">
+          <ScrollArea className=" px-6 py-2 w-full">
             <AnimatePresence initial={false}>
               {visibleTasks.map((task) => (
                 <motion.div
@@ -150,7 +158,7 @@ const CheckboxTaskOverview = ({
                           className={`
                             transition-colors
                             ${
-                              task.status === 'DONE'
+                              task.status === TaskStatusType.DONE
                                 ? 'fill-primary stroke-primary'
                                 : 'stroke-muted-foreground group-hover:stroke-primary'
                             }
@@ -158,15 +166,16 @@ const CheckboxTaskOverview = ({
                           `}
                           strokeWidth="2"
                         />
-                        {task.status === 'DONE' && !updatingTaskId && (
-                          <path
-                            d="M8 12L11 15L16 9"
-                            className="stroke-primary-foreground"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        )}
+                        {task.status === TaskStatusType.DONE &&
+                          !updatingTaskId && (
+                            <path
+                              d="M8 12L11 15L16 9"
+                              className="stroke-primary-foreground"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          )}
                       </svg>
                       {updatingTaskId === task.id && (
                         // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
@@ -196,29 +205,30 @@ const CheckboxTaskOverview = ({
                     <div className="flex-grow flex items-center justify-between">
                       <div className="flex flex-col">
                         <span
-                          className={`text-sm font-medium ${
+                          className={`text-sm font-medium flex gap-1 items-center ${
                             task.status === 'DONE'
                               ? 'line-through text-muted-foreground'
                               : ''
                           }`}
                         >
+                          {getTaskTypeIcon(task.type, 15)}
                           {task.title}
                         </span>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs text-muted-foreground">
-                            Due {format(new Date(task.dueDate), 'MMM d')}
+                            Due{' '}
+                            {DateTime.fromJSDate(
+                              new Date(task.dueDate),
+                            ).toFormat('MMM d')}
                           </span>
                           <Badge
                             variant="outline"
-                            className={`text-[10px] px-1 py-0 h-4 ${
-                              task.priority === 'HIGH'
-                                ? 'bg-destructive/10 text-destructive border-destructive/20'
-                                : task.priority === 'MEDIUM'
-                                  ? 'bg-warning/10 text-warning border-warning/20'
-                                  : 'bg-muted text-muted-foreground'
-                            }`}
+                            className={`text-[10px] text-text gap-1 flex px-1 h-4 ${getColorByPriority(
+                              task.priority,
+                            )}`}
                           >
-                            {task.priority.toLowerCase()}
+                            <ClockArrowUp size={13} />
+                            {capitalize(task.priority)}
                           </Badge>
                           {task.taskCode && (
                             <span className="text-[10px] text-muted-foreground">
@@ -239,11 +249,12 @@ const CheckboxTaskOverview = ({
                   </div>
                 </motion.div>
               ))}
-              {visibleTasks.length === 0 && (
+              {visibleTasks.length === 0 && !isTasksLoading ? (
                 <div className="py-8 text-center text-muted-foreground">
                   No tasks to display
                 </div>
-              )}
+              ) : null}
+              {isTasksLoading && <MyTaskWidgetSkeleton />}
             </AnimatePresence>
           </ScrollArea>
         </div>
@@ -275,4 +286,4 @@ const CheckboxTaskOverview = ({
   )
 }
 
-export default CheckboxTaskOverview
+export default MyTasksWidget

@@ -1,6 +1,5 @@
 'use client'
 import { differenceInDays } from 'date-fns'
-import TaskPriorityWidget from '@src/components/Widgets/CheckboxTaskOverview'
 import useSWR from 'swr'
 import {
   type Project,
@@ -19,8 +18,6 @@ import {
 } from '@ui/dropdown-menu'
 import { Button } from '@ui/button'
 import {
-  Calendar,
-  CalendarClock,
   ChevronRight,
   Clock,
   FolderOpen,
@@ -32,6 +29,7 @@ import { Progress } from '@ui/progress'
 import { Avatar, AvatarFallback } from '@ui/avatar'
 import Link from 'next/link'
 import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
+import MyTasksWidget from '@src/components/Widgets/MyTasksWidget'
 
 const Dashboard = () => {
   const { data: projects } = useSWR<
@@ -64,12 +62,50 @@ const Dashboard = () => {
     return Math.round((completed / project.tasks.length) * 100)
   }
 
+  const {
+    data: tasks,
+    mutate,
+    isLoading: isTasksLoading,
+  } = useSWR<Task[]>({
+    url: 'task/personal',
+    select: {
+      priority: true,
+      taskCode: true,
+      title: true,
+      dueDate: true,
+      status: true,
+      type: true,
+    },
+  })
+
+  const handleTaskUpdate = async (taskId: string, status: TaskStatusType) => {
+    await updateResourceByIdNoToast('task', taskId, { status })
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 w-full h-full">
       {/* Left Section - Takes 2/3 of the width */}
       <div className="col-span-2 p-4 grid-rows-3 h-full flex flex-col">
         {/* Upper Div */}
-        <div className="h-[500px] w-full border rounded-lg flex-grow" />
+        <div className="h-[200px] w-full rounded-lg flex-grow flex-col flex">
+          <div className="flex justify-between items-center">
+            <span className="text-4xl font-bold tracking-tighter">
+              Welcome Back
+            </span>
+            <span className="tracking-tighter text-2xl">
+              {DateTime.utc().toFormat('LLL dd, yyyy')}
+            </span>
+          </div>
+          <div className="text-lg text-muted-foreground">
+            <span>
+              You have{' '}
+              <span className="text-foreground font-bold">
+                {projects?.length || 0}
+              </span>{' '}
+              active projects
+            </span>
+          </div>
+        </div>
 
         {/* Cards Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 pt-3 flex-grow">
@@ -82,11 +118,11 @@ const Dashboard = () => {
                 key={index}
                 className={` ${
                   existingProj ? 'border-solid' : 'border-dashed'
-                }  h-full flex flex-col bg-white  border-b border-r border-l`}
+                }  h-full flex flex-col bg-background  border-b border-r border-l`}
               >
                 {existingProj ? (
                   <>
-                    <CardHeader className="border-2 border-dashed bg-card dark:bg-neutral-900 rounded-lg flex flex-row items-center justify-between p-3 space-y-0">
+                    <CardHeader className=" bg-card dark:bg-neutral-900 rounded-lg flex flex-row items-center justify-between p-3 space-y-0">
                       <div className="flex items-center">
                         <div className={'w-2 h-2 rounded-full mr-2'} />
                         <h3 className="font-medium text-sm flex gap-1 items-center">
@@ -198,13 +234,20 @@ const Dashboard = () => {
 
         {/* Bottom Grid Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 pt-3 gap-2 h-full">
-          <div className="col-span-2 border rounded-lg h-full" />
+          <div className="col-span-2 rounded-lg flex flex-col h-[400px]">
+            <MyTasksWidget
+              isTasksLoading={isTasksLoading}
+              tasks={tasks ?? []}
+              onTaskUpdate={handleTaskUpdate}
+              updatePersonalTasks={mutate}
+            />
+          </div>
           <div className="col-span-1 border rounded-lg h-full" />
         </div>
       </div>
 
       {/* Right Section - Takes 1/3 of the width */}
-      <div className="col-span-1 w-full h-full mb-5 border-l pl-5">
+      <div className="col-span-1 w-full flex flex-col flex-grow h-full mb-5 min-h-0">
         <ProjectTimeline projects={projects ?? []} />
       </div>
     </div>

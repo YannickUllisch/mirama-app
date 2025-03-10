@@ -117,15 +117,12 @@ export default function ProjectTimeline({
   return (
     <TooltipProvider>
       <Card
-        className={cn(
-          'w-full h-full flex-grow bg-inherit border-none ',
-          className,
-        )}
+        className={cn('w-full h-full border flex-grow bg-inherit ', className)}
       >
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Project Timeline</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow px-6 py-2 min-h-[300px]">
           {visibleDates.length > 0 ? (
             <>
               {/* Timeline header with dates */}

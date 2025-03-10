@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import type { Session } from 'next-auth'
-import { Role, type TaskStatusType } from '@prisma/client'
+import { PriorityType, Role, TaskStatusType } from '@prisma/client'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -102,58 +102,27 @@ export const extractFirstLetters = (inputString: string): string => {
   return result
 }
 
-const allowedRelations = [
-  'users',
-  'tasks',
-  'taskCategories',
-  'tags',
-  'assignedTo',
-  'user',
-]
-
-/**
- * Generate valid PRISMA include through recursive parsing.
- * @param relations Relations to generate include from
- * @param depth starting depth
- * @param maxDepth how many nested relations we at most generate. Necessary for security reasons
- * @returns record of include relations that can be used in Prisma queries.
- */
-export const generateInclude = (
-  relations: Record<string, any>,
-  depth: number,
-  maxDepth: number,
-): Record<string, any> => {
-  if (depth > maxDepth) {
-    throw new Error('Maximum include depth exceeded')
-  }
-
-  const include: Record<string, any> = {}
-
-  for (const [key, value] of Object.entries(relations)) {
-    if (!allowedRelations.includes(key)) {
-      throw new Error(`Include relation for '${key}' is now allowed`)
-    }
-    if (typeof value === 'string') {
-      include[key] = { include: { [value]: true } }
-    } else if (typeof value === 'boolean') {
-      // Direct boolean flag: { key: true }
-      include[key] = value
-    } else if (typeof value === 'object') {
-      include[key] = { include: generateInclude(value, depth + 1, maxDepth) }
-    }
-  }
-
-  return include
-}
-
 export const getColorByTaskStatusType = (status: string) => {
   switch (status) {
-    case 'DONE':
+    case TaskStatusType.DONE.toString():
       return 'bg-emerald-500 hover:bg-emerald-400 text-white'
-    case 'ACTIVE':
+    case TaskStatusType.ACTIVE.toString():
       return 'bg-blue-500 hover:bg-blue-400 text-white'
-    case 'NEW':
+    case TaskStatusType.NEW.toString():
       return 'bg-gray-400 hover:bg-gray-300 text-white'
+    default:
+      break
+  }
+}
+
+export const getColorByPriority = (priority: string) => {
+  switch (priority) {
+    case PriorityType.LOW.toString():
+      return 'bg-emerald-500 hover:bg-emerald-400 text-white'
+    case PriorityType.MEDIUM.toString():
+      return 'bg-yellow-500 hover:bg-yellow-400 text-white'
+    case PriorityType.HIGH.toString():
+      return 'bg-red-400 hover:bg-red-300 text-white'
     default:
       break
   }
