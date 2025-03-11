@@ -6,13 +6,11 @@ import {
   isAfter,
   isBefore,
   isWithinInterval,
-  parseISO,
   subDays,
   addDays,
 } from 'date-fns'
 
 import { cn } from '@src/lib/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Tooltip,
   TooltipContent,
@@ -26,10 +24,7 @@ interface ProjectTimelineProps {
   className?: string
 }
 
-export default function ProjectTimeline({
-  projects,
-  className,
-}: ProjectTimelineProps) {
+const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
   const [today] = useState(new Date())
   const [visibleDates, setVisibleDates] = useState<Date[]>([])
 
@@ -96,7 +91,6 @@ export default function ProjectTimeline({
     return {
       left: `${startPosition}%`,
       width: `${width}%`,
-      backgroundColor: 'bg-primary',
     }
   }
 
@@ -116,91 +110,124 @@ export default function ProjectTimeline({
 
   return (
     <TooltipProvider>
-      <Card
-        className={cn('w-full h-full border flex-grow bg-inherit ', className)}
-      >
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Project Timeline</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-grow px-6 py-2 min-h-[300px]">
-          {visibleDates.length > 0 ? (
-            <>
-              {/* Timeline header with dates */}
-              <div className="relative h-6 mb-2 text-xs text-muted-foreground">
+      <div className={cn('w-full h-full', className)}>
+        {visibleDates.length > 0 ? (
+          <>
+            {/* Timeline header with dates */}
+            <div className="relative h-6 mb-4 text-xs text-muted-foreground">
+              {visibleDates
+                .filter((_, i) => i % 7 === 0)
+                .map((date, i) => (
+                  <div
+                    key={i}
+                    className="absolute transform -translate-x-1/2"
+                    style={{
+                      left: `${((i * 7) / (visibleDates.length - 1)) * 100}%`,
+                    }}
+                  >
+                    {format(date, 'MMM d')}
+                  </div>
+                ))}
+            </div>
+
+            {/* Timeline grid */}
+            <div className="relative mb-2">
+              <div className="absolute inset-0 flex justify-between w-full">
                 {visibleDates
                   .filter((_, i) => i % 7 === 0)
-                  .map((date, i) => (
+                  .map((_, i) => (
                     <div
                       key={i}
-                      className="absolute transform -translate-x-1/2"
+                      className="w-px h-full bg-neutral-100 dark:bg-neutral-700"
                       style={{
                         left: `${((i * 7) / (visibleDates.length - 1)) * 100}%`,
                       }}
-                    >
-                      {format(date, 'MMM d')}
-                    </div>
+                    />
                   ))}
               </div>
+            </div>
 
-              {/* Today indicator */}
-              <div className="relative">
-                <div
-                  className="absolute w-px bg-primary z-10 top-7"
-                  style={{
-                    left: getTodayPosition(),
-                    height: `${sortedProjects.length * 70 + 10}px`, // Dynamically set height based on number of projects
-                  }}
-                >
-                  <div className="absolute -top-2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary" />
-                  <div className="absolute -top-6 -translate-x-1/2 text-xs font-medium">
-                    Today
-                  </div>
+            {/* Today indicator */}
+            <div className="relative">
+              <div
+                className="absolute w-px bg-red-500 dark:bg-red-400 z-10 top-0"
+                style={{
+                  left: getTodayPosition(),
+                  height: `${sortedProjects.length * 40 + 10}px`, // Dynamically set height based on number of projects
+                }}
+              >
+                <div className="absolute -top-2 -translate-x-1/2 w-3 h-3 rounded-full bg-red-500 dark:bg-red-400" />
+                <div className="absolute -top-6 -translate-x-1/2 text-xs font-medium text-red-500 dark:text-red-400">
+                  Today
                 </div>
               </div>
+            </div>
 
-              {/* Projects */}
-              <div className="relative mt-8 space-y-10">
-                {sortedProjects.map((project, index) => (
-                  <div key={project.id} className="relative h-10">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full h-px bg-border" />
-                    </div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          className={cn(
-                            'absolute h-16 rounded-xl cursor-default flex items-center px-2 text-2xl font-bold overflow-hidden',
-                            isProjectActive(project)
-                              ? 'bg-secondary text-white shadow-md'
-                              : 'bg-muted text-foreground border border-border',
-                          )}
-                          style={{
-                            ...getProjectBarStyle(project),
-                            zIndex: sortedProjects.length - index, // Higher z-index for projects that appear earlier in the list
-                          }}
-                        >
-                          <span className="truncate">{project.name}</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
+            {/* Projects */}
+            <div className="relative mt-8 space-y-6">
+              {sortedProjects.map((project, index) => (
+                <div key={project.id} className="relative h-8">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full h-px bg-neutral-100 dark:bg-neutral-700" />
+                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          'absolute h-8 rounded-md cursor-default flex items-center px-3 text-sm font-medium overflow-hidden transition-shadow',
+                          isProjectActive(project)
+                            ? 'bg-blue-600 text-white shadow-sm dark:bg-blue-700'
+                            : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200',
+                        )}
+                        style={{
+                          ...getProjectBarStyle(project),
+                          zIndex: sortedProjects.length - index, // Higher z-index for projects that appear earlier in the list
+                        }}
+                      >
+                        <span className="truncate">{project.name}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="bg-white dark:bg-neutral-800 border-0 shadow-md"
+                    >
+                      <div className="px-1 py-0.5">
                         <p className="font-medium">{project.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {format(new Date(project.startDate), 'MMM d, yyyy')} -{' '}
                           {format(new Date(project.endDate), 'MMM d, yyyy')}
                         </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="flex items-center justify-center h-40">
-              <p className="text-muted-foreground">Loading timeline...</p>
+                        {isProjectActive(project) && (
+                          <div className="mt-1 text-xs">
+                            <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1" />
+                            Active project
+                          </div>
+                        )}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              ))}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-40">
+            <p className="text-muted-foreground">Loading timeline...</p>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {projects.length === 0 && visibleDates.length > 0 && (
+          <div className="flex flex-col items-center justify-center h-40 text-center">
+            <p className="text-muted-foreground mb-2">No projects to display</p>
+            <p className="text-xs text-muted-foreground">
+              Create a new project to see it on the timeline
+            </p>
+          </div>
+        )}
+      </div>
     </TooltipProvider>
   )
 }
+
+export default ProjectTimeline
