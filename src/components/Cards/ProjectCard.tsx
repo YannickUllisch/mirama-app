@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import type React from 'react'
-import { getDaysRemaining } from '../helpers'
+import { getDaysRemaining } from '../../../app/app/helpers'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
@@ -34,7 +34,7 @@ const ProjectCard = ({
 }) => {
   const { data: session } = useSession()
   return (
-    <div className="relative">
+    <div className="relative shadow-sm">
       <div
         className={`h-[103%] -top-0.5 w-[15px] absolute -left-1.5 rounded-full opacity-80 z-0 ${getColorByName(
           project.name,

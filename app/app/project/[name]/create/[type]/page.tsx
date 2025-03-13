@@ -60,6 +60,8 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import SubTasksGroup from '@src/components/Task/SubTasksGroup'
+import Centering from '@ui/centering'
+import Link from 'next/link'
 
 const CreateTaskForm = ({
   params,
@@ -140,30 +142,36 @@ const CreateTaskForm = ({
                 submitButtonText={'Return'}
                 onConfirmation={() => router.push(`/app/${params.name}`)}
               >
-                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Link
+                  prefetch={false}
+                  href={`/app/project/${params.name}`}
+                  className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+                >
                   <Undo width={10} className="ml-2" />
-
                   <Button
                     type="button"
                     style={{ textDecoration: 'none', fontSize: 12 }}
                     variant={'link'}
                   >
-                    Return to Overview
+                    Return to Project View
                   </Button>
-                </div>
+                </Link>
               </ConfirmationDialog>
             ) : (
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <Link
+                prefetch={false}
+                href={`/app/project/${params.name}`}
+                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+              >
                 <Undo width={10} className="ml-2" />
                 <Button
                   type="button"
                   style={{ textDecoration: 'none', fontSize: 12 }}
                   variant={'link'}
-                  onClick={() => router.back()}
                 >
-                  Return to Overview
+                  Return to Project View
                 </Button>
-              </div>
+              </Link>
             )}
           </div>
 

@@ -6,7 +6,7 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full table overflow-auto border border-r-0  dark:border-neutral-800">
+  <div className="relative w-full table overflow-auto border border-l-0 border-r-0 dark:border-neutral-800">
     <table
       ref={ref}
       className={cn('w-full caption-bottom text-sm outline-none', className)}

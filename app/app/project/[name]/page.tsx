@@ -14,7 +14,7 @@ import useSWR from 'swr'
 import { projectTabs } from './tabs'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
 import useLocalStorage from '@src/hooks/useLocalStorage'
-import { addProjectIdToLocalStorage } from '@src/pages/dashboard/helpers'
+import { addProjectIdToLocalStorage } from '@/app/app/helpers'
 
 const ClientProjectPage = () => {
   const projectContext = useContext(ProjectDataContext)

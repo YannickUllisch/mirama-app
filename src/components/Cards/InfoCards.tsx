@@ -17,7 +17,7 @@ const InfoCards = ({
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-sm transition-shadow">
+      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -38,7 +38,7 @@ const InfoCards = ({
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-sm transition-shadow">
+      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -57,7 +57,7 @@ const InfoCards = ({
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-sm transition-shadow">
+      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -82,7 +82,7 @@ const InfoCards = ({
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-sm transition-shadow">
+      <Card className="bg-white border-dashed border dark:bg-inherit dark:shadow-neutral-800 shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div>

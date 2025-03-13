@@ -299,7 +299,6 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
     tooltipElement.style.border = '1px solid #e5e5e5'
     tooltipElement.style.borderRadius = '4px'
     tooltipElement.style.padding = '8px'
-    tooltipElement.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)'
     tooltipElement.style.zIndex = '9999'
     tooltipElement.style.pointerEvents = 'none'
     tooltipElement.style.minWidth = '200px'
@@ -314,7 +313,9 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
 
     // Add content to tooltip
     tooltipElement.innerHTML = `
-      <div style="font-weight: 500; margin-bottom: 4px;">${project.name}</div>
+      <div style="font-weight: 500; margin-bottom: 4px; font-size: 20px">${
+        project.name
+      }</div>
       <div style="color: ${
         document.documentElement.classList.contains('dark')
           ? '#a3a3a3'
@@ -324,16 +325,6 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
           new Date(project.endDate),
           'MMM d, yyyy',
         )}
-      </div>
-      <div style="color: ${
-        document.documentElement.classList.contains('dark')
-          ? '#a3a3a3'
-          : '#666666'
-      }; font-size: 11px; margin-top: 4px;">
-        Duration: ${differenceInDays(
-          new Date(project.endDate),
-          new Date(project.startDate),
-        )} days
       </div>
       <div style="margin-top: 4px; padding-top: 4px; border-top: 1px solid ${
         document.documentElement.classList.contains('dark')
@@ -484,7 +475,7 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
               {/* Projects */}
               <div className="relative mt-8 space-y-6">
                 {sortedProjects.map((project) => (
-                  <div key={project.id} className="relative h-8">
+                  <div key={project.id} className="relative h-8 ">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full h-px bg-neutral-100 dark:bg-neutral-700" />
                     </div>
@@ -493,7 +484,7 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
                         if (el) projectRefs.current.set(project.id, el)
                       }}
                       className={cn(
-                        'absolute h-8 rounded-md cursor-default flex items-center px-3 text-white text-sm font-medium overflow-hidden transition-shadow',
+                        'absolute h-8 shadow-md dark:shadow-neutral-700 rounded-full cursor-default flex items-center px-3 text-white text-sm font-medium overflow-hidden transition-shadow',
                         getColorByName(project.name),
                       )}
                       style={{
@@ -524,7 +515,7 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center flex-row h-40">
+          <div className="flex items-center justify-center gap-3 h-40">
             <Spinner className="bg-text" />
             <p className="text-muted-foreground">Loading timeline...</p>
           </div>

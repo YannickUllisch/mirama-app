@@ -3,7 +3,6 @@ import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 import GanttTab from '@src/components/Tabs/ProjectTabs/TimelineTab'
 import TableTab from '@src/components/Tabs/ProjectTabs/TableTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
-import SettingsTab from '@src/components/Tabs/ProjectTabs/SettingsTab'
 import {
   MapIcon,
   Table2,
@@ -68,16 +67,6 @@ export const projectTabs: {
     headerComponent: (
       <div className="flex justify-center gap-1 items-center">
         <GanttChart width={15} /> Timeline
-      </div>
-    ),
-  },
-  {
-    id: 'settings',
-    roles: Object.values(Role),
-    component: <SettingsTab />,
-    headerComponent: (
-      <div className="flex justify-center gap-1 items-center">
-        <Settings width={15} /> Settings
       </div>
     ),
   },

@@ -29,6 +29,9 @@ export const GET = auth(async (req) => {
       where: {
         assignedToId: session?.user.id,
         teamId: session?.user.teamId ?? 'undefined',
+        project: {
+          archived: false,
+        },
       },
       select: {
         ...prismaSelection,

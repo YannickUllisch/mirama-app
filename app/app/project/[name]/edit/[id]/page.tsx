@@ -62,6 +62,7 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import GeneralAccordion from '@src/components/GeneralAccordion'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import Link from 'next/link'
 
 const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
   // Routing used to return to previous page.
@@ -151,29 +152,36 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                 submitButtonText={'Return'}
                 onConfirmation={() => router.push(`/app/${params.name}`)}
               >
-                <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+                <Link
+                  href={`/app/project/${params.name}`}
+                  prefetch={false}
+                  className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+                >
                   <Undo width={10} className="ml-2" />
                   <Button
                     type="button"
                     style={{ textDecoration: 'none', fontSize: 12 }}
                     variant={'link'}
                   >
-                    Return
+                    Return to Project View
                   </Button>
-                </div>
+                </Link>
               </ConfirmationDialog>
             ) : (
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
+              <Link
+                href={`/app/project/${params.name}`}
+                prefetch={false}
+                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+              >
                 <Undo width={10} className="ml-2" />
                 <Button
                   type="button"
                   style={{ textDecoration: 'none', fontSize: 12 }}
                   variant={'link'}
-                  onClick={() => router.back()}
                 >
-                  Return
+                  Return to Project View
                 </Button>
-              </div>
+              </Link>
             )}
           </div>
 

@@ -12,9 +12,11 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { Badge } from '@ui/badge'
-import { capitalize } from '@src/lib/utils'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
+import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 interface HeaderInterface {
   project?: Project
@@ -27,6 +29,7 @@ const ProjectHeader: FC<HeaderInterface> = ({
   users,
   upcomingMilestone,
 }) => {
+  const { data: session } = useSession()
   return (
     <header className="mb-2 bg-white dark:bg-neutral-900 rounded-lg p-5 pb-1 overflow-hidden">
       {!project ? (
@@ -62,14 +65,14 @@ const ProjectHeader: FC<HeaderInterface> = ({
             <div className="hidden sm:flex items-center gap-3 ">
               <AvatarGroup
                 usernames={users?.map((u) => u.name) ?? []}
-                avatarSize={10}
+                avatarSize={8}
                 previewAmount={4}
-                fontSize={17}
+                fontSize={14}
               />
               <Button
                 size={'icon'}
                 variant={'ghost'}
-                className="border-2 border-dashed rounded-full h-[45px] w-[45px]"
+                className="border-2 border-dashed rounded-full h-[35px] w-[35px]"
               >
                 <UserPlus size={17} />
               </Button>
@@ -97,6 +100,11 @@ const ProjectHeader: FC<HeaderInterface> = ({
 
             <div className="hidden sm:flex items-center gap-2 rounded-sm cursor-pointer ml-auto mt-6">
               <TaskTypeCreate projectName={'Mirama'} />
+              {isTeamAdminOrOwner(session) && (
+                <Link href={`app/project/edit/${project.id}`} prefetch={false}>
+                  <Button variant={'secondary'}>Edit Project</Button>
+                </Link>
+              )}
             </div>
           </div>
         </>

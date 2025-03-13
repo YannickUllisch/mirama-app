@@ -1,8 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { type Task, TaskStatusType } from '@prisma/client'
-import { ArrowRight, Check, Clock } from 'lucide-react'
+import { type Project, type Task, TaskStatusType } from '@prisma/client'
+import { ArrowRight, Check, Clock, ExternalLink, Group } from 'lucide-react'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
 import { Badge } from '@ui/badge'
@@ -16,10 +16,10 @@ import { useMemo } from 'react'
 import Centering from '@ui/centering'
 
 interface MinimalistTasksWidgetProps {
-  tasks: Task[]
+  tasks: (Task & { project: Project })[]
   isLoading?: boolean
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
-  mutate: KeyedMutator<Task[]>
+  mutate: KeyedMutator<(Task & { project: Project })[]>
 }
 
 const MinimalistTasksWidget = ({
@@ -90,22 +90,22 @@ const MinimalistTasksWidget = ({
   // Loading state
   if (isLoading) {
     return (
-      <Card className="border shadow-sm">
+      <Card className="border shadow-sm bg-white dark:bg-inherit">
         <CardHeader className="p-4 pb-2">
-          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+          <div className="h-6 w-24 bg-background rounded animate-pulse" />
         </CardHeader>
         <CardContent className="p-0">
           <div className="px-4 pt-4">
-            <div className="h-8 bg-muted rounded animate-pulse mb-4" />
+            <div className="h-8 bg-background rounded animate-pulse mb-4" />
           </div>
           <div className="space-y-4 p-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex justify-between items-center">
                 <div className="space-y-2">
-                  <div className="h-4 w-48 bg-muted rounded animate-pulse" />
-                  <div className="h-3 w-24 bg-muted rounded animate-pulse" />
+                  <div className="h-4 w-48 bg-background rounded animate-pulse" />
+                  <div className="h-3 w-24 bg-background rounded animate-pulse" />
                 </div>
-                <div className="h-8 w-20 bg-muted rounded animate-pulse" />
+                <div className="h-8 w-20 bg-background rounded animate-pulse" />
               </div>
             ))}
           </div>
@@ -138,7 +138,7 @@ const MinimalistTasksWidget = ({
               {activeTasks.length > 0 ? (
                 <div>
                   {activeTasks.map((task) => (
-                    <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="px-4 py-3 group flex items-center justify-between hover:bg-background">
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -147,7 +147,7 @@ const MinimalistTasksWidget = ({
                           className={`w-5 h-5 rounded-full border flex items-center justify-center ${
                             updatingTaskId === task.id
                               ? 'border-none bg-inherit'
-                              : 'border-primary hover:bg-primary/10'
+                              : 'border-text hover:bg-primary/10'
                           }`}
                           aria-label={
                             task.status === TaskStatusType.DONE
@@ -172,7 +172,21 @@ const MinimalistTasksWidget = ({
                           </div>
                         </div>
                       </Centering>
-                      {getTaskTypeIcon(task.type)}
+                      <Centering className="gap-4">
+                        <Link
+                          prefetch={false}
+                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                          className="text-text/50 group-hover:opacity-100 opacity-0"
+                          aria-label="Go to Task Icon Link"
+                        >
+                          <ExternalLink size={16} />
+                        </Link>
+                        <span className="text-text/50 text-sm">
+                          {task.project.name}
+                        </span>
+
+                        {getTaskTypeIcon(task.type)}
+                      </Centering>
                     </div>
                   ))}
                 </div>
@@ -192,7 +206,7 @@ const MinimalistTasksWidget = ({
               {upcomingTasks.length > 0 ? (
                 <div>
                   {upcomingTasks.map((task) => (
-                    <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="px-4 py-3 flex items-center justify-between hover:bg-background">
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -201,7 +215,7 @@ const MinimalistTasksWidget = ({
                           className={`w-5 h-5 rounded-full border flex items-center justify-center ${
                             updatingTaskId === task.id
                               ? 'border-none bg-inherit'
-                              : 'border-primary hover:bg-primary/10'
+                              : 'border-text hover:bg-primary/10'
                           }`}
                           aria-label={
                             task.status === TaskStatusType.DONE
@@ -226,7 +240,22 @@ const MinimalistTasksWidget = ({
                           </div>
                         </div>
                       </Centering>
-                      {getTaskTypeIcon(task.type)}
+
+                      <Centering className="gap-4">
+                        <Link
+                          prefetch={false}
+                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                          className="text-text/50 group-hover:opacity-100 opacity-0"
+                          aria-label="Go to Task Icon Link"
+                        >
+                          <ExternalLink size={16} />
+                        </Link>
+                        <span className="text-text/50 text-sm">
+                          {task.project.name}
+                        </span>
+
+                        {getTaskTypeIcon(task.type)}
+                      </Centering>
                     </div>
                   ))}
                 </div>
@@ -243,7 +272,7 @@ const MinimalistTasksWidget = ({
               {completedTasks.length > 0 ? (
                 <div>
                   {completedTasks.map((task) => (
-                    <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="px-4 py-3 flex items-center justify-between hover:bg-background">
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -275,7 +304,21 @@ const MinimalistTasksWidget = ({
                           </div>
                         </div>
                       </Centering>
-                      {getTaskTypeIcon(task.type)}
+                      <Centering className="gap-4">
+                        <Link
+                          prefetch={false}
+                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                          className="text-text/50 group-hover:opacity-100 opacity-0"
+                          aria-label="Go to Task Icon Link"
+                        >
+                          <ExternalLink size={16} />
+                        </Link>
+                        <span className="text-text/50 text-sm">
+                          {task.project.name}
+                        </span>
+
+                        {getTaskTypeIcon(task.type)}
+                      </Centering>
                     </div>
                   ))}
                 </div>

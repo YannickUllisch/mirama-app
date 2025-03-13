@@ -19,9 +19,9 @@ import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
 import { Separator } from '@ui/separator'
 import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
 import { useMemo } from 'react'
-import InfoCards from '@src/pages/dashboard/InfoCards'
-import ProjectCard from '@src/pages/dashboard/project/ProjectCard'
-import { calculateProjectProgress } from '@src/pages/dashboard/helpers'
+import InfoCards from '@src/components/Cards/InfoCards'
+import ProjectCard from '@src/components/Cards/ProjectCard'
+import { calculateProjectProgress } from '@/app/app/helpers'
 import { Skeleton } from '@ui/skeleton'
 import { Spinner } from '@ui/spinner'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
@@ -49,7 +49,7 @@ const Dashboard = () => {
     data: tasks,
     mutate,
     isLoading: isTasksLoading,
-  } = useSWR<Task[]>({
+  } = useSWR<(Task & { project: Project })[]>({
     url: 'task/personal',
     select: {
       priority: true,
@@ -58,6 +58,7 @@ const Dashboard = () => {
       dueDate: true,
       status: true,
       type: true,
+      project: true,
     },
   })
 
@@ -127,7 +128,7 @@ const Dashboard = () => {
             />
 
             {/* Tasks Section */}
-            <div>
+            <>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-medium flex items-center gap-2">
                   <span>My Tasks</span>
@@ -152,7 +153,7 @@ const Dashboard = () => {
                 onTaskUpdate={handleTaskUpdate}
                 mutate={mutate}
               />
-            </div>
+            </>
           </div>
 
           {/* Right Column - Timeline & Activity */}
@@ -197,7 +198,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className=" shadow-sm bg-white dark:bg-inherit border border-dashed">
+            <Card className="shadow-sm bg-white dark:bg-inherit border border-dashed">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-xl font-medium">
                   Project Timeline

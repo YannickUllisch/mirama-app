@@ -4,10 +4,9 @@ import { Spinner } from '@ui/spinner'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
-import ProjectCard from '../../pages/dashboard/project/ProjectCard'
-import { Card } from '@ui/card'
-import { Skeleton } from '@ui/skeleton'
+import ProjectCard from '../Cards/ProjectCard'
 import useLocalStorage from '@src/hooks/useLocalStorage'
+import { v4 } from 'uuid'
 
 const RecentProjectsWidget = ({
   projects,
@@ -22,7 +21,7 @@ const RecentProjectsWidget = ({
   )
 
   return (
-    <div>
+    <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium flex items-center gap-2">
           <span>Recent Projects</span>
@@ -61,13 +60,14 @@ const RecentProjectsWidget = ({
               ) : null
             })
           : Array.from({ length: 4 }).map((_, index) => (
-              <Card
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                key={index}
-                className="border border-dashed flex items-center justify-center h-[150px] bg-background"
+              <div
+                key={`${v4()}-${index}`}
+                className="h-[150px] rounded-lg border border-dashed w-full animate-pulse bg-background p-4 flex flex-col gap-3"
               >
-                <Skeleton className="h-[150px] w-full" />
-              </Card>
+                <div className="h-[30px] rounded-lg w-[100px] animate-pulse bg-white dark:bg-neutral-900" />
+                <div className="h-[30px] rounded-lg w-full animate-pulse bg-white dark:bg-neutral-900" />
+                <div className="h-[30px] rounded-lg w-full animate-pulse bg-white dark:bg-neutral-900" />
+              </div>
             ))}
 
         {!isProjectsLoading && recentProjectIds.length < 1 ? (
@@ -76,7 +76,7 @@ const RecentProjectsWidget = ({
           </span>
         ) : null}
       </div>
-    </div>
+    </>
   )
 }
 

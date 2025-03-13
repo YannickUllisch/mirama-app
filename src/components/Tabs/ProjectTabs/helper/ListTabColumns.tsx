@@ -7,6 +7,8 @@ import {
   type User,
 } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
+import GeneralTooltip from '@src/components/GeneralTooltip'
+import EditableCell from '@src/components/Inputs/EditableCell'
 import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { Badge } from '@src/components/ui/badge'
@@ -26,6 +28,7 @@ import { SelectItem } from '@src/components/ui/tableSelect'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
+import Centering from '@ui/centering'
 import {
   BetweenHorizonalStart,
   CalendarClock,
@@ -34,6 +37,7 @@ import {
   Ellipsis,
   PanelBottomClose,
   Pencil,
+  PencilLine,
   Tag as TagIcon,
   Text,
   Trash,
@@ -126,20 +130,53 @@ export const ListTabColumns = ({
         id: 'title',
         cell: ({ getValue, row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
+          const [isEditing, setIsEditing] = useState(false)
           return (
             <div className="flex justify-between group w-full">
-              <div className="flex items-center gap-2">
+              <Centering>
                 <span className="overflow-ellipsis flex-1 min-w-0">
-                  <Link
-                    onClick={(e) => e.stopPropagation()}
-                    href={`/app/project/${projectName}/edit/${row.original.id}`}
-                    className="hover:underline flex gap-2 items-center underline-offset-4"
-                  >
-                    {getTaskTypeIcon(row.original.type)}
-                    {getValue() as string}
-                  </Link>
+                  {isEditing ? (
+                    <Centering>
+                      {getTaskTypeIcon(row.original.type)}
+                      <EditableCell
+                        key={`name${row.id}`}
+                        apiRoute="task"
+                        id={row.original.id}
+                        mutate={mutate}
+                        initialValue={getValue() as string}
+                        paramToUpdate="title"
+                        autofocus
+                        onBlueNoChange={() => setIsEditing(false)}
+                      />
+                      <GeneralTooltip tipText="Stop Edit">
+                        <Pencil
+                          aria-label="Stop Title Edit"
+                          onClick={() => setIsEditing(false)}
+                          className="w-[12px] h-[12px]"
+                        />
+                      </GeneralTooltip>
+                    </Centering>
+                  ) : (
+                    <Centering>
+                      <Link
+                        onClick={(e) => e.stopPropagation()}
+                        href={`/app/project/${projectName}/edit/${row.original.id}`}
+                        className="hover:underline flex gap-2 items-center underline-offset-4"
+                      >
+                        {getTaskTypeIcon(row.original.type)}
+                        {getValue() as string}
+                      </Link>
+                      <GeneralTooltip tipText="Start Edit">
+                        <PencilLine
+                          aria-label="Start Title Edit"
+                          onClick={() => setIsEditing(true)}
+                          className="w-[12px] h-[12px] opacity-0 group-hover:opacity-100"
+                        />
+                      </GeneralTooltip>
+                    </Centering>
+                  )}
                 </span>
-              </div>
+              </Centering>
 
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger asChild>
