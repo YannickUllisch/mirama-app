@@ -23,6 +23,9 @@ import InfoCards from '@src/pages/dashboard/InfoCards'
 import ProjectCard from '@src/pages/dashboard/project/ProjectCard'
 import { calculateProjectProgress } from '@src/pages/dashboard/helpers'
 import { Skeleton } from '@ui/skeleton'
+import { Spinner } from '@ui/spinner'
+import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
 
 const Dashboard = () => {
   const { data: projects, isLoading: isProjectsLoading } = useSWR<
@@ -58,6 +61,10 @@ const Dashboard = () => {
     },
   })
 
+  const { data: teamMembers } = useSWR<User[]>({
+    url: 'team/member',
+  })
+
   const handleTaskUpdate = async (taskId: string, status: TaskStatusType) => {
     await updateResourceByIdNoToast('task', taskId, { status })
   }
@@ -88,12 +95,14 @@ const Dashboard = () => {
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
+            <h1 className="text-3xl font-semibold tracking-tighter">
+              Dashboard
+            </h1>
             <div className="text-sm text-muted-foreground">
               {DateTime.utc().toFormat('EEEE, MMMM d, yyyy')}
             </div>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground tracking-tighter">
             Welcome back. Here's an overview of your projects and tasks.
           </p>
         </div>
@@ -112,48 +121,10 @@ const Dashboard = () => {
           {/* Left Column - Projects & Tasks */}
           <div className="lg:col-span-2 space-y-8">
             {/* Projects Section */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-medium flex items-center gap-2">
-                  <span>Recent Projects</span>
-                  {projects && projects.length > 0 && (
-                    <span className="text-sm px-2 py-0.5 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-full">
-                      {projects.length}
-                    </span>
-                  )}
-                </h2>
-                <Link href={'/app/project/create'}>
-                  <Button
-                    size="sm"
-                    className="gap-1 bg-red-500 hover:bg-red-600 text-white"
-                  >
-                    <Plus className="h-4 w-4" />
-                    New Project
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {projects?.slice(0, 4).map((project) => (
-                  <ProjectCard project={project} />
-                ))}
-
-                {isProjectsLoading && <Skeleton className="h-[200px] w-full" />}
-
-                {!isProjectsLoading && (!projects || projects.length < 4) && (
-                  <Card className="border border-dashed flex items-center justify-center h-[180px] bg-white dark:bg-neutral-800 hover:bg-[#f5f0e5] dark:hover:bg-neutral-700/50 transition-colors">
-                    <Button variant="ghost" className="flex flex-col gap-2">
-                      <div className="rounded-full bg-red-50 dark:bg-red-900/20 p-2">
-                        <Plus className="h-4 w-4 text-red-500 dark:text-red-400" />
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        Add Project
-                      </span>
-                    </Button>
-                  </Card>
-                )}
-              </div>
-            </div>
+            <RecentProjectsWidget
+              isProjectsLoading={isProjectsLoading}
+              projects={projects ?? []}
+            />
 
             {/* Tasks Section */}
             <div>
@@ -185,9 +156,9 @@ const Dashboard = () => {
           </div>
 
           {/* Right Column - Timeline & Activity */}
-          <div className="space-y-8">
+          <div className="space-y-4">
             {/* Activity Summary */}
-            <Card className="border-0 shadow-sm bg-white dark:bg-neutral-800">
+            <Card className="shadow-sm bg-white dark:bg-inherit border border-dashed">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-xl font-medium flex items-center gap-2">
                   <LineChart className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -195,76 +166,23 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-red-500" />
-                      <span className="text-sm">Projects</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium">
-                      {statistics.totalProjects}
-                      <ArrowUpRight className="h-3 w-3 text-green-500" />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-600" />
-                      <span className="text-sm">Active Tasks</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium">
-                      {statistics.totalTasks - statistics.completedTasks}
-                      <ArrowUpRight className="h-3 w-3 text-green-500" />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-500" />
-                      <span className="text-sm">Completed Tasks</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium">
-                      {statistics.completedTasks}
-                      <ArrowUpRight className="h-3 w-3 text-green-500" />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-amber-500" />
-                      <span className="text-sm">Overdue Tasks</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium">
-                      {statistics.overdueTasks}
-                      {statistics.overdueTasks > 0 ? (
-                        <ArrowUpRight className="h-3 w-3 text-red-500" />
-                      ) : (
-                        <ArrowUpRight className="h-3 w-3 text-green-500" />
-                      )}
-                    </div>
-                  </div>
+                <div className="h-[180px]">
+                  <span className="text-text/70 text-sm">Coming soon..</span>
                 </div>
-
                 <Separator className="my-4" />
 
                 <div className="pt-2">
                   <div className="text-sm font-medium mb-2">Team Activity</div>
                   <div className="flex items-center justify-between">
                     <div className="flex -space-x-2">
-                      {Array(5)
-                        .fill(0)
-                        .map((index) => (
-                          <Avatar
-                            key={index}
-                            className="h-8 w-8 border-2 border-white dark:border-neutral-800"
-                          >
-                            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-                              {String.fromCharCode(65 + index)}
-                            </AvatarFallback>
-                          </Avatar>
-                        ))}
+                      <AvatarGroup
+                        avatarSize={8}
+                        fontSize={13}
+                        previewAmount={5}
+                        usernames={teamMembers?.map((user) => user.name) ?? []}
+                      />
                     </div>
-                    <Link href={'/app/team'}>
+                    <Link href={'/app/team'} prefetch={false}>
                       <Button
                         variant="outline"
                         size="sm"
@@ -279,7 +197,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Timeline */}
             <Card className=" shadow-sm bg-white dark:bg-inherit border border-dashed">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-xl font-medium">

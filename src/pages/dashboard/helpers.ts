@@ -15,3 +15,19 @@ export const calculateProjectProgress = (
   ).length
   return Math.round((completed / project.tasks.length) * 100)
 }
+
+export const addProjectIdToLocalStorage = (
+  setValue: React.Dispatch<React.SetStateAction<string[]>>,
+  projectId: string,
+) => {
+  setValue((prev: string[]) => {
+    if (prev.includes(projectId)) return prev
+    const updatedProjects = Array.isArray(prev)
+      ? [...prev, projectId]
+      : [projectId]
+    if (updatedProjects.length > 4) {
+      updatedProjects.shift() // Remove the oldest project (FIFO)
+    }
+    return updatedProjects
+  })
+}

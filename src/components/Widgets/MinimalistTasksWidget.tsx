@@ -9,7 +9,11 @@ import { Badge } from '@ui/badge'
 import type { KeyedMutator } from 'swr'
 import { DateTime } from 'luxon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import { Separator } from '@ui/separator'
+import { Spinner } from '@ui/spinner'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import Link from 'next/link'
+import { useMemo } from 'react'
+import Centering from '@ui/centering'
 
 interface MinimalistTasksWidgetProps {
   tasks: Task[]
@@ -24,32 +28,30 @@ const MinimalistTasksWidget = ({
   onTaskUpdate,
   mutate,
 }: MinimalistTasksWidgetProps) => {
+  // Needed for keeping track of individual task loading state
   const [updatingTaskId, setUpdatingTaskId] = React.useState<string | null>(
     null,
   )
 
   // Filter tasks by status
-  const activeTasks = React.useMemo(
+  const activeTasks = useMemo(
     () =>
       tasks
         .filter((task) => task.status !== TaskStatusType.DONE)
         .sort(
           (a, b) =>
             new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
-        )
-        .slice(0, 5),
+        ),
     [tasks],
   )
 
-  const completedTasks = React.useMemo(
-    () =>
-      tasks.filter((task) => task.status === TaskStatusType.DONE).slice(0, 5),
+  const completedTasks = useMemo(
+    () => tasks.filter((task) => task.status === TaskStatusType.DONE),
     [tasks],
   )
 
-  const upcomingTasks = React.useMemo(() => {
-    const today = new Date()
-    today.setHours(23, 59, 59, 999)
+  const upcomingTasks = useMemo(() => {
+    const today = DateTime.utc().endOf('day').toJSDate()
 
     return tasks
       .filter(
@@ -59,7 +61,6 @@ const MinimalistTasksWidget = ({
       .sort(
         (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
       )
-      .slice(0, 5)
   }, [tasks])
 
   const toggleTaskCompletion = async (taskId: string) => {
@@ -114,7 +115,7 @@ const MinimalistTasksWidget = ({
   }
 
   return (
-    <Card className="border shadow-sm bg-white">
+    <Card className="border shadow-sm bg-white dark:bg-inherit">
       <CardContent className="p-0">
         <Tabs defaultValue="active" className="w-full">
           <div className="px-4 pt-4">
@@ -132,58 +133,46 @@ const MinimalistTasksWidget = ({
             </TabsList>
           </div>
 
-          <TabsContent value="active" className="p-0">
+          <TabsContent value="active">
             <div className="max-h-[300px] overflow-auto">
               {activeTasks.length > 0 ? (
                 <div>
-                  {activeTasks.map((task, index) => (
-                    <div key={task.id} className="relative">
-                      <div className="px-4 py-3 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
-                          <button
-                            onClick={() => toggleTaskCompletion(task.id)}
-                            disabled={updatingTaskId === task.id}
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                              updatingTaskId === task.id
-                                ? 'border-muted bg-muted/50'
-                                : 'border-primary hover:bg-primary/10'
-                            }`}
-                            aria-label={
-                              task.status === TaskStatusType.DONE
-                                ? 'Mark as incomplete'
-                                : 'Mark as complete'
-                            }
-                          >
-                            {updatingTaskId === task.id && (
-                              <div className="w-3 h-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                            )}
-                          </button>
-                          <div>
-                            <div className="font-medium text-sm">
-                              {task.title}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              Due{' '}
-                              {DateTime.fromJSDate(
-                                new Date(task.dueDate),
-                              ).toFormat('MMM d, yyyy')}
-                            </div>
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
+                  {activeTasks.map((task) => (
+                    <div className="px-4 py-3 flex items-center justify-between">
+                      <Centering>
+                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+                        <button
                           onClick={() => toggleTaskCompletion(task.id)}
                           disabled={updatingTaskId === task.id}
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                            updatingTaskId === task.id
+                              ? 'border-none bg-inherit'
+                              : 'border-primary hover:bg-primary/10'
+                          }`}
+                          aria-label={
+                            task.status === TaskStatusType.DONE
+                              ? 'Mark as incomplete'
+                              : 'Mark as complete'
+                          }
                         >
-                          Complete
-                        </Button>
-                      </div>
-                      {index < activeTasks.length - 1 && (
-                        <Separator className="mx-4" />
-                      )}
+                          {updatingTaskId === task.id && (
+                            <Spinner className="bg-text" />
+                          )}
+                        </button>
+                        <div>
+                          <div className="font-medium text-sm">
+                            {task.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            Due{' '}
+                            {DateTime.fromJSDate(
+                              new Date(task.dueDate),
+                            ).toFormat('MMM d, yyyy')}
+                          </div>
+                        </div>
+                      </Centering>
+                      {getTaskTypeIcon(task.type)}
                     </div>
                   ))}
                 </div>
@@ -198,32 +187,46 @@ const MinimalistTasksWidget = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="upcoming" className="p-0">
-            <div className="max-h-[400px] overflow-auto">
+          <TabsContent value="upcoming">
+            <div className="max-h-[300px] overflow-auto">
               {upcomingTasks.length > 0 ? (
                 <div>
-                  {upcomingTasks.map((task, index) => (
-                    <div key={task.id} className="relative">
-                      <div className="px-4 py-3 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-5 h-5 rounded-full border border-muted flex items-center justify-center" />
-                          <div>
-                            <div className="font-medium text-sm">
-                              {task.title}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              Due{' '}
-                              {DateTime.fromJSDate(
-                                new Date(task.dueDate),
-                              ).toFormat('MMM d, yyyy')}
-                            </div>
+                  {upcomingTasks.map((task) => (
+                    <div className="px-4 py-3 flex items-center justify-between">
+                      <Centering>
+                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+                        <button
+                          onClick={() => toggleTaskCompletion(task.id)}
+                          disabled={updatingTaskId === task.id}
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                            updatingTaskId === task.id
+                              ? 'border-none bg-inherit'
+                              : 'border-primary hover:bg-primary/10'
+                          }`}
+                          aria-label={
+                            task.status === TaskStatusType.DONE
+                              ? 'Mark as incomplete'
+                              : 'Mark as complete'
+                          }
+                        >
+                          {updatingTaskId === task.id && (
+                            <Spinner className="bg-text" />
+                          )}
+                        </button>
+                        <div>
+                          <div className="font-medium text-sm">
+                            {task.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            Due{' '}
+                            {DateTime.fromJSDate(
+                              new Date(task.dueDate),
+                            ).toFormat('MMM d, yyyy')}
                           </div>
                         </div>
-                      </div>
-                      {index < upcomingTasks.length - 1 && (
-                        <Separator className="mx-4" />
-                      )}
+                      </Centering>
+                      {getTaskTypeIcon(task.type)}
                     </div>
                   ))}
                 </div>
@@ -235,30 +238,44 @@ const MinimalistTasksWidget = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="completed" className="p-0">
+          <TabsContent value="completed">
             <div className="max-h-[300px] overflow-auto">
               {completedTasks.length > 0 ? (
                 <div>
-                  {completedTasks.map((task, index) => (
-                    <div key={task.id} className="relative">
-                      <div className="px-4 py-3 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="h-3 w-3 text-primary-foreground" />
+                  {completedTasks.map((task) => (
+                    <div className="px-4 py-3 flex items-center justify-between">
+                      <Centering>
+                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+                        <button
+                          onClick={() => toggleTaskCompletion(task.id)}
+                          disabled={updatingTaskId === task.id}
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                            updatingTaskId === task.id
+                              ? 'border-none bg-inherit'
+                              : 'border-primary bg-primary hover:bg-primary/80 '
+                          }`}
+                          aria-label={
+                            task.status === TaskStatusType.DONE
+                              ? 'Mark as incomplete'
+                              : 'Mark as complete'
+                          }
+                        >
+                          {updatingTaskId === task.id ? (
+                            <Spinner className="bg-text" />
+                          ) : (
+                            <Check className="text-white m-1" />
+                          )}
+                        </button>
+                        <div>
+                          <div className="font-medium text-sm line-through text-muted-foreground">
+                            {task.title}
                           </div>
-                          <div>
-                            <div className="font-medium text-sm line-through text-muted-foreground">
-                              {task.title}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1">
-                              Completed
-                            </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Completed
                           </div>
                         </div>
-                      </div>
-                      {index < completedTasks.length - 1 && (
-                        <Separator className="mx-4" />
-                      )}
+                      </Centering>
+                      {getTaskTypeIcon(task.type)}
                     </div>
                   ))}
                 </div>
@@ -271,14 +288,16 @@ const MinimalistTasksWidget = ({
           </TabsContent>
         </Tabs>
       </CardContent>
-      <CardFooter className="p-0">
-        <Button
-          variant="ghost"
-          className="w-full justify-between rounded-none h-10 px-4 text-xs border-t"
-        >
-          <span>View All Tasks</span>
-          <ArrowRight className="h-3 w-3" />
-        </Button>
+      <CardFooter className="p-0 ">
+        <Link prefetch={false} href={'/app/tasks'} className="w-[100%]">
+          <Button
+            variant="ghost"
+            className="w-full justify-between rounded-none h-10 px-4 text-xs border-t"
+          >
+            <span>View All Tasks</span>
+            <ArrowRight className="h-3 w-3" />
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   )

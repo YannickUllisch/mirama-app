@@ -1,6 +1,7 @@
 'use client'
 import type { Milestone, Project, User } from '@prisma/client'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import type React from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Tabs,
   TabsContent,
@@ -12,6 +13,8 @@ import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import useSWR from 'swr'
 import { projectTabs } from './tabs'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
+import useLocalStorage from '@src/hooks/useLocalStorage'
+import { addProjectIdToLocalStorage } from '@src/pages/dashboard/helpers'
 
 const ClientProjectPage = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -19,7 +22,7 @@ const ClientProjectPage = () => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const currentTab = searchParams.get('tab')
+  const currentTab = searchParams?.get('tab')
   const [tab, setTab] = useState(currentTab ?? 'overview')
 
   const { data: project } = useSWR<Project & { milestones: Milestone[] }>({
@@ -34,14 +37,27 @@ const ClientProjectPage = () => {
       milestones: true,
     },
   })
-
   const { data: users } = useSWR<User[]>(
     projectContext ? `project/users?id=${projectContext.projectId}` : undefined,
   )
 
+  // Handling Project visit, by storing the project id in local storage (used to show recent projects)
+  const [_, setRecentProjects] = useLocalStorage<string[]>(
+    'recentProjectIds',
+    [],
+  )
+  const hasStoredProject = useRef(false)
+  useEffect(() => {
+    if (project && !hasStoredProject.current) {
+      addProjectIdToLocalStorage(setRecentProjects, project.id)
+      hasStoredProject.current = true // Mark as stored so it doesn't run again
+    }
+  }, [project, setRecentProjects])
+
+  // Handling Tab updates in URL
   useEffect(() => {
     if (currentTab !== tab) {
-      const newParams = new URLSearchParams(searchParams)
+      const newParams = new URLSearchParams(searchParams as any)
       newParams.set('tab', tab)
       router.replace(`${pathname}?${newParams.toString()}`)
     }
@@ -60,6 +76,7 @@ const ClientProjectPage = () => {
         users={users}
         upcomingMilestone={upcomingMilestone}
       />
+
       <div className="rounded-lg">
         <Tabs value={tab} onValueChange={setTab} className="w-full ">
           <div className="flex w-full items-center shadow-md dark:shadow-neutral-800  bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">

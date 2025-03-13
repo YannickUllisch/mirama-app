@@ -55,13 +55,13 @@ const AppMenu: AppMenuItem[] = [
     isCollapsible: false,
     roles: Object.values(Role) as Role[],
   },
-  {
-    title: 'Calendar',
-    icon: Calendar,
-    href: '/app/calendar',
-    isCollapsible: false,
-    roles: Object.values(Role) as Role[],
-  },
+  // {
+  //   title: 'Calendar',
+  //   icon: Calendar,
+  //   href: '/app/calendar',
+  //   isCollapsible: false,
+  //   roles: Object.values(Role) as Role[],
+  // },
   {
     title: 'Teams',
     icon: Users,
@@ -81,11 +81,11 @@ const AppMenu: AppMenuItem[] = [
         href: '/app/company',
         roles: [Role.ADMIN, Role.OWNER],
       },
-      {
-        title: 'Finances',
-        href: '/app/finances',
-        roles: [Role.ADMIN, Role.OWNER],
-      },
+      // {
+      //   title: 'Finances',
+      //   href: '/app/finances',
+      //   roles: [Role.ADMIN, Role.OWNER],
+      // },
       {
         title: 'Archive',
         href: '/app/archive',
@@ -139,7 +139,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         <ProjectsNav
           session={session}
           projects={projects.map((p) => ({
-            href: `/app/${p.name}`,
+            href: `/app/project/${p.name}`,
             original: p,
             isActive:
               DateTime.fromJSDate(p.startDate) <= DateTime.now() &&

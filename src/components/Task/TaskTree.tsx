@@ -42,7 +42,7 @@ const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {
           className="flex gap-2 items-center"
         >
           <p>{element.title}</p>
-          <Link href={`/app/${projectName}/edit/${element.id}`}>
+          <Link href={`/app/project/${projectName}/edit/${element.id}`}>
             <SquareArrowOutUpRight size={10} />
           </Link>
         </File>

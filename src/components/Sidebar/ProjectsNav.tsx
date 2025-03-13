@@ -78,7 +78,7 @@ export function ProjectsNav({ projects, session }: ProjectsNavProps) {
                     asChild
                     className={cn(
                       'flex-1 justify-between',
-                      pathname.includes(project.original.name) && 'bg-accent',
+                      pathname?.includes(project.original.name) && 'bg-accent',
                     )}
                   >
                     <Link prefetch={false} href={project.href}>

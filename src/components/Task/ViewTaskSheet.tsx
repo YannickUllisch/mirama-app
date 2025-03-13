@@ -132,7 +132,7 @@ const ViewTaskSheet = ({
                   </Button>
                 </SheetClose>
                 <Button variant={'ghost'} className="p-1 h-fit" asChild>
-                  <Link href={`/app/${projectName}/edit/${task.id}`}>
+                  <Link href={`/app/project/${projectName}/edit/${task.id}`}>
                     <Pencil className="text-white" size={15} />
                   </Link>
                 </Button>

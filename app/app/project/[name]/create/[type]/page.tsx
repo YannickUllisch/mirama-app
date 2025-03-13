@@ -60,7 +60,6 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import SubTasksGroup from '@src/components/Task/SubTasksGroup'
-import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
 
 const CreateTaskForm = ({
   params,
@@ -68,7 +67,7 @@ const CreateTaskForm = ({
   // Routing used to return to previous page.
   const router = useRouter()
   const searchParams = useSearchParams()
-  const defaultParentId = searchParams.get('parentId')
+  const defaultParentId = searchParams?.get('parentId') ?? ''
   const projectContext = useContext(ProjectDataContext)
 
   // States
