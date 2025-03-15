@@ -15,7 +15,7 @@ export const getMQChannel = async (): Promise<Channel> => {
       connection = await amqplib.connect(process.env.RABBITMQ_UR ?? '')
     }
 
-    // Creating new TCP Channel, should be closed after use
+    // Creating new TCP Channel
     channel = await connection.createChannel()
 
     // Graceful shutdown handling
@@ -24,7 +24,7 @@ export const getMQChannel = async (): Promise<Channel> => {
 
     return channel
   } catch (error) {
-    console.error('RabbitMQ connection error:', error)
+    console.error('MQ connection error:', error)
     throw error
   }
 }
@@ -45,5 +45,19 @@ export const closeMQConnection = async () => {
   } finally {
     channel = null
     connection = null
+  }
+}
+
+/**
+ * Creates a temporary RabbitMQ channel. Should be closed after use.
+ */
+export const createTemporaryChannel = async () => {
+  try {
+    const connection = await amqplib.connect(process.env.RABBITMQ_UR ?? '')
+    const channel = await connection.createChannel()
+    return { connection, channel }
+  } catch (error) {
+    console.error('MQ Connection Error:', error)
+    throw error
   }
 }
