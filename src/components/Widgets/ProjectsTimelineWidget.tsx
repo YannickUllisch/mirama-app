@@ -356,11 +356,11 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
 
   return (
     <TooltipProvider>
-      <div className={cn('w-full h-full overflow-clip', className)}>
+      <div className={cn('w-full h-full overflow-clip ', className)}>
         {visibleDates.length > 0 ? (
           <div
             ref={scrollContainerRef}
-            className="overflow-x-auto pb-2 hide-scrollbar"
+            className="overflow-auto pb-2 hide-scrollbar"
             style={{
               // Set a minimum width to ensure scrollability
               minWidth: '100%',
@@ -408,7 +408,7 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
               </div>
 
               {/* Timeline grid */}
-              <div className="relative mb-2">
+              <div className="relative mb-2 ">
                 <div className="absolute inset-0 flex w-full">
                   {dateMarkers.map((date) => (
                     <div
@@ -473,11 +473,11 @@ const ProjectTimeline = ({ projects, className }: ProjectTimelineProps) => {
               </div>
 
               {/* Projects */}
-              <div className="relative mt-8 space-y-6">
+              <div className="relative mt-8 space-y-6 overflow-y-auto">
                 {sortedProjects.map((project) => (
                   <div key={project.id} className="relative h-8 ">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full h-px bg-neutral-100 dark:bg-neutral-700" />
+                      <div className="w-full h-px bg-neutral-400 dark:bg-neutral-700" />
                     </div>
                     <div
                       ref={(el) => {

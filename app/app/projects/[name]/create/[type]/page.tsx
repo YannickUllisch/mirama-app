@@ -144,7 +144,7 @@ const CreateTaskForm = ({
               >
                 <Link
                   prefetch={false}
-                  href={`/app/project/${params.name}`}
+                  href={`/app/projects/${params.name}`}
                   className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
                 >
                   <Undo width={10} className="ml-2" />
@@ -160,7 +160,7 @@ const CreateTaskForm = ({
             ) : (
               <Link
                 prefetch={false}
-                href={`/app/project/${params.name}`}
+                href={`/app/projects/${params.name}`}
                 className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
               >
                 <Undo width={10} className="ml-2" />

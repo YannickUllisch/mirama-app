@@ -139,7 +139,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
         <ProjectsNav
           session={session}
           projects={projects.map((p) => ({
-            href: `/app/project/${p.name}`,
+            href: `/app/projects/${p.name}`,
             original: p,
             isActive:
               DateTime.fromJSDate(p.startDate) <= DateTime.now() &&

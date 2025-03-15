@@ -24,7 +24,7 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
     if (typeof window !== 'undefined') {
       const currentURL = window.location.origin
       navigator.clipboard.writeText(
-        `${currentURL}/app/project/${projectName}/edit/${taskId}`,
+        `${currentURL}/app/projects/${projectName}/edit/${taskId}`,
       )
     }
   }
@@ -46,7 +46,7 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
       </ContextMenuItem>
       <Separator />
       <ContextMenuItem className="flex items-center gap-2" asChild>
-        <Link href={`/app/project/${projectName}/edit/${taskId}`}>
+        <Link href={`/app/projects/${projectName}/edit/${taskId}`}>
           <Pencil size={16} className="text-muted-foreground" />
           Edit Task
         </Link>

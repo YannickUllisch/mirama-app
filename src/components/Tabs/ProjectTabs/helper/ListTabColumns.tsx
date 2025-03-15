@@ -160,7 +160,7 @@ export const ListTabColumns = ({
                     <Centering>
                       <Link
                         onClick={(e) => e.stopPropagation()}
-                        href={`/app/project/${projectName}/edit/${row.original.id}`}
+                        href={`/app/projects/${projectName}/edit/${row.original.id}`}
                         className="hover:underline flex gap-2 items-center underline-offset-4"
                       >
                         {getTaskTypeIcon(row.original.type)}
@@ -191,7 +191,7 @@ export const ListTabColumns = ({
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/app/project/${projectName}/edit/${row.original.id}`}
+                      href={`/app/projects/${projectName}/edit/${row.original.id}`}
                       className="gap-3"
                     >
                       <Pencil className="h-4 w-4 " />
@@ -200,7 +200,7 @@ export const ListTabColumns = ({
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/app/project/${projectName}/create/${row.original.type}?parentId=${row.original.id}`}
+                      href={`/app/projects/${projectName}/create/${row.original.type}?parentId=${row.original.id}`}
                       className="gap-3"
                     >
                       <BetweenHorizonalStart className="h-4 w-4 " />
