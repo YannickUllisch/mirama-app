@@ -1,0 +1,21 @@
+{
+  "name": "socket_server",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@types/amqplib": "^0.10.7",
+    "@types/node": "^22.13.10",
+    "nodemon": "^3.1.9",
+    "tsc-watch": "^6.2.1",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "dotenv": "^16.4.7"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "watch:build": "tsc --watch"
+  }
+}

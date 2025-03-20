@@ -7,5 +7,18 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+
+  notification-worker:
+    build:
+      context: ./src/services/worker  # Update this with the actual path to your worker service
+    container_name: notification-worker
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq  # Ensures the worker connects correctly
+    volumes:
+      - ./src/services/worker:/app
+    command: ["npm", "run", "start"]  # Update based on your package.json scripts
+
 volumes:
   rabbitmq_data:

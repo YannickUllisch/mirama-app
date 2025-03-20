@@ -1,4 +1,3 @@
-import { redisClient } from '@db'
 import amqplib, { type Channel, type ChannelModel } from 'amqplib'
 
 // Global vatiables to store connection and channel, avoids needless reconnect.
