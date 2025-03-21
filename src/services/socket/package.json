@@ -1,9 +1,0 @@
-{
-  "name": "socket_server",
-  "version": "1.0.0",
-  "private": true,
-  "devDependencies": {
-    "tsc-watch": "^6.0.4",
-    "typescript": "^5.8.2"
-  }
-}
