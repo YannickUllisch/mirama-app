@@ -10,15 +10,16 @@ services:
 
   notification-worker:
     build:
-      context: ./src/services/worker  # Update this with the actual path to your worker service
+      context: ./src/services/worker
     container_name: notification-worker
     depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq  # Ensures the worker connects correctly
+      rabbitmq:
+        condition: service_started
+    env_file:
+      - ./src/services/worker/.env
     volumes:
       - ./src/services/worker:/app
-    command: ["npm", "run", "start"]  # Update based on your package.json scripts
+    command: ["npm", "run", "start"]
 
 volumes:
   rabbitmq_data:
