@@ -53,6 +53,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "@vercel/blob": "^0.27.0",
     "@vercel/postgres": "^0.7.2",
+    "amqplib": "^0.10.5",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
@@ -103,6 +104,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.0",
+    "@types/amqplib": "^0.10.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.throttle": "^4.1.9",

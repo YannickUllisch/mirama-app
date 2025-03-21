@@ -1,0 +1,25 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  notification-worker:
+    build:
+      context: ./src/services/worker
+    container_name: notification-worker
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    env_file:
+      - ./src/services/worker/.env
+    volumes:
+      - ./src/services/worker:/app
+    command: ["npm", "run", "start"]
+
+volumes:
+  rabbitmq_data:

@@ -33,7 +33,7 @@ const RecentProjectsWidget = ({
             <Spinner className="bg-text" />
           )}
         </h2>
-        <Link href={'/app/project/create'} prefetch={false}>
+        <Link href={'/app/projects/create'} prefetch={false}>
           <Button
             size="sm"
             className="gap-1 bg-red-500 hover:bg-red-600 text-white"

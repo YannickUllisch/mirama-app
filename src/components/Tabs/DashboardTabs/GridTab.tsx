@@ -39,7 +39,7 @@ const GridTab = () => {
                 project.name,
               )}`}
             >
-              <Link href={`/app/project/${project.name}`} prefetch>
+              <Link href={`/app/projects/${project.name}`} prefetch>
                 <Card className="flex min-w-64 h-[92%] flex-col m-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:shadow-none bg-white dark:bg-neutral-900">
                   <CardHeader
                     style={{

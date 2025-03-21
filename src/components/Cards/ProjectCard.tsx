@@ -42,7 +42,7 @@ const ProjectCard = ({
       />
       <Card
         key={project.id}
-        className="relative shadow-sm z-10 bg-white dark:bg-neutral-900 border border-dashed overflow-hidden group"
+        className="relative z-10 bg-neutral-50 dark:bg-background border-none overflow-hidden group"
       >
         <CardHeader className="p-4 pb-0">
           <div className="flex justify-between items-start">
@@ -67,7 +67,7 @@ const ProjectCard = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" side="bottom">
-                  <Link prefetch={false} href={`/app/project/${project.name}`}>
+                  <Link prefetch={false} href={`/app/projects/${project.name}`}>
                     <DropdownMenuItem>
                       <Centering>
                         <ExternalLinkIcon size={14} />
@@ -79,7 +79,7 @@ const ProjectCard = ({
                     <>
                       <Link
                         prefetch={false}
-                        href={`/app/project/edit/${project.id}`}
+                        href={`/app/projects/edit/${project.id}`}
                       >
                         <DropdownMenuItem>
                           <Centering>
@@ -123,11 +123,11 @@ const ProjectCard = ({
           </div>
         </CardContent>
 
-        <CardFooter className="p-0">
-          <Link href={`/app/project/${project.name}`} className="w-full">
+        <CardFooter className="p-0 bg-neutral-100 dark:bg-neutral-950/60">
+          <Link href={`/app/projects/${project.name}`} className="w-full">
             <Button
               variant="ghost"
-              className="w-full justify-between rounded-none h-10 px-4 text-xs border-t hover:bg-hover"
+              className="w-full justify-between rounded-none h-10 px-4 text-xs border-t "
             >
               <span>View Project</span>
               <ArrowRight className="h-3 w-3" />

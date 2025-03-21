@@ -153,7 +153,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
                 onConfirmation={() => router.push(`/app/${params.name}`)}
               >
                 <Link
-                  href={`/app/project/${params.name}`}
+                  href={`/app/projects/${params.name}`}
                   prefetch={false}
                   className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
                 >
@@ -169,7 +169,7 @@ const EditTaskForm = ({ params }: { params: { id: string; name: string } }) => {
               </ConfirmationDialog>
             ) : (
               <Link
-                href={`/app/project/${params.name}`}
+                href={`/app/projects/${params.name}`}
                 prefetch={false}
                 className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
               >

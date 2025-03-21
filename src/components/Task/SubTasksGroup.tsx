@@ -23,7 +23,7 @@ const SubTasksGroup = ({
             <div className="flex gap-2">
               <CornerDownRight className="w-4 h-4 flex-shrink-0" />
               <Link
-                href={`/app/project/${projectName}/edit/${task.id}`}
+                href={`/app/projects/${projectName}/edit/${task.id}`}
                 legacyBehavior
               >
                 <span className="text-primary font-bold hover:underline cursor-pointer underline-offset-2">

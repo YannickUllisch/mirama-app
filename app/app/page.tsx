@@ -8,22 +8,17 @@ import {
   type User,
 } from '@prisma/client'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
-import { ArrowUpRight, LineChart, Plus, Users2 } from 'lucide-react'
+import { LineChart, Plus, Users2 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { Progress } from '@ui/progress'
-import { Avatar, AvatarFallback } from '@ui/avatar'
 import Link from 'next/link'
 import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
 import { Separator } from '@ui/separator'
 import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
 import { useMemo } from 'react'
 import InfoCards from '@src/components/Cards/InfoCards'
-import ProjectCard from '@src/components/Cards/ProjectCard'
 import { calculateProjectProgress } from '@/app/app/helpers'
-import { Skeleton } from '@ui/skeleton'
-import { Spinner } from '@ui/spinner'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
 
@@ -159,7 +154,7 @@ const Dashboard = () => {
           {/* Right Column - Timeline & Activity */}
           <div className="space-y-4">
             {/* Activity Summary */}
-            <Card className="shadow-sm bg-white dark:bg-inherit border border-dashed">
+            <Card className=" bg-neutral-50 dark:bg-background border-none">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-xl font-medium flex items-center gap-2">
                   <LineChart className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -198,7 +193,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-sm bg-white dark:bg-inherit border border-dashed">
+            <Card className="bg-neutral-50 dark:bg-background border-none">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-xl font-medium">
                   Project Timeline
