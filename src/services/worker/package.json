@@ -1,5 +1,5 @@
 {
-  "name": "socket_server",
+  "name": "worker_server",
   "version": "1.0.0",
   "private": true,
   "devDependencies": {
