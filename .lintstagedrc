@@ -2,5 +2,6 @@
   "**/*.{ts,tsx}": [
     "biome format --write --no-errors-on-unmatched",
     "biome lint --apply --no-errors-on-unmatched"
-  ]
+  ],
+  "*.{json, md, yml}": ["biome lint --apply --no-errors-on-unmatched"]
 }
