@@ -2,6 +2,7 @@ import { io, type Socket } from 'socket.io-client'
 import { create } from 'zustand'
 import type { SocketNotification, SocketTeamStatus } from '../types/socketTypes' // Importing only necessary types
 import { toast } from 'sonner'
+import type { Session } from 'next-auth'
 
 /**
  * Define the type for all possible emitted events and their data structures.
@@ -14,7 +15,8 @@ type Store = {
   socket: Socket | null
   teamStatus: SocketTeamStatus | null
   notifications: SocketNotification[]
-  connect: () => void
+  connected: boolean
+  connect: (session: Session | null) => void
   disconnect: () => void
   emit: <T extends keyof EmitDataTypes>(
     event: T,
@@ -25,35 +27,42 @@ type Store = {
 const useSocketStore = create<Store>((set, get) => ({
   socket: null,
   teamStatus: null,
+  connected: false,
   notifications: [],
 
   /**
    * Connects to the WebSocket server and sets up event listeners.
    */
-  connect: () => {
-    const { socket } = get()
-    if (socket) {
-      toast.error('Socket already connected')
+  connect: (session) => {
+    if (!session?.user?.id) {
+      toast.error('User not found')
       return
     }
-    console.log('Connecting to socket:', 'http://localhost:8080')
+    const { socket } = get()
+    if (socket) {
+      return
+    }
     const newSocket = io('http://localhost:8080')
 
     newSocket
+      .emit('join_team', {
+        userId: session.user.id,
+        teamId: session.user.teamId,
+      })
       .on('connect', () => {
-        console.log('SOCKET CONNECTED:', newSocket.id)
-        set({ socket: newSocket })
+        console.debug('SOCKET CONNECTED:', newSocket.id)
+        set({ socket: newSocket, connected: true })
       })
       .on('disconnect', () => {
-        console.log('SOCKET DISCONNECTED!')
-        set({ socket: null })
+        console.debug('SOCKET DISCONNECTED!')
+        set({ socket: null, connected: false })
       })
       .on('team_status', (data: SocketTeamStatus) => {
-        console.log('Updated team status:', data)
+        console.debug('Updated team status:', data)
         set({ teamStatus: data })
       })
       .on('notification', (data: SocketNotification) => {
-        console.log('New notification:', data)
+        console.debug('New notification:', data)
         set((state) => ({ notifications: [...state.notifications, data] }))
       })
   },
@@ -65,7 +74,7 @@ const useSocketStore = create<Store>((set, get) => ({
     const { socket } = get()
     if (socket) {
       socket.disconnect()
-      set({ socket: null })
+      set({ socket: null, connected: false })
     } else {
       toast.error('Socket not connected')
     }
