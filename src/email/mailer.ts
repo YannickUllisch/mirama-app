@@ -4,7 +4,9 @@ import type { z } from 'zod'
 import type { ContactSchema } from '@src/lib/schemas'
 import { ContactEmail } from './templates/ContactEmail'
 
-export const resend = new Resend(process.env.RESEND_API_KEY ?? '')
+const getResendClient = () => {
+  return new Resend(process.env.RESEND_API_KEY ?? '')
+}
 
 export const sendCompanyInvitationEmail = async (params: {
   identifier: string
@@ -15,6 +17,7 @@ export const sendCompanyInvitationEmail = async (params: {
   const { identifier, url, teamName, inviterName } = params
   const { host } = new URL(url)
 
+  const resend = getResendClient()
   const email = await resend.emails.send({
     from: 'Acme <onboarding@resend.dev>',
     to: identifier,
@@ -34,6 +37,7 @@ export const sendContactEmail = async ({
   message,
   phone,
 }: z.infer<typeof ContactSchema>) => {
+  const resend = getResendClient()
   const res = await resend.emails.send({
     from: 'Acme <onboarding@resend.dev>',
     to: 'nussartz@gmail.com',

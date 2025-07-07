@@ -6,6 +6,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { getUserByEmail } from './helpers/AuthQueries'
 
 export default {
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',

@@ -5,6 +5,8 @@ import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { v4 } from 'uuid'
 import type { Favourite, FavouriteType, Task } from '@prisma/client'
 
+export const runtime = 'nodejs'
+
 export const GET = auth(async (req) => {
   try {
     // Checking Permissions
@@ -27,7 +29,7 @@ export const GET = auth(async (req) => {
     const response = await db.favourite.findMany({
       where: {
         type: favouriteType,
-        userId: session?.user.id ?? 'undef',
+        userId: session?.user?.id ?? 'undef',
       },
     })
 
@@ -69,7 +71,7 @@ export const POST = auth(async (req) => {
         data: {
           ...favourite,
           id: undefined,
-          userId: session?.user.id,
+          userId: session?.user?.id ?? 'undef',
         },
       })
 
@@ -193,7 +195,7 @@ export const PUT = auth(async (req) => {
         db.task.update({
           where: {
             id,
-            teamId: session?.user.teamId,
+            teamId: session?.user?.teamId ?? 'undef',
           },
           data: {
             ...task,

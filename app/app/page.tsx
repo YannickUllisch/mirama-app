@@ -1,11 +1,11 @@
 'use client'
 import useSWR from 'swr'
-import {
-  type Project,
-  type ProjectUser,
-  type Task,
+import type {
+  Project,
+  ProjectUser,
+  Task,
   TaskStatusType,
-  type User,
+  User,
 } from '@prisma/client'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
@@ -66,24 +66,24 @@ const Dashboard = () => {
   }
 
   // Calculate statistics
-  const statistics = useMemo(() => {
-    return {
-      totalProjects: projects?.length || 0,
-      totalTasks: tasks?.length || 0,
-      completedTasks:
-        tasks?.filter((t) => t.status === TaskStatusType.DONE).length || 0,
-      overdueTasks:
-        tasks?.filter(
-          (t) =>
-            t.status !== TaskStatusType.DONE &&
-            new Date(t.dueDate) < new Date(),
-        ).length || 0,
-      averageCompletion:
-        (projects?.reduce((acc, project) => {
-          return acc + calculateProjectProgress(project)
-        }, 0) ?? 0) / (projects?.length || 1),
-    }
-  }, [projects, tasks])
+  // const statistics = useMemo(() => {
+  //   return {
+  //     totalProjects: projects?.length || 0,
+  //     totalTasks: tasks?.length || 0,
+  //     completedTasks:
+  //       tasks?.filter((t) => t.status === TaskStatusType.DONE).length || 0,
+  //     overdueTasks:
+  //       tasks?.filter(
+  //         (t) =>
+  //           t.status !== TaskStatusType.DONE &&
+  //           new Date(t.dueDate) < new Date(),
+  //       ).length || 0,
+  //     averageCompletion:
+  //       (projects?.reduce((acc, project) => {
+  //         return acc + calculateProjectProgress(project)
+  //       }, 0) ?? 0) / (projects?.length || 1),
+  //   }
+  // }, [projects, tasks])
 
   return (
     <div className=" dark:bg-neutral-900">
@@ -103,14 +103,14 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Statistics Section */}
+        {/* Statistics Section
         <InfoCards
           averageCompletion={statistics.averageCompletion}
           completedTasks={statistics.completedTasks}
           overdueTasks={statistics.overdueTasks}
           totalProjects={statistics.totalProjects}
           totalTasks={statistics.totalTasks}
-        />
+        /> */}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
