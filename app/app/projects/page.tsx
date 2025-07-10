@@ -2,11 +2,10 @@
 import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
+import { useSession } from 'next-auth/react'
 import React, { useEffect } from 'react'
 import useSWR from 'swr'
-import { useSession } from 'next-auth/react'
 import { ProjectColumns } from './columns'
-import useSocketStore from '@store/socket'
 
 const ProjectsPage = () => {
   // Fetching Project Data
@@ -31,15 +30,7 @@ const ProjectsPage = () => {
       budget: true,
     },
   })
-
-  const { connect } = useSocketStore() // deconstructing socket and its method from socket store
   const { data: session } = useSession({ required: true })
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      connect(session)
-    }
-  }, [session, connect])
 
   const { data: users } = useSWR<User[]>('team/member')
 
