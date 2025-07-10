@@ -9,12 +9,16 @@ permissions:
   id-token: write
   contents: read
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-push-app:
     name: Build and push Mirama APP image to ECR
     uses: ./.github/workflows/build-and-push-image.yaml
     with:
-      github-environment: prod
+      github-environment: production-aws
       ecr-repository: mirama-prod-application-repository
       image-tag: "latest"
       dockerfile-path: Dockerfile

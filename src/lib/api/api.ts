@@ -11,6 +11,7 @@ export const api = axios.create({
   baseURL: `${
     envURL[(process.env.NEXT_PUBLIC_ENV as 'dev' | 'prod') ?? 'dev']
   }/api/db/`,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
