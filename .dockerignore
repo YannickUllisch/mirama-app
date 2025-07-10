@@ -7,3 +7,4 @@ README.md
 .git
 .yarn
 next-env.d.ts
+*.drawio

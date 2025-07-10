@@ -3,6 +3,8 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      - NEXTAUTH_DEBUG=true
+      - NEXT_PUBLIC_LOG_LEVEL=debug
     env_file:
       - .env
-    command: ["node", "server.js"]
