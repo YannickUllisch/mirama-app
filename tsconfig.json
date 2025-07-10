@@ -34,11 +34,12 @@
     }
   },
   "include": [
-    "next-env.d.ts",
+    "src/types/next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "commitlint.config.ts"
+    "commitlint.config.ts",
+    "src/types/**/*"
   ],
   "exclude": ["node_modules"]
 }

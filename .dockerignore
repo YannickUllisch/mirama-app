@@ -1,0 +1,10 @@
+Dockerfile
+.dockerignore
+node_modules
+README.md
+.next
+.vscode
+.git
+.yarn
+next-env.d.ts
+*.drawio

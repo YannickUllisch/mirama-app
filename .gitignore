@@ -57,3 +57,5 @@ next-env.d.ts
 !.yarn/sdks
 !.yarn/versions
 .husky/
+
+prisma/generated
