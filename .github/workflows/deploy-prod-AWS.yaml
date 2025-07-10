@@ -5,14 +5,14 @@ on:
     branches:
       - main
 
-# jobs:
-#   build-and-push-app:
-#     name: Build and push Mirama APP image to ECR
-#     uses: ./.github/workflows/build-and-push-image.yaml
-#     with:
-#       github-environment: prod
-#       ecr-repository: mirama-prod-application-repository
-#       image-tag: "latest"
-#       dockerfile-path: Dockerfile
-#       aws-account-id: "465852549019"
+jobs:
+  build-and-push-app:
+    name: Build and push Mirama APP image to ECR
+    uses: ./.github/workflows/build-and-push-image.yaml
+    with:
+      github-environment: prod
+      ecr-repository: mirama-prod-application-repository
+      image-tag: "latest"
+      dockerfile-path: Dockerfile
+      aws-account-id: "465852549019"
         
