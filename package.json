@@ -105,7 +105,6 @@
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.throttle": "^4.1.9",
     "@types/luxon": "^3.4.2",
-    "@types/mdx": "^2.0.13",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
