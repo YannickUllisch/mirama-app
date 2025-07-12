@@ -1,11 +1,7 @@
 import { auth } from '@auth'
-import { validateRequest } from '@src/lib/validateRequest'
 import db from '@db'
-import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
-import { v4 } from 'uuid'
 import type { Favourite, FavouriteType, Task } from '@prisma/client'
-
-export const runtime = 'nodejs'
+import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {
