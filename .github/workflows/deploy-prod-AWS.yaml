@@ -19,4 +19,8 @@ jobs:
       image-tag: "latest"
       dockerfile-path: Dockerfile
       aws-account-id: "465852549019"
+      ecs-service: mirama-ecs-service
+      ecs-cluster: mirama-prod-ecs-cluster
+      ecs-container-name: mirama-app
+      ecs-task-definition-family: mirama-nextjs-task
         

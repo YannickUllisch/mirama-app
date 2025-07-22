@@ -1,5 +1,5 @@
 'use client'
-import { ChevronRight } from 'lucide-react'
+import { Role } from '@prisma/client'
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,12 +14,12 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@src/components/ui/sidebar'
-import Link from 'next/link'
-import type { AppMenuItem } from '@src/lib/types'
-import type { FC } from 'react'
+import type { AppMenuItem } from '@src/types/types'
+import { ChevronRight } from 'lucide-react'
 import type { Session } from 'next-auth'
-import { Role } from '@prisma/client'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import type { FC } from 'react'
 
 interface MainNavProps
   extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {

@@ -3,7 +3,7 @@ import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
 import { useSession } from 'next-auth/react'
-import React, { useEffect } from 'react'
+import React from 'react'
 import useSWR from 'swr'
 import { ProjectColumns } from './columns'
 

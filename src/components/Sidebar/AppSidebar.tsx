@@ -1,14 +1,11 @@
 'use client'
 import {
-  Home,
-  BookAIcon,
-  Bell,
-  HelpCircleIcon,
-  Folders,
-  ClipboardList,
-  Calendar,
-  Users,
-} from 'lucide-react'
+  type Project,
+  Role,
+  type Task,
+  type Team,
+  type User,
+} from '@prisma/client'
 import {
   Sidebar,
   SidebarContent,
@@ -17,21 +14,24 @@ import {
   SidebarMenuAction,
   SidebarRail,
 } from '@src/components/ui/sidebar'
-import SelfSidebarHeader from './SidebarHeader'
+import type { AppMenuItem, SecondaryAppMenuItem } from '@src/types/types'
 import {
-  Role,
-  type Project,
-  type Task,
-  type Team,
-  type User,
-} from '@prisma/client'
-import type { AppMenuItem, SecondaryAppMenuItem } from '@src/lib/types'
-import SidebarMainNav from './MainNav'
-import SidebarUserNav from './UserNav'
+  Bell,
+  BookAIcon,
+  Calendar,
+  ClipboardList,
+  Folders,
+  HelpCircleIcon,
+  Home,
+  Users,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 import FavoritesNav from './FavouritesNav'
+import SidebarMainNav from './MainNav'
 import { ProjectsNav } from './ProjectsNav'
+import SelfSidebarHeader from './SidebarHeader'
+import SidebarUserNav from './UserNav'
 
 const AppMenu: AppMenuItem[] = [
   {

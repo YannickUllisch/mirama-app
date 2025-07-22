@@ -1,7 +1,7 @@
-import type { Board, BoardColumn } from '@src/lib/types'
-import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'
 import { TaskStatusType } from '@prisma/client'
+import type { Board, BoardColumn } from '@src/types/types'
 import { v4 } from 'uuid'
+import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'
 
 export const createBoards = (
   tasks: GroupedContainerizedTasks | undefined,

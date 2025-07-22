@@ -1,10 +1,13 @@
 import { auth } from '@auth'
+import { PublishCommand } from '@aws-sdk/client-sns'
 import db from '@db'
 import { Role } from '@prisma/client'
 import { sendCompanyInvitationEmail } from '@src/email/mailer'
 import type { InvitationSchema } from '@src/lib/schemas'
+import { getSNSClient } from '@src/lib/sns'
 import { isRoleHigher } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
+import type { SNSParams } from '@src/types/SNS'
 import { DateTime } from 'luxon'
 import type { z } from 'zod'
 
@@ -48,6 +51,17 @@ export const POST = async (req: Request) => {
     }
 
     const invitation = (await req.json()) as z.infer<typeof InvitationSchema>
+
+    const SNSClient = getSNSClient()
+
+    const SNSinput: SNSParams = {
+      Message: JSON.stringify({ test: 'hey' }),
+      TopicArn: process.env.NOTIFICATION_TOPIC_ARN ?? '',
+      MessageStructure: 'json',
+    }
+
+    const command = new PublishCommand(SNSinput)
+    const _response = await SNSClient.send(command)
 
     // Users should not be able to assign a higher rank than their own.
     if (

@@ -1,35 +1,35 @@
-import { type FC, useState, useMemo, useEffect } from 'react'
-import { v4 } from 'uuid'
-import KanbanContainer from './KanbanContainer'
 import {
   DndContext,
   type DragEndEvent,
-  useSensor,
-  useSensors,
-  type DragStartEvent,
-  type UniqueIdentifier,
   type DragMoveEvent,
   DragOverlay,
-  PointerSensor,
+  type DragStartEvent,
   KeyboardSensor,
+  PointerSensor,
+  type UniqueIdentifier,
   rectIntersection,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { type Task, TaskStatusType, type User } from '@prisma/client'
-import KanbanItem from './KanbanItem'
-import { updateResourceById } from '@src/lib/api/updateResource'
-import { groupTasksByContainer } from '../Tree/ContainerizedTree'
-import type { Board } from '@src/lib/types'
-import { Input } from '@ui/input'
-import { createBoards } from './createBoards'
-import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { useSession } from 'next-auth/react'
+import { postResource } from '@src/lib/api/postResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
 import { createTree } from '@src/lib/data-structures/Tree'
+import type { Board } from '@src/types/types'
+import { Input } from '@ui/input'
+import { useSession } from 'next-auth/react'
+import { type FC, useEffect, useMemo, useState } from 'react'
 import type { KeyedMutator } from 'swr'
 import useSWR from 'swr'
-import { KanbanHeader } from './KanbanHeader'
+import { v4 } from 'uuid'
+import { groupTasksByContainer } from '../Tree/ContainerizedTree'
+import KanbanContainer from './KanbanContainer'
 import { ContainerHeader } from './KanbanContainerItem'
+import { KanbanHeader } from './KanbanHeader'
+import KanbanItem from './KanbanItem'
+import { createBoards } from './createBoards'
 
 interface KanbanBoardProps {
   projectId: string

@@ -23,7 +23,23 @@ on:
         required: true
         type: string
         description: Path to the dockerfile to build the image from
-
+      ecs-service:
+        requred: true
+        type: string
+        description: The ECS service to update after pushing the image
+      ecs-cluster:
+        required: true
+        type: string
+        description: The ECS cluster where the service is running
+      ecs-task-definition-family:
+        required: true
+        type: string
+        description: The ECS task definition family to update
+      ecs-container-name:
+        required: true
+        type: string
+        description: The name of the container in the ECS task definition to update
+      
 permissions:
   id-token: write
   contents: read
@@ -48,6 +64,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag and push image to Amazon ECR
+        id: build-and-push-image
         env:
           ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ inputs.ecr-repository }}
@@ -55,3 +72,22 @@ jobs:
         run: |
           docker build -f ${{ inputs.dockerfile-path }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: fill-task-def
+        if: ${{ success() }}
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-family: ${{ inputs.ecs-task-definition-family }}
+          container-name: ${{ inputs.ecs-container-name }}
+          image: ${{ steps.build-and-push-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        if: ${{ success() }}
+        with:
+          task-definition: ${{ steps.fill-task-def.outputs.task-definition }}
+          service: ${{ inputs.ecs-service }}
+          cluster: ${{ inputs.ecs-cluster }}
+          wait-for-service-stability: true

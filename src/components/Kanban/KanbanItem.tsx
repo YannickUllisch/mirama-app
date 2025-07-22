@@ -2,21 +2,9 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState, type FC } from 'react'
-import {
-  MoreHorizontal,
-  Loader2,
-  Trash2,
-  UserIcon,
-  ArrowUpRight,
-  PenBoxIcon,
-  FolderTree,
-} from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { DateTime } from 'luxon'
-import { Card } from '@src/components/ui/card'
+import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
+import { Card } from '@src/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,14 +12,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { Badge } from '@src/components/ui/badge'
-import { capitalize, cn } from '@src/lib/utils'
-import type { KanbanItemType } from '@src/lib/types'
-import GeneralTableSelect from '../Select/GeneralTableSelect'
-import UserAvatar from '../Avatar/UserAvatar'
-import { SelectItem } from '@ui/select'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { capitalize, cn } from '@src/lib/utils'
+import type { KanbanItemType } from '@src/types/types'
+import { SelectItem } from '@ui/select'
+import {
+  ArrowUpRight,
+  FolderTree,
+  Loader2,
+  MoreHorizontal,
+  PenBoxIcon,
+  Trash2,
+  UserIcon,
+} from 'lucide-react'
+import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { type FC, useState } from 'react'
+import UserAvatar from '../Avatar/UserAvatar'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
