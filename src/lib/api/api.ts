@@ -4,12 +4,13 @@ import type { NextRequest } from "next/server";
 
 const envURL = {
 	dev: "http://localhost:3000",
-	prod: "https://mirama.yannickullisch.com",
+	test: process.env.NEXT_PUBLIC_BASE_URL ?? "",
+	prod: process.env.NEXT_PUBLIC_BASE_URL ?? "",
 };
 
 export const api = axios.create({
 	baseURL: `${
-		envURL[(process.env.NEXT_PUBLIC_ENV as "dev" | "prod") ?? "dev"]
+		envURL[(process.env.NEXT_PUBLIC_ENV as "dev" | "prod" | "test") ?? "dev"]
 	}/api/db/`,
 	withCredentials: true,
 	headers: {
