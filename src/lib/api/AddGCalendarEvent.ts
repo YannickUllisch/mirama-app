@@ -1,6 +1,6 @@
 import type { Session } from 'next-auth'
-import type { GoogleCalendarEvent } from '../types'
 import { signIn } from 'next-auth/react'
+import type { GoogleCalendarEvent } from '../../types/types'
 import { postResource } from './postResource'
 
 export const AddGoogleCalendarEvent = async ({

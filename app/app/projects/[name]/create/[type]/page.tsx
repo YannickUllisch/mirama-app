@@ -60,7 +60,6 @@ import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import SubTasksGroup from '@src/components/Task/SubTasksGroup'
-import Centering from '@ui/centering'
 import Link from 'next/link'
 
 const CreateTaskForm = ({
