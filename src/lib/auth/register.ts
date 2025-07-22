@@ -1,12 +1,12 @@
 'use server'
-import type * as z from 'zod'
-import { RegisterSchema } from '@src/lib/schemas'
-import bcryptjs from 'bcryptjs'
-import db from '@db'
 import { signIn } from '@auth'
+import db from '@db'
+import { RegisterSchema } from '@src/lib/schemas'
 import { DEFAULT_LOGIN_REDIRECT } from '@src/routes'
+import bcryptjs from 'bcryptjs'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { redirect } from 'next/navigation'
-import { isRedirectError } from 'next/dist/client/components/redirect'
+import type * as z from 'zod'
 import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {

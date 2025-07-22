@@ -118,7 +118,7 @@ const TableTab = () => {
           users: users ?? [],
           onTaskDelete: deleteTask,
         })}
-        data={viewFlattened ? tasks ?? [] : (taskTree as any[]) ?? []}
+        data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
         ignoreSubrows={viewFlattened}
         enableRowSelection
         dataLoading={tasksLoading}

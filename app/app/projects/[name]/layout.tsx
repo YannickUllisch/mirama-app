@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
 import { auth } from '@auth'
 import db from '@db'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
-import { redirect } from 'next/navigation'
 import ProjectUsersContext from '@src/components/Contexts/ProjectDataContext'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Projects | Mirama',
@@ -13,13 +13,18 @@ export const metadata: Metadata = {
 const Layout = async ({
   children,
   params,
-}: { children: React.ReactNode; params: { name: string } }) => {
+}: {
+  children: React.ReactNode
+  params: Promise<{ name: string }>
+}) => {
   // Validate Session
   const session = await auth()
 
+  const awaitedParams = await params
+
   const project = await db.project.findFirst({
     where: {
-      name: params.name,
+      name: awaitedParams.name,
       teamId: session?.user.teamId ?? 'undef',
     },
     select: {

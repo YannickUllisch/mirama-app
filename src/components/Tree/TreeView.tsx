@@ -1,16 +1,16 @@
 'use client'
 
 import { cn } from '@src/lib/utils'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import type React from 'react'
 import { forwardRef, useCallback, useRef } from 'react'
 import useResizeObserver from 'use-resize-observer'
-import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   CollapseButton,
-  Folder,
-  type TreeViewElement,
   File,
+  Folder,
   Tree,
+  type TreeViewElement,
 } from './TreeViewAPI'
 
 // TODO: Add the ability to add custom icons
@@ -55,7 +55,7 @@ export const TreeView = ({
   })
 
   const { height = getTotalSize(), width } = useResizeObserver({
-    ref: containerRef,
+    ref: containerRef as React.RefObject<Element>,
   })
   return (
     <div

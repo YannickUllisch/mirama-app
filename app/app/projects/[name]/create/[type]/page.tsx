@@ -1,17 +1,4 @@
 'use client'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import { Button } from '@src/components/ui/button'
-import { Input } from '@src/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@src/components/ui/select'
-import { Separator } from '@src/components/ui/separator'
-import { Textarea } from '@src/components/ui/textarea'
-import { TaskSchema } from '@src/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PriorityType,
@@ -21,19 +8,14 @@ import {
   type TaskType,
   type User,
 } from '@prisma/client'
-import {
-  BookCheck,
-  BookOpenCheck,
-  MessageCircleWarning,
-  Save,
-  Undo,
-  User as UserIcon,
-} from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useContext, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
-import { postResource } from '@src/lib/api/postResource'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
+import ClearButton from '@src/components/Buttons/ClearButton'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import GeneralAccordion from '@src/components/GeneralAccordion'
+import CalendarSelect from '@src/components/Select/CalendarSelect'
+import SubTasksGroup from '@src/components/Task/SubTasksGroup'
+import { Button } from '@src/components/ui/button'
 import {
   FormControl,
   FormField,
@@ -41,7 +23,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
-import GeneralAccordion from '@src/components/GeneralAccordion'
+import { Input } from '@src/components/ui/input'
+import { Label } from '@src/components/ui/label'
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -50,22 +33,39 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '@src/components/ui/multiselect'
-import CalendarSelect from '@src/components/Select/CalendarSelect'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
-import { capitalize } from '@src/lib/utils'
-import { Label } from '@src/components/ui/label'
-import ClearButton from '@src/components/Buttons/ClearButton'
-import useSWR, { mutate } from 'swr'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@src/components/ui/select'
+import { Separator } from '@src/components/ui/separator'
+import { Textarea } from '@src/components/ui/textarea'
+import { postResource } from '@src/lib/api/postResource'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import SubTasksGroup from '@src/components/Task/SubTasksGroup'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { TaskSchema } from '@src/lib/schemas'
+import { capitalize } from '@src/lib/utils'
+import {
+  BookCheck,
+  BookOpenCheck,
+  MessageCircleWarning,
+  Save,
+  Undo,
+  User as UserIcon,
+} from 'lucide-react'
 import Link from 'next/link'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import React, { useContext, useTransition } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import useSWR, { mutate } from 'swr'
+import type { z } from 'zod'
 
-const CreateTaskForm = ({
-  params,
-}: { params: { name: string; type: string } }) => {
+const CreateTaskForm = () => {
   // Routing used to return to previous page.
+  const params = useParams() as { name: string; type: string }
+
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultParentId = searchParams?.get('parentId') ?? ''

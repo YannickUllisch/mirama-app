@@ -1,7 +1,30 @@
 'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PriorityType, StatusType, type Tag, type User } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import CalendarSelect from '@src/components/Select/CalendarSelect'
+import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
+import { Card, CardContent } from '@src/components/ui/card'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
+import { Label } from '@src/components/ui/label'
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '@src/components/ui/multiselect'
+import { ScrollArea } from '@src/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
@@ -10,18 +33,17 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Separator } from '@src/components/ui/separator'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@src/components/ui/tabs'
 import { Textarea } from '@src/components/ui/textarea'
+import { postResource } from '@src/lib/api/postResource'
 import { ProjectSchema } from '@src/lib/schemas'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { capitalize } from '@src/lib/utils'
 import {
-  PriorityType,
-  type Tag,
-  type User,
-  StatusType,
-  type Team,
-} from '@prisma/client'
-import {
-  Archive,
   Briefcase,
   Calendar,
   Flag,
@@ -35,44 +57,16 @@ import {
   Undo,
   Users,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import React, { useTransition, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import React, { useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
-import { postResource } from '@src/lib/api/postResource'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@src/components/ui/form'
-import GeneralAccordion from '@src/components/GeneralAccordion'
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from '@src/components/ui/multiselect'
-import CalendarSelect from '@src/components/Select/CalendarSelect'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
-import { capitalize } from '@src/lib/utils'
-import { Label } from '@src/components/ui/label'
-import ClearButton from '@src/components/Buttons/ClearButton'
 import useSWR, { mutate } from 'swr'
-import { ScrollArea } from '@src/components/ui/scroll-area'
-import { Card, CardContent } from '@src/components/ui/card'
-import { Badge } from '@src/components/ui/badge'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@src/components/ui/tabs'
+import type { z } from 'zod'
 
-const CreateProjectForm = ({ params }: { params: { name: string } }) => {
+const CreateProjectForm = () => {
+  // Dynamic Page Params
+  const params = useParams() as { name: string }
+
   // Routing used to return to previous page.
   const router = useRouter()
 

@@ -1,19 +1,19 @@
 'use client'
 import { Role } from '@prisma/client'
-import React, { useEffect, useState } from 'react'
+import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
+import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
+import TagsTab from '@src/components/Tabs/SettingTabs/TagsTab'
+import { Separator } from '@src/components/ui/separator'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import { useSession } from 'next-auth/react'
 import { Settings, Tags, User, UserCog } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Separator } from '@src/components/ui/separator'
-import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
-import TagsTab from '@src/components/Tabs/SettingTabs/TagsTab'
-import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
+import { useSession } from 'next-auth/react'
+import React, { type JSX, useEffect, useState } from 'react'
 
 const ProjectPage = () => {
   const { data: session } = useSession()
