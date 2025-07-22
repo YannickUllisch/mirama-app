@@ -271,10 +271,10 @@ const Folder = forwardRef<
           }`}
         />
         {expendedItems?.includes(value)
-          ? openIcon ??
-            props.personalizedIcon ?? <FolderOpenIcon className="h-4 w-4" />
-          : closeIcon ??
-            props.personalizedIcon ?? <FolderIcon className="h-4 w-4" />}
+          ? (openIcon ??
+            props.personalizedIcon ?? <FolderOpenIcon className="h-4 w-4" />)
+          : (closeIcon ??
+            props.personalizedIcon ?? <FolderIcon className="h-4 w-4" />)}
         <span>{element}</span>
       </AccordionPrimitive.Trigger>
       <AccordionPrimitive.Content className="text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down relative overflow-hidden h-full">

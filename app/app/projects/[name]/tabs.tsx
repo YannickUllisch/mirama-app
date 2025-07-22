@@ -1,17 +1,17 @@
 import { Role } from '@prisma/client'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
-import GanttTab from '@src/components/Tabs/ProjectTabs/TimelineTab'
-import TableTab from '@src/components/Tabs/ProjectTabs/TableTab'
+import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
 import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
+import TableTab from '@src/components/Tabs/ProjectTabs/TableTab'
+import GanttTab from '@src/components/Tabs/ProjectTabs/TimelineTab'
 import {
-  MapIcon,
-  Table2,
   ClipboardList,
   GanttChart,
-  Settings,
   ListTodo,
+  MapIcon,
+  Table2,
 } from 'lucide-react'
-import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
+import type { JSX } from 'react'
 
 // Tab definitions
 export const projectTabs: {

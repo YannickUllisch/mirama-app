@@ -1,8 +1,8 @@
-import { Resend } from 'resend'
-import { InvitationEmail } from './templates/InvitationEmail'
-import type { z } from 'zod'
 import type { ContactSchema } from '@src/lib/schemas'
+import { Resend } from 'resend'
+import type { z } from 'zod'
 import { ContactEmail } from './templates/ContactEmail'
+import { InvitationEmail } from './templates/InvitationEmail'
 
 const getResendClient = () => {
   return new Resend(process.env.RESEND_API_KEY ?? '')
@@ -22,7 +22,7 @@ export const sendCompanyInvitationEmail = async (params: {
     from: 'Acme <onboarding@resend.dev>',
     to: identifier,
     subject: `Invitation to ${host}`,
-    react: InvitationEmail({ inviterName, teamName, url: url }),
+    react: await InvitationEmail({ inviterName, teamName, url: url }),
   })
 
   if (email.error) {
@@ -42,7 +42,7 @@ export const sendContactEmail = async ({
     from: 'Acme <onboarding@resend.dev>',
     to: 'nussartz@gmail.com',
     subject: 'New Contact Message',
-    react: ContactEmail({ email, firstName, lastName, message, phone }),
+    react: await ContactEmail({ email, firstName, lastName, message, phone }),
   })
 
   if (res.error) {

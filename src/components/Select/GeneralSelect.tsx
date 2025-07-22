@@ -47,7 +47,9 @@ const GeneralSelect: FC<GeneralSelectProps> = ({
       >
         <SelectValue
           placeholder={placeholder ?? value}
-          defaultValue={value ?? items.length > 0 ? items[0].value : undefined}
+          defaultValue={
+            (value ?? items.length > 0) ? items[0].value : undefined
+          }
         />
       </SelectTrigger>
       <SelectContent>
