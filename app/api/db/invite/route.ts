@@ -51,17 +51,22 @@ export const POST = async (req: Request) => {
     }
 
     const invitation = (await req.json()) as z.infer<typeof InvitationSchema>
+    try {
+      const SNSClient = getSNSClient()
 
-    const SNSClient = getSNSClient()
+      const SNSinput: SNSParams = {
+        Message: JSON.stringify({ default: 'hey' }),
+        TopicArn: process.env.NOTIFICATION_TOPIC_ARN ?? '',
+        MessageStructure: 'json',
+      }
 
-    const SNSinput: SNSParams = {
-      Message: JSON.stringify({ test: 'hey' }),
-      TopicArn: process.env.NOTIFICATION_TOPIC_ARN ?? '',
-      MessageStructure: 'json',
+      const command = new PublishCommand(SNSinput)
+      const response = await SNSClient.send(command)
+
+      console.log(response)
+    } catch (err) {
+      console.log(err)
     }
-
-    const command = new PublishCommand(SNSinput)
-    const _response = await SNSClient.send(command)
 
     // Users should not be able to assign a higher rank than their own.
     if (

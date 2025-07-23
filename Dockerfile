@@ -35,7 +35,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/postcss.config.js ./
+COPY --from=builder /app/tailwind.config.ts ./
 
 EXPOSE 3000
 
