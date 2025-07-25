@@ -1,6 +1,5 @@
 import type { Role } from '@prisma/client'
 import NextAuth from 'next-auth'
-import ResendProvider from 'next-auth/providers/resend'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'
 import { getUserById } from './helpers/AuthQueries'
@@ -58,11 +57,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   ...authConfig,
-  providers: [
-    ...authConfig.providers,
-    ResendProvider({
-      from: process.env.RESEND_EMAIL_FROM,
-      apiKey: process.env.RESEND_API_KEY,
-    }),
-  ],
+  providers: [...authConfig.providers],
 })

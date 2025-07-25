@@ -1,6 +1,8 @@
 import { ConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 
+export const runtime = 'nodejs'
+
 export const confirmUser = async ({
   email,
   code,

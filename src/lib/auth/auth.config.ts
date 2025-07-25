@@ -10,6 +10,8 @@ import type { CognitoProfile } from 'next-auth/providers/cognito'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 
+export const runtime = 'nodejs'
+
 export default {
   trustHost: true,
   providers: [

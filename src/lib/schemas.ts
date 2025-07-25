@@ -39,12 +39,6 @@ export const VerifySchema = z.object({
     }),
 })
 
-export const EmailLoginSchema = z.object({
-  email: z.string().email({
-    message: 'Invalid email format',
-  }),
-})
-
 export const ContactSchema = z.object({
   firstName: z.string().min(2, { message: 'Please define your First Name' }),
   lastName: z.string().min(2, { message: 'Please define your Last Name' }),

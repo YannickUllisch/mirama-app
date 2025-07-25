@@ -5,10 +5,6 @@ import { DEFAULT_LOGIN_REDIRECT } from '@src/routes'
 import { AuthError } from 'next-auth'
 import type * as z from 'zod'
 
-export const resendLogin = async (formData: FormData) => {
-  await signIn('resend', formData)
-}
-
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values)
 
