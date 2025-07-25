@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronDown, Folder, FolderOpen, List, PlusSquare } from 'lucide-react'
+import { ChevronDown, FolderOpen, PlusSquare } from 'lucide-react'
 import {
   SidebarGroup,
   SidebarMenu,

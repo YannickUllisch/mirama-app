@@ -1,10 +1,10 @@
 'use client'
-import React, { type FC, useState } from 'react'
+import { type FC, useState } from 'react'
 import UserAvatar from './UserAvatar'
 import type { User } from '@prisma/client'
 import { capitalize, isRoleHigher, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '../ui/button'
-import { Delete, Pencil, PencilLine, Trash2 } from 'lucide-react'
+import { Pencil, PencilLine, Trash2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,

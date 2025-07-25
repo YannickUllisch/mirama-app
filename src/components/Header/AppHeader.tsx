@@ -1,24 +1,23 @@
 'use client'
-import React, { useMemo } from 'react'
-import { usePathname } from 'next/navigation'
+import { type Favourite, FavouriteType } from '@prisma/client'
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbSeparator,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@src/components/ui/breadcrumb'
-import { capitalize } from '@src/lib/utils'
-import Link from 'next/link'
-import { SidebarTrigger } from '../ui/sidebar'
-import { Separator } from '../ui/separator'
-import { Button } from '../ui/button'
-import { Ellipsis, Share2, Star } from 'lucide-react'
-import { APP_HEADER_HEIGHT } from '@src/lib/constants'
-import useSWR, { mutate } from 'swr'
-import { type Favourite, FavouriteType } from '@prisma/client'
-import { postResource } from '@src/lib/api/postResource'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { postResource } from '@src/lib/api/postResource'
+import { capitalize } from '@src/lib/utils'
+import { Ellipsis, Share2, Star } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
+import useSWR, { mutate } from 'swr'
+import { Button } from '../ui/button'
+import { Separator } from '../ui/separator'
+import { SidebarTrigger } from '../ui/sidebar'
 
 const AppHeader = () => {
   const pathname = usePathname()
@@ -96,7 +95,7 @@ const AppHeader = () => {
       </div>
       <div className="flex justify-center items-center md:hidden">
         <Link href={'/app'}>
-          <span className="font-semibold text-lg">.mirage</span>
+          <span className="font-semibold text-lg">.mirama</span>
         </Link>
       </div>
       <div className="flex justify-center items-center md:block gap-0 ">

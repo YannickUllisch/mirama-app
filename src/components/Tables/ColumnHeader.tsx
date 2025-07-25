@@ -14,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { SortAsc } from 'lucide-react'
 import type React from 'react'
 
 interface DataTableColumnHeaderProps<TData, TValue>

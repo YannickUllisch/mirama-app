@@ -1,12 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { InvitationSchema } from '@src/lib/schemas'
-import React, {
-  type FC,
-  type PropsWithChildren,
-  useState,
-  useTransition,
-} from 'react'
+import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Input } from '@src/components/ui/input'
@@ -22,9 +17,7 @@ import {
 } from '@src/components/ui/dialog'
 import { Button } from '@src/components/ui/button'
 import { postResource } from '@src/lib/api/postResource'
-import type { KeyedMutator } from 'swr'
-import { Role, type User } from '@prisma/client'
-import { Label } from '../ui/label'
+import { Role } from '@prisma/client'
 import {
   FormControl,
   FormField,

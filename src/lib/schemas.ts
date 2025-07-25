@@ -22,6 +22,23 @@ export const RegisterSchema = z.object({
     .min(6, { message: 'Password needs to include at least 6 characters' }),
 })
 
+export const VerifySchema = z.object({
+  email: z.string().email({
+    message: 'Please enter a valid email address',
+  }),
+  confirmationCode: z
+    .string()
+    .min(6, {
+      message: 'Confirmation code must be 6 digits',
+    })
+    .max(6, {
+      message: 'Confirmation code must be 6 digits',
+    })
+    .regex(/^\d{6}$/, {
+      message: 'Confirmation code must contain only numbers',
+    }),
+})
+
 export const EmailLoginSchema = z.object({
   email: z.string().email({
     message: 'Invalid email format',
@@ -94,23 +111,6 @@ export const TaskSchema = z
   .refine((data) => data.startDate <= data.dueDate, {
     message: 'Start Date must be before or equal to Due Date',
     path: ['startDate'],
-  })
-
-export const ChangePasswordSchema = z
-  .object({
-    old: z.string(),
-    new: z
-      .string()
-      .min(6, { message: 'Password needs to include at least 6 characters' }),
-    newValidated: z.string(),
-  })
-  .refine((data) => data.new === data.newValidated, {
-    message: 'New Password does not match',
-    path: ['newValidated'],
-  })
-  .refine((data) => data.old !== data.new, {
-    message: 'Please choose a different password',
-    path: ['new'],
   })
 
 export const MilestoneSchema = z.object({

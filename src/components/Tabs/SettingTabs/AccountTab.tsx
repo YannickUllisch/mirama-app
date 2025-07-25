@@ -1,14 +1,13 @@
 'use client'
-import React, { type FC } from 'react'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { Button } from '@src/components/ui/button'
+import { Input } from '@src/components/ui/input'
+import { Label } from '@src/components/ui/label'
+import { Separator } from '@src/components/ui/separator'
 import { LogOut } from 'lucide-react'
 import type { Session } from 'next-auth'
-import { Label } from '@src/components/ui/label'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import { Input } from '@src/components/ui/input'
-import ChangePasswordDialog from '@src/components/Dialogs/ChangePasswordDialog'
-import { Button } from '@src/components/ui/button'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
-import { Separator } from '@src/components/ui/separator'
+import type { FC } from 'react'
 
 interface AccountTabProps {
   session: Session | null
@@ -55,9 +54,7 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
 
           <div className="pb-5 flex flex-col gap-y-3 max-w-[200px]">
             <Label>Password</Label>
-            <ChangePasswordDialog>
-              <Button variant={'secondary'}>Change Password</Button>
-            </ChangePasswordDialog>
+            Coming soon...
           </div>
         </div>
       </div>

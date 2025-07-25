@@ -1,6 +1,6 @@
 import db from '@db'
 import { auth } from '@auth'
-import { Prisma, type ProjectUser, Role, type Project } from '@prisma/client'
+import { type ProjectUser, Role, type Project } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { validateRequest } from '@src/lib/validateRequest'
 import { v4 } from 'uuid'

@@ -1,29 +1,51 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "organizeImports": {
-    "enabled": true
+    "enabled": true,
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "public/**",
+      ".next/**",
+      ".vercel/**"
+    ]
   },
   "files": {
     "ignoreUnknown": true
   },
   "formatter": {
-    "ignore": ["coverage/**", "node_modules/**", "build/**", "public/**"],
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "public/**",
+      ".next/**",
+      ".vercel/**"
+    ],
     "enabled": true,
     "formatWithErrors": true,
     "indentStyle": "space",
     "indentWidth": 2
   },
   "linter": {
-    "ignore": ["coverage/**", "node_modules/**", "build/**", "public/**"],
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "public/**",
+      ".next/**",
+      ".vercel/**"
+    ],
     "enabled": true,
     "rules": {
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "off",
         "noAsyncPromiseExecutor": "off",
-        "noConsoleLog": "warn"
+        "noConsoleLog": "warn",
+        "useAwait": "error"
       },
       "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedLabels": "error",
         "noUnusedVariables": "error"
       },
       "performance": {

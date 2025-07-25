@@ -7,7 +7,7 @@ export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
 
   adapter.createUser = async (user) => {
-    const inputUser = user as any as User
+    const inputUser = user as any as User & { oauthId?: string }
 
     if (!inputUser.name || !inputUser.teamId) {
       // Look up invitation
@@ -22,7 +22,6 @@ export const CreatePrismaAdapter = () => {
       }
 
       // If the invitation is received use the name from it to add to the typedUser (It will be missing otherwise).
-      inputUser.name = invitation.name
       inputUser.teamId = invitation.teamId
       inputUser.role = invitation.role
       inputUser.email = invitation.email
@@ -40,7 +39,12 @@ export const CreatePrismaAdapter = () => {
 
     const createdUser = await db.user.create({
       data: {
-        ...inputUser,
+        email: inputUser.email,
+        name: inputUser.name,
+        teamId: inputUser.teamId,
+        role: inputUser.role,
+        emailVerified: new Date(),
+        id: inputUser.oauthId,
       },
     })
 

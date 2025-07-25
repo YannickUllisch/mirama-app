@@ -1,5 +1,5 @@
 'use client'
-import React, { type FC, useEffect, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import { Input } from '@src/components/ui/tableInput'
 import { toast } from 'sonner'
 import { updateResourceById } from '@src/lib/api/updateResource'

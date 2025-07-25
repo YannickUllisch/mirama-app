@@ -5,7 +5,6 @@ import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { Plus, Users } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import React from 'react'
 import useSWR from 'swr'
 
 const ClientTeamPage = () => {

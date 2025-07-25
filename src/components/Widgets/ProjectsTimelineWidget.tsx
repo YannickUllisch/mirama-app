@@ -3,14 +3,7 @@
 import type React from 'react'
 
 import { useEffect, useState, useRef } from 'react'
-import {
-  format,
-  isWithinInterval,
-  differenceInDays,
-  addDays,
-  min,
-  max,
-} from 'date-fns'
+import { format, differenceInDays, addDays, min, max } from 'date-fns'
 
 import { cn, getColorByName } from '@src/lib/utils'
 import { TooltipProvider } from '@ui/tooltip'

@@ -1,7 +1,7 @@
 'use server'
-import Link from 'next/link'
 import { Button } from '@src/components/ui/button'
 import type { Session } from 'next-auth'
+import Link from 'next/link'
 import ToggleTheme from '../Footer/ToggleTheme'
 
 const PublicHeader = ({ session }: { session: Session | null }) => {
@@ -10,7 +10,7 @@ const PublicHeader = ({ session }: { session: Session | null }) => {
       <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold">.mirage</span>
+            <span className="text-2xl font-bold">.mirama</span>
           </Link>
         </div>
         <div className="flex items-center gap-3">

@@ -7,7 +7,6 @@ import {
   FlaskConical,
   Trophy,
 } from 'lucide-react'
-import React from 'react'
 import { cn } from '../utils'
 
 const ICON_SIZE = 16

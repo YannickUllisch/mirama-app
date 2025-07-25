@@ -1,7 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EmailLoginSchema } from '@src/lib/schemas'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Input } from '@src/components/ui/input'

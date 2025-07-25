@@ -1,4 +1,4 @@
-import { ClipboardCheck, Clock, MessageSquare, User, Users } from 'lucide-react'
+import { ClipboardCheck, Clock, MessageSquare, Users } from 'lucide-react'
 import { Badge } from '@src/components/ui/badge'
 
 export const LandingBentoBox = () => (

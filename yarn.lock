@@ -103,6 +103,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-cognito-identity-provider@npm:^3.848.0":
+  version: 3.848.0
+  resolution: "@aws-sdk/client-cognito-identity-provider@npm:3.848.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:5.2.0"
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@aws-sdk/core": "npm:3.846.0"
+    "@aws-sdk/credential-provider-node": "npm:3.848.0"
+    "@aws-sdk/middleware-host-header": "npm:3.840.0"
+    "@aws-sdk/middleware-logger": "npm:3.840.0"
+    "@aws-sdk/middleware-recursion-detection": "npm:3.840.0"
+    "@aws-sdk/middleware-user-agent": "npm:3.848.0"
+    "@aws-sdk/region-config-resolver": "npm:3.840.0"
+    "@aws-sdk/types": "npm:3.840.0"
+    "@aws-sdk/util-endpoints": "npm:3.848.0"
+    "@aws-sdk/util-user-agent-browser": "npm:3.840.0"
+    "@aws-sdk/util-user-agent-node": "npm:3.848.0"
+    "@smithy/config-resolver": "npm:^4.1.4"
+    "@smithy/core": "npm:^3.7.0"
+    "@smithy/fetch-http-handler": "npm:^5.1.0"
+    "@smithy/hash-node": "npm:^4.0.4"
+    "@smithy/invalid-dependency": "npm:^4.0.4"
+    "@smithy/middleware-content-length": "npm:^4.0.4"
+    "@smithy/middleware-endpoint": "npm:^4.1.15"
+    "@smithy/middleware-retry": "npm:^4.1.16"
+    "@smithy/middleware-serde": "npm:^4.0.8"
+    "@smithy/middleware-stack": "npm:^4.0.4"
+    "@smithy/node-config-provider": "npm:^4.1.3"
+    "@smithy/node-http-handler": "npm:^4.1.0"
+    "@smithy/protocol-http": "npm:^5.1.2"
+    "@smithy/smithy-client": "npm:^4.4.7"
+    "@smithy/types": "npm:^4.3.1"
+    "@smithy/url-parser": "npm:^4.0.4"
+    "@smithy/util-base64": "npm:^4.0.0"
+    "@smithy/util-body-length-browser": "npm:^4.0.0"
+    "@smithy/util-body-length-node": "npm:^4.0.0"
+    "@smithy/util-defaults-mode-browser": "npm:^4.0.23"
+    "@smithy/util-defaults-mode-node": "npm:^4.0.23"
+    "@smithy/util-endpoints": "npm:^3.0.6"
+    "@smithy/util-middleware": "npm:^4.0.4"
+    "@smithy/util-retry": "npm:^4.0.6"
+    "@smithy/util-utf8": "npm:^4.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/86bf516ee6639781f4ab4b5c45d189041cad99df4462683a7dc0d56d2f1b08d67b8bbc8deb5f10066292df2234844b82804ac37200ac06ee80e024270496b4e4
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-sns@npm:^3.848.0":
   version: 3.848.0
   resolution: "@aws-sdk/client-sns@npm:3.848.0"
@@ -6025,6 +6072,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"input-otp@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "input-otp@npm:1.4.2"
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+  checksum: 10c0/d3a3216a75ed832993f3f2852edd7a85c5bae30ea6d251182119120488bbf9fed7cfdd91819bcee6daff57b3cfcbca94fd16d6a7c92cee4d806c0d4fa6ff1128
+  languageName: node
+  linkType: hard
+
 "internmap@npm:1 - 2":
   version: 2.0.3
   resolution: "internmap@npm:2.0.3"
@@ -6914,6 +6971,7 @@ __metadata:
   resolution: "mirama@workspace:."
   dependencies:
     "@auth/prisma-adapter": "npm:^2.10.0"
+    "@aws-sdk/client-cognito-identity-provider": "npm:^3.848.0"
     "@aws-sdk/client-sns": "npm:^3.848.0"
     "@biomejs/biome": "npm:1.9.4"
     "@commitlint/cli": "npm:^19.8.1"
@@ -6970,6 +7028,7 @@ __metadata:
     framer-motion: "npm:^12.23.6"
     googleapis: "npm:153.0.0"
     husky: "npm:^9.1.7"
+    input-otp: "npm:^1.4.2"
     ioredis: "npm:^5.6.1"
     jotai: "npm:^2.12.5"
     lint-staged: "npm:^16.1.2"

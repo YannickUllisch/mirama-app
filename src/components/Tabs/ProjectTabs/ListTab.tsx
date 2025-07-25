@@ -10,7 +10,6 @@ import {
 import type { DragEndEvent } from '@dnd-kit/core'
 import {
   PriorityType,
-  type Project,
   type Task,
   TaskStatusType,
   type TaskType,
@@ -18,10 +17,9 @@ import {
 } from '@prisma/client'
 import useSWR from 'swr'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Input } from '@ui/input'
 import { postResource } from '@src/lib/api/postResource'
-import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { useSession } from 'next-auth/react'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { updateResourceById } from '@src/lib/api/updateResource'

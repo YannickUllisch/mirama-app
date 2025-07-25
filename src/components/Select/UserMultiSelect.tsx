@@ -1,5 +1,4 @@
 import type { User } from '@prisma/client'
-import type React from 'react'
 import {
   MultiSelector,
   MultiSelectorContent,

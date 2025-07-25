@@ -1,13 +1,10 @@
 import { auth } from '@auth'
-import { PublishCommand } from '@aws-sdk/client-sns'
 import db from '@db'
 import { Role } from '@prisma/client'
-import { sendCompanyInvitationEmail } from '@src/email/mailer'
+import { inviteUserCognito } from '@src/lib/auth/inviteUser'
 import type { InvitationSchema } from '@src/lib/schemas'
-import { getSNSClient } from '@src/lib/sns'
 import { isRoleHigher } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
-import type { SNSParams } from '@src/types/SNS'
 import { DateTime } from 'luxon'
 import type { z } from 'zod'
 
@@ -51,22 +48,6 @@ export const POST = async (req: Request) => {
     }
 
     const invitation = (await req.json()) as z.infer<typeof InvitationSchema>
-    try {
-      const SNSClient = getSNSClient()
-
-      const SNSinput: SNSParams = {
-        Message: JSON.stringify({ default: 'hey' }),
-        TopicArn: process.env.NOTIFICATION_TOPIC_ARN ?? '',
-        MessageStructure: 'json',
-      }
-
-      const command = new PublishCommand(SNSinput)
-      const response = await SNSClient.send(command)
-
-      console.log(response)
-    } catch (err) {
-      console.log(err)
-    }
 
     // Users should not be able to assign a higher rank than their own.
     if (
@@ -104,12 +85,7 @@ export const POST = async (req: Request) => {
         },
       })
 
-      await sendCompanyInvitationEmail({
-        identifier: invitation.email, // temporary since I cannot send mails without a domain
-        url: process.env.NEXT_PUBLIC_BASE_URL ?? '',
-        inviterName: session?.user.name ?? 'REDACTED',
-        teamName: invitationTeam.name,
-      })
+      await inviteUserCognito({ email: invitation.email })
 
       return Response.json(
         { success: true, message: 'Invitation has been sent' },

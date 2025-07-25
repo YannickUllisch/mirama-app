@@ -1,7 +1,6 @@
 import { auth } from '@auth'
 import { Role } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
-import { DateTime } from 'luxon'
 
 export const POST = async (_req: Request) => {
   try {
@@ -14,17 +13,6 @@ export const POST = async (_req: Request) => {
     if (validatedRequest) {
       return validatedRequest
     }
-
-    // try {
-    //   // await sendVerificationRequest({
-    //   //   identifier: 'yannicku01@gmail.com',
-    //   //   url: 'test/mirage.com',
-    //   //   token: 'asdfasdf',
-    //   // })
-    // } catch (err) {
-    //   console.error(err)
-    //   throw err
-    // }
 
     return Response.json({ success: true, message: 'yess' }, { status: 200 })
   } catch (err) {

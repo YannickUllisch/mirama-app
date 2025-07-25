@@ -1,11 +1,11 @@
 'use client'
-import LoginForm from '@src/components/auth/LoginForm'
+import Loading from '@/app/loading'
 import image from '@public/test2.png'
+import LoginForm from '@src/components/auth/LoginForm'
+import { AuthSocial } from '@src/components/auth/Socials'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import Loading from '@/app/loading'
-import { AuthSocial } from '@src/components/auth/Socials'
 
 export default function LoginPage() {
   return (
@@ -13,7 +13,7 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold ">.mirage</span>
+            <span className="text-2xl font-bold ">.mirama</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">

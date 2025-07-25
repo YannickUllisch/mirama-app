@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { MoveRight, CheckCircle, Lock, LockOpen } from 'lucide-react'
+import { MoveRight, CheckCircle, LockOpen } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
 import Link from 'next/link'
 

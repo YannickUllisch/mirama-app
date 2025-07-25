@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from 'react'
+import { useState, type FC } from 'react'
 import { CircleOff } from 'lucide-react'
 import { Card, CardContent } from '@ui/card'
 import { cn } from '@src/lib/utils'

@@ -1,13 +1,9 @@
 'use server'
-import { signIn } from '@auth'
-import db from '@db'
+import { SignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { RegisterSchema } from '@src/lib/schemas'
-import { DEFAULT_LOGIN_REDIRECT } from '@src/routes'
-import bcryptjs from 'bcryptjs'
-import { isRedirectError } from 'next/dist/client/components/redirect-error'
-import { redirect } from 'next/navigation'
 import type * as z from 'zod'
 import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
+import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -17,7 +13,6 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   }
 
   const { email, password } = validatedFields.data
-  const hashedPassword = await bcryptjs.hash(password, 10)
 
   const invitation = await getValidCompanyInvitation({ email })
 
@@ -27,44 +22,13 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     }
   }
 
-  await db.user.create({
-    data: {
-      email: invitation.email,
-      name: invitation.name,
-      role: invitation.role,
-      teamId: invitation.teamId,
-      emailVerified: new Date(),
-      password: hashedPassword,
-    },
+  const client = getCognitoIdentityProviderClient()
+  const command = new SignUpCommand({
+    ClientId: process.env.COGNITO_CLIENT_ID,
+    Username: email,
+    Password: password,
+    UserAttributes: [{ Name: 'email', Value: email }],
   })
 
-  try {
-    await db.user.update({
-      where: { email },
-      data: {
-        password: hashedPassword,
-        emailVerified: new Date(),
-      },
-    })
-
-    try {
-      await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
-    } catch (err) {
-      // We get redirect error when trying to signin even when signin is successfull
-      // For now just force redirect
-      if (isRedirectError(err)) {
-        redirect(DEFAULT_LOGIN_REDIRECT)
-      }
-    }
-  } catch (error) {
-    console.error('Error during user update or sign-in:', error)
-    return { error: 'Server Error, please contact support' }
-  }
-
-  // Case 3: User does not exist
-  return { error: 'Contact your administrator for an invitation' }
+  return await client.send(command)
 }

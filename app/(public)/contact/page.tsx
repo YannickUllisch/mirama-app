@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import contactImage from '@public/test2.png'
 import Image from 'next/image'
 import ContactForm from '@src/components/auth/ContactForm'

@@ -1,4 +1,4 @@
-import type { CompanyInvitation, Tag } from '@prisma/client'
+import type { CompanyInvitation } from '@prisma/client'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import {
   DropdownMenu,

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { resendLogin } from '@src/lib/auth/login'
