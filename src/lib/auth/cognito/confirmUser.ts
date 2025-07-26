@@ -16,5 +16,10 @@ export const confirmUser = async ({
     Username: email,
     ConfirmationCode: code,
   })
-  return await client.send(command)
+  try {
+    await client.send(command)
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to confirm Code' }
+  }
 }

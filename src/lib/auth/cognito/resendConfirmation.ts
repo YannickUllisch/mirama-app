@@ -1,7 +1,7 @@
 import { ResendConfirmationCodeCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 
-export async function resendConfirmationCode(email: string) {
+export const resendConfirmationCode = async (email: string) => {
   const client = getCognitoIdentityProviderClient()
 
   const command = new ResendConfirmationCodeCommand({

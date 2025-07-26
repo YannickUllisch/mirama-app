@@ -12,8 +12,8 @@ import {
   FormMessage,
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
-import { confirmUser } from '@src/lib/auth/confirmUser'
-import { resendConfirmationCode } from '@src/lib/auth/resendConfirmation'
+import { confirmUser } from '@src/lib/auth/cognito/confirmUser'
+import { resendConfirmationCode } from '@src/lib/auth/cognito/resendConfirmation'
 import { VerifySchema } from '@src/lib/schemas'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@ui/input-otp'
 import { Loader2 } from 'lucide-react'

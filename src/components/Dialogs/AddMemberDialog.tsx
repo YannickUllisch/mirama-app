@@ -1,10 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { InvitationSchema } from '@src/lib/schemas'
-import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
-import { Input } from '@src/components/ui/input'
+import { Role } from '@prisma/client'
+import { Button } from '@src/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -15,9 +12,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@src/components/ui/dialog'
-import { Button } from '@src/components/ui/button'
+import { Input } from '@src/components/ui/input'
 import { postResource } from '@src/lib/api/postResource'
-import { Role } from '@prisma/client'
+import { InvitationSchema } from '@src/lib/schemas'
+import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import type { z } from 'zod'
 import {
   FormControl,
   FormField,
@@ -41,7 +41,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
     defaultValues: {
       email: '',
       name: '',
-      role: 'USER',
+      role: Role.USER,
     },
   })
 

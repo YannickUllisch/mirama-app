@@ -3,7 +3,7 @@ import { SignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { RegisterSchema } from '@src/lib/schemas'
 import type * as z from 'zod'
 import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
-import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
+import { getCognitoIdentityProviderClient } from './cognito/cognitoIdentityProvider'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)

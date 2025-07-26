@@ -8,7 +8,7 @@ import type { NextAuthConfig } from 'next-auth'
 import CognitoProvider from 'next-auth/providers/cognito'
 import type { CognitoProfile } from 'next-auth/providers/cognito'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
+import { getCognitoIdentityProviderClient } from './cognito/cognitoIdentityProvider'
 
 export const runtime = 'nodejs'
 
@@ -32,7 +32,7 @@ export default {
           client_id: process.env.COGNITO_CLIENT_ID as string,
           scope: 'openid email profile',
           redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/cognito`,
-          prompt: 'select_account',
+          prompt: 'login',
         },
       },
       profile(profile: CognitoProfile, tokens: any) {

@@ -18,5 +18,13 @@ export const inviteUserCognito = async ({
     DesiredDeliveryMediums: ['EMAIL'], // Send invitation via email
   })
 
-  return await client.send(command)
+  try {
+    await client.send(command)
+    return { success: true }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || 'Failed to send invitation',
+    }
+  }
 }

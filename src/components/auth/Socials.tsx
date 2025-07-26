@@ -12,10 +12,17 @@ export const AuthSocial = () => {
     setFormError(null)
     try {
       const result = await signIn('cognito', {
-        redirect: false, // Don't redirect so we can handle errors
+        redirect: false,
         callbackUrl: '/app',
       })
-      setFormError(result.error ?? 'Error Occurred with Google Provider')
+      if (result?.error) {
+        // Show the error returned from NextAuth (from PrismaAdapter)
+        setFormError(result.error)
+      } else if (!result?.ok) {
+        setFormError('An unknown error occurred during social login.')
+      } else if (result?.ok && result.url) {
+        window.location.href = result.url
+      }
     } catch (err: any) {
       setFormError(err)
     }

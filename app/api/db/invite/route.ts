@@ -1,7 +1,7 @@
 import { auth } from '@auth'
 import db from '@db'
 import { Role } from '@prisma/client'
-import { inviteUserCognito } from '@src/lib/auth/inviteUser'
+import { inviteUserCognito } from '@src/lib/auth/cognito/inviteUser'
 import type { InvitationSchema } from '@src/lib/schemas'
 import { isRoleHigher } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
