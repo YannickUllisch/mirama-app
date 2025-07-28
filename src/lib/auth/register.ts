@@ -1,9 +1,7 @@
 'use server'
-import { SignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { RegisterSchema } from '@src/lib/schemas'
 import type * as z from 'zod'
 import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
-import { getCognitoIdentityProviderClient } from './cognito/cognitoIdentityProvider'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -12,23 +10,28 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: 'Invalid fields!' }
   }
 
-  const { email, password } = validatedFields.data
+  const { email } = validatedFields.data
 
   const invitation = await getValidCompanyInvitation({ email })
 
   if (!invitation) {
     return {
-      error: 'Invitation Error, please contact your administrator',
+      error:
+        'The system is currently not open for public registrations. An invitation is required.',
     }
   }
 
-  const client = getCognitoIdentityProviderClient()
-  const command = new SignUpCommand({
-    ClientId: process.env.COGNITO_CLIENT_ID,
-    Username: email,
-    Password: password,
-    UserAttributes: [{ Name: 'email', Value: email }],
-  })
+  // const client = getCognitoIdentityProviderClient()
+  // const command = new SignUpCommand({
+  //   ClientId: process.env.COGNITO_CLIENT_ID,
+  //   Username: email,
+  //   Password: password,
+  //   UserAttributes: [{ Name: 'email', Value: email }],
+  // })
 
-  return await client.send(command)
+  // return await client.send(command)
+  return {
+    error:
+      'Sign ups are currently disabled, due to invitational system being active.',
+  }
 }

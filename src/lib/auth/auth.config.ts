@@ -4,6 +4,7 @@ import {
   GetUserCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
+import { Role } from '@prisma/client'
 import type { NextAuthConfig } from 'next-auth'
 import CognitoProvider from 'next-auth/providers/cognito'
 import type { CognitoProfile } from 'next-auth/providers/cognito'
@@ -80,13 +81,16 @@ export default {
             | AttributeType[]
             | undefined
 
+          const email = attributes?.find((attr) => attr.Name === 'email')?.Value
+          const uuid = attributes?.find((attr) => attr.Name === 'sub')?.Value
+
+          // Attributes are properly added in prisma-adapter
           return {
-            id: userResult.Username as string,
-            oauthId: attributes?.find((attr) => attr.Name === 'sub')?.Value,
-            email: attributes?.find((attr) => attr.Name === 'email')?.Value,
-            idToken: authResult.AuthenticationResult?.IdToken,
-            accessToken,
-            refreshToken: authResult.AuthenticationResult?.RefreshToken,
+            id: uuid,
+            email,
+            name: 'Temp',
+            emailVerified: new Date(),
+            role: Role.USER,
           }
         } catch (err) {
           console.error('Cognito Auth Error:', err)

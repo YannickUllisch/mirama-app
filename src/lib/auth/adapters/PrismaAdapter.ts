@@ -7,8 +7,15 @@ import { deleteCognitoUser } from '../cognito/deleteCognitoUser'
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
 
+  adapter.getUser = async (id) => {
+    const dbUser = await db.user.findUnique({ where: { id } })
+    if (!dbUser) {
+      console.warn(`No user found in DB for id: ${id}`)
+    }
+    return dbUser
+  }
   adapter.createUser = async (user) => {
-    const inputUser = user as any as User & { oauthId?: string }
+    const inputUser = user as any as User
 
     if (!inputUser.name || !inputUser.teamId) {
       // Look up invitation
@@ -44,12 +51,12 @@ export const CreatePrismaAdapter = () => {
 
     const createdUser = await db.user.create({
       data: {
+        id: inputUser.id,
         email: inputUser.email,
         name: inputUser.name,
         teamId: inputUser.teamId,
         role: inputUser.role,
         emailVerified: new Date(),
-        id: inputUser.oauthId,
       },
     })
 

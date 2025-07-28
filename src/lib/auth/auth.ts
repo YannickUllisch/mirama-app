@@ -6,6 +6,33 @@ import { getUserById } from './helpers/AuthQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
+    async signIn({ user }) {
+      const adapter = CreatePrismaAdapter()
+
+      const existingUser = getUserById(user.id ?? '')
+
+      if (!existingUser) {
+        try {
+          // We call adapter function to reuse logic
+          if (typeof adapter.createUser === 'function') {
+            await adapter.createUser({
+              emailVerified: new Date(),
+              name: user.name ?? '',
+              id: user.id ?? '',
+              email: user.email ?? '',
+            })
+          } else {
+            console.error('Create User is not Defined')
+            return false
+          }
+        } catch (e) {
+          console.error('Create User failed:', e)
+          return false
+        }
+      }
+
+      return true
+    },
     async jwt({ token, user }) {
       if (!token.sub) return token
 

@@ -60,6 +60,22 @@ export const POST = async (req: Request) => {
       )
     }
 
+    const existingUserWithEmail = await db.user.findFirst({
+      where: {
+        email: invitation.email,
+      },
+    })
+
+    if (existingUserWithEmail) {
+      return Response.json(
+        {
+          success: true,
+          message: 'The invited Email has already been registered.',
+        },
+        { status: 400 },
+      )
+    }
+
     const invitationTeam = await db.team.findFirst({
       where: {
         id: session?.user.teamId,
@@ -77,6 +93,19 @@ export const POST = async (req: Request) => {
     const expiresAt = DateTime.now().plus({ day: 1 }).toJSDate()
 
     try {
+      // Inviting first to avoid mismatch between invitations and cognito users
+      const cognitoRes = await inviteUserCognito({ email: invitation.email })
+
+      if (cognitoRes.error) {
+        return Response.json(
+          {
+            success: false,
+            message: `Invitation failed with error: ${cognitoRes.error}`,
+          },
+          { status: 500 },
+        )
+      }
+
       await db.companyInvitation.create({
         data: {
           ...invitation,
@@ -84,8 +113,6 @@ export const POST = async (req: Request) => {
           expiresAt,
         },
       })
-
-      await inviteUserCognito({ email: invitation.email })
 
       return Response.json(
         { success: true, message: 'Invitation has been sent' },
