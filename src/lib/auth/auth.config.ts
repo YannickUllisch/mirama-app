@@ -4,7 +4,6 @@ import {
   GetUserCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
-import { Role } from '@prisma/client'
 import type { NextAuthConfig } from 'next-auth'
 import CognitoProvider from 'next-auth/providers/cognito'
 import type { CognitoProfile } from 'next-auth/providers/cognito'
@@ -88,9 +87,7 @@ export default {
           return {
             id: uuid,
             email,
-            name: 'Temp',
-            emailVerified: new Date(),
-            role: Role.USER,
+            name: '',
           }
         } catch (err) {
           console.error('Cognito Auth Error:', err)

@@ -8,7 +8,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       const adapter = CreatePrismaAdapter()
-
       const existingUser = getUserById(user.id ?? '')
 
       if (!existingUser) {
