@@ -9,7 +9,6 @@ import { getColorByName } from '@src/lib/utils'
 import { CalendarDays, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import React from 'react'
 import useSWR from 'swr'
 
 const GridTab = () => {

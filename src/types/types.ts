@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { PriorityType, Role, Task, TaskType, User } from '@prisma/client'
+import type { Role, Task, TaskType, User } from '@prisma/client'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { KeyedMutator } from 'swr'

@@ -7,7 +7,6 @@ import {
 import React from 'react'
 import type { TableData } from '@src/components/Tables/DataTable'
 import { TableBody, TableCell, TableRow } from '@src/components/ui/table'
-import { Loader2 } from 'lucide-react'
 import { Checkbox } from '@src/components/ui/checkbox'
 import { Spinner } from '@ui/spinner'
 

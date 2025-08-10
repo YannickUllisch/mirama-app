@@ -1,102 +1,54 @@
-import NextAuth from 'next-auth'
-import db from '@db'
 import type { Role } from '@prisma/client'
-import authConfig from './auth.config'
-import ResendProvider from 'next-auth/providers/resend'
+import NextAuth from 'next-auth'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
-import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
-import { getUserByEmail, getUserById } from './helpers/AuthQueries'
+import authConfig from './auth.config'
+import { getUserById } from './helpers/AuthQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  events: {
-    async linkAccount({ user }) {
-      const existingUser = await getUserByEmail(user.email ?? 'undef')
-      if (existingUser) {
-        await db.user.update({
-          where: { id: user.id },
-          data: { emailVerified: new Date() },
-        })
-      }
-    },
-  },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'google' && user.id) {
-        const existingUser = await getUserByEmail(profile?.email ?? 'undef')
+    async signIn({ user }) {
+      const adapter = CreatePrismaAdapter()
+      const existingUser = getUserById(user.id ?? '')
 
-        // If invited but account hasnt been created
-        if (!existingUser) {
-          const existingInvite = await getValidCompanyInvitation({
-            email: user.email ?? 'undef',
-          })
-
-          if (existingInvite) {
-            await db.user.create({
-              data: {
-                email: existingInvite.email,
-                name: existingInvite.name,
-                role: existingInvite.role,
-                teamId: existingInvite.teamId,
-                emailVerified: new Date(),
-              },
+      if (!existingUser) {
+        try {
+          // We call adapter function to reuse logic
+          if (typeof adapter.createUser === 'function') {
+            await adapter.createUser({
+              emailVerified: new Date(),
+              name: user.name ?? '',
+              id: user.id ?? '',
+              email: user.email ?? '',
             })
-
-            // Deleting invitation in DB for cleanup
-            // We remove all invites since we to this point only assume that they can be invited to a single company
-            await db.companyInvitation.deleteMany({
-              where: {
-                email: existingInvite.email,
-              },
-            })
-
-            return true
+          } else {
+            console.error('Create User is not Defined')
+            return false
           }
-          return false
-        }
-
-        await db.account.upsert({
-          where: {
-            provider_providerAccountId: {
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-            },
-          },
-          update: {
-            expires_at: account.expires_at,
-            refresh_token: account.refresh_token,
-            access_token: account.access_token,
-          },
-          create: {
-            userId: existingUser.id,
-            provider: account.provider,
-            providerAccountId: account.providerAccountId,
-            expires_at: account.expires_at,
-            refresh_token: account.refresh_token,
-            access_token: account.access_token,
-            type: account.type,
-            scope: account.scope,
-            id_token: account.id_token,
-            token_type: account.token_type,
-          },
-        })
-
-        return true
-      }
-
-      if (user.id && account?.provider === 'credentials') {
-        const existingUser = await getUserById(user.id)
-        // Prevent SignIn without email verification
-        if (
-          !existingUser ||
-          !existingUser.emailVerified ||
-          !existingUser.password
-        ) {
+        } catch (e) {
+          console.error('Create User failed:', e)
           return false
         }
       }
+
       return true
     },
-    async session({ token, session }) {
+    async jwt({ token, user }) {
+      if (!token.sub) return token
+
+      const existingUser = await getUserById(token.sub)
+      if (!existingUser) return token
+
+      token.teamId = existingUser.teamId
+      token.role = existingUser.role
+      token.name = existingUser.name
+      if (user && 'refreshToken' in user) {
+        token.refreshToken = user.refreshToken ?? ''
+      }
+
+      return token
+    },
+    session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub
       }
@@ -114,27 +66,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       if (token.provider && session.user) {
-        session.user.provider = token.provider as string
+        session.user.refreshToken = token.refreshToken as string
       }
 
       return session
-    },
-
-    async jwt({ token, account }) {
-      if (!token.sub) return token
-
-      const existingUser = await getUserById(token.sub)
-      if (!existingUser) return token
-
-      token.teamId = existingUser.teamId
-      token.role = existingUser.role
-      token.name = existingUser.name
-
-      if (account) {
-        token.provider = account.provider
-      }
-
-      return token
     },
   },
   pages: {
@@ -149,11 +84,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   ...authConfig,
-  providers: [
-    ...authConfig.providers,
-    ResendProvider({
-      from: process.env.RESEND_EMAIL_FROM,
-      apiKey: process.env.RESEND_API_KEY,
-    }),
-  ],
+  providers: [...authConfig.providers],
 })

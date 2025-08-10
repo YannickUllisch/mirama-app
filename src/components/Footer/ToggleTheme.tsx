@@ -1,6 +1,6 @@
 'use client'
 import { useTheme } from 'next-themes'
-import React, { type FC } from 'react'
+import type { FC } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
 interface ToggleThemeProps {

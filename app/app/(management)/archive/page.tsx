@@ -2,7 +2,6 @@
 import type { Project, ProjectUser, User } from '@prisma/client'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { useSession } from 'next-auth/react'
-import React from 'react'
 import useSWR from 'swr'
 import { ArchiveColumns } from './columns'
 

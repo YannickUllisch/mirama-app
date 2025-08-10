@@ -1,8 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
+  <img src="public/logo/mirage-logo.png" alt="Mirama Logo" width="120" height="120">
+  <h2 align="center">Mirama Frontend</h2>
+  <p align="center">
+    <img src="https://img.shields.io/badge/Next.js-000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+    <br />
+    <a href="https://github.com/YannickUllisch/mirama-app">Project Repo</a>
+    &middot;
+    <a href="mailto:yannicku01@gmail.com">Contact</a>
+  </p>
+</div>
+
+---
+
+## Overview
+
+This repository contains the main web application for the Mirama platform, built with [Next.js](https://nextjs.org/) and TypeScript. The frontend is designed for performance, accessibility, and seamless integration with the Mirama backend and AWS infrastructure.
+
+Key features include:
+
+- **Modern React (Next.js 14+)**: App directory, server components, and optimized routing.
+- **TypeScript**: Type-safe codebase for reliability and maintainability.
+- **Tailwind CSS**: Utility-first styling for rapid UI development.
+- **API Integration**: Connects securely to backend APIs and AWS services.
+- **Authentication**: Ready for integration with Cognito and OAuth providers.
+- **Responsive Design**: Mobile-first layouts and accessibility best practices.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+To launch the development environment:
 
 ```bash
 npm run dev
@@ -14,23 +43,27 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) in your browser to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can begin development by editing files in the `app/` directory. Changes are reflected instantly thanks to hot reloading.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `app/` – Main application routes and pages
+- `components/` – Reusable UI components
+- `styles/` – Global and component-level styles
+- `public/` – Static assets (including logo)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Resources
 
-## Deploy on Vercel
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TypeScript Docs](https://www.typescriptlang.org/docs/)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<p align="right"><a href="#">Back to top</a></p>

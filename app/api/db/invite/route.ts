@@ -1,13 +1,10 @@
 import { auth } from '@auth'
-import { PublishCommand } from '@aws-sdk/client-sns'
 import db from '@db'
 import { Role } from '@prisma/client'
-import { sendCompanyInvitationEmail } from '@src/email/mailer'
+import { inviteUserCognito } from '@src/lib/auth/cognito/inviteUser'
 import type { InvitationSchema } from '@src/lib/schemas'
-import { getSNSClient } from '@src/lib/sns'
 import { isRoleHigher } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
-import type { SNSParams } from '@src/types/SNS'
 import { DateTime } from 'luxon'
 import type { z } from 'zod'
 
@@ -52,17 +49,6 @@ export const POST = async (req: Request) => {
 
     const invitation = (await req.json()) as z.infer<typeof InvitationSchema>
 
-    const SNSClient = getSNSClient()
-
-    const SNSinput: SNSParams = {
-      Message: JSON.stringify({ test: 'hey' }),
-      TopicArn: process.env.NOTIFICATION_TOPIC_ARN ?? '',
-      MessageStructure: 'json',
-    }
-
-    const command = new PublishCommand(SNSinput)
-    const _response = await SNSClient.send(command)
-
     // Users should not be able to assign a higher rank than their own.
     if (
       invitation.role &&
@@ -71,6 +57,22 @@ export const POST = async (req: Request) => {
       return Response.json(
         { ok: false, message: 'Request denied, missing permission' },
         { status: 403 },
+      )
+    }
+
+    const existingUserWithEmail = await db.user.findFirst({
+      where: {
+        email: invitation.email,
+      },
+    })
+
+    if (existingUserWithEmail) {
+      return Response.json(
+        {
+          success: true,
+          message: 'The invited Email has already been registered.',
+        },
+        { status: 400 },
       )
     }
 
@@ -91,19 +93,25 @@ export const POST = async (req: Request) => {
     const expiresAt = DateTime.now().plus({ day: 1 }).toJSDate()
 
     try {
+      // Inviting first to avoid mismatch between invitations and cognito users
+      const cognitoRes = await inviteUserCognito({ email: invitation.email })
+
+      if (cognitoRes.error) {
+        return Response.json(
+          {
+            success: false,
+            message: `Invitation failed with error: ${cognitoRes.error}`,
+          },
+          { status: 500 },
+        )
+      }
+
       await db.companyInvitation.create({
         data: {
           ...invitation,
           teamId: session?.user.teamId ?? 'undef',
           expiresAt,
         },
-      })
-
-      await sendCompanyInvitationEmail({
-        identifier: invitation.email, // temporary since I cannot send mails without a domain
-        url: process.env.NEXT_PUBLIC_BASE_URL ?? '',
-        inviterName: session?.user.name ?? 'REDACTED',
-        teamName: invitationTeam.name,
       })
 
       return Response.json(

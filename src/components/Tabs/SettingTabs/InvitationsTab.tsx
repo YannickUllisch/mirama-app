@@ -1,6 +1,6 @@
 'use client'
 import type { CompanyInvitation } from '@prisma/client'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { InvitationsTabColumns } from './helper/InvitationsTabColumns'

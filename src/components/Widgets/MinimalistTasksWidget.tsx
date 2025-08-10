@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { type Project, type Task, TaskStatusType } from '@prisma/client'
-import { ArrowRight, Check, Clock, ExternalLink, Group } from 'lucide-react'
+import { ArrowRight, Check, Clock, ExternalLink } from 'lucide-react'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
 import { Badge } from '@ui/badge'

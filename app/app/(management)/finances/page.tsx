@@ -2,7 +2,7 @@
 import type { Expense, Project } from '@prisma/client'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { getExpenseColumns } from './columns'
 import { BudgetExpenseBarChart } from '@src/components/Analytics/BudgetExpenseBarChart'

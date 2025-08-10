@@ -1,6 +1,6 @@
 'use client'
 import type React from 'react'
-import { type FC, useEffect, useState } from 'react'
+import { type FC, useState } from 'react'
 import {
   Dialog,
   DialogClose,

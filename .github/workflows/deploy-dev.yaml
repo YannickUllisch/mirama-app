@@ -21,12 +21,21 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Clean Yarn cache
+        run: yarn cache clean
+
+      - name: Install dependencies
+        run: yarn install
+        
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-
+      
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 

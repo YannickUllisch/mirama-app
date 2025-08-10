@@ -18,7 +18,6 @@ import type { AppMenuItem, SecondaryAppMenuItem } from '@src/types/types'
 import {
   Bell,
   BookAIcon,
-  Calendar,
   ClipboardList,
   Folders,
   HelpCircleIcon,

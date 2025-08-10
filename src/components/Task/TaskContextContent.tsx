@@ -5,7 +5,7 @@ import { ContextMenuContent, ContextMenuItem } from '@ui/context-menu'
 import { Separator } from '@ui/separator'
 import { CheckSquare, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
-import React, { type FC } from 'react'
+import type { FC } from 'react'
 import type { KeyedMutator } from 'swr'
 
 interface TaskContextContentProps {

@@ -1,4 +1,3 @@
-import type React from 'react'
 import type { FC } from 'react'
 import { ChevronDown, Plus } from 'lucide-react'
 import { capitalize } from '@src/lib/utils'

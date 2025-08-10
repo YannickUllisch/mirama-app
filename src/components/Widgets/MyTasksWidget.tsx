@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { format } from 'date-fns'
 import { ChevronDown, ClockArrowUp, ExternalLink } from 'lucide-react'
 import { type Task, TaskStatusType } from '@prisma/client'
 
@@ -14,10 +13,8 @@ import type { KeyedMutator } from 'swr'
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { DateTime } from 'luxon'
-import { capitalize, getColorByName, getColorByPriority } from '@src/lib/utils'
+import { capitalize, getColorByPriority } from '@src/lib/utils'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import { Spinner } from '@ui/spinner'
-import { Skeleton } from '@ui/skeleton'
 import MyTaskWidgetSkeleton from '../Skeletons/MyTaskWidgetSkeleton'
 
 interface MyTasksProps {

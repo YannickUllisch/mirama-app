@@ -1,5 +1,5 @@
 import type { Task } from '@prisma/client'
-import React, { type PropsWithChildren, useState, type FC } from 'react'
+import { type PropsWithChildren, useState, type FC } from 'react'
 import {
   Dialog,
   DialogClose,
@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from '../ui/dialog'
 import { Button } from '../ui/button'
-import { Label } from '../ui/label'
 import {
   Select,
   SelectContent,

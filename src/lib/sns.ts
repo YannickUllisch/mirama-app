@@ -1,5 +1,7 @@
 import { SNSClient } from '@aws-sdk/client-sns'
 
+export const runtime = 'nodejs'
+
 export const getSNSClient = () => {
   return new SNSClient({
     region: 'eu-west-1',

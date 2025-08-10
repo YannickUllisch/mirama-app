@@ -1,24 +1,7 @@
-// 'use client'
-// import { Button } from '@src/components/ui/button'
-// import { postResource } from '@src/lib/api/postResource'
-// import { signIn, useSession } from 'next-auth/react'
-// import React from 'react'
-
-// const CompanyPage = () => {
-//   const { data: session } = useSession()
-//   const func = async () => {
-//     if (session?.user.provider !== 'google') {
-//       await signIn('google', { redirect: false })
-//     }
-//     postResource('/google/calendarAPI', [])
-//   }
-//   return <Button onClick={func}>test </Button>
-// }
-
-// export default CompanyPage
-
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
+import { Button } from '@src/components/ui/button'
 import {
   Card,
   CardContent,
@@ -26,19 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@src/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
-import { Button } from '@src/components/ui/button'
 import { Progress } from '@src/components/ui/progress'
-import {
-  Users,
-  Briefcase,
-  CheckCircle2,
-  Clock,
-  Plus,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-} from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -46,6 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Briefcase,
+  CheckCircle2,
+  Clock,
+  Plus,
+  Users,
+} from 'lucide-react'
 
 // This would typically come from your database
 const mockData = {

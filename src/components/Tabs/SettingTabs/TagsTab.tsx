@@ -1,6 +1,6 @@
 'use client'
 import type { Tag } from '@prisma/client'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import useSWR from 'swr'
 import type { RowSelectionState } from '@tanstack/react-table'
 import { Plus } from 'lucide-react'

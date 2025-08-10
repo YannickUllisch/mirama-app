@@ -1,14 +1,9 @@
 'use server'
-import type * as z from 'zod'
+import { signIn } from '@auth'
+import { LoginSchema } from '@src/lib/schemas'
 import { DEFAULT_LOGIN_REDIRECT } from '@src/routes'
 import { AuthError } from 'next-auth'
-import { LoginSchema } from '@src/lib/schemas'
-import { getUserByEmail } from '../api/queries/User/UserQueries'
-import { signIn } from '@auth'
-
-export const resendLogin = async (formData: FormData) => {
-  await signIn('resend', formData)
-}
+import type * as z from 'zod'
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values)
@@ -18,12 +13,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   }
 
   const { email, password } = validatedFields.data
-
-  const existingUser = await getUserByEmail(email)
-
-  if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: 'Invalid email or password' }
-  }
 
   try {
     await signIn('credentials', {

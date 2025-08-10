@@ -1,14 +1,8 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { InvitationSchema, MilestoneSchema } from '@src/lib/schemas'
+import { MilestoneSchema } from '@src/lib/schemas'
 import type React from 'react'
-import {
-  type FC,
-  type PropsWithChildren,
-  useEffect,
-  useState,
-  useTransition,
-} from 'react'
+import { useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Input } from '@src/components/ui/input'
@@ -16,7 +10,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,13 +20,7 @@ import { postResource } from '@src/lib/api/postResource'
 import type { KeyedMutator } from 'swr'
 import type { Milestone } from '@prisma/client'
 import { Label } from '../ui/label'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form'
+import { FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { format } from 'date-fns'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { CalendarIcon } from 'lucide-react'

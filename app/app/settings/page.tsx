@@ -13,7 +13,7 @@ import {
 import { Settings, Tags, User, UserCog } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import React, { type JSX, useEffect, useState } from 'react'
+import { type JSX, useEffect, useState } from 'react'
 
 const ProjectPage = () => {
   const { data: session } = useSession()

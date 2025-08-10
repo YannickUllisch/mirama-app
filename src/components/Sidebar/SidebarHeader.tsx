@@ -1,12 +1,11 @@
 'use client'
-import type * as React from 'react'
-import Link from 'next/link'
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@ui/sidebar'
-import { ClipboardCheck, Unlink2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@ui/sidebar'
+import { ClipboardCheck } from 'lucide-react'
+import Link from 'next/link'
 
 const SidebarHeader = () => {
   return (
@@ -25,7 +24,7 @@ const SidebarHeader = () => {
                 <div className="flex items-center">
                   <Link href="/" className="flex items-center gap-2">
                     <span className="text-2xl font-bold tracking-tighter">
-                      .mirage
+                      .mirama
                     </span>
                   </Link>
                 </div>

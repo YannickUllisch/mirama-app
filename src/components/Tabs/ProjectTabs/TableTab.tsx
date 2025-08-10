@@ -1,7 +1,6 @@
 'use client'
 import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import type React from 'react'
 import { useContext, useState } from 'react'
 import useSWR from 'swr'
 import { DataTable } from '@src/components/Tables/DataTable'

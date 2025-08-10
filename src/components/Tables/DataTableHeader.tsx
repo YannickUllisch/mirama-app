@@ -1,4 +1,3 @@
-import type React from 'react'
 import type { TableData } from '@src/components/Tables/DataTable'
 import { flexRender, type Table } from '@tanstack/react-table'
 import { TableHead, TableHeader, TableRow } from '@src/components//ui/table'

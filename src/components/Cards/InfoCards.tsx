@@ -1,4 +1,3 @@
-import React from 'react'
 import InfoCard from './InfoCard'
 import { CheckCircle2, FolderOpen, TimerIcon, TrendingUp } from 'lucide-react'
 

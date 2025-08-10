@@ -1,12 +1,11 @@
 import type { Milestone, Project, User } from '@prisma/client'
-import React, { type FC } from 'react'
+import type { FC } from 'react'
 import AvatarGroup from '../Avatar/AvatarGroup'
 import TaskTypeCreate from '../Task/TaskTypeCreate'
 import {
   CalendarClock,
   ClockArrowUp,
   Flag,
-  Loader2,
   PanelBottomClose,
   UserPlus,
 } from 'lucide-react'

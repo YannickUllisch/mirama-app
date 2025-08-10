@@ -2,10 +2,18 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import db from '@db'
 import type { User } from '@prisma/client'
 import { getValidCompanyInvitation } from '@src/lib/api/queries/Invite/InviteQueries'
+import { deleteCognitoUser } from '../cognito/deleteCognitoUser'
 
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
 
+  adapter.getUser = async (id) => {
+    const dbUser = await db.user.findUnique({ where: { id } })
+    if (!dbUser) {
+      console.warn(`No user found in DB for id: ${id}`)
+    }
+    return dbUser
+  }
   adapter.createUser = async (user) => {
     const inputUser = user as any as User
 
@@ -14,18 +22,21 @@ export const CreatePrismaAdapter = () => {
       const invitation = await getValidCompanyInvitation({
         email: inputUser.email,
       })
-
       if (!invitation) {
-        throw new Error(
+        await deleteCognitoUser(inputUser.email)
+        const error = new Error(
           'No invitation for this Email was found. Please contact your administrator',
         )
+        // Add a custom property for NextAuth error handling
+        error.name = 'InvitationError'
+        throw error
       }
 
       // If the invitation is received use the name from it to add to the typedUser (It will be missing otherwise).
-      inputUser.name = invitation.name
       inputUser.teamId = invitation.teamId
       inputUser.role = invitation.role
       inputUser.email = invitation.email
+      inputUser.name = invitation.name
     }
 
     if (!inputUser.name) {
@@ -40,7 +51,12 @@ export const CreatePrismaAdapter = () => {
 
     const createdUser = await db.user.create({
       data: {
-        ...inputUser,
+        id: inputUser.id,
+        email: inputUser.email,
+        name: inputUser.name,
+        teamId: inputUser.teamId,
+        role: inputUser.role,
+        emailVerified: new Date(),
       },
     })
 

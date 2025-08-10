@@ -1,6 +1,5 @@
 'use client'
 import type { Milestone, Project, User } from '@prisma/client'
-import type React from 'react'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Tabs,

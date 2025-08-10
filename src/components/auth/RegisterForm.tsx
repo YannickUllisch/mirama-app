@@ -1,8 +1,8 @@
 'use client'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type * as z from 'zod'
-import { Input } from '@src/components/ui/input'
+import { FormError } from '@src/components/auth/popups/FormError'
+import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
+import { Button } from '@src/components/ui/button'
 import {
   Form,
   FormControl,
@@ -11,15 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@src/components/ui/form'
-import { Button } from '@src/components/ui/button'
-import { FormError } from '@src/components/auth/popups/FormError'
+import { Input } from '@src/components/ui/input'
 import { register } from '@src/lib/auth/register'
-import { useState, useTransition } from 'react'
 import { RegisterSchema } from '@src/lib/schemas'
-import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
-import { AuthSocial } from './Socials'
-import NextTopLoader from 'nextjs-toploader'
 import { Loader2 } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import type * as z from 'zod'
 import { PasswordInput } from './PasswordInput'
 
 const RegisterForm = () => {
@@ -40,11 +38,7 @@ const RegisterForm = () => {
     setSuccess('')
 
     startTransition(() => {
-      register(vals).then((data) => {
-        if (data) {
-          setError(data.error)
-        }
-      })
+      register(vals)
     })
   }
 

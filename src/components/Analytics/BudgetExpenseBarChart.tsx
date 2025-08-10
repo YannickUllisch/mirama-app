@@ -8,15 +8,7 @@ import {
 } from '@src/components/ui/chart'
 import type { Expense, Project } from '@prisma/client'
 import { useMemo } from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card'
-import { TrendingUp } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 interface BudgetExpenseChartData {
   name: string // Use project name as the key

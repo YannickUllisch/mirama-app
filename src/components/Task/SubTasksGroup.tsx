@@ -1,5 +1,4 @@
 import type { Task } from '@prisma/client'
-import React from 'react'
 import { Label } from '../ui/label'
 import { CornerDownRight, X } from 'lucide-react'
 import Link from 'next/link'

@@ -1,5 +1,5 @@
 import { cn } from '@src/lib/utils'
-import React, { type FC, type PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 
 interface CenteringProps {
   className?: string
