@@ -23,8 +23,8 @@ jobs:
         run: yarn cache clean
 
       - name: Install dependencies
-        run: yarn Install
-        
+        run: yarn install
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
