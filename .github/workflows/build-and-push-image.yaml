@@ -24,7 +24,7 @@ on:
         type: string
         description: Path to the dockerfile to build the image from
       ecs-service:
-        requred: true
+        required: true
         type: string
         description: The ECS service to update after pushing the image
       ecs-cluster:
