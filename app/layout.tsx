@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: 'Entry Page for Management System',
 }
 
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en" className={dmMono.variable}>
       <meta name="viewport" content="width=device-width, initial-scale=1" />

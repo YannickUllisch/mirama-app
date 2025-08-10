@@ -5,6 +5,7 @@ import authConfig from './auth.config'
 import { getUserById } from './helpers/AuthQueries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user }) {
       const adapter = CreatePrismaAdapter()

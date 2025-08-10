@@ -2,20 +2,19 @@
   "name": "mirama",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "22.x"
-  },
   "overrides": {
     "react-is": "^19.1.0"
   },
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "prisma generate && next build",
+    "build": "next build && yarn copy:static && yarn copy:public",
     "start": "next start",
     "lint-staged": "lint-staged",
     "prisma:update": "prisma db push && prisma generate",
     "lint": "biome format --write --no-errors-on-unmatched . & biome lint --write --no-errors-on-unmatched .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "copy:static": "copyfiles -u 1 '!**/standalone/**' './build/**/*' ./build/standalone/build",
+    "copy:public": "copyfiles './public/**/*' ./build/standalone/"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -57,6 +56,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "copyfiles": "^2.4.1",
     "date-fns": "^3.0.0",
     "framer-motion": "^12.23.6",
     "googleapis": "153.0.0",
@@ -100,6 +100,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^19.8.1",
     "@tailwindcss/postcss": "^4.1.2",
+    "@types/copyfiles": "^2",
     "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.throttle": "^4.1.9",
     "@types/luxon": "^3.6.2",
