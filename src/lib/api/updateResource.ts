@@ -14,7 +14,7 @@ export const updateResourceById = async <T, U>(
   try {
     toast.promise(api.put(`${route}?id=${id}`, params), {
       loading: 'Updating..',
-      error: (err) => err.response.statusText ?? err,
+      error: (error) => error.response?.data.message ?? error.message ?? error,
       success: () => {
         if (options?.mutate) {
           options.mutate()
@@ -51,6 +51,6 @@ export const updateResourceByIdNoToast = async <T, U>(
     })
   } catch (error: any) {
     toast.error(error)
-    throw error.response?.statusText ?? error
+    throw error.response?.data.message ?? error.message ?? error
   }
 }

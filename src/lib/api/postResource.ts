@@ -13,7 +13,8 @@ export const postResource = async <T, U>(
   try {
     toast.promise(api.post(route, params), {
       loading: 'Creating..',
-      error: (err) => err.response.statusText ?? err,
+      error: (err) =>
+        err?.response?.data.message ?? err?.message ?? JSON.stringify(err),
       success: () => {
         if (options?.mutate) {
           options.mutate()
