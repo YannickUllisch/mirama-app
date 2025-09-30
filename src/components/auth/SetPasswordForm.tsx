@@ -14,7 +14,6 @@ import {
 import { Input } from '@src/components/ui/input'
 import { handleAuthChallenge } from '@src/lib/auth/cognito/handleAuthChallenge'
 import { CognitoChangePasswordSchema } from '@src/lib/schemas'
-import {} from '@ui/input-otp'
 import { Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'

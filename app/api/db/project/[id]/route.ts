@@ -1,8 +1,8 @@
 import { auth } from '@auth'
+import db from '@db'
+import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 import { validateRequest } from '@src/lib/validateRequest'
 import type { NextRequest } from 'next/server'
-import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
-import db from '@db'
 
 export const GET = async (req: NextRequest) => {
   try {

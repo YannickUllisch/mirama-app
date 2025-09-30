@@ -1,7 +1,7 @@
 import { auth } from '@auth'
-import { validateRequest } from '@src/lib/validateRequest'
 import db from '@db'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {

@@ -1,13 +1,13 @@
-import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
-import AppHeader from '@src/components/Header/AppHeader'
-import type { Metadata } from 'next'
-import SwrProvider from '@src/components/Wrappers/SwrProvider'
 import { auth } from '@auth'
-import { SidebarProvider } from '@src/components/ui/sidebar'
-import AppSidebar from '@src/components/Sidebar/AppSidebar'
-import { redirect } from 'next/navigation'
 import db from '@db'
+import AppHeader from '@src/components/Header/AppHeader'
+import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
+import SwrProvider from '@src/components/Wrappers/SwrProvider'
+import { SidebarProvider } from '@src/components/ui/sidebar'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Mirama',

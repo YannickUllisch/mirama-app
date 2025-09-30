@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import SuperJSON from 'superjson'
-import { RedisAdapter } from './misc/prisma-redis-extension/Adapters/redis-adapter'
-import createPrismaRedisCache from './misc/prisma-redis-extension/index'
+import { RedisAdapter } from '../redis/Adapters/redis-adapter'
+import createPrismaRedisCache from '../redis/index'
 
 export const redisClient = new Redis(process.env.REDIS_URL ?? '') // Uses default options for Redis connection
 

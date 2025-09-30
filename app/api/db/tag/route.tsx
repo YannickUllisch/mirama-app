@@ -1,7 +1,7 @@
 import { auth } from '@auth'
-import { validateRequest } from '@src/lib/validateRequest'
-import { Role, type Tag } from '@prisma/client'
 import db from '@db'
+import { Role, type Tag } from '@prisma/client'
+import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {

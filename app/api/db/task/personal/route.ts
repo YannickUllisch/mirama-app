@@ -1,7 +1,7 @@
 import { auth } from '@auth'
-import { validateRequest } from '@src/lib/validateRequest'
 import db from '@db'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
+import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {
   try {

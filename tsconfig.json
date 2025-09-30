@@ -21,13 +21,13 @@
     ],
     "paths": {
       "@auth": ["./src/lib/auth/auth.ts"],
-      "@db": ["./src/lib/db.ts"],
+      "@db": ["./server/db/db.ts"],
       "@api": ["./src/lib/api/api.ts"],
+      "@withAuth": ["./server/auth/withAuth.ts"],
+      "@server/*": ["./server/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@store/*": ["./src/store/*"],
       "@services/*": ["./src/services/*"],
       "@ui/*": ["./src/components/ui/*"],
-      "@markdown/*": ["./src/markdown"],
       "@public/*": ["./public/*"],
       "@src/*": ["./src/*"],
       "@/*": ["./*"]

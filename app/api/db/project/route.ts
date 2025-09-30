@@ -1,11 +1,11 @@
-import db from '@db'
 import { auth } from '@auth'
-import { type ProjectUser, Role, type Project } from '@prisma/client'
-import { DateTime } from 'luxon'
-import { validateRequest } from '@src/lib/validateRequest'
-import { v4 } from 'uuid'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import db from '@db'
+import { type Project, type ProjectUser, Role } from '@prisma/client'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { validateRequest } from '@src/lib/validateRequest'
+import { DateTime } from 'luxon'
+import { v4 } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {

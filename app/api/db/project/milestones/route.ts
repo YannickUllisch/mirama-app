@@ -1,5 +1,5 @@
-import db from '@db'
 import { auth } from '@auth'
+import db from '@db'
 import { type Milestone, Role } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
 
