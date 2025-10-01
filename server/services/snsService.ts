@@ -2,10 +2,7 @@ import { PublishCommand } from '@aws-sdk/client-sns'
 import type { SNSParamsInput } from '@server/domain/snsSchema'
 import { getSNSClient } from '@server/utils/snsClient'
 
-export const sendMessageToSNS = async (
-  stringifiedBody: string,
-  topicArn: string,
-) => {
+const sendMessageToSNS = async (stringifiedBody: string, topicArn: string) => {
   const SNSClient = getSNSClient()
 
   const SNSinput: SNSParamsInput = {
@@ -18,4 +15,8 @@ export const sendMessageToSNS = async (
   const response = await SNSClient.send(command)
 
   return response
+}
+
+export const SNSService = {
+  sendMessageToSNS,
 }

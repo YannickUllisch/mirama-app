@@ -8,11 +8,11 @@ import { inviteUserCognito } from '@src/lib/auth/cognito/inviteUser'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 
-export const getInvitationsByTeam = async (teamId: string) => {
+const getInvitationsByTeam = async (teamId: string) => {
   return await db.companyInvitation.findMany({ where: { teamId } })
 }
 
-export const createNewInvitation = async (
+const createNewInvitation = async (
   invitation: CreateInvitationInput,
   userRole: Role,
   teamId: string,
@@ -48,7 +48,7 @@ export const createNewInvitation = async (
   return newInvitation
 }
 
-export const updateInvitation = async (
+const updateInvitation = async (
   teamId: string,
   invitation: UpdateInvitationInput,
 ) => {
@@ -66,18 +66,15 @@ export const updateInvitation = async (
   })
 }
 
-export const deleteInvitations = async (teamId: string, emails: string[]) => {
-  await db.$transaction(async (prisma) => {
-    const existing = await prisma.companyInvitation.findMany({
-      where: { email: { in: emails }, teamId },
-    })
-
-    if (existing.length !== emails.length) {
-      throw new Error('Some invitations not found or unauthorized')
-    }
-
-    await prisma.companyInvitation.deleteMany({
-      where: { email: { in: emails }, teamId },
-    })
+const deleteInvitations = async (teamId: string, emails: string[]) => {
+  await db.companyInvitation.deleteMany({
+    where: { email: { in: emails }, teamId },
   })
+}
+
+export const InvitationService = {
+  getInvitationsByTeam,
+  createNewInvitation,
+  updateInvitation,
+  deleteInvitations,
 }
