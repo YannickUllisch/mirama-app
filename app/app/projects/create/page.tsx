@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { Separator } from '@src/components/ui/separator'
 import {
   Tabs,
   TabsContent,
@@ -44,15 +43,14 @@ import { postResource } from '@src/lib/api/postResource'
 import { ProjectSchema } from '@src/lib/schemas'
 import { capitalize } from '@src/lib/utils'
 import {
-  Briefcase,
   Calendar,
   Flag,
+  Folder,
   Lightbulb,
   MessageCircleWarning,
   Milestone,
   Plus,
   Save,
-  Sparkles,
   Trash2,
   Undo,
   Users,
@@ -150,19 +148,13 @@ const CreateProjectForm = () => {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 rounded-lg shadow-sm">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-5">
+        <div className="flex justify-between items-center p-2">
           <div className="flex items-center gap-4 dark:text-white">
-            <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-              <Briefcase
-                width={24}
-                className="text-blue-600 dark:text-blue-400"
-              />
-            </div>
             <div>
               <span className="text-2xl font-bold">Create Project</span>
               <p className="text-sm text-muted-foreground">
-                Launch your next big idea
+                Fill out the information to create a new Project
               </p>
             </div>
           </div>
@@ -194,30 +186,21 @@ const CreateProjectForm = () => {
 
             <Button
               type="submit"
-              className={`gap-2 ${
-                form.watch().name.length < 1
-                  ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
-                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white'
-              }`}
+              variant={form.watch().name.length < 1 ? 'outline' : 'auth'}
+              className={'gap-2'}
               aria-label="Save Project Button"
-              disabled={isPending}
+              disabled={isPending || !form.formState.isDirty}
             >
               <Save width={16} />
               <span>Save Project</span>
             </Button>
           </div>
         </div>
-        <Separator />
 
         <div className="form-group">
-          <div className="min-h-[30px] text-sm flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="flex gap-1 items-center px-3 py-1 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
-            >
-              <Sparkles className="w-[14px] h-[14px]" />
-              NEW PROJECT
-            </Badge>
+          <div className="min-h-[30px] text-sm flex items-center gap-2">
+            <Folder className="w-4 h-4" />
+            <span className="font-bold">Project Title</span>
             {form.watch().name.length < 1 ? (
               <div className="flex items-center gap-2 text-red-500 ">
                 <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
@@ -249,7 +232,7 @@ const CreateProjectForm = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="col-span-1 lg:col-span-2">
+          <Card className="col-span-1 lg:col-span-2 bg-background">
             <CardContent className="p-6">
               <div className="space-y-6">
                 <div>

@@ -1,9 +1,9 @@
 import {
   PriorityType,
-  TaskStatusType,
-  type TaskTagJoin,
   type Tag,
   type Task,
+  TaskStatusType,
+  type TaskTagJoin,
   type User,
 } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'

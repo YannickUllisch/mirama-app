@@ -1,5 +1,5 @@
-import { auth } from '@auth'
 import db from '@db'
+import { auth } from '@server/auth/auth'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 import { validateRequest } from '@src/lib/validateRequest'
 import type { NextRequest } from 'next/server'

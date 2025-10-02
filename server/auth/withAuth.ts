@@ -1,5 +1,5 @@
-import { auth } from '@auth'
 import type { Role } from '@prisma/client'
+import { auth } from '@server/auth/auth'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 

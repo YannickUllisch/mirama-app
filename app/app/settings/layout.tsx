@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'My Tasks',
-  description: 'Overview of all personal Tasks',
+  title: 'Settings',
+  description: 'Personalization Settings',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

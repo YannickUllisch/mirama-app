@@ -1,5 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { confirmUser } from '@server/auth/cognito/confirmUser'
+import { resendConfirmationCode } from '@server/auth/cognito/resendConfirmation'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { Button } from '@src/components/ui/button'
@@ -12,8 +14,6 @@ import {
   FormMessage,
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
-import { confirmUser } from '@src/lib/auth/cognito/confirmUser'
-import { resendConfirmationCode } from '@src/lib/auth/cognito/resendConfirmation'
 import { VerifySchema } from '@src/lib/schemas'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@ui/input-otp'
 import { Loader2 } from 'lucide-react'

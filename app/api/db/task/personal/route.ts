@@ -1,4 +1,4 @@
-import { auth } from '@auth'
+import { auth } from '@server/auth/auth'
 import db from '@db'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 import { validateRequest } from '@src/lib/validateRequest'

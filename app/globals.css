@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --background: 249 7% 96%; /* Oat Light */
+    --background: 0 0% 97%; /* Oat Light */
     --foreground: 11 32% 15%; /* Navy 900 */
-    --card: 249 7% 96%; /* Oat Light */
+    --card: 0 0% 100%; /* Oat Light */
     --card-foreground: 11 32% 15%; /* Navy 900 */
     --popover: 249 7% 96%; /* Oat Light */
     --popover-foreground: 11 32% 15%; /* Navy 900 */
@@ -29,7 +29,7 @@
     --text-inverted: 249 7% 96%;
     --text-secondary: 11 10% 40%; /* Darker Oat */
     --hover: 40 14% 92%; /* Oat Medium */
-    --sidebar-background: 249 7% 96%; /* Oat Light */
+    --sidebar-background: 0 0% 97%; /* Oat Light */
     --sidebar-foreground: 11 32% 15%; /* Navy 900 */
     --sidebar-primary: 6 100% 56%; /* Lava 600 */
     --sidebar-primary-foreground: 249 7% 96%; /* Oat Light */

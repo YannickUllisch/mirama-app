@@ -20,7 +20,7 @@
       }
     ],
     "paths": {
-      "@auth": ["./src/lib/auth/auth.ts"],
+      "@auth": ["./server/auth/auth.ts"],
       "@db": ["./server/db/db.ts"],
       "@api": ["./src/lib/api/api.ts"],
       "@withAuth": ["./server/auth/withAuth.ts"],

@@ -1,10 +1,10 @@
 import db from '@db'
 import type { Role } from '@prisma/client'
+import { inviteUserCognito } from '@server/auth/cognito/inviteUser'
 import type {
   CreateInvitationInput,
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
-import { inviteUserCognito } from '@src/lib/auth/cognito/inviteUser'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 

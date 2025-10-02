@@ -1,9 +1,9 @@
 'use client'
 import {
   PriorityType,
-  StatusType,
   type Project,
   type ProjectUser,
+  StatusType,
   type User,
 } from '@prisma/client'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
@@ -106,7 +106,7 @@ export const ProjectColumns = ({
             return (
               <div className="flex gap-2 items-center">
                 <Link
-                  href={`/app/${row.original.name}`}
+                  href={`/app/projects/${row.original.name}`}
                   className="hover:underline"
                 >
                   {getValue() as string}
@@ -123,7 +123,7 @@ export const ProjectColumns = ({
           }
           return (
             <Link
-              href={`/app/${row.original.name}`}
+              href={`/app/projects/${row.original.name}`}
               className="hover:underline"
             >
               {getValue() as string}
@@ -350,50 +350,48 @@ export const ProjectColumns = ({
                   <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <>
-                    {isTeamAdminOrOwner(session) && (
-                      <>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            updateResourceById(
-                              'project',
-                              row.original.id,
-                              {
-                                archived: !row.original.archived,
-                              },
-                              { mutate: mutate },
-                            )
+                  {isTeamAdminOrOwner(session) && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          updateResourceById(
+                            'project',
+                            row.original.id,
+                            {
+                              archived: !row.original.archived,
+                            },
+                            { mutate: mutate },
+                          )
+                        }
+                        className="gap-3"
+                      >
+                        <Archive className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
+                        Archive
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="gap-3"
+                        onClick={() => setDelDialogOpen(true)}
+                      >
+                        <ConfirmationDialog
+                          open={delDialogOpen}
+                          setOpen={setDelDialogOpen}
+                          dialogTitle={'Are you sure?'}
+                          dialogDesc={'Deleting a project can not be undone!'}
+                          submitButtonText={'Delete'}
+                          onConfirmation={() =>
+                            deleteResources('project', [row.original.id], {
+                              mutate: mutate,
+                            })
                           }
-                          className="gap-3"
                         >
-                          <Archive className="w-3.5 h-3.5 text-neutral-600 dark:text-white cursor-pointer " />
-                          Archive
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="gap-3"
-                          onClick={() => setDelDialogOpen(true)}
-                        >
-                          <ConfirmationDialog
-                            open={delDialogOpen}
-                            setOpen={setDelDialogOpen}
-                            dialogTitle={'Are you sure?'}
-                            dialogDesc={'Deleting a project can not be undone!'}
-                            submitButtonText={'Delete'}
-                            onConfirmation={() =>
-                              deleteResources('project', [row.original.id], {
-                                mutate: mutate,
-                              })
-                            }
-                          >
-                            <>
-                              <Trash className="h-4 w-4 text-red-500" />
-                              Delete
-                            </>
-                          </ConfirmationDialog>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </>
+                          <>
+                            <Trash className="h-4 w-4 text-red-500" />
+                            Delete
+                          </>
+                        </ConfirmationDialog>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuItem
                     onClick={() =>
                       updateResourceById(

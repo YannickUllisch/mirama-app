@@ -1,6 +1,6 @@
-import { auth } from '@auth'
 import db from '@db'
 import { type Milestone, Role } from '@prisma/client'
+import { auth } from '@server/auth/auth'
 import { validateRequest } from '@src/lib/validateRequest'
 
 export const GET = auth(async (req) => {

@@ -1,6 +1,6 @@
-import { auth } from '@auth'
 import db from '@db'
 import { TaskType } from '@prisma/client'
+import { auth } from '@server/auth/auth'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 

@@ -1,5 +1,5 @@
 'use server'
-import { signIn } from '@auth'
+import { signIn } from '@server/auth/auth'
 import { LoginSchema } from '@src/lib/schemas'
 import { DEFAULT_LOGIN_REDIRECT } from '@src/routes'
 import { AuthError } from 'next-auth'

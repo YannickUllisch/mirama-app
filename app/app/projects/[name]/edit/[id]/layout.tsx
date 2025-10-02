@@ -1,5 +1,5 @@
-import { auth } from '@auth'
 import db from '@db'
+import { auth } from '@server/auth/auth'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 

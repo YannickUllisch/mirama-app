@@ -1,4 +1,4 @@
-import { auth } from '@auth'
+import { auth } from '@server/auth/auth'
 import db from '@db'
 import AppHeader from '@src/components/Header/AppHeader'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'

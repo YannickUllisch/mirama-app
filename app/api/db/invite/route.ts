@@ -1,6 +1,5 @@
 import { Role } from '@prisma/client'
 import { InvitationController } from '@server/controllers/invitationController'
-
 import { exceptionHandler } from '@server/utils/exceptionHandler'
 import { withAuth } from '@withAuth'
 

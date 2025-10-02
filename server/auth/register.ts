@@ -1,7 +1,7 @@
 'use server'
 import { RegisterSchema } from '@src/lib/schemas'
 import type * as z from 'zod'
-import { getValidCompanyInvitation } from '../api/queries/Invite/InviteQueries'
+import { getValidCompanyInvitation } from '../../src/lib/api/queries/Invite/InviteQueries'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)

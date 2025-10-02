@@ -1,4 +1,4 @@
-import { auth } from '@auth'
+import { auth } from '@server/auth/auth'
 import db from '@db'
 import type { Task } from '@prisma/client'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'

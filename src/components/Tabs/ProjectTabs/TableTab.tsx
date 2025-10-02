@@ -1,11 +1,8 @@
 'use client'
 import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
-import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import { useContext, useState } from 'react'
-import useSWR from 'swr'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { ListTabColumns } from './helper/ListTabColumns'
-import { createMemoizedTree } from '@src/lib/data-structures/Tree'
+import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
   DropdownMenu,
@@ -15,10 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { Settings2 } from 'lucide-react'
-import { Button } from '@src/components/ui/button'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { createMemoizedTree } from '@src/lib/data-structures/Tree'
+import type { RowSelectionState, SortingState } from '@tanstack/react-table'
+import { Settings2 } from 'lucide-react'
+import { useContext, useState } from 'react'
+import useSWR from 'swr'
+import { ListTabColumns } from './helper/ListTabColumns'
 
 const TableTab = () => {
   // Project context

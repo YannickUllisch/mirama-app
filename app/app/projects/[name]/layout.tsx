@@ -1,12 +1,12 @@
-import { auth } from '@auth'
 import db from '@db'
+import { auth } from '@server/auth/auth'
 import ProjectUsersContext from '@src/components/Contexts/ProjectDataContext'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
-  title: 'Projects | Mirama',
+  title: 'Projects',
   description: 'Project and Task Management',
 }
 

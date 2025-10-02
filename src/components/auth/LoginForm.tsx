@@ -1,8 +1,9 @@
 'use client'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type * as z from 'zod'
-import { Input } from '@src/components/ui/input'
+import { login } from '@server/auth/login'
+import { FormError } from '@src/components/auth/popups/FormError'
+import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
+import { Button } from '@src/components/ui/button'
 import {
   Form,
   FormControl,
@@ -10,16 +11,15 @@ import {
   FormItem,
   FormMessage,
 } from '@src/components/ui/form'
-import { Button } from '@src/components/ui/button'
-import { FormError } from '@src/components/auth/popups/FormError'
-import { useState, useTransition } from 'react'
+import { Input } from '@src/components/ui/input'
 import { LoginSchema } from '@src/lib/schemas'
-import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
-import { login } from '@src/lib/auth/login'
+import { Loader2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import type * as z from 'zod'
 import { Label } from '../ui/label'
 import { PasswordInput } from './PasswordInput'
-import { Loader2 } from 'lucide-react'
 
 const LoginForm = () => {
   const searchParams = useSearchParams()
