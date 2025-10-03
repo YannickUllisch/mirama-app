@@ -1,6 +1,6 @@
-import { auth } from '@server/auth/auth'
 import db from '@db'
 import type { Task } from '@prisma/client'
+import { auth } from '@server/auth/auth'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { validateRequest } from '@src/lib/validateRequest'
@@ -41,11 +41,7 @@ export const GET = auth(async (req) => {
       include: {
         assignedTo: true,
         subtasks: true,
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
+        tags: true,
         comments: true,
       },
       orderBy: {
@@ -115,12 +111,8 @@ export const POST = auth(async (req) => {
             task.parentId && !isTaskTypeContainer(task.type)
               ? task.parentId
               : undefined,
-          taskCode: await generateTaskId(project.name, newId),
-          tags: {
-            create: task.tags?.map((tagId) => ({
-              tag: { connect: { id: tagId } },
-            })),
-          },
+          taskCode: generateTaskId(project.name, newId),
+          tags: undefined,
         },
       })
 
@@ -208,39 +200,7 @@ export const PUT = auth(async (req) => {
     }
 
     try {
-      const attachedTags = await db.taskTagJoin.findMany({
-        where: {
-          taskId: id,
-        },
-        select: {
-          tagId: true,
-        },
-      })
-
-      const existingTagIds = attachedTags.map((tag) => tag.tagId)
-
-      const tagsToRemove =
-        existingTagIds.filter((tagId) => !task.tags?.includes(tagId)) ?? []
-      const tagsToAdd =
-        task.tags?.filter((tagId) => !existingTagIds.includes(tagId)) ?? []
-
       await db.$transaction([
-        // Remove tags
-        db.taskTagJoin.deleteMany({
-          where: {
-            taskId: id,
-            tagId: { in: tagsToRemove },
-          },
-        }),
-
-        // Add new tags
-        db.taskTagJoin.createMany({
-          data: tagsToAdd.map((tagId) => ({
-            taskId: id,
-            tagId,
-          })),
-        }),
-
         // Update task details
         db.task.update({
           where: {

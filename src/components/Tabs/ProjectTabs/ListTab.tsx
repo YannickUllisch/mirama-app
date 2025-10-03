@@ -1,12 +1,5 @@
 'use client'
 
-import {
-  ListGroup,
-  ListHeader,
-  ListItem,
-  ListItems,
-  ListProvider,
-} from '@src/components/ui/roadmap-ui/list'
 import type { DragEndEvent } from '@dnd-kit/core'
 import {
   PriorityType,
@@ -15,22 +8,26 @@ import {
   type TaskType,
   type User,
 } from '@prisma/client'
-import useSWR from 'swr'
-import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
-import { useContext, useEffect, useRef, useState } from 'react'
-import { Input } from '@ui/input'
-import { postResource } from '@src/lib/api/postResource'
-import { useSession } from 'next-auth/react'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import TaskContextContent from '@src/components/Task/TaskContextContent'
+import {
+  ListGroup,
+  ListHeader,
+  ListItem,
+  ListItems,
+  ListProvider,
+} from '@src/components/ui/roadmap-ui/list'
+import { postResource } from '@src/lib/api/postResource'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import {
   individualTaskTypes,
   isTaskTypeContainer,
 } from '@src/lib/helpers/TaskTypeHelpers'
-import TaskContextContent from '@src/components/Task/TaskContextContent'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+import { Checkbox } from '@ui/checkbox'
+import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -41,10 +38,13 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@ui/dropdown-menu'
+import { Input } from '@ui/input'
+import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { Checkbox } from '@ui/checkbox'
+import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { useContext, useEffect, useRef, useState } from 'react'
+import useSWR from 'swr'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -193,7 +193,10 @@ const ListTab = () => {
       <div className="flex flex-col flex-grow min-h-0 rounded-xl border">
         <ListProvider onDragEnd={handleDragEnd}>
           {Object.keys(TaskStatusType).map((status) => (
-            <div className="flex flex-col flex-grow overflow-y-auto">
+            <div
+              key={`status-type-${status}`}
+              className="flex flex-col flex-grow overflow-y-auto"
+            >
               <ListGroup key={status} id={status}>
                 <ListHeader
                   className="sticky top-0"

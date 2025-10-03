@@ -1,5 +1,5 @@
 'use client'
-import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
+import type { Tag, Task, User } from '@prisma/client'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
@@ -36,7 +36,7 @@ const TableTab = () => {
   } = useSWR<
     (Task & {
       assignedTo: User
-      tags: (TaskTagJoin & { tag: Tag })[]
+      tags: Tag[]
       subtasks: Task[]
     })[]
   >(

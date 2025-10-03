@@ -1,11 +1,13 @@
-import { auth } from '@server/auth/auth'
 import db from '@db'
 import { type Project, type ProjectUser, Role } from '@prisma/client'
+import { auth } from '@server/auth/auth'
+import { ProjectController } from '@server/controllers/projectController'
+import { exceptionHandler } from '@server/utils/exceptionHandler'
 import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { validateRequest } from '@src/lib/validateRequest'
+import { withAuth } from '@withAuth'
 import { DateTime } from 'luxon'
-import { v4 } from 'uuid'
 
 export const GET = auth(async (req) => {
   try {
@@ -56,96 +58,10 @@ export const GET = auth(async (req) => {
   }
 })
 
-export const POST = auth(async (req) => {
-  try {
-    const session = req.auth
-    const validatedRequest = await validateRequest(session, [
-      Role.ADMIN,
-      Role.OWNER,
-    ])
-    if (validatedRequest) {
-      return validatedRequest
-    }
-    const project = (await req.json()) as Omit<
-      Project & { users: ProjectUser[] },
-      'id' | 'teamId'
-    >
-
-    if (!project) {
-      return Response.json(
-        { ok: false, message: 'Project attributes must be defined in request' },
-        { status: 400 },
-      )
-    }
-
-    const generatedId = v4()
-
-    try {
-      await db.project.create({
-        data: {
-          ...project,
-          teamId: session?.user.teamId ?? 'undefined',
-          id: generatedId,
-          users: undefined,
-        },
-      })
-    } catch (err) {
-      console.error('Error in creating project', err)
-      throw err
-    }
-
-    // Create ProjectUser records, to handle many to many relationship
-    try {
-      const userIds = project.users.map((pu) => pu.userId)
-
-      // Check if all user IDs exist in the User table
-      const existingUsers = await db.user.findMany({
-        where: {
-          id: { in: userIds },
-        },
-        select: { id: true },
-      })
-
-      const existingUserIds = new Set(existingUsers.map((user) => user.id))
-
-      // Filter out users that don't exist in the User table
-      const validProjectUsers = project.users.filter((pu) =>
-        existingUserIds.has(pu.userId),
-      )
-
-      if (validProjectUsers.length !== project.users.length) {
-        console.warn(
-          'Some user IDs do not exist in the User table and will be skipped',
-        )
-      }
-
-      await db.projectUser.createMany({
-        data: project.users.map((pu) => {
-          return {
-            projectId: generatedId,
-            userId: pu.userId,
-            isManager: pu.isManager,
-            id: undefined,
-          }
-        }),
-        skipDuplicates: true,
-      })
-    } catch (err) {
-      console.error('Error in creating ProjectUser Records', err)
-      throw err
-    }
-
-    return Response.json(
-      { ok: true, message: 'Project created' },
-      { status: 201 },
-    )
-  } catch (err) {
-    return Response.json(
-      { ok: false, message: `Failed with Error ${err}` },
-      { status: 500 },
-    )
-  }
-})
+export const POST = withAuth(
+  [Role.OWNER, Role.ADMIN],
+  exceptionHandler(ProjectController.createProjectController),
+)
 
 export const DELETE = auth(async (req) => {
   try {

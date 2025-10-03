@@ -41,6 +41,7 @@ import {
 import { Textarea } from '@src/components/ui/textarea'
 import { postResource } from '@src/lib/api/postResource'
 import { capitalize } from '@src/lib/utils'
+import { ColorPicker } from '@ui/color-picker'
 import {
   Calendar,
   ClipboardPen,
@@ -73,6 +74,7 @@ const CreateProjectForm = () => {
   const [newMilestone, setNewMilestone] = useState({
     title: '',
     date: new Date(),
+    colors: 'white',
   })
   const [newTag, setNewTag] = useState('')
 
@@ -118,7 +120,7 @@ const CreateProjectForm = () => {
     const result = AttachMilestoneToProjectSchema.safeParse(newMilestone)
     if (result.success) {
       appendMilestone(result.data)
-      setNewMilestone({ title: '', date: new Date() })
+      setNewMilestone({ title: '', date: new Date(), colors: 'white' })
     }
   }
 
@@ -158,7 +160,6 @@ const CreateProjectForm = () => {
       postResource('project', vals)
         .then(() => {
           mutate('project')
-          router.back()
         })
         .catch(() => {
           mutate('project')
@@ -183,33 +184,21 @@ const CreateProjectForm = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            {form.formState.isDirty ? (
-              <ConfirmationDialog
-                dialogTitle={'Discard changes?'}
-                dialogDesc={'All progress will be lost'}
-                submitButtonText={'Return'}
-                onConfirmation={() => router.push(`/app/${params.name}`)}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-2 bg-transparent"
-                >
-                  <Undo className="w-4 h-4" />
-                  Cancel
-                </Button>
-              </ConfirmationDialog>
-            ) : (
+            <ConfirmationDialog
+              dialogTitle={'Discard changes?'}
+              dialogDesc={'All progress will be lost'}
+              submitButtonText={'Return'}
+              onConfirmation={() => router.push(`/app/projects/${params.name}`)}
+            >
               <Button
                 type="button"
                 variant="outline"
                 className="gap-2 bg-transparent"
-                onClick={() => router.back()}
               >
                 <Undo className="w-4 h-4" />
                 Cancel
               </Button>
-            )}
+            </ConfirmationDialog>
 
             <Button
               type="submit"
@@ -408,6 +397,18 @@ const CreateProjectForm = () => {
                             })
                           }
                           value={newMilestone.date}
+                        />
+                      </div>
+                      <div className="w-40">
+                        <Label>Color</Label>
+                        <ColorPicker
+                          onChange={(color) =>
+                            setNewMilestone({
+                              ...newMilestone,
+                              colors: color,
+                            })
+                          }
+                          value={newMilestone.colors}
                         />
                       </div>
                       <Button

@@ -1,5 +1,11 @@
 import z from 'zod'
 
+export const TagResponse = z.object({
+  id: z.string(),
+  title: z.string(),
+  colors: z.string(),
+})
+
 export const UpdateTagSchema = z.object({
   title: z
     .string()

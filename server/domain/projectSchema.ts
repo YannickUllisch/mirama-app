@@ -14,8 +14,8 @@ export const CreateProjectSchema = z
   .object({
     name: z.string().min(1, { message: 'Name cannot be empty.' }),
     description: z.string().optional(),
-    startDate: z.date({ message: 'Start Date has to be defined' }),
-    endDate: z.date({ message: 'End Date has to be defined' }),
+    startDate: z.coerce.date({ message: 'Start Date has to be defined' }),
+    endDate: z.coerce.date({ message: 'End Date has to be defined' }),
     priority: PriorityTypeSchema.default('LOW'),
     status: StatusTypeSchema.default('ACTIVE'),
     budget: z.number().default(0),
@@ -37,7 +37,7 @@ export const UpdateProjectSchema = z
     priority: PriorityTypeSchema,
     status: StatusTypeSchema,
     budget: z.number(),
-    tags: z.string().array(),
+    tags: z.string().array(), // TODO: Switch with TagResponse type
     users: z.array(ProjectUserLinkSchema),
     milestones: z.array(AttachMilestoneToProjectSchema),
   })
