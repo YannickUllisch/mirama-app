@@ -3,13 +3,13 @@
 import { Badge } from '@src/components/ui/badge'
 import {
   Command,
-  CommandItem,
   CommandEmpty,
+  CommandItem,
   CommandList,
 } from '@src/components/ui/command'
 import { cn } from '@src/lib/utils'
 import { Command as CommandPrimitive } from 'cmdk'
-import { X as RemoveIcon, Check } from 'lucide-react'
+import { Check, X as RemoveIcon } from 'lucide-react'
 import type React from 'react'
 import {
   type KeyboardEvent,
@@ -173,7 +173,7 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'flex flex-wrap gap-1 p-1 py-1.5 border border-muted rounded-lg bg-transparent',
+        'flex flex-wrap gap-1 p-1 py-1.5 border rounded-lg bg-transparent',
         className,
       )}
       {...props}
@@ -266,7 +266,7 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full bg-background dark:bg-neutral-900 text-text shadow-md z-10 border border-muted',
+        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full bg-background text-text shadow-md z-10 border',
         className,
       )}
     >
@@ -303,7 +303,7 @@ const MultiSelectorItem = forwardRef<
         setInputValue('')
       }}
       className={cn(
-        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between hover:bg-neutral-200 dark:hover:bg-neutral-800',
+        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between ',
         className,
         isIncluded && 'opacity-50 cursor-default',
         props.disabled && 'opacity-50 cursor-not-allowed',

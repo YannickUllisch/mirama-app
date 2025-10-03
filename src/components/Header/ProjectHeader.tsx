@@ -1,7 +1,8 @@
 import type { Milestone, Project, User } from '@prisma/client'
-import type { FC } from 'react'
-import AvatarGroup from '../Avatar/AvatarGroup'
-import TaskTypeCreate from '../Task/TaskTypeCreate'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Spinner } from '@ui/spinner'
 import {
   CalendarClock,
   ClockArrowUp,
@@ -10,12 +11,11 @@ import {
   UserPlus,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { Badge } from '@ui/badge'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
-import { Button } from '@ui/button'
-import { Spinner } from '@ui/spinner'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
+import type { FC } from 'react'
+import AvatarGroup from '../Avatar/AvatarGroup'
+import TaskTypeCreate from '../Task/TaskTypeCreate'
 
 interface HeaderInterface {
   project?: Project
@@ -100,7 +100,10 @@ const ProjectHeader: FC<HeaderInterface> = ({
             <div className="hidden sm:flex items-center gap-2 rounded-sm cursor-pointer ml-auto mt-6">
               <TaskTypeCreate projectName={'Mirama'} />
               {isTeamAdminOrOwner(session) && (
-                <Link href={`app/project/edit/${project.id}`} prefetch={false}>
+                <Link
+                  href={`/app/projects/edit/${project.id}`}
+                  prefetch={false}
+                >
                   <Button variant={'secondary'}>Edit Project</Button>
                 </Link>
               )}

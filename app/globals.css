@@ -15,10 +15,10 @@
     --primary-dark: 4 100% 45%; /* Darker Lava */
     --secondary: 197 35% 17%; /* Navy 800 */
     --secondary-foreground: 249 7% 96%; /* Oat Light */
-    --muted: 40 14% 92%; /* Oat Medium */
-    --muted-foreground: 11 10% 40%; /* Darker Oat */
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 30%;
     --accent: 40 14% 92%; /* Oat Medium */
-    --accent-foreground: 11 32% 15%; /* Navy 900 */
+    --accent-foreground: 40 14% 30%; /* Dark Oat */
     --destructive: 6 100% 56%; /* Lava 600 */
     --destructive-foreground: 249 7% 96%; /* Oat Light */
     --border: 40 10% 85%; /* Light Oat for subtle borders */
@@ -51,10 +51,10 @@
     --primary-foreground: 10 100% 63%; /* Lighter Lava */
     --secondary: 205 18.42% 14.9%; /* Navy 800 */
     --secondary-foreground: 249 7% 96%; /* Oat Light */
-    --muted: 197 35% 15%; /* Dark Muted Navy */
-    --muted-foreground: 249 7% 70%; /* Faded Oat */
-    --accent: 197 35% 15%; /* Dark Muted Navy */
-    --accent-foreground: 249 7% 96%; /* Oat Light */
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 40 14% 60%; /* Oat Medium */
+    --accent-foreground: 40 14% 10%; /* Dark Oat */
     --destructive: 6 100% 56%; /* Lava 600 */
     --destructive-foreground: 249 7% 96%; /* Oat Light */
     --border: 0 0% 18%; /* Slightly lighter Navy */

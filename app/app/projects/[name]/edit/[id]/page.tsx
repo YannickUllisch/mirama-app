@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PriorityType,
@@ -58,7 +59,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { notFound, useParams, useRouter } from 'next/navigation'
 import { useContext, useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
@@ -76,7 +77,11 @@ const EditTaskForm = () => {
     projectContext ? `project/users?id=${projectContext?.projectId}` : '',
   )
 
-  const { data: task, mutate: updateTask } = useSWR<
+  const {
+    data: task,
+    isLoading: isTaskLoading,
+    mutate: updateTask,
+  } = useSWR<
     Task & {
       subtasks: Task[]
       tags: (TaskTagJoin & { tag: Tag })[]
@@ -138,6 +143,14 @@ const EditTaskForm = () => {
         router.back()
       })
     })
+  }
+
+  if (isTaskLoading) {
+    return <Loading />
+  }
+
+  if (!task) {
+    notFound()
   }
 
   return (

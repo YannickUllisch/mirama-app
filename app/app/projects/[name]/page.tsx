@@ -1,19 +1,25 @@
 'use client'
+import { addProjectIdToLocalStorage } from '@/app/app/helpers'
+import Loading from '@/app/loading'
 import type { Milestone, Project, User } from '@prisma/client'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import ProjectHeader from '@src/components/Header/ProjectHeader'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import useLocalStorage from '@src/hooks/useLocalStorage'
+import {
+  notFound,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { projectTabs } from './tabs'
-import ProjectHeader from '@src/components/Header/ProjectHeader'
-import useLocalStorage from '@src/hooks/useLocalStorage'
-import { addProjectIdToLocalStorage } from '@/app/app/helpers'
 
 const ClientProjectPage = () => {
   const projectContext = useContext(ProjectDataContext)
@@ -24,7 +30,9 @@ const ClientProjectPage = () => {
   const currentTab = searchParams?.get('tab')
   const [tab, setTab] = useState(currentTab ?? 'overview')
 
-  const { data: project } = useSWR<Project & { milestones: Milestone[] }>({
+  const { data: project, isLoading } = useSWR<
+    Project & { milestones: Milestone[] }
+  >({
     url: projectContext ? `project/${projectContext.projectId}` : undefined,
     select: {
       startDate: true,
@@ -67,6 +75,14 @@ const ClientProjectPage = () => {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) // Sort by date ascending
       .find((milestone) => new Date(milestone.date) >= new Date())
   }, [project?.milestones])
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  if (!project) {
+    notFound()
+  }
 
   return (
     <>
