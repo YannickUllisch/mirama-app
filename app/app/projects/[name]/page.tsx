@@ -44,6 +44,7 @@ const ClientProjectPage = () => {
       milestones: true,
     },
   })
+
   const { data: users } = useSWR<User[]>(
     projectContext ? `project/users?id=${projectContext.projectId}` : undefined,
   )

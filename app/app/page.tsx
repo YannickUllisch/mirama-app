@@ -1,5 +1,4 @@
 'use client'
-import useSWR from 'swr'
 import type {
   Project,
   ProjectUser,
@@ -7,17 +6,18 @@ import type {
   TaskStatusType,
   User,
 } from '@prisma/client'
+import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
+import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
+import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Separator } from '@ui/separator'
 import { LineChart, Plus, Users2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
-import { Separator } from '@ui/separator'
-import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
+import useSWR from 'swr'
 
 const Dashboard = () => {
   const { data: projects, isLoading: isProjectsLoading } = useSWR<

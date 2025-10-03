@@ -6,7 +6,6 @@ import {
   type Tag,
   type Task,
   TaskStatusType,
-  type TaskTagJoin,
   type TaskType,
   type User,
 } from '@prisma/client'

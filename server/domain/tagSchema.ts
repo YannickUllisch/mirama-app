@@ -3,7 +3,6 @@ import z from 'zod'
 export const TagResponse = z.object({
   id: z.string(),
   title: z.string(),
-  colors: z.string(),
 })
 
 export const UpdateTagSchema = z.object({
@@ -20,7 +19,6 @@ export const CreateTagSchema = z.object({
   title: z
     .string()
     .min(2, { message: 'Tag title must be at least 2 characters.' }),
-  color: z.string().optional(),
 })
 
 export type CreateTagInput = z.infer<typeof CreateTagSchema>

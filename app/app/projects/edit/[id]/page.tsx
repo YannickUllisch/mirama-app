@@ -1,14 +1,17 @@
 'use client'
+import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PriorityType, StatusType, type Tag, type User } from '@prisma/client'
 import { AttachNewMilestoneToProjectSchema } from '@server/domain/milestoneSchema'
 import {
-  type CreateProjectInput,
-  CreateProjectSchema,
+  type ProjectResponseInput,
+  type UpdateProjectInput,
+  UpdateProjectSchema,
 } from '@server/domain/projectSchema'
 import { CreateTagSchema } from '@server/domain/tagSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { Button } from '@src/components/ui/button'
 import { Card, CardContent } from '@src/components/ui/card'
@@ -39,14 +42,14 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { postResource } from '@src/lib/api/postResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
 import { capitalize } from '@src/lib/utils'
 import { ColorPicker } from '@ui/color-picker'
 import {
   Calendar,
   ClipboardPen,
   MessageCircleWarning,
-  Milestone,
+  MilestoneIcon,
   Plus,
   Save,
   ShoppingCart,
@@ -56,15 +59,19 @@ import {
   Undo,
   Users,
 } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { use, useEffect, useState, useTransition } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import useSWR, { mutate } from 'swr'
+import { v4 } from 'uuid'
 
-const CreateProjectForm = () => {
+const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   // Dynamic Page Params
-  const params = useParams() as { name: string }
+  const { id } = use(params)
 
+  const { data: project, isLoading } = useSWR<ProjectResponseInput>({
+    url: `project/tmp?id=${id}`,
+  })
   // Routing used to return to previous page.
   const router = useRouter()
 
@@ -82,8 +89,8 @@ const CreateProjectForm = () => {
   const { data: tags } = useSWR<Tag[]>('tag')
 
   // Form Logic and Functions
-  const form = useForm<CreateProjectInput>({
-    resolver: zodResolver(CreateProjectSchema),
+  const form = useForm<UpdateProjectInput>({
+    resolver: zodResolver(UpdateProjectSchema),
     defaultValues: {
       name: '',
       description: '',
@@ -94,9 +101,24 @@ const CreateProjectForm = () => {
       budget: 0,
       tags: [],
       users: [],
-      newMilestones: [],
+      milestones: [],
     },
   })
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+  useEffect(() => {
+    if (project) {
+      form.reset({
+        ...project,
+        milestones: project.milestones.map((m) => ({ ...m })),
+        tags: project.tags.map((t) => t.id),
+        users: project.users.map((u) => ({
+          isManager: u.isManager,
+          userId: u.id,
+        })),
+      })
+    }
+  }, [project])
 
   const {
     fields: userFields,
@@ -113,13 +135,14 @@ const CreateProjectForm = () => {
     remove: removeMilestone,
   } = useFieldArray({
     control: form.control,
-    name: 'newMilestones',
+    name: 'milestones',
   })
 
   const handleAddMilestone = () => {
-    const result = AttachNewMilestoneToProjectSchema.safeParse(newMilestone)
-    if (result.success) {
-      appendMilestone(result.data)
+    const { success, data } =
+      AttachNewMilestoneToProjectSchema.safeParse(newMilestone)
+    if (success) {
+      appendMilestone({ ...data, id: v4() })
       setNewMilestone({ title: '', date: new Date(), colors: '' })
     }
   }
@@ -129,10 +152,9 @@ const CreateProjectForm = () => {
     if (result.success) {
       // In a real app, you'd create the tag via API first
       // For now, we'll just add it to the form
-      const currentTags = form.getValues('newTags')
-      const titles = currentTags.map((t) => t.title)
-      if (!titles.includes(newTag)) {
-        form.setValue('newTags', [...currentTags, { title: newTag }], {
+      const currentTags = form.getValues('tags')
+      if (!currentTags.includes(newTag)) {
+        form.setValue('tags', [...currentTags, newTag], {
           shouldValidate: true,
         })
       }
@@ -154,11 +176,11 @@ const CreateProjectForm = () => {
     }
   }
 
-  const onSubmit = (vals: CreateProjectInput) => {
+  const onSubmit = (vals: UpdateProjectInput) => {
     startTransition(() => {
       // Optimistically update SWR cache globally
 
-      postResource('project', vals)
+      updateResourceById('project', project?.id ?? '', vals)
         .then(() => {
           mutate('project')
         })
@@ -168,28 +190,26 @@ const CreateProjectForm = () => {
     })
   }
 
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 pb-[50px]"
       >
-        <div className="flex justify-between items-center p-2">
-          <div className="flex items-center gap-4">
-            <div>
-              <span className="text-2xl font-bold">Create Project</span>
-              <p className="text-sm text-muted-foreground">
-                Fill out the information to create a new Project
-              </p>
-            </div>
-          </div>
-
+        <PageHeader
+          title="Update Project"
+          description="Fill out the information to create a new Project"
+        >
           <div className="flex items-center gap-3">
             <ConfirmationDialog
               dialogTitle={'Discard changes?'}
               dialogDesc={'All progress will be lost'}
               submitButtonText={'Return'}
-              onConfirmation={() => router.push(`/app/projects/${params.name}`)}
+              onConfirmation={() => router.push('/app/projects')}
             >
               <Button
                 type="button"
@@ -212,7 +232,7 @@ const CreateProjectForm = () => {
               <span>Save Project</span>
             </Button>
           </div>
-        </div>
+        </PageHeader>
 
         <Card>
           <CardContent>
@@ -368,7 +388,7 @@ const CreateProjectForm = () => {
 
                 <div>
                   <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                    <Milestone className="w-5 h-5 text-accent-foreground" />
+                    <MilestoneIcon className="w-5 h-5 text-accent-foreground" />
                     Milestones
                   </h3>
 
@@ -433,7 +453,7 @@ const CreateProjectForm = () => {
                             >
                               <div className="flex items-center gap-3">
                                 <div className="bg-accent p-2 rounded-full">
-                                  <Milestone className="w-4 h-4 text-accent-foreground" />
+                                  <MilestoneIcon className="w-4 h-4 text-accent-foreground" />
                                 </div>
                                 <div>
                                   <p className="font-medium">
@@ -462,7 +482,7 @@ const CreateProjectForm = () => {
                       </ScrollArea>
                     ) : (
                       <div className="flex flex-col items-center justify-center h-[200px] border rounded-md p-4 bg-secondary/10">
-                        <Milestone className="w-12 h-12 text-muted-foreground" />
+                        <MilestoneIcon className="w-12 h-12 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           No milestones added yet
                         </p>
@@ -628,6 +648,7 @@ const CreateProjectForm = () => {
                           const user = users?.find(
                             (u) => u.id === userField.userId,
                           )
+
                           if (!user) return null
 
                           return (
