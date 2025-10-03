@@ -7,6 +7,7 @@ import type {
   User,
 } from '@prisma/client'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import PageHeader from '@src/components/PageHeader'
 import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
 import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
 import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
@@ -14,7 +15,7 @@ import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Separator } from '@ui/separator'
-import { LineChart, Plus, Users2 } from 'lucide-react'
+import { Home, LineChart, Plus, Users2 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import useSWR from 'swr'
@@ -84,30 +85,18 @@ const Dashboard = () => {
 
   return (
     <div className=" dark:bg-neutral-900">
+      <PageHeader
+        title="Dashboard"
+        description="Welcome back. Here's an overview of your projects and tasks."
+        icon={Home}
+      >
+        <div className="text-sm text-muted-foreground">
+          {DateTime.utc().toFormat('EEEE, MMMM d, yyyy')}
+        </div>
+      </PageHeader>
+
       <div className="mx-auto px-4 py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <h1 className="text-3xl font-semibold tracking-tighter">
-              Dashboard
-            </h1>
-            <div className="text-sm text-muted-foreground">
-              {DateTime.utc().toFormat('EEEE, MMMM d, yyyy')}
-            </div>
-          </div>
-          <p className="text-muted-foreground tracking-tighter">
-            Welcome back. Here's an overview of your projects and tasks.
-          </p>
-        </div>
-
-        {/* Statistics Section
-        <InfoCards
-          averageCompletion={statistics.averageCompletion}
-          completedTasks={statistics.completedTasks}
-          overdueTasks={statistics.overdueTasks}
-          totalProjects={statistics.totalProjects}
-          totalTasks={statistics.totalTasks}
-        /> */}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

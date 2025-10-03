@@ -50,6 +50,7 @@ import {
   ClipboardPen,
   MessageCircleWarning,
   MilestoneIcon,
+  PenIcon,
   Plus,
   Save,
   ShoppingCart,
@@ -202,7 +203,8 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
       >
         <PageHeader
           title="Update Project"
-          description="Fill out the information to create a new Project"
+          description="View and manage your project"
+          icon={PenIcon}
         >
           <div className="flex items-center gap-3">
             <ConfirmationDialog

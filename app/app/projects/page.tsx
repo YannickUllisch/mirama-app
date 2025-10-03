@@ -1,7 +1,9 @@
 'use client'
 import type { Project, ProjectUser, User } from '@prisma/client'
+import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
+import { Folders } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
 import { ProjectColumns } from './columns'
@@ -51,6 +53,11 @@ const ProjectsPage = () => {
 
   return (
     <div>
+      <PageHeader
+        title="Your Projects"
+        description="Manage your projects"
+        icon={Folders}
+      />
       <DataTable
         tableIdentifier="projectPageTable"
         columns={ProjectColumns({

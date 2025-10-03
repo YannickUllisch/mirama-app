@@ -2,7 +2,9 @@
 import type { User } from '@prisma/client'
 import UserCard from '@src/components/Avatar/UserCard'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
+import PageHeader from '@src/components/PageHeader'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { Button } from '@ui/button'
 import { Plus, Users } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import useSWR from 'swr'
@@ -17,21 +19,16 @@ const ClientTeamPage = () => {
 
   return (
     <>
-      <div className="flex items-center gap-4 dark:text-white mb-6">
-        <Users width={20} />
-        <span style={{ fontSize: 20 }}>Team</span>
+      <PageHeader title="Team" description="View your Team." icon={Users}>
         {isTeamAdminOrOwner(session) && (
-          <>
-            <span>|</span>
-            <AddMemberDialog>
-              <div className="flex gap-2 items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Plus width={15} className="ml-2" />
-                <span className="text-xs">Add User</span>
-              </div>
-            </AddMemberDialog>
-          </>
+          <AddMemberDialog>
+            <Button size={'sm'} variant={'secondary'} className="w-30">
+              <Plus width={15} />
+              <span>Add User</span>
+            </Button>
+          </AddMemberDialog>
         )}
-      </div>
+      </PageHeader>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6">
         {teamMembers?.map((member) => (

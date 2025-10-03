@@ -59,9 +59,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   }
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Member to Team</DialogTitle>

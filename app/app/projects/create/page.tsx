@@ -9,6 +9,7 @@ import {
 import { CreateTagSchema } from '@server/domain/tagSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { Button } from '@src/components/ui/button'
 import { Card, CardContent } from '@src/components/ui/card'
@@ -48,6 +49,7 @@ import {
   MessageCircleWarning,
   Milestone,
   Plus,
+  PlusCircle,
   Save,
   ShoppingCart,
   TagIcon,
@@ -56,15 +58,12 @@ import {
   Undo,
   Users,
 } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import useSWR, { mutate } from 'swr'
 
 const CreateProjectForm = () => {
-  // Dynamic Page Params
-  const params = useParams() as { name: string }
-
   // Routing used to return to previous page.
   const router = useRouter()
 
@@ -174,22 +173,17 @@ const CreateProjectForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 pb-[50px]"
       >
-        <div className="flex justify-between items-center p-2">
-          <div className="flex items-center gap-4">
-            <div>
-              <span className="text-2xl font-bold">Create Project</span>
-              <p className="text-sm text-muted-foreground">
-                Fill out the information to create a new Project
-              </p>
-            </div>
-          </div>
-
+        <PageHeader
+          title="Create Project"
+          description="Fill out the information to create a new Project"
+          icon={PlusCircle}
+        >
           <div className="flex items-center gap-3">
             <ConfirmationDialog
               dialogTitle={'Discard changes?'}
               dialogDesc={'All progress will be lost'}
               submitButtonText={'Return'}
-              onConfirmation={() => router.push(`/app/projects/${params.name}`)}
+              onConfirmation={() => router.push('/app/projects')}
             >
               <Button
                 type="button"
@@ -212,7 +206,7 @@ const CreateProjectForm = () => {
               <span>Save Project</span>
             </Button>
           </div>
-        </div>
+        </PageHeader>
 
         <Card>
           <CardContent>
