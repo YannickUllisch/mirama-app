@@ -1,5 +1,5 @@
 import z from 'zod'
-import { RoleSchema } from './roleSchema'
+import { RoleSchema } from './enumSchemas'
 
 export const CreateInvitationSchema = z.object({
   name: z.string().min(3, {

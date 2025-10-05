@@ -1,7 +1,8 @@
-import { auth } from '@server/auth/auth'
 import db from '@db'
+import { auth } from '@server/auth/auth'
 import AppHeader from '@src/components/Header/AppHeader'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import SwrProvider from '@src/components/Wrappers/SwrProvider'
 import { SidebarProvider } from '@src/components/ui/sidebar'
@@ -49,25 +50,27 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <SessionWrapper>
       <SwrProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            <AppSidebar
-              projects={projects}
-              user={user}
-              session={session}
-              className="flex-shrink-0"
-              team={null}
-            />
-            <div className="flex-1 overflow-hidden min-h-[100vh] ">
-              <AppHeader />
-              <main className="flex flex-col overflow-y-auto w-full h-[100%] rounded-lg border border-hover">
-                <div className="bg-white h-[100%] dark:bg-neutral-900 flex-1 px-6 pt-5">
-                  {children}
-                </div>
-              </main>
+        <QueryClientWrapper>
+          <SidebarProvider>
+            <div className="flex min-h-screen w-full">
+              <AppSidebar
+                projects={projects}
+                user={user}
+                session={session}
+                className="flex-shrink-0"
+                team={null}
+              />
+              <div className="flex-1 overflow-hidden min-h-[100vh] ">
+                <AppHeader />
+                <main className="flex flex-col overflow-y-auto w-full h-[100%] rounded-lg border border-hover">
+                  <div className="bg-white h-[100%] dark:bg-neutral-900 flex-1 px-6 pt-5">
+                    {children}
+                  </div>
+                </main>
+              </div>
             </div>
-          </div>
-        </SidebarProvider>
+          </SidebarProvider>
+        </QueryClientWrapper>
       </SwrProvider>
     </SessionWrapper>
   )

@@ -1,11 +1,11 @@
+import useLocalStorage from '@hooks/utils/useLocalStorage'
 import type { Project, Task } from '@prisma/client'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import ProjectCard from '../Cards/ProjectCard'
-import useLocalStorage from '@src/hooks/useLocalStorage'
 import { v4 } from 'uuid'
+import ProjectCard from '../Cards/ProjectCard'
 
 const RecentProjectsWidget = ({
   projects,

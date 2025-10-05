@@ -4,9 +4,67 @@ import type {
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import { ProjectMapper } from '@server/mapping/project/projectMapping'
+import { UserMapper } from '@server/mapping/user/userMapping'
 import { withPrismaErrorSanitizer } from '@server/utils/errorSanitizer'
 import { v4 } from 'uuid'
+
+const getAllProjects = async (
+  sessionUserId: string,
+  teamId: string,
+  onlyArchived: boolean,
+  isTeamAdminOrOwner: boolean,
+): Promise<ProjectResponseInput[]> => {
+  const res = await db.project.findMany({
+    where: {
+      teamId: teamId,
+      archived: onlyArchived,
+      ...(isTeamAdminOrOwner
+        ? {} // Admins should see all projects, so we remove the users filter
+        : {
+            users: {
+              some: {
+                userId: sessionUserId,
+              },
+            },
+          }),
+    },
+    include: {
+      milestones: true,
+      tags: true,
+      tasks: true,
+      users: {
+        include: {
+          user: true,
+        },
+      },
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  })
+
+  return res.map((r) => ProjectMapper.mapDefaultToApi(r))
+}
+
+const getProjectAssignees = async (
+  projectId: string,
+  teamId: string,
+): Promise<UserResponseType[]> => {
+  const res = await db.user.findMany({
+    where: {
+      projects: {
+        some: {
+          projectId,
+        },
+      },
+      teamId: teamId,
+    },
+  })
+
+  return res.map((r) => UserMapper.mapDefaultToApi(r))
+}
 
 const getDefaultProjectResponse = async (
   projectId: string,
@@ -140,4 +198,6 @@ export const ProjectService = {
   deleteProject,
   createProject,
   updateProject,
+  getAllProjects,
+  getProjectAssignees,
 }

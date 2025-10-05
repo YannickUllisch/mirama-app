@@ -5,7 +5,7 @@ import {
   AttachNewMilestoneToProjectSchema,
   MilestoneProjectResponseSchema,
 } from './milestoneSchema'
-import { CreateTagSchema, TagResponse } from './tagSchema'
+import { CreateTagSchema, TagResponseSchema } from './tagSchema'
 import { TaskProjectResponseSchema } from './taskSchema'
 import { UserProjectResponseSchema } from './userSchema'
 
@@ -26,7 +26,7 @@ export const ProjectResponseSchema = z
     status: StatusTypeSchema.default('ACTIVE'),
     budget: z.number().default(0),
     milestones: z.array(MilestoneProjectResponseSchema),
-    tags: z.array(TagResponse),
+    tags: z.array(TagResponseSchema),
     users: z.array(UserProjectResponseSchema),
     tasks: z.array(TaskProjectResponseSchema),
   })
@@ -43,6 +43,7 @@ export const CreateProjectSchema = z
     endDate: z.coerce.date({ message: 'End Date has to be defined' }),
     priority: PriorityTypeSchema.default('LOW'),
     status: StatusTypeSchema.default('ACTIVE'),
+    archived: z.boolean(),
     budget: z.number().default(0),
     tags: z.string().array(),
     newTags: z.array(CreateTagSchema),

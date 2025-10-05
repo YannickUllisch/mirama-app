@@ -1,5 +1,14 @@
 import z from 'zod'
-import { RoleSchema } from './roleSchema'
+import { RoleSchema } from './enumSchemas'
+
+export const UserResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string(),
+  role: RoleSchema,
+  teamId: z.string().nullable(),
+  preferredDateType: z.string(),
+})
 
 export const DeleteUsersSchema = z.array(
   z.string().min(1, 'Array of atleast one ID is required'),
@@ -29,6 +38,7 @@ export const UserProjectResponseSchema = z.object({
 })
 
 // TypeScript types inferred from schemas
-export type UpdateUserinput = z.infer<typeof UpdateUserSchema>
-export type DeletUserInput = z.infer<typeof DeleteUsersSchema>
-export type UserProjectResponseInput = z.infer<typeof UserProjectResponseSchema>
+export type UpdateUserType = z.infer<typeof UpdateUserSchema>
+export type UserResponseType = z.infer<typeof UpdateUserSchema>
+export type DeleteUserType = z.infer<typeof DeleteUsersSchema>
+export type UserProjectResponseType = z.infer<typeof UserProjectResponseSchema>

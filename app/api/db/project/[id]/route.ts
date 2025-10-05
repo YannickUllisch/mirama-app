@@ -1,52 +1,19 @@
-import db from '@db'
-import { auth } from '@server/auth/auth'
-import { reconstructPrismaSelect } from '@src/lib/api/APIReconstructions'
-import { validateRequest } from '@src/lib/validateRequest'
-import type { NextRequest } from 'next/server'
+import { Role } from '@prisma/client'
+import { ProjectController } from '@server/controllers/projectController'
+import { exceptionHandler } from '@server/utils/exceptionHandler'
+import { withAuth } from '@withAuth'
 
-export const GET = async (req: NextRequest) => {
-  try {
-    // Checking Permissions
-    const session = await auth()
-    const validatedRequest = await validateRequest(session)
-    if (validatedRequest) {
-      return validatedRequest
-    }
-    const { searchParams } = new URL(req.url)
+export const GET = withAuth(
+  Object.values(Role),
+  exceptionHandler(ProjectController.getProjectById),
+)
 
-    // Extracting name from dynamic route
-    const id = req.nextUrl.pathname.split('/').pop()
+export const PUT = withAuth(
+  Object.values(Role),
+  exceptionHandler(ProjectController.updateProject),
+)
 
-    if (!id) {
-      return Response.json(
-        { ok: false, message: 'Project ID needs to be defined in request' },
-        { status: 400 },
-      )
-    }
-
-    const selectQuery = searchParams.getAll('select[]')
-
-    // Extract select fields from select object format and parse all selections
-    const prismaSelection = reconstructPrismaSelect({
-      prismaModel: 'Project',
-      rawSelectQuery: selectQuery,
-    })
-
-    const response = await db.project.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        ...prismaSelection,
-        id: true,
-      },
-    })
-
-    return Response.json(response, { status: 200 })
-  } catch (err) {
-    return Response.json(
-      { ok: false, message: `Failed with Error ${err}` },
-      { status: 500 },
-    )
-  }
-}
+export const DELETE = withAuth(
+  [Role.ADMIN, Role.OWNER],
+  exceptionHandler(ProjectController.deleteProjectById),
+)

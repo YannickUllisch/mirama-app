@@ -1,11 +1,13 @@
 import {
   PriorityType,
+  Role,
   StatusType,
   TaskStatusType,
   TaskType,
 } from '@prisma/client'
 import z from 'zod'
 
+export const RoleSchema = z.nativeEnum(Role)
 export const PriorityTypeSchema = z.nativeEnum(PriorityType)
 export const StatusTypeSchema = z.nativeEnum(StatusType)
 export const TaskStatusTypeSchema = z.nativeEnum(TaskStatusType)

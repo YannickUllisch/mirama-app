@@ -7,20 +7,14 @@ import { InvitationService } from '@server/services/invitationService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
-const getInvitationsController = async (
-  _req: NextRequest,
-  session: Session,
-) => {
+const getInvitations = async (_req: NextRequest, session: Session) => {
   const invitations = await InvitationService.getInvitationsByTeam(
     session.user.teamId,
   )
   return Response.json(invitations, { status: 200 })
 }
 
-const createInvitationController = async (
-  req: NextRequest,
-  session: Session,
-) => {
+const createInvitation = async (req: NextRequest, session: Session) => {
   const body = await req.json()
   const parsedBody = CreateInvitationSchema.parse(body)
   const inv = await InvitationService.createNewInvitation(
@@ -31,10 +25,7 @@ const createInvitationController = async (
   return Response.json(inv, { status: 201 })
 }
 
-const updateInvitationsController = async (
-  req: NextRequest,
-  session: Session,
-) => {
+const updateInvitations = async (req: NextRequest, session: Session) => {
   const body: string[] = await req.json()
   const input = UpdateInvitationSchema.parse(body)
 
@@ -45,10 +36,7 @@ const updateInvitationsController = async (
   return Response.json(invitations, { status: 200 })
 }
 
-const deleteInvitationsController = async (
-  req: NextRequest,
-  session: Session,
-) => {
+const deleteInvitations = async (req: NextRequest, session: Session) => {
   const body = await req.json()
   const input = DeleteInvitationsSchema.parse(body)
 
@@ -60,8 +48,8 @@ const deleteInvitationsController = async (
 }
 
 export const InvitationController = {
-  getInvitationsController,
-  createInvitationController,
-  updateInvitationsController,
-  deleteInvitationsController,
+  getInvitations,
+  createInvitation,
+  updateInvitations,
+  deleteInvitations,
 }

@@ -1,10 +1,10 @@
 'use client'
 import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PriorityType, StatusType, type Tag, type User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { PriorityType, StatusType } from '@prisma/client'
 import { AttachNewMilestoneToProjectSchema } from '@server/domain/milestoneSchema'
 import {
-  type ProjectResponseInput,
   type UpdateProjectInput,
   UpdateProjectSchema,
 } from '@server/domain/projectSchema'
@@ -63,22 +63,18 @@ import {
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useState, useTransition } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import useSWR, { mutate } from 'swr'
+import { mutate } from 'swr'
 import { v4 } from 'uuid'
 
 const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   // Dynamic Page Params
   const { id } = use(params)
 
-  const { data: project, isLoading } = useSWR<ProjectResponseInput>({
-    url: `project/tmp?id=${id}`,
-  })
   // Routing used to return to previous page.
   const router = useRouter()
 
   // States
   const [isPending, startTransition] = useTransition()
-
   const [newMilestone, setNewMilestone] = useState({
     title: '',
     date: new Date(),
@@ -86,8 +82,10 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   })
   const [newTag, setNewTag] = useState('')
 
-  const { data: users } = useSWR<User[]>('team/member')
-  const { data: tags } = useSWR<Tag[]>('tag')
+  // Hooks
+  const { data: project, isLoading } = apiRequest.project.fetchById.useQuery(id)
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: tags } = apiRequest.tag.fetchAll.useQuery()
 
   // Form Logic and Functions
   const form = useForm<UpdateProjectInput>({

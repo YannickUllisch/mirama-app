@@ -1,6 +1,7 @@
 'use client'
 import { addProjectIdToLocalStorage } from '@/app/app/helpers'
 import Loading from '@/app/loading'
+import useLocalStorage from '@hooks/utils/useLocalStorage'
 import type { Milestone, Project, User } from '@prisma/client'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
@@ -10,7 +11,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import useLocalStorage from '@src/hooks/useLocalStorage'
 import {
   notFound,
   usePathname,

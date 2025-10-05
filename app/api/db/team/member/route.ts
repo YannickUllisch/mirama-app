@@ -1,5 +1,5 @@
 import { Role } from '@prisma/client'
-import { UserController } from '@server/controllers/userController'
+import { UserController } from '@server/controllers/teamController'
 import { exceptionHandler } from '@server/utils/exceptionHandler'
 import { withAuth } from '@withAuth'
 

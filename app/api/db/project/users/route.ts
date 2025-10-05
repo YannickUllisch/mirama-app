@@ -1,40 +1,9 @@
-import db from '@db'
-import { auth } from '@server/auth/auth'
-import { validateRequest } from '@src/lib/validateRequest'
+import { Role } from '@prisma/client'
+import { ProjectController } from '@server/controllers/projectController'
+import { exceptionHandler } from '@server/utils/exceptionHandler'
+import { withAuth } from '@withAuth'
 
-export const GET = auth(async (req) => {
-  try {
-    // Checking Permissions
-
-    const session = req.auth
-    const validatedRequest = await validateRequest(session)
-    if (validatedRequest) {
-      return validatedRequest
-    }
-
-    const id = req.nextUrl.searchParams.get('id') as string
-    if (!id) {
-      return Response.json(
-        { ok: false, message: 'Project ID needs to be defined in request' },
-        { status: 400 },
-      )
-    }
-    const response = await db.user.findMany({
-      where: {
-        projects: {
-          some: {
-            projectId: id,
-          },
-        },
-        teamId: session?.user.teamId,
-      },
-    })
-
-    return Response.json(response, { status: 200 })
-  } catch (err) {
-    return Response.json(
-      { ok: false, message: `Failed with Error ${err}` },
-      { status: 500 },
-    )
-  }
-})
+export const GET = withAuth(
+  Object.values(Role),
+  exceptionHandler(ProjectController.getProjectAssignees),
+)

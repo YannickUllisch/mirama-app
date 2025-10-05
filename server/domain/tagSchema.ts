@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const TagResponse = z.object({
+export const TagResponseSchema = z.object({
   id: z.string(),
   title: z.string(),
 })
@@ -21,6 +21,7 @@ export const CreateTagSchema = z.object({
     .min(2, { message: 'Tag title must be at least 2 characters.' }),
 })
 
-export type CreateTagInput = z.infer<typeof CreateTagSchema>
-export type UpdateTagInput = z.infer<typeof UpdateTagSchema>
-export type DeleteTagsInput = z.infer<typeof DeleteTagsSchema>
+export type TagResponseType = z.infer<typeof TagResponseSchema>
+export type CreateTagType = z.infer<typeof CreateTagSchema>
+export type UpdateTagType = z.infer<typeof UpdateTagSchema>
+export type DeleteTagsType = z.infer<typeof DeleteTagsSchema>

@@ -2,7 +2,7 @@ import { ContactRequestSchema } from '@server/domain/contactSchema'
 import { SNSService } from '@server/services/snsService'
 import type { NextRequest } from 'next/server'
 
-const contactRequestController = async (req: NextRequest) => {
+const sendContactRequest = async (req: NextRequest) => {
   const body = await req.json()
   const input = ContactRequestSchema.parse(body)
 
@@ -18,5 +18,5 @@ const contactRequestController = async (req: NextRequest) => {
 }
 
 export const ContactController = {
-  contactRequestController,
+  sendContactRequest,
 }

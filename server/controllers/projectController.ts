@@ -8,11 +8,25 @@ import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
-const getDefaultProjectController = async (
-  req: NextRequest,
-  session: Session,
-) => {
-  const pid = req.nextUrl.searchParams.get('id')
+const getAllProjects = async (req: NextRequest, session: Session) => {
+  const { searchParams } = new URL(req.url)
+  const archivedStatus = (searchParams.get('archived') as string) === 'true'
+
+  const roleCheck = isTeamAdminOrOwner(session)
+
+  const res = await ProjectService.getAllProjects(
+    session.user.id ?? '',
+    session.user.teamId,
+    archivedStatus,
+    roleCheck,
+  )
+
+  return Response.json(res, { status: 200 })
+}
+
+const getProjectById = async (req: NextRequest, session: Session) => {
+  // Extracting name from dynamic route
+  const pid = req.nextUrl.pathname.split('/').pop()
 
   if (!pid) {
     return Response.json(
@@ -25,10 +39,43 @@ const getDefaultProjectController = async (
     session.user.teamId,
   )
 
-  return Response.json(project, { status: 201 })
+  return Response.json(project, { status: 200 })
 }
 
-const createProjectController = async (req: NextRequest, session: Session) => {
+const deleteProjectById = async (req: NextRequest, session: Session) => {
+  // Extracting name from dynamic route
+  const pid = req.nextUrl.pathname.split('/').pop()
+
+  if (!pid) {
+    return Response.json(
+      { ok: false, message: 'Project ID is required in Request' },
+      { status: 404 },
+    )
+  }
+  const project = await ProjectService.deleteProject(pid, session.user.teamId)
+
+  return Response.json(project, { status: 200 })
+}
+
+const getProjectAssignees = async (req: NextRequest, session: Session) => {
+  // Extracting name from query
+  const pid = req.nextUrl.searchParams.get('id')
+
+  if (!pid) {
+    return Response.json(
+      { ok: false, message: 'Project ID is required in Request' },
+      { status: 404 },
+    )
+  }
+  const users = await ProjectService.getProjectAssignees(
+    pid,
+    session.user.teamId,
+  )
+
+  return Response.json(users, { status: 200 })
+}
+
+const createProject = async (req: NextRequest, session: Session) => {
   const body = await req.json()
   const parsedBody = CreateProjectSchema.parse(body)
   const project = await ProjectService.createProject(
@@ -38,8 +85,8 @@ const createProjectController = async (req: NextRequest, session: Session) => {
   return Response.json(project, { status: 201 })
 }
 
-const updateProjectController = async (req: NextRequest, session: Session) => {
-  const pid = req.nextUrl.searchParams.get('id')
+const updateProject = async (req: NextRequest, session: Session) => {
+  const pid = req.nextUrl.pathname.split('/').pop()
 
   if (!pid) {
     return Response.json(
@@ -68,7 +115,10 @@ const updateProjectController = async (req: NextRequest, session: Session) => {
 }
 
 export const ProjectController = {
-  getDefaultProjectController,
-  createProjectController,
-  updateProjectController,
+  getAllProjects,
+  getProjectById,
+  createProject,
+  updateProject,
+  getProjectAssignees,
+  deleteProjectById,
 }

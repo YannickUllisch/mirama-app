@@ -5,20 +5,20 @@ import { withAuth } from '@withAuth'
 
 export const GET = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.getInvitationsController),
+  exceptionHandler(InvitationController.getInvitations),
 )
 
 export const POST = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.createInvitationController),
+  exceptionHandler(InvitationController.createInvitation),
 )
 
 export const DELETE = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.deleteInvitationsController),
+  exceptionHandler(InvitationController.deleteInvitations),
 )
 
 export const PUT = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.updateInvitationsController),
+  exceptionHandler(InvitationController.updateInvitations),
 )

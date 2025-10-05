@@ -6,15 +6,15 @@ import { withAuth } from '@withAuth'
 
 export const GET = withAuth(
   Object.values(Role),
-  exceptionHandler(FavouriteController.getFavouritesController),
+  exceptionHandler(FavouriteController.getFavourites),
 )
 
 export const POST = withAuth(
   Object.values(Role),
-  exceptionHandler(FavouriteController.createFavouriteController),
+  exceptionHandler(FavouriteController.createFavourite),
 )
 
 export const DELETE = withAuth(
   Object.values(Role),
-  exceptionHandler(FavouriteController.deleteFavouriteController),
+  exceptionHandler(FavouriteController.deleteFavourite),
 )

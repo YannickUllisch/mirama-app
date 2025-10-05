@@ -61,17 +61,17 @@ model User {
   name              String    
   email             String   @unique
   emailVerified     DateTime?
-  password          String?
   role              Role      @default(USER)
-  teamId            String? 
+
   accounts          Account[]
   // These are needed for overview of personal projets and tasks a user is assigned to.
   tasks             Task[]
-
+  
+  teamId            String? 
   team              Team?     @relation(fields: [teamId], references: [id])
   preferredDateType String    @default("dd-MM-yyyy")
 
-  projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
+  projects          ProjectUser[]
   comments          Comment[]
   notifications     Notification[]
   favourites        Favourite[]

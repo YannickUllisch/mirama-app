@@ -39,7 +39,7 @@ interface EditableCellProps {
   disabled?: boolean
 }
 
-export function EditableCell({
+export const EditableCell = ({
   value,
   onSave,
   type = EditableCellType.TEXT,
@@ -49,7 +49,7 @@ export function EditableCell({
   selectType,
   isLoading,
   disabled,
-}: EditableCellProps) {
+}: EditableCellProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(value)
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
@@ -114,7 +114,16 @@ export function EditableCell({
                   mode="single"
                   selected={editValue instanceof Date ? editValue : undefined}
                   onSelect={(date) => {
-                    setEditValue(date)
+                    if (!date) return
+                    const utcDate = new Date(
+                      Date.UTC(
+                        date.getFullYear(),
+                        date.getMonth(),
+                        date.getDate(),
+                      ),
+                    )
+
+                    setEditValue(utcDate)
                     setIsDatePickerOpen(false)
                   }}
                   initialFocus
@@ -203,7 +212,7 @@ export function EditableCell({
 
     if (type === EditableCellType.DATE) {
       if (!value) return ''
-      if (value instanceof Date) return value.toString()
+      if (value instanceof Date) return value.toUTCString()
       return value.toString()
     }
 

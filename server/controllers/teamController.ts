@@ -1,5 +1,5 @@
 import { DeleteUsersSchema, UpdateUserSchema } from '@server/domain/userSchema'
-import { UserService } from '@server/services/userService'
+import { UserService } from '@server/services/teamService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
