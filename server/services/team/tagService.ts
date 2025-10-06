@@ -1,4 +1,4 @@
-import db from '@db'
+import db from '@server/utils/db'
 import type { CreateTagType, UpdateTagType } from '@server/domain/tagSchema'
 import { TagMapper } from '@server/mapping/general/tagMapper'
 

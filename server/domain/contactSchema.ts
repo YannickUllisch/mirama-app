@@ -19,4 +19,4 @@ export const ContactRequestSchema = z.object({
 })
 
 // TypeScript types inferred from schemas
-export type ContactRequestInput = z.infer<typeof ContactRequestSchema>
+export type ContactRequestType = z.infer<typeof ContactRequestSchema>

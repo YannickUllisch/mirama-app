@@ -1,8 +1,10 @@
 'use client'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type * as z from 'zod'
-import { Input } from '@src/components/ui/input'
+import {
+  ContactRequestSchema,
+  type ContactRequestType,
+} from '@server/domain/contactSchema'
+import { Button } from '@src/components/ui/button'
 import {
   Form,
   FormControl,
@@ -10,19 +12,19 @@ import {
   FormItem,
   FormMessage,
 } from '@src/components/ui/form'
-import { Button } from '@src/components/ui/button'
-import { useTransition } from 'react'
-import { ContactSchema } from '@src/lib/schemas'
-import { Textarea } from '../ui/textarea'
-import { Label } from '../ui/label'
+import { Input } from '@src/components/ui/input'
 import { postResource } from '@src/lib/api/postResource'
+import { useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { Label } from '../ui/label'
 import { PhoneInput } from '../ui/phone-input'
+import { Textarea } from '../ui/textarea'
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<z.infer<typeof ContactSchema>>({
-    resolver: zodResolver(ContactSchema),
+  const form = useForm<ContactRequestType>({
+    resolver: zodResolver(ContactRequestSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -31,7 +33,7 @@ const RegisterForm = () => {
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof ContactSchema>) => {
+  const onSubmit = (vals: ContactRequestType) => {
     startTransition(() => {
       postResource(
         'contact',

@@ -1,12 +1,10 @@
 'use client'
-import type { Tag, Milestone, Task, User, Project } from '@prisma/client'
+import Loading from '@/app/loading'
+import type { Milestone, Project, Tag, Task, User } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
-import GeneralSelect from '@src/components/Select/GeneralSelect'
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-} from '@src/components/ui/context-menu'
+import { ViewControls } from '@src/components/Gantt/ViewOptions'
 import {
   GanttCreateMarkerTrigger,
   GanttFeatureItem,
@@ -21,22 +19,24 @@ import {
   GanttTimeline,
   GanttToday,
 } from '@src/components/Gantt/gantt'
+import GeneralSelect from '@src/components/Select/GeneralSelect'
+import TaskContextContent from '@src/components/Task/TaskContextContent'
+import { Checkbox } from '@src/components/ui/checkbox'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+} from '@src/components/ui/context-menu'
+import { Label } from '@src/components/ui/label'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { capitalize } from '@src/lib/utils'
 import groupBy from 'lodash.groupby'
+import get from 'lodash/get'
+import dynamic from 'next/dynamic'
 import { useContext, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import useSWR from 'swr'
-import get from 'lodash/get'
-import { capitalize } from '@src/lib/utils'
-import { updateResourceById } from '@src/lib/api/updateResource'
-import { Checkbox } from '@src/components/ui/checkbox'
-import { Label } from '@src/components/ui/label'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import dynamic from 'next/dynamic'
-import TaskContextContent from '@src/components/Task/TaskContextContent'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import Loading from '@/app/loading'
-import { ViewControls } from '@src/components/Gantt/ViewOptions'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(

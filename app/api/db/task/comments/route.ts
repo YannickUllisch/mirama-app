@@ -1,5 +1,5 @@
 import { auth } from '@server/auth/auth'
-import db from '@db'
+import db from '@server/utils/db'
 import type { Comment } from '@prisma/client'
 import { validateRequest } from '@src/lib/validateRequest'
 

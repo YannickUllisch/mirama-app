@@ -1,6 +1,6 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import db from '@db'
 import type { User } from '@prisma/client'
+import db from '@server/utils/db'
 import { getValidCompanyInvitation } from '@src/lib/api/queries/Invite/InviteQueries'
 import { deleteCognitoUser } from '../cognito/deleteCognitoUser'
 

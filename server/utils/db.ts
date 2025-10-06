@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import SuperJSON from 'superjson'
-import { RedisAdapter } from '../redis/Adapters/redis-adapter'
-import createPrismaRedisCache from '../redis/index'
+import { RedisAdapter } from './redis/Adapters/redis-adapter'
+import createPrismaRedisCache from './redis/index'
 
 export const redisClient = new Redis(process.env.REDIS_URL ?? '') // Uses default options for Redis connection
 
@@ -33,11 +33,6 @@ const prismaClientSingleton = () => {
         cacheTime: 60 * 5, // 15 mins
       },
       {
-        model: 'ProjectUser',
-        cacheTime: 60 * 15, // 15 minutes
-        invalidateRelated: ['Project'],
-      },
-      {
         model: 'Team',
         cacheTime: 60 * 60, // 1 hour, it is very uncommon for this to change. It is however queried quite often.
       },
@@ -48,7 +43,6 @@ const prismaClientSingleton = () => {
       {
         model: 'Tag',
         cacheTime: 60 * 60, // 1 hour
-        invalidateRelated: ['TaskTagJoin'],
       },
       {
         model: 'CompanyInvitation',

@@ -9,6 +9,10 @@ import {
   type TaskType,
   type User,
 } from '@prisma/client'
+import {
+  TaskResponseSchema,
+  type TaskResponseType,
+} from '@server/domain/taskSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -47,7 +51,6 @@ import { Textarea } from '@src/components/ui/textarea'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import { TaskSchema } from '@src/lib/schemas'
 import { capitalize } from '@src/lib/utils'
 import {
   BookCheck,
@@ -62,7 +65,6 @@ import { notFound, useParams, useRouter } from 'next/navigation'
 import { useContext, useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR from 'swr'
-import type { z } from 'zod'
 
 const EditTaskForm = () => {
   // Dynamic Page Params
@@ -83,7 +85,7 @@ const EditTaskForm = () => {
   } = useSWR<
     Task & {
       subtasks: Task[]
-      tags: (TaskTagJoin & { tag: Tag })[]
+      tags: Tag[]
     }
   >(`task/${params.id}`)
 
@@ -97,8 +99,8 @@ const EditTaskForm = () => {
   const [isPending, startTransition] = useTransition()
 
   // Form Logic and Functions
-  const form = useForm<z.infer<typeof TaskSchema>>({
-    resolver: zodResolver(TaskSchema),
+  const form = useForm<TaskResponseType>({
+    resolver: zodResolver(TaskResponseSchema),
   })
 
   useEffect(() => {
@@ -113,7 +115,7 @@ const EditTaskForm = () => {
         priority: task?.priority ?? PriorityType.LOW,
         projectId: task?.projectId ?? '',
         status: task?.status ?? TaskStatusType.NEW,
-        tags: task?.tags.map((tag) => tag.tagId),
+        tags: task?.tags.map((tag) => tag.id),
         parentId: task?.parentId ?? undefined,
         type: task?.type ?? 'TASK',
       })
@@ -136,7 +138,7 @@ const EditTaskForm = () => {
   }, [task, form.reset])
 
   // Functions
-  const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
+  const onSubmit = (vals: TaskResponseType) => {
     startTransition(() => {
       updateResourceById('task', task?.id ?? '', vals).then(() => {
         router.back()

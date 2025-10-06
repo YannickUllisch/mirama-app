@@ -1,4 +1,4 @@
-import db from '@db'
+import db from '@server/utils/db'
 import type { Role } from '@prisma/client'
 import { inviteUserCognito } from '@server/auth/cognito/inviteUser'
 import type {

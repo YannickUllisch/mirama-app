@@ -8,6 +8,10 @@ import {
   type TaskType,
   type User,
 } from '@prisma/client'
+import {
+  TaskResponseSchema,
+  type TaskResponseType,
+} from '@server/domain/taskSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -45,7 +49,6 @@ import { Textarea } from '@src/components/ui/textarea'
 import { postResource } from '@src/lib/api/postResource'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import { TaskSchema } from '@src/lib/schemas'
 import { capitalize } from '@src/lib/utils'
 import {
   BookCheck,
@@ -60,7 +63,6 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useContext, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import useSWR, { mutate } from 'swr'
-import type { z } from 'zod'
 
 const CreateTaskForm = () => {
   // Routing used to return to previous page.
@@ -84,8 +86,8 @@ const CreateTaskForm = () => {
   const { data: tags } = useSWR<Tag[]>('tag')
 
   // Form Logic and Functions
-  const form = useForm<z.infer<typeof TaskSchema>>({
-    resolver: zodResolver(TaskSchema),
+  const form = useForm<TaskResponseType>({
+    resolver: zodResolver(TaskResponseSchema),
     defaultValues: {
       assignedToId: null,
       description: '',
@@ -106,7 +108,7 @@ const CreateTaskForm = () => {
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof TaskSchema>) => {
+  const onSubmit = (vals: TaskResponseType) => {
     startTransition(() => {
       if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
         vals.assignedToId = null

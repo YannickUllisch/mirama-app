@@ -3,7 +3,6 @@ import {
   type Tag,
   type Task,
   TaskStatusType,
-  type TaskTagJoin,
   type User,
 } from '@prisma/client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
@@ -60,7 +59,7 @@ export const ListTabColumns = ({
   mutate: KeyedMutator<
     (Task & {
       assignedTo: User
-      tags: (TaskTagJoin & { tag: Tag })[]
+      tags: Tag[]
       subtasks: Task[]
     })[]
   >
@@ -404,7 +403,7 @@ export const ListTabColumns = ({
           />
         ),
         cell: ({ row, getValue }) => {
-          const tasks = getValue() as (TaskTagJoin & { tag: Tag })[]
+          const tasks = getValue() as Tag[]
           const taskCount = tasks.length
 
           // If there are more than 2 tasks, we will show the "X tasks left" badge
@@ -420,9 +419,9 @@ export const ListTabColumns = ({
                 <Badge
                   variant="outline"
                   className="flex-nowrap whitespace-nowrap text-ellipsis"
-                  key={`status-item-${tag.tag.title}`}
+                  key={`status-item-${tag.title}`}
                 >
-                  {tag.tag.title}
+                  {tag.title}
                 </Badge>
               ))}
 
@@ -444,7 +443,7 @@ export const ListTabColumns = ({
                         key={`remaining-task-${task.id}`}
                         className="text-xs"
                       >
-                        {task.tag.title}
+                        {task.title}
                       </div>
                     ))}
                   </HoverCardContent>

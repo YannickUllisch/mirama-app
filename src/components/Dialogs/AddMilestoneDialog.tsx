@@ -1,11 +1,8 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MilestoneSchema } from '@src/lib/schemas'
-import type React from 'react'
-import { useState, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
-import { Input } from '@src/components/ui/input'
+import type { Milestone } from '@prisma/client'
+import { MilestoneSchema } from '@server/domain/milestoneSchema'
+import { Button } from '@src/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -15,18 +12,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@src/components/ui/dialog'
-import { Button } from '@src/components/ui/button'
+import { Input } from '@src/components/ui/input'
 import { postResource } from '@src/lib/api/postResource'
-import type { KeyedMutator } from 'swr'
-import type { Milestone } from '@prisma/client'
-import { Label } from '../ui/label'
-import { FormControl, FormField, FormItem, FormMessage } from '../ui/form'
+import { updateResourceById } from '@src/lib/api/updateResource'
 import { format } from 'date-fns'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { CalendarIcon } from 'lucide-react'
+import type React from 'react'
+import { useState, useTransition } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import type { KeyedMutator } from 'swr'
+import type { z } from 'zod'
 import { Calendar } from '../ui/calendar'
 import { ColorPicker } from '../ui/color-picker'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { FormControl, FormField, FormItem, FormMessage } from '../ui/form'
+import { Label } from '../ui/label'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 
 const AddMilestoneDialog = ({
   children,

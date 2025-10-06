@@ -1,7 +1,7 @@
-import db from '@db'
 import type { Role } from '@prisma/client'
 import type { UpdateUserType } from '@server/domain/userSchema'
 import { UserMapper } from '@server/mapping/user/userMapping'
+import db from '@server/utils/db'
 import { isRoleHigher } from '@src/lib/utils'
 
 /**

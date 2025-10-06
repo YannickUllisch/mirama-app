@@ -1,7 +1,7 @@
-import db from '@db'
 import { TaskStatusType } from '@prisma/client'
 import type { TaskResponseType } from '@server/domain/taskSchema'
 import { TaskMapper } from '@server/mapping/task'
+import db from '@server/utils/db'
 
 const getTasksByProjectId = async (
   pid: string,

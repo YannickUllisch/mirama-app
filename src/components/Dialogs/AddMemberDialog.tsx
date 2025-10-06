@@ -2,8 +2,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { Role } from '@prisma/client'
-import type { CreateInvitationInput } from '@server/domain/invitationSchema'
-import { InvitationSchema } from '@src/lib/schemas'
+import {
+  type CreateInvitationInput,
+  CreateInvitationSchema,
+} from '@server/domain/invitationSchema'
 import { Button } from '@ui/button'
 import {
   Dialog,
@@ -37,7 +39,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const form = useForm<CreateInvitationInput>({
-    resolver: zodResolver(InvitationSchema),
+    resolver: zodResolver(CreateInvitationSchema),
     defaultValues: {
       email: '',
       name: '',

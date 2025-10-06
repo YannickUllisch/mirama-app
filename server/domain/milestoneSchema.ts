@@ -17,6 +17,15 @@ export const MilestoneProjectResponseSchema = z.object({
   colors: z.string(),
 })
 
+// TMP
+export const MilestoneSchema = z.object({
+  id: z.string(),
+  date: z.coerce.date(),
+  title: z.string(),
+  colors: z.string(),
+  projectId: z.string(),
+})
+
 export type AttachNewMilestoneToProjectInput = z.infer<
   typeof AttachNewMilestoneToProjectSchema
 >

@@ -9,7 +9,6 @@ const Layout = ({
   children,
 }: {
   children: React.ReactNode
-  params: Promise<{ name: string; id: string }>
 }) => {
   return children
 }

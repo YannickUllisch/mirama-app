@@ -1,4 +1,4 @@
-import db from '@db'
+import db from '@server/utils/db'
 import { DateTime } from 'luxon'
 
 export const getValidCompanyInvitation = async ({

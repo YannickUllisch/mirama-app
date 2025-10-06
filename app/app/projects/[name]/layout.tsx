@@ -1,5 +1,5 @@
-import db from '@db'
 import { auth } from '@server/auth/auth'
+import db from '@server/utils/db'
 import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'

@@ -1,4 +1,4 @@
-import db from '@db'
+import db from '@server/utils/db'
 import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
 import type { CreateFavouriteType } from '@server/domain/favouriteSchema'
 import { FavouriteMapper } from '@server/mapping/general/favouriteMapping'

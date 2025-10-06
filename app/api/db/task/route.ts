@@ -1,4 +1,4 @@
-import db from '@db'
+import db from '@server/utils/db'
 import { Role, type Task } from '@prisma/client'
 import { auth } from '@server/auth/auth'
 import { TaskController } from '@server/controllers/taskController'
