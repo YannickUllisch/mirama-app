@@ -25,9 +25,10 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
       <SwrProvider>
         <QueryClientWrapper>
           <SidebarProvider>
-            <div className="flex min-h-screen w-full flex-col">
+            <div className="w-full flex flex-col">
               <AppHeader />
-              <div className="flex flex-1">
+
+              <div className="flex flex-1 pt-14">
                 <AppSidebar session={session} className="flex-shrink-0" />
 
                 <main className="flex-1 overflow-auto bg-card rounded-lg">

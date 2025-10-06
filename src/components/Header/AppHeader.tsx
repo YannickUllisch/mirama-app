@@ -54,7 +54,7 @@ const AppHeader = () => {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background">
       <div className="flex h-14 items-center gap-4 px-4 justify-between">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="text-sidebar-foreground" />
