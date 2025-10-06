@@ -10,6 +10,7 @@ import type {
   UpdateTagType,
 } from '@server/domain/tagSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const tag = {
   fetchAll: {
@@ -42,10 +43,11 @@ const tag = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['tags'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['tags'] })
@@ -75,10 +77,11 @@ const tag = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['tags'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['tags'] })
@@ -108,10 +111,11 @@ const tag = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['tags'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['tags'] })

@@ -47,7 +47,7 @@
   .dark {
     --background: 0 0% 7.6%; /*207, 24%, 8.82%;*/
     --foreground: 249 7% 96%; /* Oat Light */
-    --card: 205 18.42% 14.9%; /* Dark Navy */
+    --card: 0 0% 10%; /* Dark Navy */
     --card-foreground: 249 7% 96%; /* Oat Light */
     --popover: 197 65% 12%; /* Slightly lighter Navy */
     --popover-foreground: 249 7% 96%; /* Oat Light */

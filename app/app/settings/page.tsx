@@ -1,5 +1,6 @@
 'use client'
 import { Role } from '@prisma/client'
+import PageHeader from '@src/components/PageHeader'
 import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
 import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
 import TagsTab from '@src/components/Tabs/SettingTabs/TagsTab'
@@ -11,8 +12,8 @@ import {
   TabsTrigger,
 } from '@src/components/ui/tabs'
 import { Settings, Tags, User, UserCog } from 'lucide-react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type JSX, useEffect, useState } from 'react'
 
 const ProjectPage = () => {
@@ -73,10 +74,11 @@ const ProjectPage = () => {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <div className="items-center flex gap-2 pb-1">
-        <Settings strokeWidth={1.5} width={16} />
-        <span style={{ fontSize: 16 }}>Settings</span>
-      </div>
+      <PageHeader
+        icon={Settings}
+        title="Settings"
+        description="General Settings"
+      />
       <div className="flex items-center  dark:text-white rounded-lg h-10 relative overflow-x-auto">
         <TabsList className="justify-stretch absolute flex">
           {settingsTabs.map(
@@ -99,7 +101,7 @@ const ProjectPage = () => {
         (tab) =>
           session &&
           tab.roles.includes(session.user.role) && (
-            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+            <TabsContent className="px-10" value={tab.id} key={`${tab.id}-tab`}>
               {tab.component}
             </TabsContent>
           ),

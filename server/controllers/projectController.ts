@@ -4,13 +4,13 @@ import {
 } from '@server/domain/projectSchema'
 import { ProjectService } from '@server/services/projectService'
 import { checkIfManager } from '@server/utils/checkManager'
+import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
 const getAllProjects = async (req: NextRequest, session: Session) => {
-  const { searchParams } = new URL(req.url)
-  const archivedStatus = (searchParams.get('archived') as string) === 'true'
+  const archivedStatus = req.nextUrl.searchParams.get('archived') === 'true'
 
   const roleCheck = isTeamAdminOrOwner(session)
 
@@ -25,15 +25,8 @@ const getAllProjects = async (req: NextRequest, session: Session) => {
 }
 
 const getProjectById = async (req: NextRequest, session: Session) => {
-  // Extracting name from dynamic route
-  const pid = req.nextUrl.pathname.split('/').pop()
+  const pid = getDynamicRoute(req)
 
-  if (!pid) {
-    return Response.json(
-      { ok: false, message: 'Project ID is required in Request' },
-      { status: 404 },
-    )
-  }
   const project = await ProjectService.getDefaultProjectResponse(
     pid,
     session.user.teamId,
@@ -43,30 +36,17 @@ const getProjectById = async (req: NextRequest, session: Session) => {
 }
 
 const deleteProjectById = async (req: NextRequest, session: Session) => {
-  // Extracting name from dynamic route
-  const pid = req.nextUrl.pathname.split('/').pop()
+  const pid = getDynamicRoute(req)
 
-  if (!pid) {
-    return Response.json(
-      { ok: false, message: 'Project ID is required in Request' },
-      { status: 404 },
-    )
-  }
   const project = await ProjectService.deleteProject(pid, session.user.teamId)
 
   return Response.json(project, { status: 200 })
 }
 
 const getProjectAssignees = async (req: NextRequest, session: Session) => {
-  // Extracting name from query
-  const pid = req.nextUrl.searchParams.get('id')
+  // Extracting ID from route
+  const pid = getDynamicRoute(req)
 
-  if (!pid) {
-    return Response.json(
-      { ok: false, message: 'Project ID is required in Request' },
-      { status: 404 },
-    )
-  }
   const users = await ProjectService.getProjectAssignees(
     pid,
     session.user.teamId,
@@ -86,14 +66,7 @@ const createProject = async (req: NextRequest, session: Session) => {
 }
 
 const updateProject = async (req: NextRequest, session: Session) => {
-  const pid = req.nextUrl.pathname.split('/').pop()
-
-  if (!pid) {
-    return Response.json(
-      { ok: false, message: 'Project ID is required in Request' },
-      { status: 404 },
-    )
-  }
+  const pid = getDynamicRoute(req)
 
   const body = await req.json()
   const parsedBody = UpdateProjectSchema.parse(body)

@@ -18,14 +18,14 @@ export const createInviteFn = async (payload: CreateInvitationInput) => {
 }
 
 export const updateInvitationFn = async (
-  email: string,
+  id: string,
   payload: UpdateInvitationInput,
 ) => {
-  const { data } = await api.put(`invite/${email}`, payload)
+  const { data } = await api.put(`invite/${id}`, payload)
   return data
 }
 
-export const deleteInvitationFn = async (email: string) => {
-  const { data } = await api.delete(`invite/${email}`)
+export const deleteInvitationFn = async (id: string) => {
+  const { data } = await api.delete(`invite/${id}`)
   return data
 }

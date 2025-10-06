@@ -8,6 +8,7 @@ import type {
   UserResponseType,
 } from '@server/domain/userSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const team = {
   fetchMembers: {
@@ -45,10 +46,11 @@ const team = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['teamMembers'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['teamMembers'] })
@@ -81,10 +83,11 @@ const team = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['teamMembers'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['teamMembers'] })

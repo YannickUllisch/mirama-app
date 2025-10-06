@@ -7,6 +7,9 @@ const getFavouritesByType = async (userId: string, type: string) => {
   const parsedType = FavouriteTypeSchema.parse(type)
   const res = await db.favourite.findMany({
     where: { userId, type: parsedType },
+    orderBy: {
+      data: 'asc',
+    },
   })
   return res.map((r) => FavouriteMapper.mapDefaultToApi(r))
 }

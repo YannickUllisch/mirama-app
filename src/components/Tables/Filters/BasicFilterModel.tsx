@@ -1,10 +1,10 @@
 'use client'
-import type { Table } from '@tanstack/react-table'
-import { Input } from '@src/components/ui/input'
-import { DataTableFacetedFilter } from './FacetedFilter'
-import { Button } from '@src/components/ui/button'
 import { PriorityType, StatusType, TaskStatusType } from '@prisma/client'
+import { Button } from '@src/components/ui/button'
+import { Input } from '@src/components/ui/input'
 import { capitalize } from '@src/lib/utils'
+import type { Table } from '@tanstack/react-table'
+import { DataTableFacetedFilter } from './FacetedFilter'
 
 interface BasicFilterModelProps<TData> {
   table: Table<TData>
@@ -47,7 +47,7 @@ export function BasicFilterModel<TData>({
             })}
           />
         )}
-        {table.getColumn('priority') && (
+        {table?.getColumn('priority') ? (
           <DataTableFacetedFilter
             column={table.getColumn('priority')}
             title="Priority"
@@ -58,7 +58,7 @@ export function BasicFilterModel<TData>({
               }
             })}
           />
-        )}
+        ) : null}
         {isFiltered && (
           <Button
             variant="ghost"

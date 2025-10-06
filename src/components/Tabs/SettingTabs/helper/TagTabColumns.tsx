@@ -1,19 +1,22 @@
 'use client'
 
-import type { TagResponseType, UpdateTagType } from '@server/domain/tagSchema'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import type { TagResponseType } from '@server/domain/tagSchema'
+import {
+  EditableCell,
+  EditableCellType,
+} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
-import { Ellipsis, PenSquareIcon, Trash } from 'lucide-react'
+import { Ellipsis, Trash } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
 
@@ -21,24 +24,11 @@ const columnHelper = createColumnHelper<TagResponseType>()
 
 export const useTagColumns = ({
   session,
-  updateMutation,
+  handleFieldUpdate,
   deleteMutation,
 }: {
   session: Session | null
-  updateMutation: UseMutateFunction<
-    {
-      id: string
-      title: string
-    },
-    Error,
-    {
-      id: string
-      data: UpdateTagType
-    },
-    {
-      previous?: TagResponseType[]
-    }
-  >
+  handleFieldUpdate: HandleFieldUpdate<TagResponseType>
   deleteMutation: UseMutateFunction<
     {
       success: boolean
@@ -57,7 +47,15 @@ export const useTagColumns = ({
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Title" />
         ),
-        cell: ({ getValue }) => <span>{getValue()}</span>,
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'title', value as string)
+            }
+            type={EditableCellType.TEXT}
+          />
+        ),
       }),
 
       columnHelper.display({
@@ -67,7 +65,6 @@ export const useTagColumns = ({
         ),
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
-          const [delDialogOpen, setDelDialogOpen] = useState(false)
 
           if (!isTeamAdminOrOwner(session)) return null
 
@@ -78,44 +75,11 @@ export const useTagColumns = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem
-                  className="gap-2"
-                  onClick={() => {
-                    // Open inline edit modal or directly call updateMutation
-                    const newTitle = prompt(
-                      'Enter new tag title:',
-                      row.original.title,
-                    )
-                    if (newTitle && newTitle.trim().length > 0) {
-                      updateMutation({
-                        id: row.original.id,
-                        data: {
-                          title: newTitle.trim(),
-                        },
-                      })
-                    }
-                  }}
-                >
-                  <PenSquareIcon className="w-3.5 h-3.5" />
-                  Edit
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
                   className="gap-3"
-                  onClick={() => setDelDialogOpen(true)}
+                  onClick={() => deleteMutation(row.original.id)}
                 >
-                  <ConfirmationDialog
-                    open={delDialogOpen}
-                    setOpen={setDelDialogOpen}
-                    dialogTitle={'Delete Tag?'}
-                    dialogDesc={'This action cannot be undone.'}
-                    submitButtonText={'Delete'}
-                    onConfirmation={() => deleteMutation(row.original.id)}
-                  >
-                    <Centering>
-                      <Trash className="h-4 w-4 text-destructive" />
-                      Delete
-                    </Centering>
-                  </ConfirmationDialog>
+                  <Trash className="h-4 w-4 text-destructive" />
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -123,6 +87,6 @@ export const useTagColumns = ({
         },
       }),
     ],
-    [session, updateMutation, deleteMutation],
+    [session, handleFieldUpdate, deleteMutation],
   )
 }

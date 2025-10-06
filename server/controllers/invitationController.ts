@@ -3,6 +3,7 @@ import {
   UpdateInvitationSchema,
 } from '@server/domain/invitationSchema'
 import { InvitationService } from '@server/services/invitationService'
+import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
@@ -25,37 +26,23 @@ const createInvitation = async (req: NextRequest, session: Session) => {
 }
 
 const updateInvitation = async (req: NextRequest, session: Session) => {
-  const email = req.nextUrl.pathname.split('/').pop()
-
-  if (!email) {
-    return Response.json(
-      { ok: false, message: 'Invitation Email is required in Request' },
-      { status: 404 },
-    )
-  }
+  const id = getDynamicRoute(req)
 
   const body: string[] = await req.json()
   const input = UpdateInvitationSchema.parse(body)
 
   const invitations = await InvitationService.updateInvitation(
     session.user.teamId,
-    email,
+    id,
     input,
   )
   return Response.json(invitations, { status: 200 })
 }
 
 const deleteInvitation = async (req: NextRequest, session: Session) => {
-  const email = req.nextUrl.pathname.split('/').pop()
+  const id = getDynamicRoute(req)
 
-  if (!email) {
-    return Response.json(
-      { ok: false, message: 'Invitation Email is required in Request' },
-      { status: 404 },
-    )
-  }
-
-  await InvitationService.deleteInvitation(session.user.teamId, email)
+  await InvitationService.deleteInvitation(session.user.teamId, id)
   return Response.json(
     { success: true, message: 'Deleted successfully' },
     { status: 200 },

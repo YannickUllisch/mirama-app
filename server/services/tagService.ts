@@ -1,12 +1,18 @@
 import db from '@db'
 import type { CreateTagType, UpdateTagType } from '@server/domain/tagSchema'
+import { TagMapper } from '@server/mapping/tag/tagMapper'
 
 const getAllTeamTags = async (teamId: string) => {
-  return await db.tag.findMany({
+  const tags = await db.tag.findMany({
     where: {
       teamId,
     },
+    orderBy: {
+      title: 'asc',
+    },
   })
+
+  return tags.map((t) => TagMapper.mapDefaultToApi(t))
 }
 
 const createNewTeamTag = async (input: CreateTagType, teamId: string) => {
@@ -17,7 +23,7 @@ const createNewTeamTag = async (input: CreateTagType, teamId: string) => {
     },
   })
 
-  return tag
+  return TagMapper.mapDefaultToApi(tag)
 }
 
 const updateTag = async (
@@ -35,23 +41,21 @@ const updateTag = async (
     },
   })
 
-  return tag
+  return TagMapper.mapDefaultToApi(tag)
 }
 
-const deleteTags = async (ids: string[], teamId: string) => {
-  const tag = await db.tag.deleteMany({
+const deleteTag = async (id: string, teamId: string) => {
+  return await db.tag.delete({
     where: {
       teamId,
-      id: { in: ids },
+      id: id,
     },
   })
-
-  return tag
 }
 
 export const TagService = {
   updateTag,
   createNewTeamTag,
   getAllTeamTags,
-  deleteTags,
+  deleteTag,
 }

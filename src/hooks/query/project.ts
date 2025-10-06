@@ -14,6 +14,7 @@ import type {
 } from '@server/domain/projectSchema'
 import type { UserProjectResponseType } from '@server/domain/userSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const project = {
   fetchAll: {
@@ -64,10 +65,11 @@ const project = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['projects'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
@@ -82,7 +84,11 @@ const project = {
       return useMutation<
         ProjectResponseInput,
         Error,
-        { id: string; data: UpdateProjectInput }
+        { id: string; data: UpdateProjectInput },
+        {
+          previousProjects?: ProjectResponseInput[]
+          previousProject?: ProjectResponseInput
+        }
       >({
         mutationFn: ({ id, data }) => updateProjectFn(id, data),
         onMutate: async ({ id, data }) => {
@@ -130,15 +136,16 @@ const project = {
 
           return { previousProjects, previousProject }
         },
-        // onError: (_err, _vars, ctx) => {
-        //   // Rollback to previous cache on error
-        //   if (ctx?.previousProjects) {
-        //     queryClient.setQueryData(['projects'], ctx.previousProjects)
-        //   }
-        //   if (ctx?.previousProject) {
-        //     queryClient.setQueryData(['project', _vars.id], ctx.previousProject)
-        //   }
-        // },
+        onError: (err, _vars, ctx) => {
+          // Rollback to previous cache on error
+          if (ctx?.previousProjects) {
+            queryClient.setQueryData(['projects'], ctx.previousProjects)
+          }
+          if (ctx?.previousProject) {
+            queryClient.setQueryData(['project', _vars.id], ctx.previousProject)
+          }
+          toast.error(err?.message || 'An error occurred')
+        },
         onSettled: (_data, _error, variables) => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
           if (variables?.id) {
@@ -154,14 +161,18 @@ const project = {
   delete: {
     useMutation: () => {
       const queryClient = useQueryClient()
-      return useMutation<{ success: boolean }, Error, string>({
+      return useMutation<
+        { success: boolean },
+        Error,
+        string,
+        { previous: ProjectResponseInput[] }
+      >({
         mutationFn: deleteProjectFn,
         onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
 
-          const previous = queryClient.getQueryData<ProjectResponseInput[]>([
-            'projects',
-          ])
+          const previous =
+            queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
 
           queryClient.setQueryData<ProjectResponseInput[]>(
             ['projects'],
@@ -170,11 +181,12 @@ const project = {
 
           return { previous }
         },
-        // onError: (_err, _vars, ctx) => {
-        //   if (ctx?.previous) {
-        //     queryClient.setQueryData(['projects'], ctx.previous)
-        //   }
-        // },
+        onError: (err, _vars, ctx) => {
+          if (ctx?.previous) {
+            queryClient.setQueryData(['projects'], ctx.previous)
+          }
+          toast.error(err?.message || 'An error occurred')
+        },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
         },
@@ -188,15 +200,21 @@ const project = {
       return useMutation<
         { success: boolean },
         Error,
-        { id: string; archive: boolean }
+        { id: string; archive: boolean },
+        {
+          previousProject: ProjectResponseInput | null
+          previousProjects: ProjectResponseInput[]
+        }
       >({
         mutationFn: ({ id, archive }) => archiveProjectFn(id, archive),
         onMutate: async ({ id, archive }) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
+          await queryClient.cancelQueries({ queryKey: ['project', id] })
 
-          const previous = queryClient.getQueryData<ProjectResponseInput[]>([
-            'projects',
-          ])
+          const previousProject =
+            queryClient.getQueryData<ProjectResponseInput>(['project', id])
+          const previousProjects =
+            queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
 
           queryClient.setQueryData<ProjectResponseInput[]>(
             ['projects'],
@@ -204,15 +222,36 @@ const project = {
               old.map((p) => (p.id === id ? { ...p, archived: archive } : p)),
           )
 
-          return { previous }
+          queryClient.setQueryData<ProjectResponseInput>(
+            ['project', id],
+            (old) =>
+              old
+                ? {
+                    ...old,
+                    archived: old.archived,
+                  }
+                : old,
+          )
+
+          // Ensure previousProject is never undefined
+          return { previousProject: previousProject ?? null, previousProjects }
         },
-        // onError: (_err, _vars, ctx) => {
-        //   if (ctx?.previous) {
-        //     queryClient.setQueryData(['projects'], ctx.previous)
-        //   }
-        // },
-        onSettled: () => {
+        onError: (err, _vars, ctx) => {
+          if (ctx?.previousProjects) {
+            queryClient.setQueryData(['projects'], ctx.previousProjects)
+          }
+          if (ctx?.previousProject) {
+            queryClient.setQueryData(['project', _vars.id], ctx.previousProject)
+          }
+          toast.error(err?.message || 'An error occurred')
+        },
+        onSettled: (_data, _error, variables) => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
+          if (variables?.id) {
+            queryClient.invalidateQueries({
+              queryKey: ['project', variables.id],
+            })
+          }
         },
       })
     },

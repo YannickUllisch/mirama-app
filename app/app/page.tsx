@@ -84,7 +84,7 @@ const Dashboard = () => {
   // }, [projects, tasks])
 
   return (
-    <div className=" dark:bg-neutral-900">
+    <div>
       <PageHeader
         title="Dashboard"
         description="Welcome back. Here's an overview of your projects and tasks."

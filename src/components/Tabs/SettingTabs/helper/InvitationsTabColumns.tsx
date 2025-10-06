@@ -1,14 +1,17 @@
 'use client'
-import type {
-  InvitationResponseType,
-  UpdateInvitationInput,
-} from '@server/domain/invitationSchema'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
-import HoverLink from '@src/components/HoverLink'
+import type { RoleType } from '@/prisma/zod/inputTypeSchemas/RoleSchema'
+import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import { Role } from '@prisma/client'
+import type { InvitationResponseType } from '@server/domain/invitationSchema'
+import {
+  EditableCell,
+  EditableCellType,
+} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
+import { Button } from '@ui/button'
 import Centering from '@ui/centering'
 import {
   DropdownMenu,
@@ -16,9 +19,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
-import { Ellipsis, RefreshCw, Trash } from 'lucide-react'
+import { Ellipsis, RefreshCcw, Trash } from 'lucide-react'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
 const columnHelper = createColumnHelper<
@@ -27,21 +31,11 @@ const columnHelper = createColumnHelper<
 
 export const useInvitationColumns = ({
   session,
-  updateMutation,
+  handleFieldUpdate,
   deleteMutation,
 }: {
   session: Session | null
-  updateMutation: UseMutateFunction<
-    InvitationResponseType,
-    Error,
-    {
-      email: string
-      payload: UpdateInvitationInput
-    },
-    {
-      previous?: InvitationResponseType[]
-    }
-  >
+  handleFieldUpdate: HandleFieldUpdate<InvitationResponseType>
   deleteMutation: UseMutateFunction<
     {
       success: boolean
@@ -60,7 +54,15 @@ export const useInvitationColumns = ({
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Name" />
         ),
-        cell: ({ getValue }) => <span>{getValue()}</span>,
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'name', value as string)
+            }
+            type={EditableCellType.TEXT}
+          />
+        ),
       }),
 
       columnHelper.accessor('email', {
@@ -69,12 +71,12 @@ export const useInvitationColumns = ({
           <DataTableColumnHeader column={column} title="Email" />
         ),
         cell: ({ getValue }) => (
-          <HoverLink
+          <Link
             href={`mailto:${getValue()}`}
             className="hover:underline text-primary"
           >
             {getValue()}
-          </HoverLink>
+          </Link>
         ),
       }),
 
@@ -83,7 +85,21 @@ export const useInvitationColumns = ({
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Role" />
         ),
-        cell: ({ getValue }) => capitalize(getValue()),
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            options={
+              Object.values(Role).map((r) => ({
+                label: capitalize(r) as string,
+                value: r,
+              })) ?? []
+            }
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'role', value as RoleType)
+            }
+            type={EditableCellType.SELECT}
+          />
+        ),
       }),
 
       columnHelper.accessor('expiresAt', {
@@ -91,9 +107,27 @@ export const useInvitationColumns = ({
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Expires At" />
         ),
-        cell: ({ getValue }) => {
+        cell: ({ row, getValue }) => {
           const date = new Date(getValue())
-          return DateTime.fromJSDate(date).toFormat('dd.MM.yyyy')
+          return (
+            <div>
+              <span>
+                {DateTime.fromJSDate(date).toFormat('dd.MM.yyyy HH:mm')}
+              </span>
+              <Button
+                variant={'ghost'}
+                onClick={() =>
+                  handleFieldUpdate(
+                    row.original,
+                    'expiresAt',
+                    DateTime.utc().plus({ day: 1 }).toJSDate(),
+                  )
+                }
+              >
+                <RefreshCcw className="w-3 h-3" />
+              </Button>
+            </div>
+          )
         },
       }),
 
@@ -104,7 +138,6 @@ export const useInvitationColumns = ({
         ),
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
-          const [delDialogOpen, setDelDialogOpen] = useState(false)
 
           if (!isTeamAdminOrOwner(session)) return null
 
@@ -116,38 +149,12 @@ export const useInvitationColumns = ({
               <DropdownMenuContent>
                 <DropdownMenuItem
                   className="gap-2"
-                  onClick={() =>
-                    updateMutation({
-                      email: row.original.email,
-                      payload: {
-                        extendInvitation: true,
-                        name: row.original.name,
-                        role: row.original.role,
-                      },
-                    })
-                  }
+                  onClick={() => deleteMutation(row.original.id)}
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  Extend Invitation
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  className="gap-3"
-                  onClick={() => setDelDialogOpen(true)}
-                >
-                  <ConfirmationDialog
-                    open={delDialogOpen}
-                    setOpen={setDelDialogOpen}
-                    dialogTitle={'Delete Invitation?'}
-                    dialogDesc={'Deleting this invitation cannot be undone.'}
-                    submitButtonText={'Delete'}
-                    onConfirmation={() => deleteMutation(row.original.email)}
-                  >
-                    <Centering>
-                      <Trash className="h-4 w-4 text-destructive" />
-                      Delete
-                    </Centering>
-                  </ConfirmationDialog>
+                  <Centering>
+                    <Trash className="h-4 w-4 text-destructive" />
+                    Delete
+                  </Centering>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -155,6 +162,6 @@ export const useInvitationColumns = ({
         },
       }),
     ],
-    [session, updateMutation, deleteMutation],
+    [session, handleFieldUpdate, deleteMutation],
   )
 }

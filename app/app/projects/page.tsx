@@ -1,14 +1,16 @@
 'use client'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
-import type {
-  ProjectResponseInput,
-  UpdateProjectInput,
+import {
+  type ProjectResponseInput,
+  type UpdateProjectInput,
+  UpdateProjectSchema,
 } from '@server/domain/projectSchema'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Folders } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 import { useProjectColumns } from './columns'
 
 const ProjectsPage = () => {
@@ -28,6 +30,7 @@ const ProjectsPage = () => {
     UpdateProjectInput
   >({
     mutate: projectMutation,
+    updateSchema: UpdateProjectSchema,
     mapToUpdateInput: (data) => ({
       ...data,
       tags: data.tags.map((t) => t.id),
@@ -36,6 +39,10 @@ const ProjectsPage = () => {
         userId: u.id,
       })),
     }),
+    onValidationError: (err) => {
+      const firstMessage = err.errors?.[0]?.message || 'Input Error'
+      toast.error(`Input Error: ${firstMessage}`)
+    },
   })
 
   return (

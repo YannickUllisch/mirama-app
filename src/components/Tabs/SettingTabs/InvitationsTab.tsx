@@ -1,13 +1,18 @@
 'use client'
 import apiRequest from '@hooks/query'
+import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import {
+  type InvitationResponseType,
+  type UpdateInvitationInput,
+  UpdateInvitationSchema,
+} from '@server/domain/invitationSchema'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import { Plus, UserPlus } from 'lucide-react'
 import type { Session } from 'next-auth'
-import { useMemo } from 'react'
-import { v4 } from 'uuid'
+import { toast } from 'sonner'
 import { useInvitationColumns } from './helper/InvitationsTabColumns'
 
 const InvitationsTab = ({ session }: { session: Session | null }) => {
@@ -19,20 +24,23 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
   const { mutate: useDeleteInvitation } =
     apiRequest.invitation.delete.useMutation()
 
-  // Problem is that DataTable expects an ID which is not given in the
-  // CompanyInvitation type.
-  const revisedInvitations = useMemo(() => {
-    if (invitations) {
-      return invitations?.map((inv) => {
-        return {
-          ...inv,
-          id: v4(),
-        }
-      })
-    }
-
-    return []
-  }, [invitations])
+  // Update State
+  const { handleFieldUpdate } = useEditableColumns<
+    InvitationResponseType,
+    UpdateInvitationInput
+  >({
+    mutate: useUpdateInvitation,
+    updateSchema: UpdateInvitationSchema,
+    mapToUpdateInput: (data) => ({
+      extendInvitation: true,
+      name: data.name,
+      role: data.role,
+    }),
+    onValidationError: (err) => {
+      const firstMessage = err.errors?.[0]?.message || 'Input Error'
+      toast.error(`Input Error: ${firstMessage}`)
+    },
+  })
 
   return (
     <>
@@ -46,9 +54,9 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
         columns={useInvitationColumns({
           deleteMutation: useDeleteInvitation,
           session: session,
-          updateMutation: useUpdateInvitation,
+          handleFieldUpdate: handleFieldUpdate,
         })}
-        data={revisedInvitations ?? []}
+        data={invitations ?? []}
         dataLoading={isLoading}
         toolbarOptions={{
           showFilterOption: true,

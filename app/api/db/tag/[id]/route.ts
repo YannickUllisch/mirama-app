@@ -3,12 +3,12 @@ import { TagController } from '@server/controllers/tagController'
 import { exceptionHandler } from '@server/utils/exceptionHandler'
 import { withAuth } from '@withAuth'
 
-export const GET = withAuth(
-  Object.values(Role),
-  exceptionHandler(TagController.getTags),
+export const PUT = withAuth(
+  [Role.OWNER, Role.ADMIN],
+  exceptionHandler(TagController.updateTag),
 )
 
-export const POST = withAuth(
+export const DELETE = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(TagController.createTag),
+  exceptionHandler(TagController.deleteTag),
 )

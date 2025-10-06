@@ -113,12 +113,9 @@ const AppHeader = () => {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search data, notebooks, recents, and more..."
-              className="w-full pl-9 pr-20 bg-gray-50 border-sidebar-border focus-visible:ring-sidebar-ring"
+              placeholder="Search projects, tasks, recents, and more..."
+              className="w-full pl-9 bg-card border-sidebar-border focus-visible:ring-sidebar-ring"
             />
-            <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border border-sidebar-border bg-white px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-              <span className="text-xs">⌘</span>P
-            </kbd>
           </div>
         </div>
 

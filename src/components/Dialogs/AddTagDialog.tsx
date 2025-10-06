@@ -40,15 +40,18 @@ const AddTagDialog = () => {
   })
 
   // Hooks
-  const { mutateAsync: useCreateTag, isPending: isCreatePending } =
+  const { mutate: useCreateTag, isPending: isCreatePending } =
     apiRequest.tag.create.useMutation()
 
   // Helper functions
   const onSubmit = (vals: CreateTagType) => {
-    startTransition(async () => {
-      await useCreateTag(vals)
+    startTransition(() => {
+      useCreateTag(vals, {
+        onSuccess: () => {
+          handleClose()
+        },
+      })
     })
-    handleClose()
   }
 
   const handleClose = () => {
@@ -59,7 +62,7 @@ const AddTagDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button size={'sm'}>
           <Plus className="w-4 h-4" />
           Create
         </Button>
@@ -102,15 +105,13 @@ const AddTagDialog = () => {
                   Close
                 </Button>
               </DialogClose>
-              <DialogClose asChild>
-                <Button
-                  type="submit"
-                  disabled={isPending || isCreatePending}
-                  variant="default"
-                >
-                  Create
-                </Button>
-              </DialogClose>
+              <Button
+                type="submit"
+                disabled={isPending || isCreatePending}
+                variant="default"
+              >
+                Create
+              </Button>
             </DialogFooter>
           </form>
         </Form>

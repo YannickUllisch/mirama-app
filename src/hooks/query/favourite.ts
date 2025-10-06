@@ -10,6 +10,7 @@ import type {
   FavouriteResponseType,
 } from '@server/domain/favouriteSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const favourite = {
   fetchAll: {
@@ -62,10 +63,11 @@ const favourite = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['favourites'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['favourites'] })
@@ -99,10 +101,11 @@ const favourite = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['favourites'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['favourites'] })

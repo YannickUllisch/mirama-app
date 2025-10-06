@@ -1,11 +1,12 @@
 'use client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import PageHeader from '@src/components/PageHeader'
 import { Button } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'
 import { Label } from '@src/components/ui/label'
 import { Separator } from '@src/components/ui/separator'
-import { LogOut } from 'lucide-react'
+import { LogOut, UserIcon } from 'lucide-react'
 import type { Session } from 'next-auth'
 import type { FC } from 'react'
 
@@ -18,7 +19,11 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
     <div className="flex justify-between mb-5 flex-col">
       <div className="justify-between pb-5 grid grid-cols-2">
         <div className="flex flex-col gap-y-2">
-          <span className="font-medium text-2xl pb-5">Account Settings</span>
+          <PageHeader
+            icon={UserIcon}
+            title="Account"
+            description="View and manage your Profile"
+          />
           <Label>Profile picture</Label>
           <div className="p-2 flex items-center gap-5 pb-5">
             <UserAvatar

@@ -1,5 +1,6 @@
 import { CreateFavouriteSchema } from '@server/domain/favouriteSchema'
 import { FavouriteService } from '@server/services/favouriteService'
+import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
@@ -30,16 +31,9 @@ const createFavourite = async (req: NextRequest, session: Session) => {
 }
 
 const deleteFavourite = async (req: NextRequest, session: Session) => {
-  const fid = req.nextUrl.pathname.split('/').pop()
+  const id = getDynamicRoute(req)
 
-  if (!fid) {
-    return Response.json(
-      { ok: false, message: 'Fav ID is required in Request' },
-      { status: 404 },
-    )
-  }
-
-  await FavouriteService.deleteFavourite(session.user.id ?? '', fid)
+  await FavouriteService.deleteFavourite(session.user.id ?? '', id)
 
   return Response.json(
     { success: true, message: 'Deleted successfully' },

@@ -10,7 +10,12 @@ import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 
 const getInvitationsByTeam = async (teamId: string) => {
-  const res = await db.companyInvitation.findMany({ where: { teamId } })
+  const res = await db.companyInvitation.findMany({
+    where: { teamId },
+    orderBy: {
+      email: 'asc',
+    },
+  })
   return res.map((r) => InvitationMapper.mapDefaultToApi(r))
 }
 
@@ -52,16 +57,17 @@ const createNewInvitation = async (
 
 const updateInvitation = async (
   teamId: string,
-  email: string,
+  invId: string,
   invitation: UpdateInvitationInput,
 ) => {
   const res = await db.companyInvitation.update({
     where: {
-      email: email,
+      id: invId,
       teamId: teamId,
     },
     data: {
-      ...invitation,
+      role: invitation.role,
+      name: invitation.name,
       expiresAt: invitation.extendInvitation
         ? DateTime.now().plus({ days: 1 }).toJSDate()
         : undefined,
@@ -72,9 +78,9 @@ const updateInvitation = async (
   return InvitationMapper.mapDefaultToApi(res)
 }
 
-const deleteInvitation = async (teamId: string, email: string) => {
+const deleteInvitation = async (teamId: string, id: string) => {
   await db.companyInvitation.deleteMany({
-    where: { email, teamId },
+    where: { id, teamId },
   })
 }
 

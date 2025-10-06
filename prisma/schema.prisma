@@ -89,7 +89,8 @@ model VerificationToken {
 }
 
 model CompanyInvitation {
-  email     String   @id
+  id        String     @id @default(cuid())
+  email     String  
   name      String  
   role      Role
   teamId    String

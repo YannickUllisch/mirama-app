@@ -2,6 +2,7 @@ import z from 'zod'
 import { RoleSchema } from './enumSchemas'
 
 export const InvitationResponseSchema = z.object({
+  id: z.string(),
   email: z.string().email(),
   name: z.string(),
   role: RoleSchema,

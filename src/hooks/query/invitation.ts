@@ -11,6 +11,7 @@ import type {
 } from '@server/domain/invitationSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
+import { toast } from 'sonner'
 
 const invitation = {
   fetchAll: {
@@ -45,6 +46,7 @@ const invitation = {
               ...old,
               {
                 ...newInvite,
+                id: `temp-${Math.random()}`,
                 email: newInvite.email ?? `temp-${Math.random()}`,
                 expiresAt: DateTime.utc().plus({ days: 1 }).toJSDate(),
                 teamId: '',
@@ -54,10 +56,11 @@ const invitation = {
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['invitation'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['invitation'] })
@@ -72,11 +75,11 @@ const invitation = {
       return useMutation<
         InvitationResponseType,
         Error,
-        { email: string; payload: UpdateInvitationInput },
+        { id: string; data: UpdateInvitationInput },
         { previous?: InvitationResponseType[] }
       >({
-        mutationFn: ({ email, payload }) => updateInvitationFn(email, payload),
-        onMutate: async ({ email, payload }) => {
+        mutationFn: ({ id, data }) => updateInvitationFn(id, data),
+        onMutate: async ({ id, data }) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
           const previous = queryClient.getQueryData<InvitationResponseType[]>([
@@ -87,17 +90,16 @@ const invitation = {
           queryClient.setQueryData<InvitationResponseType[]>(
             ['invitation'],
             (old = []) =>
-              old.map((inv) =>
-                inv.email === email ? { ...inv, ...payload } : inv,
-              ),
+              old.map((inv) => (inv.id === id ? { ...inv, ...data } : inv)),
           )
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['invitation'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['invitation'] })
@@ -116,7 +118,7 @@ const invitation = {
         { previous?: InvitationResponseType[] }
       >({
         mutationFn: deleteInvitationFn,
-        onMutate: async (email) => {
+        onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
           const previous = queryClient.getQueryData<InvitationResponseType[]>([
@@ -126,15 +128,16 @@ const invitation = {
           // Optimistically remove the invitation from the cache
           queryClient.setQueryData<InvitationResponseType[]>(
             ['invitation'],
-            (old = []) => old.filter((p) => p.email !== email),
+            (old = []) => old.filter((p) => p.id !== id),
           )
 
           return { previous }
         },
-        onError: (_err, _vars, ctx) => {
+        onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['invitation'], ctx.previous)
           }
+          toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['invitation'] })

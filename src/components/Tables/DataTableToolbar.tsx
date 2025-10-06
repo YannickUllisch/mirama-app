@@ -1,21 +1,17 @@
+import { BasicFilterModel } from '@src/components/Tables/Filters/BasicFilterModel'
+import { ToolbarViewOptions } from '@src/components/Tables/Toolbar/ToolbarViewOptions'
+import { Button } from '@src/components/ui/button'
 import type { ColumnFiltersState, Table } from '@tanstack/react-table'
+import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'
-import { getLocalStorageItem, type TableData } from './DataTable'
-import { BasicFilterModel } from '@src/components/Tables/Filters/BasicFilterModel'
-import { ChevronDown, SlidersHorizontal } from 'lucide-react'
-import { Button } from '@src/components/ui/button'
-import { ToolbarViewOptions } from '@src/components/Tables/Toolbar/ToolbarViewOptions'
-import ToolbarRefresh from '@src/components/Tables/Toolbar/ToolbarRefresh'
+import { type TableData, getLocalStorageItem } from './DataTable'
 
 interface DataTableToolBarProps<TData extends TableData<TData>> {
   table: Table<TData>
   tableIdentifier: string
   columnFilters: ColumnFiltersState
   toolbarOptions?: {
-    refresh?: {
-      mutate?: () => any
-    }
     addToolbarleft?: React.ReactNode
     addToolbarright?: React.ReactNode
     showFilterOption?: boolean
@@ -80,9 +76,6 @@ const DataTableToolbar = <TData extends TableData<TData>>({
         <div className="flex gap-1 items-center">
           {toolbarOptions?.addToolbarright}
           <ToolbarViewOptions table={table} />
-          {toolbarOptions?.refresh && (
-            <ToolbarRefresh mutate={toolbarOptions.refresh.mutate} />
-          )}
         </div>
       </div>
 
