@@ -19,7 +19,9 @@ const ProjectsPage = () => {
   const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
-
+  const { mutate: useArchiveMutation } =
+    apiRequest.project.archive.useMutation()
+  const { mutate: useDeleteMutation } = apiRequest.project.delete.useMutation()
   // Column Update handler
   const { handleFieldUpdate } = useEditableColumns<
     ProjectResponseInput,
@@ -37,7 +39,7 @@ const ProjectsPage = () => {
   })
 
   return (
-    <div>
+    <>
       <PageHeader
         title="Your Projects"
         description="Manage your projects"
@@ -49,6 +51,8 @@ const ProjectsPage = () => {
           session: session,
           users: users ?? [],
           handleFieldUpdate,
+          archiveMutation: useArchiveMutation,
+          deleteMutation: useDeleteMutation,
         })}
         data={projects ?? []}
         dataLoading={isLoading}
@@ -59,7 +63,7 @@ const ProjectsPage = () => {
           showPagination: true,
         }}
       />
-    </div>
+    </>
   )
 }
 

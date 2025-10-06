@@ -1,7 +1,4 @@
-import {
-  CreateFavouriteSchema,
-  DeleteFavouritesSchema,
-} from '@server/domain/favouriteSchema'
+import { CreateFavouriteSchema } from '@server/domain/favouriteSchema'
 import { FavouriteService } from '@server/services/favouriteService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
@@ -33,9 +30,15 @@ const createFavourite = async (req: NextRequest, session: Session) => {
 }
 
 const deleteFavourite = async (req: NextRequest, session: Session) => {
-  const body: string[] = await req.json()
-  const input = DeleteFavouritesSchema.parse(body)
-  await FavouriteService.deleteFavourites(session.user.id ?? '', input)
+  const fid = req.nextUrl.pathname.split('/').pop()
+
+  if (!fid) {
+    return Response.json(
+      { ok: false, message: 'Fav ID is required in Request' },
+      { status: 404 },
+    )
+  }
+  await FavouriteService.deleteFavourite(session.user.id ?? '', fid)
 
   return Response.json(
     { success: true, message: 'Deleted successfully' },

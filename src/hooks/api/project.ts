@@ -11,6 +11,13 @@ export const fetchProjectsFn = async (): Promise<ProjectResponseInput[]> => {
   return data
 }
 
+export const fetchArchivedProjectsFn = async (): Promise<
+  ProjectResponseInput[]
+> => {
+  const { data } = await api.get('project?archived=true')
+  return data
+}
+
 export const fetchProjectByIdFn = async (
   id: string,
 ): Promise<ProjectResponseInput | null> => {
@@ -43,12 +50,8 @@ export const deleteProjectFn = async (id: string) => {
   return data
 }
 
-export const archiveProjectFn = async (id: string) => {
-  const { data } = await api.post(`project/${id}/archive`)
-  return data
-}
-
-export const unarchiveProjectFn = async (id: string) => {
-  const { data } = await api.post(`project/${id}/unarchive`)
+export const archiveProjectFn = async (id: string, archived: boolean) => {
+  const archiveRoute = archived ? 'archive' : 'unarchive'
+  const { data } = await api.post(`project/${id}/${archiveRoute}`)
   return data
 }

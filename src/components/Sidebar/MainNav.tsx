@@ -1,10 +1,11 @@
 'use client'
-import { Role } from '@prisma/client'
+import type { Role } from '@prisma/client'
+import type { AppMenuItem } from '@src/types/types'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@src/components/ui/collapsible'
+} from '@ui/collapsible'
 import {
   SidebarGroup,
   SidebarMenu,
@@ -13,96 +14,84 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@src/components/ui/sidebar'
-import type { AppMenuItem } from '@src/types/types'
-import { ChevronRight } from 'lucide-react'
+} from '@ui/sidebar'
+import { ChevronDown } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import type { FC } from 'react'
 
-interface MainNavProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof SidebarGroup>, 'props'> {
+interface MainNavProps {
   items: AppMenuItem[]
   session: Session | null
+  pathname: string
 }
 
-const SidebarMainNav: FC<MainNavProps> = ({ items, session, ...props }) => {
-  const pathname = usePathname()
+const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
+  const hasRole = (roles: Role[]) => {
+    if (!session?.user) return false
+    return roles.includes(session.user.role as Role)
+  }
+
   return (
-    <SidebarGroup {...props}>
+    <SidebarGroup>
       <SidebarMenu>
-        {items.map(
-          (item) =>
-            item.roles?.includes(session?.user.role ?? Role.USER) && (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={item.isActive}
-                className="group/collapsible"
-              >
+        {items.map((item) => {
+          if (item.roles && !hasRole(item.roles)) return null
+
+          if (item.isCollapsible && item.items) {
+            return (
+              <Collapsible key={item.title} defaultOpen={item.isActive}>
                 <SidebarMenuItem>
-                  {!item.isCollapsible && item.href ? (
-                    <Link href={item.href} prefetch>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        className={
-                          item.href === pathname
-                            ? 'bg-muted dark:bg-secondary tracking-tighter'
-                            : ''
-                        }
-                      >
-                        {item.icon && <item.icon />}
-
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </Link>
-                  ) : (
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
-                        {item.icon && <item.icon />}
-                        <span>{item.title}</span>
-                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                  )}
-
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className="relative data-[active=true]:bg-transparent data-[active=true]:text-sidebar-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-0 data-[active=true]:before:bottom-0 data-[active=true]:before:w-1 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-r"
+                    >
+                      <item.icon className="size-4" strokeWidth={1.5} />
+                      <span>{item.title}</span>
+                      <ChevronDown className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map(
-                        (subItem) =>
-                          subItem.roles?.includes(
-                            session?.user.role ?? Role.USER,
-                          ) && (
-                            <SidebarMenuSubItem
-                              key={subItem.title}
-                              className={
-                                item.href === pathname
-                                  ? 'bg-background dark:bg-secondary'
-                                  : ''
-                              }
+                      {item.items.map((subItem) => {
+                        if (subItem.roles && !hasRole(subItem.roles))
+                          return null
+                        return (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={`${subItem.href === pathname ? 'bg-transparent text-text font-semibold underline underline-offset-4' : ''}`}
                             >
-                              <SidebarMenuSubButton
-                                asChild
-                                className={
-                                  subItem.href === pathname
-                                    ? 'bg-secondary'
-                                    : ''
-                                }
-                              >
-                                <Link href={subItem.href} prefetch>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ),
-                      )}
+                              <Link href={subItem.href}>
+                                <span>{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        )
+                      })}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
-            ),
-        )}
+            )
+          }
+
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === item.href}
+                tooltip={item.title}
+                className="relative data-[active=true]:bg-transparent data-[active=true]:hover:bg-primary data-[active=true]:hover:text-sidebar-accent-foreground data-[active=true]:text-sidebar-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-0 data-[active=true]:before:bottom-0 data-[active=true]:before:w-1 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-r"
+              >
+                <Link href={item.href ?? '/app'}>
+                  <item.icon className="size-4" strokeWidth={1.5} />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )
+        })}
       </SidebarMenu>
     </SidebarGroup>
   )

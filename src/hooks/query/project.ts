@@ -2,10 +2,10 @@ import {
   archiveProjectFn,
   createProjectFn,
   deleteProjectFn,
+  fetchArchivedProjectsFn,
   fetchProjectAssigneesFn,
   fetchProjectByIdFn,
   fetchProjectsFn,
-  unarchiveProjectFn,
   updateProjectFn,
 } from '@hooks/api/project'
 import type {
@@ -39,6 +39,14 @@ const project = {
         enabled: !!id,
         queryKey: ['projectAssignees', id],
         queryFn: () => fetchProjectAssigneesFn(id),
+      }),
+  },
+
+  fetchArchived: {
+    useQuery: () =>
+      useQuery<ProjectResponseInput[]>({
+        queryKey: ['projects'],
+        queryFn: () => fetchArchivedProjectsFn(),
       }),
   },
 
@@ -177,9 +185,13 @@ const project = {
   archive: {
     useMutation: () => {
       const queryClient = useQueryClient()
-      return useMutation<{ success: boolean }, Error, string>({
-        mutationFn: archiveProjectFn,
-        onMutate: async (id) => {
+      return useMutation<
+        { success: boolean },
+        Error,
+        { id: string; archive: boolean }
+      >({
+        mutationFn: ({ id, archive }) => archiveProjectFn(id, archive),
+        onMutate: async ({ id, archive }) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
 
           const previous = queryClient.getQueryData<ProjectResponseInput[]>([
@@ -189,39 +201,7 @@ const project = {
           queryClient.setQueryData<ProjectResponseInput[]>(
             ['projects'],
             (old = []) =>
-              old.map((p) => (p.id === id ? { ...p, archived: true } : p)),
-          )
-
-          return { previous }
-        },
-        // onError: (_err, _vars, ctx) => {
-        //   if (ctx?.previous) {
-        //     queryClient.setQueryData(['projects'], ctx.previous)
-        //   }
-        // },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['projects'] })
-        },
-      })
-    },
-  },
-
-  unarchive: {
-    useMutation: () => {
-      const queryClient = useQueryClient()
-      return useMutation<{ success: boolean }, Error, string>({
-        mutationFn: unarchiveProjectFn,
-        onMutate: async (id) => {
-          await queryClient.cancelQueries({ queryKey: ['projects'] })
-
-          const previous = queryClient.getQueryData<ProjectResponseInput[]>([
-            'projects',
-          ])
-
-          queryClient.setQueryData<ProjectResponseInput[]>(
-            ['projects'],
-            (old = []) =>
-              old.map((p) => (p.id === id ? { ...p, archived: false } : p)),
+              old.map((p) => (p.id === id ? { ...p, archived: archive } : p)),
           )
 
           return { previous }

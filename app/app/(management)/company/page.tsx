@@ -1,5 +1,6 @@
 'use client'
 
+import PageHeader from '@src/components/PageHeader'
 import { Avatar, AvatarFallback, AvatarImage } from '@src/components/ui/avatar'
 import { Button } from '@src/components/ui/button'
 import {
@@ -26,6 +27,7 @@ import {
   Clock,
   Plus,
   Users,
+  Users2,
 } from 'lucide-react'
 
 // This would typically come from your database
@@ -66,17 +68,12 @@ const mockData = {
   },
 }
 
-export default function TeamDashboard() {
+const TeamDashboardPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header Section */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {mockData.team.name}
-          </h1>
-          <p className="text-muted-foreground">Team Overview</p>
-        </div>
+        <PageHeader title="Team" description="Team Overview" icon={Users2} />
         <div className="flex gap-4">
           <Select defaultValue="last-7-days">
             <SelectTrigger className="w-[180px]">
@@ -244,3 +241,5 @@ export default function TeamDashboard() {
     </div>
   )
 }
+
+export default TeamDashboardPage

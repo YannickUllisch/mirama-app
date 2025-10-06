@@ -158,6 +158,20 @@ const updateProject = async (
 const createProject = async (input: CreateProjectInput, teamId: string) => {
   withPrismaErrorSanitizer(async () => {
     const { newMilestones, newTags, ...proj } = input
+
+    const existingProject = await db.project.findFirst({
+      where: {
+        teamId,
+        name: proj.name,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    if (existingProject)
+      throw new Error('Project name must be Unique across your Team.')
+
     const project = await db.project.create({
       data: {
         ...proj,
@@ -193,6 +207,25 @@ const deleteProject = async (pid: string, teamId: string) => {
   })
 }
 
+const archiveProject = async (
+  projectId: string,
+  teamId: string,
+  archive: boolean,
+) => {
+  await withPrismaErrorSanitizer(async () => {
+    const res = await db.project.update({
+      where: {
+        id: projectId,
+        teamId,
+      },
+      data: {
+        archived: archive,
+      },
+    })
+    return res
+  })
+}
+
 export const ProjectService = {
   getDefaultProjectResponse,
   deleteProject,
@@ -200,4 +233,5 @@ export const ProjectService = {
   updateProject,
   getAllProjects,
   getProjectAssignees,
+  archiveProject,
 }

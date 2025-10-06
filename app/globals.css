@@ -29,14 +29,18 @@
     --text-inverted: 249 7% 96%;
     --text-secondary: 11 10% 40%; /* Darker Oat */
     --hover: 40 14% 92%; /* Oat Medium */
+
+    /* Sidebar */
     --sidebar-background: 0 0% 97%; /* Oat Light */
-    --sidebar-foreground: 11 32% 15%; /* Navy 900 */
+    --sidebar-foreground: 197 35% 10%; /* Navy 900 */
     --sidebar-primary: 6 100% 56%; /* Lava 600 */
-    --sidebar-primary-foreground: 249 7% 96%; /* Oat Light */
-    --sidebar-accent: 40 14% 92%; /* Oat Medium */
-    --sidebar-accent-foreground: 11 32% 15%; /* Navy 900 */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 6 100% 56%; /* Lava 600 */
+    --sidebar-accent-foreground: 197 35% 95%; /* Navy 900 */
     --sidebar-border: 40 10% 85%; /* Light Oat */
     --sidebar-ring: 6 100% 56%; /* Lava 600 */
+
+    /* Charts */
     --chart-1: 6 100% 56%; /* Lava 600 */
     --chart-2: 197 35% 17%; /* Navy 800 */
   }

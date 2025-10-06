@@ -16,14 +16,14 @@ const createFavourite = async (userId: string, input: CreateFavouriteInput) => {
   return fav
 }
 
-const deleteFavourites = async (userId: string, ids: string[]) => {
-  await db.favourite.deleteMany({
-    where: { id: { in: ids }, userId },
+const deleteFavourite = async (userId: string, id: string) => {
+  await db.favourite.delete({
+    where: { id: id, userId },
   })
 }
 
 export const FavouriteService = {
   getFavouritesByType,
   createFavourite,
-  deleteFavourites,
+  deleteFavourite,
 }

@@ -1,46 +1,47 @@
 'use client'
-
-import { Star, ChevronDown } from 'lucide-react'
-import Link from 'next/link'
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@ui/sidebar'
+import { ChevronDown, Star } from 'lucide-react'
+import Link from 'next/link'
 
+import apiRequest from '@hooks/query'
+import { FavouriteType } from '@prisma/client'
+import { capitalize, cn } from '@src/lib/utils'
 import { Button } from '@ui/button'
-import { useState } from 'react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@ui/collapsible'
-import { capitalize, cn } from '@src/lib/utils'
-import useSWR from 'swr'
-import { type Favourite, FavouriteType } from '@prisma/client'
+import { useState } from 'react'
 
 const FavoritesNav = () => {
   const [isOpen, setIsOpen] = useState(true)
 
-  const { data: favs } = useSWR<Favourite[]>({
-    url: 'favourite',
-    type: FavouriteType.ROUTE,
-  })
+  const { data: favs } = apiRequest.favourite.fetchByType.useQuery(
+    FavouriteType.ROUTE,
+  )
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden  p-0 px-2">
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden p-0 px-2">
         <div className="flex items-center justify-between px-2 py-1">
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="p-0 hover:bg-transparent">
+            <Button
+              variant="ghost"
+              className="p-0 hover:bg-transparent text-sidebar-foreground"
+            >
               <ChevronDown
                 className={cn(
                   'h-4 w-4 shrink-0 transition-transform duration-200',
                   !isOpen && '-rotate-90',
                 )}
               />
-              <span className="ml-2 text-text/80">Favourites</span>
+              <span className="ml-2">Favourites</span>
             </Button>
           </CollapsibleTrigger>
         </div>

@@ -114,6 +114,21 @@ const updateProject = async (req: NextRequest, session: Session) => {
   return Response.json(project, { status: 200 })
 }
 
+const archiveProject = async (req: NextRequest, session: Session) => {
+  // Assumed route /api/db/project/{id}/archiveORunarchive
+  const segments = req.nextUrl.pathname.split('/').filter(Boolean)
+  const pid = segments[segments.length - 2]
+  const archiveStatus = segments[segments.length - 1] === 'archive'
+
+  const project = await ProjectService.archiveProject(
+    pid,
+    session.user.teamId,
+    archiveStatus,
+  )
+
+  return Response.json(project, { status: 200 })
+}
+
 export const ProjectController = {
   getAllProjects,
   getProjectById,
@@ -121,4 +136,5 @@ export const ProjectController = {
   updateProject,
   getProjectAssignees,
   deleteProjectById,
+  archiveProject,
 }

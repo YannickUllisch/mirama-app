@@ -1,13 +1,13 @@
 'use client'
 import type { Expense, Project } from '@prisma/client'
+import { BudgetExpenseBarChart } from '@src/components/Analytics/BudgetExpenseBarChart'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { Separator } from '@src/components/ui/separator'
+import { useSession } from 'next-auth/react'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { getExpenseColumns } from './columns'
-import { BudgetExpenseBarChart } from '@src/components/Analytics/BudgetExpenseBarChart'
-import { Separator } from '@src/components/ui/separator'
-import { useSession } from 'next-auth/react'
 
 const BudgetPage = () => {
   const { data: session } = useSession({ required: true })
@@ -52,16 +52,14 @@ const BudgetPage = () => {
           }
         />
         {selectedProject && (
-          <>
-            <DataTable
-              key={`datatable-expenses-${selectedProject.name}`}
-              tableIdentifier={`${selectedProject.name}-budget-table`}
-              columns={getExpenseColumns({ mutate: mutate, session: session })}
-              data={selectedProject.expenses ?? []}
-              dataLoading={isLoading}
-              toolbarOptions={{ showFilterOption: true }}
-            />
-          </>
+          <DataTable
+            key={`datatable-expenses-${selectedProject.name}`}
+            tableIdentifier={`${selectedProject.name}-budget-table`}
+            columns={getExpenseColumns({ mutate: mutate, session: session })}
+            data={selectedProject.expenses ?? []}
+            dataLoading={isLoading}
+            toolbarOptions={{ showFilterOption: true }}
+          />
         )}
       </div>
     </main>

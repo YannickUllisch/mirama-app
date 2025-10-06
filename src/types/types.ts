@@ -10,7 +10,7 @@ export interface AppMenuItem {
   href?: string
   isCollapsible: boolean
   isActive?: boolean
-  icon?: LucideIcon
+  icon: LucideIcon
   items?: {
     title: string
     href: string

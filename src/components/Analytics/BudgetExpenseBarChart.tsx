@@ -1,13 +1,13 @@
 'use client'
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
+import type { Expense, Project } from '@prisma/client'
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@src/components/ui/chart'
-import type { Expense, Project } from '@prisma/client'
 import { useMemo } from 'react'
+import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 interface BudgetExpenseChartData {
@@ -37,7 +37,7 @@ export const BudgetExpenseBarChart = ({
     }
 
     return projects.map((project) => {
-      const totalExpenses = project.expenses.reduce(
+      const totalExpenses = project.expenses?.reduce(
         (acc, curr) => acc + curr.amount,
         0,
       )
