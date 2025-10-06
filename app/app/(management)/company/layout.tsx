@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Archive',
-  description: 'Archived Projects View',
+  title: 'Company',
+  description: 'Company View',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

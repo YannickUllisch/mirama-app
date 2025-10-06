@@ -1,6 +1,7 @@
 import db from '@db'
 import type { Role } from '@prisma/client'
-import type { UpdateUserinput } from '@server/domain/userSchema'
+import type { UpdateUserType } from '@server/domain/userSchema'
+import { UserMapper } from '@server/mapping/user/userMapping'
 import { isRoleHigher } from '@src/lib/utils'
 
 /**
@@ -9,35 +10,38 @@ import { isRoleHigher } from '@src/lib/utils'
  * @returns Array of users sorted by ascending
  */
 const getUsersByTeam = async (teamId: string) => {
-  return await db.user.findMany({ where: { teamId }, orderBy: { role: 'asc' } })
+  const res = await db.user.findMany({
+    where: { teamId },
+    orderBy: { role: 'asc' },
+  })
+
+  return res.map((r) => UserMapper.mapDefaultToApi(r))
 }
 
 /**
- * Deletes Users in Bulk
- * @param ids Array of Ids for users to delete (bulk request)
+ * Deletes User
+ * @param id ID for user to delete
  * @param sessionRole Role of requestee needed for permission check
  * @param teamId TeamId of all users
  */
-const deleteUsers = async (
-  ids: string[],
-  sessionRole: Role,
-  teamId: string,
-) => {
-  const usersToDelete = await db.user.findMany({
+const deleteUser = async (id: string, sessionRole: Role, teamId: string) => {
+  const userToDelete = await db.user.findFirst({
     where: {
-      id: {
-        in: ids,
-      },
+      id,
     },
   })
 
+  if (!userToDelete) {
+    throw new Error('User could not be found')
+  }
+
   // Check if any user has a higher role
-  if (usersToDelete.some((user) => isRoleHigher(user.role, sessionRole))) {
+  if (isRoleHigher(userToDelete.role, sessionRole)) {
     throw new Error('Action not Allowed')
   }
 
   await db.user.deleteMany({
-    where: { id: { in: ids }, teamId },
+    where: { id: id, teamId },
   })
 }
 
@@ -52,7 +56,7 @@ const updateUser = async (
   userId: string,
   sessionRole: Role,
   teamId: string,
-  input: UpdateUserinput,
+  input: UpdateUserType,
 ) => {
   const userToUpdate = await db.user.findFirst({ where: { id: userId } })
 
@@ -81,6 +85,6 @@ const updateUser = async (
 
 export const UserService = {
   getUsersByTeam,
-  deleteUsers,
+  deleteUser,
   updateUser,
 }

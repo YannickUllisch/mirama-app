@@ -1,49 +1,40 @@
 'use client'
-import type { Tag } from '@prisma/client'
-import { useState } from 'react'
-import useSWR from 'swr'
-import type { RowSelectionState } from '@tanstack/react-table'
-import { Plus } from 'lucide-react'
-import { TagTabColumns } from './helper/TagTabColumns'
+import apiRequest from '@hooks/query'
 import AddTagDialog from '@src/components/Dialogs/AddTagDialog'
-import { Button } from '@src/components/ui/button'
+import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { TagIcon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useTagColumns } from './helper/TagTabColumns'
 
 const TagsTab = () => {
-  const { data: tags, isLoading, mutate } = useSWR<Tag[]>('tag')
-
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const { data: session } = useSession()
+  const { data: tags, isLoading } = apiRequest.tag.fetchAll.useQuery()
+  const { mutate: useDeleteTag } = apiRequest.tag.delete.useMutation()
+  const { mutate: useUpdateTag } = apiRequest.tag.update.useMutation()
 
   return (
-    <DataTable
-      tableIdentifier="tagsTable"
-      enableRowSelection
-      rowSelection={rowSelection}
-      onRowSelectionChange={setRowSelection}
-      columns={TagTabColumns({ mutate: mutate })}
-      data={tags ?? []}
-      dataLoading={isLoading}
-      toolbarOptions={{
-        showFilterOption: true,
-        addToolbarleft: (
-          <AddTagDialog
-            key={'tag-dialog'}
-            mutate={mutate}
-            button={
-              <div className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
-                <Plus width={15} className="ml-2" />
-                <Button
-                  style={{ fontSize: 11, textDecoration: 'none' }}
-                  variant="link"
-                >
-                  Add Tag
-                </Button>
-              </div>
-            }
-          />
-        ),
-      }}
-    />
+    <>
+      <PageHeader
+        icon={TagIcon}
+        title="Tags"
+        description="View and manage Tags used across Projects and Tasks"
+      />
+      <DataTable
+        tableIdentifier="tagsTable"
+        columns={useTagColumns({
+          deleteMutation: useDeleteTag,
+          session: session,
+          updateMutation: useUpdateTag,
+        })}
+        data={tags ?? []}
+        dataLoading={isLoading}
+        toolbarOptions={{
+          showFilterOption: true,
+          addToolbarleft: <AddTagDialog key={'tag-dialog'} />,
+        }}
+      />
+    </>
   )
 }
 

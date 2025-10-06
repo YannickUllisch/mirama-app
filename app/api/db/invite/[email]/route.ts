@@ -3,12 +3,12 @@ import { InvitationController } from '@server/controllers/invitationController'
 import { exceptionHandler } from '@server/utils/exceptionHandler'
 import { withAuth } from '@withAuth'
 
-export const GET = withAuth(
+export const DELETE = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.getInvitations),
+  exceptionHandler(InvitationController.deleteInvitation),
 )
 
-export const POST = withAuth(
+export const PUT = withAuth(
   [Role.OWNER, Role.ADMIN],
-  exceptionHandler(InvitationController.createInvitation),
+  exceptionHandler(InvitationController.updateInvitation),
 )

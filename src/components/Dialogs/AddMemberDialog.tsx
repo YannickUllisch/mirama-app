@@ -1,7 +1,10 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import apiRequest from '@hooks/query'
 import { Role } from '@prisma/client'
-import { Button } from '@src/components/ui/button'
+import type { CreateInvitationInput } from '@server/domain/invitationSchema'
+import { InvitationSchema } from '@src/lib/schemas'
+import { Button } from '@ui/button'
 import {
   Dialog,
   DialogClose,
@@ -11,32 +14,29 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@src/components/ui/dialog'
-import { Input } from '@src/components/ui/input'
-import { postResource } from '@src/lib/api/postResource'
-import { InvitationSchema } from '@src/lib/schemas'
-import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
+} from '@ui/dialog'
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form'
+} from '@ui/form'
+import { Input } from '@ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select'
+} from '@ui/select'
+import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 
 const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const form = useForm<z.infer<typeof InvitationSchema>>({
+  const form = useForm<CreateInvitationInput>({
     resolver: zodResolver(InvitationSchema),
     defaultValues: {
       email: '',
@@ -45,18 +45,15 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof InvitationSchema>) => {
+  const { mutate: useCreateInvitation } =
+    apiRequest.invitation.create.useMutation()
+
+  const onSubmit = (vals: CreateInvitationInput) => {
     startTransition(() => {
-      postResource('invite', vals)
-        .then(() => {
-          form.reset()
-          setIsOpen(false)
-        })
-        .catch(() => {
-          setIsOpen(false)
-        })
+      useCreateInvitation(vals)
     })
   }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>

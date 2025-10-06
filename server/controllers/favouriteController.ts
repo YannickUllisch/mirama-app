@@ -38,6 +38,7 @@ const deleteFavourite = async (req: NextRequest, session: Session) => {
       { status: 404 },
     )
   }
+
   await FavouriteService.deleteFavourite(session.user.id ?? '', fid)
 
   return Response.json(

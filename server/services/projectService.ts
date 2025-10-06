@@ -100,7 +100,7 @@ const updateProject = async (
   withPrismaErrorSanitizer(async () => {
     const { users, milestones, tags, ...proj } = input
 
-    return await db.$transaction(async (prisma) => {
+    const res = await db.$transaction(async (prisma) => {
       // Updating the project main fields and tags
       const project = await prisma.project.update({
         where: { id: projectId, teamId },
@@ -113,6 +113,16 @@ const updateProject = async (
             })),
           },
           teamId,
+        },
+        include: {
+          milestones: true,
+          tags: true,
+          tasks: true,
+          users: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
@@ -153,6 +163,8 @@ const updateProject = async (
 
       return project
     })
+
+    return ProjectMapper.mapDefaultToApi(res)
   })
 
 const createProject = async (input: CreateProjectInput, teamId: string) => {
@@ -195,9 +207,19 @@ const createProject = async (input: CreateProjectInput, teamId: string) => {
         },
         teamId,
       },
+      include: {
+        milestones: true,
+        tags: true,
+        tasks: true,
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     })
 
-    return project
+    return ProjectMapper.mapDefaultToApi(project)
   })
 }
 
@@ -221,8 +243,18 @@ const archiveProject = async (
       data: {
         archived: archive,
       },
+      include: {
+        milestones: true,
+        tags: true,
+        tasks: true,
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     })
-    return res
+    return ProjectMapper.mapDefaultToApi(res)
   })
 }
 

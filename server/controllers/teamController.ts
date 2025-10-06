@@ -1,27 +1,21 @@
-import { DeleteUsersSchema, UpdateUserSchema } from '@server/domain/userSchema'
+import { UpdateUserSchema } from '@server/domain/userSchema'
 import { UserService } from '@server/services/teamService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
-const getTeamMembersController = async (
-  _req: NextRequest,
-  session: Session,
-) => {
+const getTeamMembers = async (_req: NextRequest, session: Session) => {
   const members = await UserService.getUsersByTeam(session.user.teamId)
   return Response.json(members, { status: 200 })
 }
 
-const updateTeamMembersController = async (
-  req: NextRequest,
-  session: Session,
-) => {
+const updateTeamMember = async (req: NextRequest, session: Session) => {
   // Fetching ID from query
-  const id = req.nextUrl.searchParams.get('id')
+  const mid = req.nextUrl.pathname.split('/').pop()
 
-  if (!id) {
+  if (!mid) {
     return Response.json(
-      { success: false, message: 'ID needs to be provided in query' },
-      { status: 400 },
+      { ok: false, message: 'Member ID is required in Request' },
+      { status: 404 },
     )
   }
 
@@ -30,7 +24,7 @@ const updateTeamMembersController = async (
   const input = UpdateUserSchema.parse(body)
 
   const member = await UserService.updateUser(
-    id,
+    mid,
     session.user.role,
     session.user.teamId,
     input,
@@ -38,17 +32,20 @@ const updateTeamMembersController = async (
   return Response.json(member, { status: 200 })
 }
 
-const deleteTeamMembersController = async (
-  req: NextRequest,
-  session: Session,
-) => {
-  const body: string[] = await req.json()
-  const ids = DeleteUsersSchema.parse(body)
+const deleteTeamMember = async (req: NextRequest, session: Session) => {
+  const mid = req.nextUrl.pathname.split('/').pop()
 
-  if (ids.includes(session.user.id ?? ''))
+  if (!mid) {
+    return Response.json(
+      { ok: false, message: 'Member ID is required in Request' },
+      { status: 404 },
+    )
+  }
+
+  if (mid.includes(session.user.id ?? ''))
     throw new Error('Can not remove yourself from Team')
 
-  await UserService.deleteUsers(ids, session.user.role, session.user.teamId)
+  await UserService.deleteUser(mid, session.user.role, session.user.teamId)
 
   return Response.json(
     { success: true, message: 'Deleted successfully' },
@@ -57,7 +54,7 @@ const deleteTeamMembersController = async (
 }
 
 export const UserController = {
-  getTeamMembersController,
-  updateTeamMembersController,
-  deleteTeamMembersController,
+  getTeamMembers,
+  updateTeamMember,
+  deleteTeamMember,
 }

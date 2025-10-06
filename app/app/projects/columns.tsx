@@ -1,8 +1,8 @@
 'use client'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
-import type { User } from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import HoverLink from '@src/components/HoverLink'
@@ -42,7 +42,7 @@ export const useProjectColumns = ({
   archiveMutation,
 }: {
   session: Session | null
-  users: User[]
+  users: UserResponseType[]
   handleFieldUpdate: HandleFieldUpdate<ProjectResponseInput>
   deleteMutation: UseMutateFunction<
     {

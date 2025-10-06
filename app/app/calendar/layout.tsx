@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Calendar | Mirama',
-  description: 'Calendar view of your projects',
+  title: 'Calendar',
+  description: 'Your calendar view over projects and events',
 }
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
-  return children
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="min-h-[100vh]">{children}</div>
 }
 
 export default Layout

@@ -142,8 +142,11 @@ const TeamDashboardPage = () => {
               {mockData.team.members.length}
             </div>
             <div className="flex -space-x-2 mt-2">
-              {mockData.team.members.map((member, i) => (
-                <Avatar key={i} className="border-2 border-background">
+              {mockData.team.members.map((member) => (
+                <Avatar
+                  key={member.name}
+                  className="border-2 border-background"
+                >
                   <AvatarImage src={member.avatar} alt={member.name} />
                   <AvatarFallback>
                     {member.name
@@ -177,8 +180,8 @@ const TeamDashboardPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockData.team.members.map((member, i) => (
-                <div key={i} className="flex items-center gap-4">
+              {mockData.team.members.map((member) => (
+                <div key={member.name} className="flex items-center gap-4">
                   <Avatar>
                     <AvatarImage src={member.avatar} alt={member.name} />
                     <AvatarFallback>
@@ -212,8 +215,8 @@ const TeamDashboardPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockData.team.recentActivity.map((activity, i) => (
-                <div key={i} className="flex items-center gap-4">
+              {mockData.team.recentActivity.map((activity) => (
+                <div key={activity.title} className="flex items-center gap-4">
                   {activity.status === 'completed' ? (
                     <CheckCircle2 className="h-5 w-5 text-green-500" />
                   ) : (

@@ -5,11 +5,13 @@ import type {
   CreateInvitationInput,
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
+import { InvitationMapper } from '@server/mapping/invitation/invitationMapping'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 
 const getInvitationsByTeam = async (teamId: string) => {
-  return await db.companyInvitation.findMany({ where: { teamId } })
+  const res = await db.companyInvitation.findMany({ where: { teamId } })
+  return res.map((r) => InvitationMapper.mapDefaultToApi(r))
 }
 
 const createNewInvitation = async (
@@ -41,20 +43,21 @@ const createNewInvitation = async (
   if (cognitoRes.error)
     throw new Error(`Cognito invitation failed: ${cognitoRes.error}`)
 
-  const newInvitation = db.companyInvitation.create({
+  const newInvitation = await db.companyInvitation.create({
     data: { ...invitation, teamId, expiresAt },
   })
 
-  return newInvitation
+  return InvitationMapper.mapDefaultToApi(newInvitation)
 }
 
 const updateInvitation = async (
   teamId: string,
+  email: string,
   invitation: UpdateInvitationInput,
 ) => {
-  return await db.companyInvitation.update({
+  const res = await db.companyInvitation.update({
     where: {
-      email: invitation.email,
+      email: email,
       teamId: teamId,
     },
     data: {
@@ -62,13 +65,16 @@ const updateInvitation = async (
       expiresAt: invitation.extendInvitation
         ? DateTime.now().plus({ days: 1 }).toJSDate()
         : undefined,
+      email: undefined, // we do not allow updating the Email to avoid sync issues with Cognito
     },
   })
+
+  return InvitationMapper.mapDefaultToApi(res)
 }
 
-const deleteInvitations = async (teamId: string, emails: string[]) => {
+const deleteInvitation = async (teamId: string, email: string) => {
   await db.companyInvitation.deleteMany({
-    where: { email: { in: emails }, teamId },
+    where: { email, teamId },
   })
 }
 
@@ -76,5 +82,5 @@ export const InvitationService = {
   getInvitationsByTeam,
   createNewInvitation,
   updateInvitation,
-  deleteInvitations,
+  deleteInvitation,
 }

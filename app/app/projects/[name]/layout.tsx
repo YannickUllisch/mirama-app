@@ -1,6 +1,6 @@
 import db from '@db'
 import { auth } from '@server/auth/auth'
-import ProjectUsersContext from '@src/components/Contexts/ProjectDataContext'
+import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
@@ -47,9 +47,9 @@ const Layout = async ({
   }
 
   return (
-    <ProjectUsersContext projectId={project.id} projectName={project.name}>
+    <ProjectViewContext projectId={project.id} projectName={project.name}>
       {children}
-    </ProjectUsersContext>
+    </ProjectViewContext>
   )
 }
 

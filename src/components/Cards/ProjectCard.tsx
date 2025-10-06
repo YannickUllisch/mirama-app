@@ -1,6 +1,8 @@
 import type { Project } from '@prisma/client'
+import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
+import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,12 +20,10 @@ import {
   Trash2,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import type React from 'react'
-import { getDaysRemaining } from '../../../app/app/helpers'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
-import Centering from '@ui/centering'
+import Link from 'next/link'
+import type React from 'react'
+import { getDaysRemaining } from '../../../app/app/_helpers'
 
 const ProjectCard = ({
   project,

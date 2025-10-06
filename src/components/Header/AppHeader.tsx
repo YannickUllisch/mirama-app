@@ -132,12 +132,12 @@ const AppHeader = () => {
                   id: Date.now().toString(),
                   type: FavouriteType.ROUTE,
                   data: pathname,
-                  userId: session?.user.id,
+                  userId: session?.user.id ?? '',
                 }
 
                 useCreateFav(newFav)
               } else {
-                useDeleteFavs([currFav.id])
+                useDeleteFavs(currFav.id)
               }
             }}
           >

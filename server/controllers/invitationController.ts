@@ -1,6 +1,5 @@
 import {
   CreateInvitationSchema,
-  DeleteInvitationsSchema,
   UpdateInvitationSchema,
 } from '@server/domain/invitationSchema'
 import { InvitationService } from '@server/services/invitationService'
@@ -25,22 +24,38 @@ const createInvitation = async (req: NextRequest, session: Session) => {
   return Response.json(inv, { status: 201 })
 }
 
-const updateInvitations = async (req: NextRequest, session: Session) => {
+const updateInvitation = async (req: NextRequest, session: Session) => {
+  const email = req.nextUrl.pathname.split('/').pop()
+
+  if (!email) {
+    return Response.json(
+      { ok: false, message: 'Invitation Email is required in Request' },
+      { status: 404 },
+    )
+  }
+
   const body: string[] = await req.json()
   const input = UpdateInvitationSchema.parse(body)
 
   const invitations = await InvitationService.updateInvitation(
     session.user.teamId,
+    email,
     input,
   )
   return Response.json(invitations, { status: 200 })
 }
 
-const deleteInvitations = async (req: NextRequest, session: Session) => {
-  const body = await req.json()
-  const input = DeleteInvitationsSchema.parse(body)
+const deleteInvitation = async (req: NextRequest, session: Session) => {
+  const email = req.nextUrl.pathname.split('/').pop()
 
-  await InvitationService.deleteInvitations(session.user.teamId, input)
+  if (!email) {
+    return Response.json(
+      { ok: false, message: 'Invitation Email is required in Request' },
+      { status: 404 },
+    )
+  }
+
+  await InvitationService.deleteInvitation(session.user.teamId, email)
   return Response.json(
     { success: true, message: 'Deleted successfully' },
     { status: 200 },
@@ -50,6 +65,6 @@ const deleteInvitations = async (req: NextRequest, session: Session) => {
 export const InvitationController = {
   getInvitations,
   createInvitation,
-  updateInvitations,
-  deleteInvitations,
+  updateInvitation,
+  deleteInvitation,
 }

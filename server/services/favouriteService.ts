@@ -1,19 +1,21 @@
 import db from '@db'
-import {
-  type CreateFavouriteInput,
-  FavouriteTypeSchema,
-} from '@server/domain/favouriteSchema'
+import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
+import type { CreateFavouriteType } from '@server/domain/favouriteSchema'
+import { FavouriteMapper } from '@server/mapping/favourite/favouriteMapping'
 
 const getFavouritesByType = async (userId: string, type: string) => {
   const parsedType = FavouriteTypeSchema.parse(type)
-  return await db.favourite.findMany({ where: { userId, type: parsedType } })
+  const res = await db.favourite.findMany({
+    where: { userId, type: parsedType },
+  })
+  return res.map((r) => FavouriteMapper.mapDefaultToApi(r))
 }
 
-const createFavourite = async (userId: string, input: CreateFavouriteInput) => {
+const createFavourite = async (userId: string, input: CreateFavouriteType) => {
   const fav = await db.favourite.create({
     data: { ...input, userId, id: undefined },
   })
-  return fav
+  return FavouriteMapper.mapDefaultToApi(fav)
 }
 
 const deleteFavourite = async (userId: string, id: string) => {

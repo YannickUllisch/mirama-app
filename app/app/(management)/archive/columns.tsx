@@ -1,7 +1,7 @@
 'use client'
 import {} from '@prisma/client'
-import type { User } from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import HoverLink from '@src/components/HoverLink'
@@ -31,7 +31,7 @@ export const useArchivedProjectsColumns = ({
   archiveMutation,
 }: {
   session: Session | null
-  users: User[]
+  users: UserResponseType[]
   deleteMutation: UseMutateFunction<
     {
       success: boolean

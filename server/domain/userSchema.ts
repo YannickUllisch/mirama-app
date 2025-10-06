@@ -10,10 +10,6 @@ export const UserResponseSchema = z.object({
   preferredDateType: z.string(),
 })
 
-export const DeleteUsersSchema = z.array(
-  z.string().min(1, 'Array of atleast one ID is required'),
-)
-
 export const UpdateUserSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
@@ -31,7 +27,6 @@ export const UserProjectResponseSchema = z.object({
   name: z.string(),
   email: z.string(),
   emailVerified: z.coerce.date().nullable(),
-  password: z.string().nullable(),
   teamId: z.string().nullable(),
   preferredDateType: z.string(),
   isManager: z.boolean(),
@@ -39,6 +34,5 @@ export const UserProjectResponseSchema = z.object({
 
 // TypeScript types inferred from schemas
 export type UpdateUserType = z.infer<typeof UpdateUserSchema>
-export type UserResponseType = z.infer<typeof UpdateUserSchema>
-export type DeleteUserType = z.infer<typeof DeleteUsersSchema>
+export type UserResponseType = z.infer<typeof UserResponseSchema>
 export type UserProjectResponseType = z.infer<typeof UserProjectResponseSchema>

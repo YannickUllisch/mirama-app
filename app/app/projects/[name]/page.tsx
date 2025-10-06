@@ -1,5 +1,5 @@
 'use client'
-import { addProjectIdToLocalStorage } from '@/app/app/helpers'
+import { addProjectIdToLocalStorage } from '@/app/app/_helpers'
 import Loading from '@/app/loading'
 import useLocalStorage from '@hooks/utils/useLocalStorage'
 import type { Milestone, Project, User } from '@prisma/client'
@@ -19,7 +19,7 @@ import {
 } from 'next/navigation'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import useSWR from 'swr'
-import { projectTabs } from './tabs'
+import { projectTabs } from './_tabs'
 
 const ClientProjectPage = () => {
   const projectContext = useContext(ProjectDataContext)

@@ -1,5 +1,5 @@
 import db from '@db'
-import type { CreateTagInput, UpdateTagInput } from '@server/domain/tagSchema'
+import type { CreateTagType, UpdateTagType } from '@server/domain/tagSchema'
 
 const getAllTeamTags = async (teamId: string) => {
   return await db.tag.findMany({
@@ -9,7 +9,7 @@ const getAllTeamTags = async (teamId: string) => {
   })
 }
 
-const createNewTeamTag = async (input: CreateTagInput, teamId: string) => {
+const createNewTeamTag = async (input: CreateTagType, teamId: string) => {
   const tag = await db.tag.create({
     data: {
       ...input,
@@ -22,7 +22,7 @@ const createNewTeamTag = async (input: CreateTagInput, teamId: string) => {
 
 const updateTag = async (
   tagId: string,
-  input: UpdateTagInput,
+  input: UpdateTagType,
   teamId: string,
 ) => {
   const tag = await db.tag.update({

@@ -1,81 +1,128 @@
-import type { Tag } from '@prisma/client'
+'use client'
+
+import type { TagResponseType, UpdateTagType } from '@server/domain/tagSchema'
+import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { Checkbox } from '@src/components/ui/checkbox'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import type { UseMutateFunction } from '@tanstack/react-query'
+import { createColumnHelper } from '@tanstack/react-table'
+import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@src/components/ui/dropdown-menu'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Ellipsis } from 'lucide-react'
+} from '@ui/dropdown-menu'
+import { Ellipsis, PenSquareIcon, Trash } from 'lucide-react'
+import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
 
-export const TagTabColumns = ({ mutate }: { mutate: KeyedMutator<Tag[]> }) => {
-  const cols: ColumnDef<Tag>[] = useMemo(
+const columnHelper = createColumnHelper<TagResponseType>()
+
+export const useTagColumns = ({
+  session,
+  updateMutation,
+  deleteMutation,
+}: {
+  session: Session | null
+  updateMutation: UseMutateFunction<
+    {
+      id: string
+      title: string
+    },
+    Error,
+    {
+      id: string
+      data: UpdateTagType
+    },
+    {
+      previous?: TagResponseType[]
+    }
+  >
+  deleteMutation: UseMutateFunction<
+    {
+      success: boolean
+    },
+    Error,
+    string,
+    {
+      previous?: TagResponseType[]
+    }
+  >
+}) => {
+  return useMemo(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        size: 30,
-        enableHiding: false,
-        enableSorting: false,
-      },
-      {
-        accessorKey: 'title',
-        size: 400,
+      columnHelper.accessor('title', {
+        id: 'title',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Title" />
         ),
-        cell: ({ getValue, row }) => {
+        cell: ({ getValue }) => <span>{getValue()}</span>,
+      }),
+
+      columnHelper.display({
+        id: 'actions',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
+          const [delDialogOpen, setDelDialogOpen] = useState(false)
+
+          if (!isTeamAdminOrOwner(session)) return null
 
           return (
-            <div className="flex items-center justify-between group w-full">
-              {getValue() as string}
-
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis
-                    size={28}
-                    className={`cursor-pointer ${
-                      !menuOpen && !row.getIsSelected()
-                        ? 'invisible group-hover:visible'
-                        : 'visible'
-                    } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50`}
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      deleteResources('tag', [row.original.id], {
-                        mutate: mutate,
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => {
+                    // Open inline edit modal or directly call updateMutation
+                    const newTitle = prompt(
+                      'Enter new tag title:',
+                      row.original.title,
+                    )
+                    if (newTitle && newTitle.trim().length > 0) {
+                      updateMutation({
+                        id: row.original.id,
+                        data: {
+                          title: newTitle.trim(),
+                        },
                       })
                     }
+                  }}
+                >
+                  <PenSquareIcon className="w-3.5 h-3.5" />
+                  Edit
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="gap-3"
+                  onClick={() => setDelDialogOpen(true)}
+                >
+                  <ConfirmationDialog
+                    open={delDialogOpen}
+                    setOpen={setDelDialogOpen}
+                    dialogTitle={'Delete Tag?'}
+                    dialogDesc={'This action cannot be undone.'}
+                    submitButtonText={'Delete'}
+                    onConfirmation={() => deleteMutation(row.original.id)}
                   >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                    <Centering>
+                      <Trash className="h-4 w-4 text-destructive" />
+                      Delete
+                    </Centering>
+                  </ConfirmationDialog>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )
         },
-      },
+      }),
     ],
-    [mutate],
+    [session, updateMutation, deleteMutation],
   )
-  return cols
 }
