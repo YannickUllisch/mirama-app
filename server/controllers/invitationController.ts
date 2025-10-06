@@ -2,7 +2,7 @@ import {
   CreateInvitationSchema,
   UpdateInvitationSchema,
 } from '@server/domain/invitationSchema'
-import { InvitationService } from '@server/services/invitationService'
+import { InvitationService } from '@server/services/general/invitationService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'

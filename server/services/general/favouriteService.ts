@@ -1,7 +1,7 @@
 import db from '@db'
 import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
 import type { CreateFavouriteType } from '@server/domain/favouriteSchema'
-import { FavouriteMapper } from '@server/mapping/favourite/favouriteMapping'
+import { FavouriteMapper } from '@server/mapping/general/favouriteMapping'
 
 const getFavouritesByType = async (userId: string, type: string) => {
   const parsedType = FavouriteTypeSchema.parse(type)

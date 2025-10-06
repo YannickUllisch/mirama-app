@@ -1,5 +1,5 @@
 import { CreateFavouriteSchema } from '@server/domain/favouriteSchema'
-import { FavouriteService } from '@server/services/favouriteService'
+import { FavouriteService } from '@server/services/general/favouriteService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'

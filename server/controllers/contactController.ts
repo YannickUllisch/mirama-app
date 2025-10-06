@@ -1,5 +1,5 @@
 import { ContactRequestSchema } from '@server/domain/contactSchema'
-import { SNSService } from '@server/services/snsService'
+import { SNSService } from '@server/services/general/snsService'
 import type { NextRequest } from 'next/server'
 
 const sendContactRequest = async (req: NextRequest) => {

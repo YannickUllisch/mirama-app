@@ -2,7 +2,7 @@ import {
   CreateProjectSchema,
   UpdateProjectSchema,
 } from '@server/domain/projectSchema'
-import { ProjectService } from '@server/services/projectService'
+import { ProjectService } from '@server/services/project/projectService'
 import { checkIfManager } from '@server/utils/checkManager'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'

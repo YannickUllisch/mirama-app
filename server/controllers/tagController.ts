@@ -1,5 +1,5 @@
 import { CreateTagSchema, UpdateTagSchema } from '@server/domain/tagSchema'
-import { TagService } from '@server/services/tagService'
+import { TagService } from '@server/services/team/tagService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'

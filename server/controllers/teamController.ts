@@ -1,5 +1,5 @@
 import { UpdateUserSchema } from '@server/domain/userSchema'
-import { UserService } from '@server/services/teamService'
+import { UserService } from '@server/services/team/teamService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 

@@ -79,7 +79,7 @@ const ProjectPage = () => {
         title="Settings"
         description="General Settings"
       />
-      <div className="flex items-center  dark:text-white rounded-lg h-10 relative overflow-x-auto">
+      <div className="flex items-center dark:text-white rounded-lg h-10 relative overflow-x-auto">
         <TabsList className="justify-stretch absolute flex">
           {settingsTabs.map(
             (tabHeader) =>

@@ -1,12 +1,10 @@
 'use client'
-import type { Project } from '@prisma/client'
-import { calendarConfig } from '@src/components/Calendar/full-calender-config'
+import apiRequest from '@hooks/query'
 import FullCalender from '@src/components/Calendar/full-calender'
-
-import useSWR from 'swr'
+import { calendarConfig } from '@src/components/Calendar/full-calender-config'
 
 const CalendarClientPage = () => {
-  const { data: projects } = useSWR<Project[]>('project?archived=false')
+  const { data: _projects } = apiRequest.project.fetchAll.useQuery()
 
   // const events: CalendarEvent[] = useMemo(() => {
   //   return (

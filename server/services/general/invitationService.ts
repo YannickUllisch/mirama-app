@@ -5,7 +5,7 @@ import type {
   CreateInvitationInput,
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
-import { InvitationMapper } from '@server/mapping/invitation/invitationMapping'
+import { InvitationMapper } from '@server/mapping/general/invitationMapping'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 

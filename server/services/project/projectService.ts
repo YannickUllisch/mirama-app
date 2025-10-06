@@ -87,7 +87,7 @@ const getDefaultProjectResponse = async (
     },
   })
 
-  if (!project) return null
+  if (!project) throw new Error('Project not Found')
 
   return ProjectMapper.mapDefaultToApi(project)
 }

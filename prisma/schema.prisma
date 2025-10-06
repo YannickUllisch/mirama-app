@@ -64,7 +64,6 @@ model User {
   role              Role      @default(USER)
 
   accounts          Account[]
-  // These are needed for overview of personal projets and tasks a user is assigned to.
   tasks             Task[]
   
   teamId            String? 

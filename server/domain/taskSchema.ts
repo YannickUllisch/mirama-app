@@ -1,20 +1,154 @@
 import { PriorityType, TaskStatusType } from '@prisma/client'
+import { validateRecusiveSubtasks } from '@server/utils/validationHelpers'
 import z from 'zod'
-import { TaskTypeSchema } from './enumSchemas'
+import { CommentResponseSchema } from './commentSchema'
+import {
+  PriorityTypeSchema,
+  TaskStatusTypeSchema,
+  TaskTypeSchema,
+} from './enumSchemas'
+import { CreateTagSchema, TagResponseSchema } from './tagSchema'
+import { UserResponseSchema } from './userSchema'
 
-export const TaskProjectResponseSchema = z
+export const SimpleTaskResponseSchema = z.object({
+  id: z.string(),
+  taskCode: z.string(),
+
+  type: TaskTypeSchema,
+  title: z.string().min(1, { message: 'Title cannot be empty.' }),
+  description: z.string().nullable(),
+  priority: PriorityTypeSchema,
+  status: TaskStatusTypeSchema,
+
+  startDate: z.date({ message: 'Start Date has to be defined' }),
+  dueDate: z.date({ message: 'Due Date has to be defined' }),
+
+  dateCreated: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  assignedToId: z.string().nullable(),
+})
+
+export const TaskResponseSchema: z.ZodType<any> = z
   .object({
-    assignedToId: z.string().nullable(),
-    dueDate: z.date({ message: 'Due Date has to be defined' }),
-    startDate: z.date({ message: 'Start Date has to be defined' }),
+    id: z.string(),
+    taskCode: z.string(),
+
+    type: TaskTypeSchema,
     title: z.string().min(1, { message: 'Title cannot be empty.' }),
     description: z.string().nullable(),
-    priority: z.nativeEnum(PriorityType),
-    status: z.nativeEnum(TaskStatusType),
+    priority: PriorityTypeSchema,
+    status: TaskStatusTypeSchema,
+
+    startDate: z.date({ message: 'Start Date has to be defined' }),
+    dueDate: z.date({ message: 'Due Date has to be defined' }),
+
     parentId: z.string().nullable(),
-    type: TaskTypeSchema,
+    parent: z.lazy(() => SimpleTaskResponseSchema).nullable(),
+    subtasks: z.lazy(() => z.array(SimpleTaskResponseSchema)).default([]),
+
+    dateCreated: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+    assignedTo: UserResponseSchema,
+
+    projectId: z.string(),
+    projectName: z.string(),
+    tags: z.array(TagResponseSchema),
+    comments: z.array(CommentResponseSchema),
   })
   .refine((data) => data.startDate <= data.dueDate, {
     message: 'Start Date must be before or equal to Due Date',
     path: ['startDate'],
   })
+  .refine(
+    (data) => !validateRecusiveSubtasks(data.subtasks, data.parentId), // indirect cycle
+    {
+      message: 'Creating a cyclic Task dependency is not allowed',
+      path: ['parentId'],
+    },
+  )
+  .refine((data) => data.parentId !== data.id, {
+    message: 'A task cannot be its own parent',
+    path: ['parentId'],
+  })
+
+export const TaskProjectResponseSchema = z
+  .object({
+    id: z.string(),
+    title: z.string().min(1, { message: 'Title cannot be empty.' }),
+    type: TaskTypeSchema,
+    assignedToId: z.string().nullable(),
+    dueDate: z.coerce.date({ message: 'Due Date has to be defined' }),
+    startDate: z.coerce.date({ message: 'Start Date has to be defined' }),
+    description: z.string().nullable(),
+    priority: z.nativeEnum(PriorityType),
+    status: z.nativeEnum(TaskStatusType),
+    parentId: z.string().nullable(),
+  })
+  .refine((data) => data.startDate <= data.dueDate, {
+    message: 'Start Date must be before or equal to Due Date',
+    path: ['startDate'],
+  })
+
+export const CreateTaskSchema = z
+  .object({
+    title: z.string().min(1, { message: 'Title cannot be empty.' }),
+    type: TaskTypeSchema,
+    description: z.string().nullable(),
+    priority: PriorityTypeSchema.default(PriorityType.LOW),
+    status: TaskStatusTypeSchema.default(TaskStatusType.NEW),
+
+    startDate: z.coerce.date(),
+    dueDate: z.coerce.date(),
+
+    tags: z.string().array(),
+    newTags: z.array(CreateTagSchema),
+
+    parentId: z.string().nullable(),
+    assignedToId: z.string().nullable(),
+    subtasks: z.string().array(),
+    projectId: z.string(),
+  })
+  .refine((data) => data.startDate <= data.dueDate, {
+    message: 'Start Date must be before or equal to Due Date',
+    path: ['startDate'],
+  })
+
+export const UpdateTaskSchema = z
+  .object({
+    id: z.string(),
+    title: z.string().min(1).optional(),
+    type: TaskTypeSchema.optional(),
+    description: z.string().nullable().optional(),
+    priority: PriorityTypeSchema.optional(),
+    status: TaskStatusTypeSchema.optional(),
+    tags: z.array(TagResponseSchema),
+
+    startDate: z.date().optional(),
+    dueDate: z.date().optional(),
+
+    parentId: z.string().nullable().optional(),
+    assignedToId: z.string().nullable().optional(),
+    projectId: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDate && data.dueDate) {
+        return data.startDate <= data.dueDate
+      }
+      return true
+    },
+    {
+      message: 'Start Date must be before or equal to Due Date',
+      path: ['startDate'],
+    },
+  )
+  .refine((data) => data.parentId !== data.id, {
+    message: 'A task cannot be its own parent',
+    path: ['parentId'],
+  })
+
+export type TaskResponseType = z.infer<typeof TaskResponseSchema>
+export type SimpleTaskResponseType = z.infer<typeof SimpleTaskResponseSchema>
+export type TaskProjectResponseType = z.infer<typeof TaskProjectResponseSchema>
+export type CreateTaskType = z.infer<typeof CreateTaskSchema>
+export type UpdateTaskType = z.infer<typeof UpdateTaskSchema>

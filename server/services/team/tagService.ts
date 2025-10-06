@@ -1,6 +1,6 @@
 import db from '@db'
 import type { CreateTagType, UpdateTagType } from '@server/domain/tagSchema'
-import { TagMapper } from '@server/mapping/tag/tagMapper'
+import { TagMapper } from '@server/mapping/general/tagMapper'
 
 const getAllTeamTags = async (teamId: string) => {
   const tags = await db.tag.findMany({
