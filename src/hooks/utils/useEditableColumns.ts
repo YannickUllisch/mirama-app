@@ -16,6 +16,7 @@ export const useEditableColumns = <
   mutate,
   updateSchema,
   mapToUpdateInput,
+  getKey,
   onValidationError,
 }: {
   mutate: UseMutateFunction<
@@ -25,11 +26,12 @@ export const useEditableColumns = <
     unknown
   >
   updateSchema: ZodType<UpdateType, any, any>
+  getKey: (data: ResponseType) => string
   mapToUpdateInput: Mapper<ResponseType, UpdateType>
   onValidationError?: (error: ZodError<UpdateType>) => void
 }) => {
   const handleUpdate = (data: ResponseType) => {
-    const { id } = data
+    const id = getKey(data)
     const mapped = mapToUpdateInput(data)
     const result = updateSchema.safeParse(mapped)
     if (!result.success) {

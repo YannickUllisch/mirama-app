@@ -26,6 +26,7 @@ const TagsTab = () => {
     UpdateTagType
   >({
     mutate: useUpdateTag,
+    getKey: (data) => data.id,
     updateSchema: UpdateTagSchema,
     mapToUpdateInput: (data) => ({
       ...data,

@@ -1,10 +1,10 @@
-import { api } from '@api'
 import type {
   CreateProjectInput,
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
 import type { UserProjectResponseType } from '@server/domain/userSchema'
+import { api } from '@src/lib/api'
 
 export const fetchProjectsFn = async (): Promise<ProjectResponseInput[]> => {
   const { data } = await api.get('project')

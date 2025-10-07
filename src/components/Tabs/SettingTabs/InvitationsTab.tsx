@@ -30,6 +30,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
     UpdateInvitationInput
   >({
     mutate: useUpdateInvitation,
+    getKey: (data) => data.email,
     updateSchema: UpdateInvitationSchema,
     mapToUpdateInput: (data) => ({
       extendInvitation: true,

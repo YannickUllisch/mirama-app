@@ -1,9 +1,9 @@
-import { api } from '@api'
 import type { FavouriteType } from '@prisma/client'
 import type {
   CreateFavouriteType,
   FavouriteResponseType,
 } from '@server/domain/favouriteSchema'
+import { api } from '@src/lib/api'
 
 export const fetchFavouritesFn = async (): Promise<FavouriteResponseType[]> => {
   const { data } = await api.get('favourite')

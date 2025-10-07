@@ -31,6 +31,7 @@ const ProjectsPage = () => {
   >({
     mutate: projectMutation,
     updateSchema: UpdateProjectSchema,
+    getKey: (data) => data.id,
     mapToUpdateInput: (data) => ({
       ...data,
       tags: data.tags.map((t) => t.id),

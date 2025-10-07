@@ -52,7 +52,18 @@ const mapDefaultToApi = (
 const mapSimplifiedToApi = (input: Task): SimpleTaskResponseType => {
   const { teamId, projectId, ...data } = input
   return {
-    ...data,
+    assignedToId: data.assignedToId,
+    dateCreated: data.dateCreated,
+    description: data.description,
+    dueDate: data.dueDate,
+    id: data.id,
+    priority: data.priority,
+    startDate: data.startDate,
+    status: data.status,
+    taskCode: data.taskCode,
+    title: data.title,
+    type: data.type,
+    updatedAt: data.updatedAt,
   }
 }
 

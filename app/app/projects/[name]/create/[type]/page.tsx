@@ -9,8 +9,8 @@ import {
   type User,
 } from '@prisma/client'
 import {
-  TaskResponseSchema,
-  type TaskResponseType,
+  CreateTaskSchema,
+  type CreateTaskType,
 } from '@server/domain/taskSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
@@ -86,10 +86,10 @@ const CreateTaskForm = () => {
   const { data: tags } = useSWR<Tag[]>('tag')
 
   // Form Logic and Functions
-  const form = useForm<TaskResponseType>({
-    resolver: zodResolver(TaskResponseSchema),
+  const form = useForm<CreateTaskType>({
+    resolver: zodResolver(CreateTaskSchema),
     defaultValues: {
-      assignedToId: null,
+      assignedToId: undefined,
       description: '',
       title: '',
       dueDate: new Date(),
@@ -98,7 +98,6 @@ const CreateTaskForm = () => {
       projectId: projectContext?.projectId,
       status: TaskStatusType.NEW,
       tags: [],
-      subtasks: undefined,
       parentId:
         defaultParentId &&
         !isTaskTypeContainer(params.type.toUpperCase() as TaskType)
@@ -108,7 +107,7 @@ const CreateTaskForm = () => {
     },
   })
 
-  const onSubmit = (vals: TaskResponseType) => {
+  const onSubmit = (vals: CreateTaskType) => {
     startTransition(() => {
       if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
         vals.assignedToId = null
@@ -468,7 +467,7 @@ const CreateTaskForm = () => {
                     <Label>Link to Parent</Label>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value}
+                      value={field.value ?? undefined}
                       key={`parent-select-${field.value}`}
                     >
                       <FormControl>

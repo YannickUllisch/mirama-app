@@ -7,7 +7,11 @@ const mapDefaultToApi = (
   input: Comment & { user: User },
 ): CommentResponseType => {
   return {
-    ...input,
+    content: input.content,
+    createdAt: input.createdAt,
+    id: input.id,
+    parentId: input.parentId,
+    userId: input.userId,
     user: UserMapper.mapDefaultToApi(input.user),
   }
 }

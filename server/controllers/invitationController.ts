@@ -42,7 +42,7 @@ const updateInvitation = async (req: NextRequest, session: Session) => {
 const deleteInvitation = async (req: NextRequest, session: Session) => {
   const id = getDynamicRoute(req)
 
-  await InvitationService.deleteInvitation(session.user.teamId, id)
+  await InvitationService.deleteInvitation(id, session.user.teamId)
   return Response.json(
     { success: true, message: 'Deleted successfully' },
     { status: 200 },

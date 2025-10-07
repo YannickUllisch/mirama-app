@@ -3,7 +3,12 @@ import type { InvitationResponseType } from '@server/domain/invitationSchema'
 
 const mapDefaultToApi = (input: CompanyInvitation): InvitationResponseType => {
   return {
-    ...input,
+    email: input.email,
+    expiresAt: input.expiresAt,
+    id: input.id,
+    name: input.name,
+    role: input.role,
+    teamId: input.teamId,
   }
 }
 

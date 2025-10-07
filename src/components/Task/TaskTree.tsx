@@ -1,12 +1,12 @@
 'use client'
 import type { Task } from '@prisma/client'
 import {
-  Folder,
-  File,
-  Tree,
   CollapseButton,
+  File,
+  Folder,
+  Tree,
 } from '@src/components/Tree/TreeViewAPI'
-import { createTree } from '@src/lib/data-structures/Tree'
+import { createTree } from '@src/lib/createTree'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'

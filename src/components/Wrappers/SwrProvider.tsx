@@ -1,5 +1,5 @@
 'use client'
-import { api } from '@api'
+import { api } from '@src/lib/api'
 import type { FC, PropsWithChildren } from 'react'
 import { toast } from 'sonner'
 import { SWRConfig } from 'swr'

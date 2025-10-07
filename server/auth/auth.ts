@@ -2,7 +2,7 @@ import type { Role } from '@prisma/client'
 import NextAuth from 'next-auth'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'
-import { getUserById } from './helpers/AuthQueries'
+import { getUserById } from './helpers/queries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,

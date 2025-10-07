@@ -1,5 +1,8 @@
-import { fetchProjectByIdFn } from '@hooks/api/project'
-import { createTaskFn, fetchTaskById } from '@hooks/api/task'
+import {
+  createTaskFn,
+  fetchPersonalTasksFn,
+  fetchTaskById,
+} from '@hooks/api/task'
 import type { TaskResponseType } from '@server/domain/taskSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -10,15 +13,23 @@ const project = {
       useQuery<TaskResponseType | null>({
         enabled: !!id,
         queryKey: ['task', id],
-        queryFn: () => fetchProjectByIdFn(id),
+        queryFn: () => fetchTaskById(id),
       }),
   },
 
   fetchByProject: {
     useQuery: (id: string) =>
-      useQuery<TaskResponseType[]>({
+      useQuery<TaskResponseType | null>({
         queryKey: ['tasks'],
         queryFn: () => fetchTaskById(id),
+      }),
+  },
+
+  fetchPersonal: {
+    useQuery: (id?: string) =>
+      useQuery<TaskResponseType[]>({
+        queryKey: ['tasks'],
+        queryFn: () => fetchPersonalTasksFn(id),
       }),
   },
 

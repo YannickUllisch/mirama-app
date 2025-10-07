@@ -4,9 +4,9 @@ import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
 const getTasksByProject = async (req: NextRequest, session: Session) => {
-  const pid = req.nextUrl.searchParams.get('projectId') as string
+  const pid = req.nextUrl.searchParams.get('projectId')
   const ignoreCompleted =
-    (req.nextUrl.searchParams.get('ignoreCompleted') as string) === 'true'
+    req.nextUrl.searchParams.get('ignoreCompleted') === 'true'
 
   if (!pid) {
     return Response.json(
@@ -29,7 +29,19 @@ const getTaskById = async (req: NextRequest, session: Session) => {
   return Response.json(task, { status: 200 })
 }
 
+const getPersonalTasks = async (req: NextRequest, session: Session) => {
+  const pid = req.nextUrl.searchParams.get('projectId')
+
+  const tasks = await TaskService.getPersonalTasks(
+    session.user.id ?? '',
+    session.user.teamId,
+    pid ?? undefined,
+  )
+  return Response.json(tasks, { status: 200 })
+}
+
 export const TaskController = {
   getTasksByProject,
   getTaskById,
+  getPersonalTasks,
 }

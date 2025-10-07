@@ -1,4 +1,3 @@
-import db from '@server/utils/db'
 import type {
   CreateProjectInput,
   ProjectResponseInput,
@@ -7,7 +6,7 @@ import type {
 import type { UserResponseType } from '@server/domain/userSchema'
 import { ProjectMapper } from '@server/mapping/project/projectMapping'
 import { UserMapper } from '@server/mapping/user/userMapping'
-import { withPrismaErrorSanitizer } from '@server/utils/errorSanitizer'
+import db from '@server/utils/db'
 import { v4 } from 'uuid'
 
 const getAllProjects = async (
@@ -96,79 +95,78 @@ const updateProject = async (
   input: UpdateProjectInput,
   projectId: string,
   teamId: string,
-) =>
-  withPrismaErrorSanitizer(async () => {
-    const { users, milestones, tags, ...proj } = input
+) => {
+  const { users, milestones, tags, ...proj } = input
 
-    const res = await db.$transaction(async (prisma) => {
-      // Updating the project main fields and tags
-      const project = await prisma.project.update({
-        where: { id: projectId, teamId },
-        data: {
-          ...proj,
-          tags: {
-            connectOrCreate: tags.map((tag) => ({
-              where: { id: tag },
-              create: { title: tag, teamId },
-            })),
-          },
-          teamId,
+  const res = await db.$transaction(async (prisma) => {
+    // Updating the project main fields and tags
+    const project = await prisma.project.update({
+      where: { id: projectId, teamId },
+      data: {
+        ...proj,
+        tags: {
+          connectOrCreate: tags.map((tag) => ({
+            where: { id: tag },
+            create: { title: tag, teamId },
+          })),
         },
-        include: {
-          milestones: true,
-          tags: true,
-          tasks: true,
-          users: {
-            include: {
-              user: true,
-            },
+        teamId,
+      },
+      include: {
+        milestones: true,
+        tags: true,
+        tasks: true,
+        users: {
+          include: {
+            user: true,
           },
         },
-      })
-
-      // Syncronizing users by recreation
-      await prisma.projectUser.deleteMany({ where: { projectId } })
-      if (users && users.length > 0) {
-        await prisma.projectUser.createMany({
-          data: users.map((u) => ({ ...u, projectId })),
-        })
-      }
-
-      // Syncronizing milestones
-      const existingMilestones = await prisma.milestone.findMany({
-        where: { projectId },
-        select: { id: true },
-      })
-      const inputIds = milestones.filter((m) => m.id).map((m) => m.id)
-      const idsToDelete = existingMilestones
-        .map((m) => m.id)
-        .filter((id) => !inputIds.includes(id))
-
-      if (idsToDelete.length > 0) {
-        await prisma.milestone.deleteMany({
-          where: { id: { in: idsToDelete } },
-        })
-      }
-
-      await Promise.all(
-        milestones.map((m) =>
-          m.id
-            ? prisma.milestone.update({
-                where: { id: m.id },
-                data: { ...m, projectId },
-              })
-            : prisma.milestone.create({ data: { ...m, projectId } }),
-        ),
-      )
-
-      return project
+      },
     })
 
-    return ProjectMapper.mapDefaultToApi(res)
+    // Syncronizing users by recreation
+    await prisma.projectUser.deleteMany({ where: { projectId } })
+    if (users && users.length > 0) {
+      await prisma.projectUser.createMany({
+        data: users.map((u) => ({ ...u, projectId })),
+      })
+    }
+
+    // Syncronizing milestones
+    const existingMilestones = await prisma.milestone.findMany({
+      where: { projectId },
+      select: { id: true },
+    })
+    const inputIds = milestones.filter((m) => m.id).map((m) => m.id)
+    const idsToDelete = existingMilestones
+      .map((m) => m.id)
+      .filter((id) => !inputIds.includes(id))
+
+    if (idsToDelete.length > 0) {
+      await prisma.milestone.deleteMany({
+        where: { id: { in: idsToDelete } },
+      })
+    }
+
+    await Promise.all(
+      milestones.map((m) =>
+        m.id
+          ? prisma.milestone.update({
+              where: { id: m.id },
+              data: { ...m, projectId },
+            })
+          : prisma.milestone.create({ data: { ...m, projectId } }),
+      ),
+    )
+
+    return project
   })
 
+  return ProjectMapper.mapDefaultToApi(res)
+}
+
 const createProject = async (input: CreateProjectInput, teamId: string) => {
-  withPrismaErrorSanitizer(async () => {
+  {
     const { newMilestones, newTags, ...proj } = input
 
     const existingProject = await db.project.findFirst({
@@ -220,7 +218,7 @@ const createProject = async (input: CreateProjectInput, teamId: string) => {
     })
 
     return ProjectMapper.mapDefaultToApi(project)
-  })
+  }
 }
 
 const deleteProject = async (pid: string, teamId: string) => {
@@ -234,28 +232,26 @@ const archiveProject = async (
   teamId: string,
   archive: boolean,
 ) => {
-  await withPrismaErrorSanitizer(async () => {
-    const res = await db.project.update({
-      where: {
-        id: projectId,
-        teamId,
-      },
-      data: {
-        archived: archive,
-      },
-      include: {
-        milestones: true,
-        tags: true,
-        tasks: true,
-        users: {
-          include: {
-            user: true,
-          },
+  const res = await db.project.update({
+    where: {
+      id: projectId,
+      teamId,
+    },
+    data: {
+      archived: archive,
+    },
+    include: {
+      milestones: true,
+      tags: true,
+      tasks: true,
+      users: {
+        include: {
+          user: true,
         },
       },
-    })
-    return ProjectMapper.mapDefaultToApi(res)
+    },
   })
+  return ProjectMapper.mapDefaultToApi(res)
 }
 
 export const ProjectService = {

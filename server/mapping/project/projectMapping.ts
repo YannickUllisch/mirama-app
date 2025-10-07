@@ -17,7 +17,15 @@ const mapDefaultToApi = (
   },
 ): ProjectResponseInput => {
   return {
-    ...input,
+    archived: input.archived,
+    budget: input.budget,
+    description: input.description,
+    endDate: input.endDate,
+    id: input.id,
+    name: input.name,
+    priority: input.priority,
+    startDate: input.startDate,
+    status: input.status,
     milestones: input.milestones.map((m) => ({ ...m })),
     tags: input.tags.map((t) => ({ title: t.title, id: t.id })),
     users: input.users.map((u) => ({

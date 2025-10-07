@@ -1,9 +1,9 @@
-import { api } from '@api'
 import type {
   CreateTagType,
   TagResponseType,
   UpdateTagType,
 } from '@server/domain/tagSchema'
+import { api } from '@src/lib/api'
 
 export const fetchTagsFn = async (): Promise<TagResponseType[]> => {
   const { data } = await api.get('tag')

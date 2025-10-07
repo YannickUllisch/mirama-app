@@ -3,8 +3,10 @@ import type { FavouriteResponseType } from '@server/domain/favouriteSchema'
 
 const mapDefaultToApi = (input: Favourite): FavouriteResponseType => {
   return {
-    ...input,
-    userId: input.userId ?? 'ERROR',
+    data: input.data,
+    id: input.id,
+    type: input.type,
+    userId: input.userId ?? '',
   }
 }
 

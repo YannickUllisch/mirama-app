@@ -1,8 +1,8 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { User } from '@prisma/client'
 import db from '@server/utils/db'
-import { getValidCompanyInvitation } from '@src/lib/api/queries/Invite/InviteQueries'
 import { deleteCognitoUser } from '../cognito/deleteCognitoUser'
+import { getValidCompanyInvitation } from '../helpers/queries'
 
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)

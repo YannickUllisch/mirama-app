@@ -5,7 +5,7 @@ import {
   InitiateAuthCommand,
   RespondToAuthChallengeCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
-import { CognitoChangePasswordSchema } from '@src/lib/schemas'
+import { CognitoChangePasswordSchema } from '@server/auth/schemas'
 import type z from 'zod'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 

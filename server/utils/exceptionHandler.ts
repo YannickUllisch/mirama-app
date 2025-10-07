@@ -1,3 +1,4 @@
+import { sanitizePrismaError } from './errorSanitizer'
 import type { AnyController, Controller } from './types'
 
 export const exceptionHandler = (controller: Controller): Controller => {
@@ -5,7 +6,11 @@ export const exceptionHandler = (controller: Controller): Controller => {
     try {
       return await controller(req, session)
     } catch (err: any) {
-      return Response.json({ ok: false, message: err.message }, { status: 400 })
+      const sanitized = sanitizePrismaError(err)
+      return Response.json(
+        { ok: false, message: sanitized.message },
+        { status: 400 },
+      )
     }
   }
 }
@@ -17,7 +22,11 @@ export const genericExceptionHandler = <TArgs extends any[]>(
     try {
       return await controller(...args)
     } catch (err: any) {
-      return Response.json({ ok: false, message: err.message }, { status: 400 })
+      const sanitized = sanitizePrismaError(err)
+      return Response.json(
+        { ok: false, message: sanitized.message },
+        { status: 400 },
+      )
     }
   }
 }

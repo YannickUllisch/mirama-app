@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { createMemoizedTree } from '@src/lib/data-structures/Tree'
+import { createMemoizedTree } from '@src/lib/createTree'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
 import { useContext, useState } from 'react'

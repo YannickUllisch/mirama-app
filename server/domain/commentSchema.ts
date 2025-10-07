@@ -1,7 +1,7 @@
 import z from 'zod'
 import { UserResponseSchema } from './userSchema'
 
-export const CommentResponseSchema: z.ZodType<any> = z.object({
+export const CommentResponseSchema = z.object({
   id: z.string(),
   content: z.string().min(1, { message: 'Comment content cannot be empty.' }),
 

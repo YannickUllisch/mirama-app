@@ -47,7 +47,7 @@ const invitation = {
               {
                 ...newInvite,
                 id: `temp-${Math.random()}`,
-                email: newInvite.email ?? `temp-${Math.random()}`,
+                email: newInvite.email,
                 expiresAt: DateTime.utc().plus({ days: 1 }).toJSDate(),
                 teamId: '',
               },
@@ -90,7 +90,7 @@ const invitation = {
           queryClient.setQueryData<InvitationResponseType[]>(
             ['invitation'],
             (old = []) =>
-              old.map((inv) => (inv.id === id ? { ...inv, ...data } : inv)),
+              old.map((inv) => (inv.email === id ? { ...inv, ...data } : inv)),
           )
 
           return { previous }
@@ -118,7 +118,7 @@ const invitation = {
         { previous?: InvitationResponseType[] }
       >({
         mutationFn: deleteInvitationFn,
-        onMutate: async (id) => {
+        onMutate: async (email) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
           const previous = queryClient.getQueryData<InvitationResponseType[]>([
@@ -128,7 +128,7 @@ const invitation = {
           // Optimistically remove the invitation from the cache
           queryClient.setQueryData<InvitationResponseType[]>(
             ['invitation'],
-            (old = []) => old.filter((p) => p.id !== id),
+            (old = []) => old.filter((p) => p.email !== email),
           )
 
           return { previous }

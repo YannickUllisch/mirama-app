@@ -1,5 +1,4 @@
 import { PriorityType, TaskStatusType } from '@prisma/client'
-import { validateRecusiveSubtasks } from '@server/utils/validationHelpers'
 import z from 'zod'
 import { CommentResponseSchema } from './commentSchema'
 import {
@@ -28,7 +27,7 @@ export const SimpleTaskResponseSchema = z.object({
   assignedToId: z.string().nullable(),
 })
 
-export const TaskResponseSchema: z.ZodType<any> = z
+export const TaskResponseSchema = z
   .object({
     id: z.string(),
     taskCode: z.string(),
@@ -48,7 +47,8 @@ export const TaskResponseSchema: z.ZodType<any> = z
 
     dateCreated: z.coerce.date(),
     updatedAt: z.coerce.date(),
-    assignedTo: UserResponseSchema,
+    assignedTo: UserResponseSchema.nullable(),
+    assignedToId: z.string().nullable(),
 
     projectId: z.string(),
     projectName: z.string(),
@@ -59,13 +59,10 @@ export const TaskResponseSchema: z.ZodType<any> = z
     message: 'Start Date must be before or equal to Due Date',
     path: ['startDate'],
   })
-  .refine(
-    (data) => !validateRecusiveSubtasks(data.subtasks, data.parentId), // indirect cycle
-    {
-      message: 'Creating a cyclic Task dependency is not allowed',
-      path: ['parentId'],
-    },
-  )
+  .refine((data) => !data.subtasks.map((s) => s.id !== data.id), {
+    message: 'Creating a cyclic Task dependency is not allowed',
+    path: ['parentId'],
+  })
   .refine((data) => data.parentId !== data.id, {
     message: 'A task cannot be its own parent',
     path: ['parentId'],
@@ -116,19 +113,21 @@ export const CreateTaskSchema = z
 export const UpdateTaskSchema = z
   .object({
     id: z.string(),
-    title: z.string().min(1).optional(),
-    type: TaskTypeSchema.optional(),
-    description: z.string().nullable().optional(),
-    priority: PriorityTypeSchema.optional(),
-    status: TaskStatusTypeSchema.optional(),
-    tags: z.array(TagResponseSchema),
+    title: z.string().min(1, { message: 'Title cannot be empty.' }),
+    type: TaskTypeSchema,
+    description: z.string().nullable(),
+    priority: PriorityTypeSchema,
+    status: TaskStatusTypeSchema,
 
-    startDate: z.date().optional(),
-    dueDate: z.date().optional(),
+    startDate: z.coerce.date(),
+    dueDate: z.coerce.date(),
+    tags: z.string().array(),
+    newTags: z.array(CreateTagSchema),
 
-    parentId: z.string().nullable().optional(),
-    assignedToId: z.string().nullable().optional(),
-    projectId: z.string().optional(),
+    parentId: z.string().nullable(),
+    assignedToId: z.string().nullable(),
+    subtasks: z.string().array(),
+    projectId: z.string(),
   })
   .refine(
     (data) => {

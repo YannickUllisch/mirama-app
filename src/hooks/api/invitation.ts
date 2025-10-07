@@ -1,9 +1,9 @@
-import { api } from '@api'
 import type {
   CreateInvitationInput,
   InvitationResponseType,
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
+import { api } from '@src/lib/api'
 
 export const fetchInvitationsFn = async (): Promise<
   InvitationResponseType[]
@@ -18,14 +18,14 @@ export const createInviteFn = async (payload: CreateInvitationInput) => {
 }
 
 export const updateInvitationFn = async (
-  id: string,
+  email: string,
   payload: UpdateInvitationInput,
 ) => {
-  const { data } = await api.put(`invite/${id}`, payload)
+  const { data } = await api.put(`invite/${email}`, payload)
   return data
 }
 
-export const deleteInvitationFn = async (id: string) => {
-  const { data } = await api.delete(`invite/${id}`)
+export const deleteInvitationFn = async (email: string) => {
+  const { data } = await api.delete(`invite/${email}`)
   return data
 }

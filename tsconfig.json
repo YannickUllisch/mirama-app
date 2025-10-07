@@ -21,8 +21,8 @@
     ],
     "paths": {
       "@auth": ["./server/auth/auth.ts"],
-      "@db": ["server/utils/db.ts"],
-      "@api": ["./src/lib/api/api.ts"],
+      "@db": ["./server/utils/db.ts"],
+      "@api": ["./src/lib/api.ts"],
       "@withAuth": ["./server/auth/withAuth.ts"],
       "@server/*": ["./server/*"],
       "@hooks/*": ["./src/hooks/*"],

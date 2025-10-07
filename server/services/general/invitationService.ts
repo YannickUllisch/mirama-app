@@ -1,4 +1,3 @@
-import db from '@server/utils/db'
 import type { Role } from '@prisma/client'
 import { inviteUserCognito } from '@server/auth/cognito/inviteUser'
 import type {
@@ -6,6 +5,7 @@ import type {
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
 import { InvitationMapper } from '@server/mapping/general/invitationMapping'
+import db from '@server/utils/db'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 
@@ -57,12 +57,12 @@ const createNewInvitation = async (
 
 const updateInvitation = async (
   teamId: string,
-  invId: string,
+  email: string,
   invitation: UpdateInvitationInput,
 ) => {
   const res = await db.companyInvitation.update({
     where: {
-      id: invId,
+      email,
       teamId: teamId,
     },
     data: {
@@ -78,9 +78,9 @@ const updateInvitation = async (
   return InvitationMapper.mapDefaultToApi(res)
 }
 
-const deleteInvitation = async (teamId: string, id: string) => {
+const deleteInvitation = async (email: string, teamId: string) => {
   await db.companyInvitation.deleteMany({
-    where: { id, teamId },
+    where: { email, teamId },
   })
 }
 

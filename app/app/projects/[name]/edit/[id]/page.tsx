@@ -6,13 +6,14 @@ import {
   type Tag,
   type Task,
   TaskStatusType,
-  type TaskType,
+  TaskType,
   type User,
 } from '@prisma/client'
 import {
-  TaskResponseSchema,
-  type TaskResponseType,
+  UpdateTaskSchema,
+  type UpdateTaskType,
 } from '@server/domain/taskSchema'
+
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -99,29 +100,37 @@ const EditTaskForm = () => {
   const [isPending, startTransition] = useTransition()
 
   // Form Logic and Functions
-  const form = useForm<TaskResponseType>({
-    resolver: zodResolver(TaskResponseSchema),
+  const form = useForm<UpdateTaskType>({
+    resolver: zodResolver(UpdateTaskSchema),
   })
 
   useEffect(() => {
     if (task) {
       // Manually reset form values when defaultExpense changes
       form.reset({
-        assignedToId: task?.assignedToId,
+        id: task.id,
+
         description: task?.description,
         title: task?.title ?? '',
-        dueDate: new Date(task?.dueDate ?? ''),
-        startDate: new Date(task?.startDate ?? ''),
+        assignedToId: task?.assignedToId,
+        startDate: new Date(task?.startDate),
+        dueDate: new Date(task?.dueDate),
+
         priority: task?.priority ?? PriorityType.LOW,
-        projectId: task?.projectId ?? '',
         status: task?.status ?? TaskStatusType.NEW,
-        tags: task?.tags.map((tag) => tag.id),
+        type: task?.type ?? TaskType.TASK,
+        projectId: task?.projectId,
+
+        tags: task?.tags.map((t) => t.id),
+        newTags: [],
         parentId: task?.parentId ?? undefined,
-        type: task?.type ?? 'TASK',
+
+        subtasks: task.subtasks.map((t) => t.id),
       })
     } else {
       // If defaultExpense is undefined, reset the form to initial values
       form.reset({
+        id: '',
         assignedToId: undefined,
         description: '',
         title: '',
@@ -131,6 +140,8 @@ const EditTaskForm = () => {
         projectId: '',
         status: TaskStatusType.NEW,
         tags: [],
+        newTags: [],
+        subtasks: [],
         parentId: undefined,
         type: 'TASK',
       })
@@ -138,7 +149,7 @@ const EditTaskForm = () => {
   }, [task, form.reset])
 
   // Functions
-  const onSubmit = (vals: TaskResponseType) => {
+  const onSubmit = (vals: UpdateTaskType) => {
     startTransition(() => {
       updateResourceById('task', task?.id ?? '', vals).then(() => {
         router.back()
@@ -492,7 +503,7 @@ const EditTaskForm = () => {
                       <Label>Link to Parent</Label>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value}
+                        value={field.value ?? undefined}
                         key={`parent-select-${field.value}`}
                       >
                         <FormControl>

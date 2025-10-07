@@ -1,6 +1,6 @@
 import { TaskType } from '@prisma/client'
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Create Task',
@@ -18,7 +18,7 @@ const Layout = async ({
 
   const validTypes = Object.values(TaskType)
   if (!validTypes.includes(awaitedParams.type.toUpperCase() as TaskType)) {
-    redirect(`/app/projects/${awaitedParams.name}`)
+    notFound()
   }
 
   return children

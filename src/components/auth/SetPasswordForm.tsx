@@ -1,6 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { handleAuthChallenge } from '@server/auth/cognito/handleAuthChallenge'
+import { CognitoChangePasswordSchema } from '@server/auth/schemas'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { Button } from '@src/components/ui/button'
@@ -13,7 +14,6 @@ import {
   FormMessage,
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
-import { CognitoChangePasswordSchema } from '@src/lib/schemas'
 import { Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'
