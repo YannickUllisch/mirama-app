@@ -1,8 +1,8 @@
-import { api } from '@api'
 import type {
   UpdateUserType,
   UserResponseType,
 } from '@server/domain/userSchema'
+import { api } from '@src/lib/api'
 
 export const fetchTeamMembersFn = async (): Promise<UserResponseType[]> => {
   const { data } = await api.get('team/member')
