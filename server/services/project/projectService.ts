@@ -50,7 +50,30 @@ const getAllProjects = async (
 const getProjectAssignees = async (
   projectId: string,
   teamId: string,
+  sessionUserId: string,
+  isAdminOrOwner: boolean,
 ): Promise<UserResponseType[]> => {
+  const project = await db.project.findFirst({
+    where: {
+      id: projectId,
+      teamId,
+    },
+    select: {
+      users: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  })
+
+  if (
+    !project?.users.map((u) => u.userId).includes(sessionUserId) &&
+    !isAdminOrOwner
+  ) {
+    throw new Error('Invalid permission')
+  }
+
   const res = await db.user.findMany({
     where: {
       projects: {
@@ -68,6 +91,8 @@ const getProjectAssignees = async (
 const getDefaultProjectResponse = async (
   projectId: string,
   teamId: string,
+  sessionUserId: string,
+  isAdminOrOwner: boolean,
 ): Promise<ProjectResponseInput | null> => {
   const project = await db.project.findFirst({
     where: {
@@ -87,6 +112,13 @@ const getDefaultProjectResponse = async (
   })
 
   if (!project) throw new Error('Project not Found')
+
+  if (
+    !project.users.map((u) => u.userId).includes(sessionUserId) &&
+    !isAdminOrOwner
+  ) {
+    throw new Error('Invalid Permission')
+  }
 
   return ProjectMapper.mapDefaultToApi(project)
 }

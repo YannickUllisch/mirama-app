@@ -7,7 +7,30 @@ const getTasksByProjectId = async (
   pid: string,
   teamId: string,
   ignoreCompleted: boolean,
+  sessionUserId: string,
+  isTeamAdminOrOwner: boolean,
 ): Promise<TaskResponseType[]> => {
+  const project = await db.project.findFirst({
+    where: {
+      id: pid,
+      teamId,
+    },
+    select: {
+      users: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  })
+
+  if (
+    !project?.users.map((p) => p.userId).includes(sessionUserId) &&
+    !isTeamAdminOrOwner
+  ) {
+    throw new Error('Invalid Permission')
+  }
+
   const res = await db.task.findMany({
     where: {
       project: {
@@ -44,6 +67,8 @@ const getTasksByProjectId = async (
 const getTaskById = async (
   id: string,
   teamId: string,
+  sessionUserId: string,
+  isTeamAdminOrOwner: boolean,
 ): Promise<TaskResponseType> => {
   const res = await db.task.findFirst({
     where: {
@@ -66,6 +91,28 @@ const getTaskById = async (
   })
 
   if (!res) throw new Error('Task not found')
+
+  // Refined access Permission check
+  const project = await db.project.findFirst({
+    where: {
+      id: res.projectId,
+      teamId,
+    },
+    select: {
+      users: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  })
+
+  if (
+    !project?.users.map((p) => p.userId).includes(sessionUserId) &&
+    !isTeamAdminOrOwner
+  ) {
+    throw new Error('Invalid Permission')
+  }
 
   return TaskMapper.mapDefaultToApi(res)
 }

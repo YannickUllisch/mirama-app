@@ -1,5 +1,6 @@
 import { TaskService } from '@server/services/task/taskService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 
@@ -15,17 +16,29 @@ const getTasksByProject = async (req: NextRequest, session: Session) => {
     )
   }
 
+  const roleCheck = isTeamAdminOrOwner(session)
+
   const tasks = await TaskService.getTasksByProjectId(
     pid,
     session.user.teamId,
     ignoreCompleted,
+    session.user.id ?? '',
+    roleCheck,
   )
   return Response.json(tasks, { status: 200 })
 }
 
 const getTaskById = async (req: NextRequest, session: Session) => {
   const id = getDynamicRoute(req)
-  const task = await TaskService.getTaskById(id, session.user.teamId)
+
+  const roleCheck = isTeamAdminOrOwner(session)
+
+  const task = await TaskService.getTaskById(
+    id,
+    session.user.teamId,
+    session.user.id ?? '',
+    roleCheck,
+  )
   return Response.json(task, { status: 200 })
 }
 

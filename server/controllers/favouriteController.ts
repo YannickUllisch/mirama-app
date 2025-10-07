@@ -1,3 +1,4 @@
+import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
 import { CreateFavouriteSchema } from '@server/domain/favouriteSchema'
 import { FavouriteService } from '@server/services/general/favouriteService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
@@ -13,9 +14,11 @@ const getFavourites = async (req: NextRequest, session: Session) => {
       { status: 400 },
     )
 
+  const parsedType = FavouriteTypeSchema.parse(type)
+
   const favourites = await FavouriteService.getFavouritesByType(
     session.user.id,
-    type,
+    parsedType,
   )
   return Response.json(favourites, { status: 200 })
 }

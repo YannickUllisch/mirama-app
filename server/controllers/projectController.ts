@@ -27,9 +27,13 @@ const getAllProjects = async (req: NextRequest, session: Session) => {
 const getProjectById = async (req: NextRequest, session: Session) => {
   const pid = getDynamicRoute(req)
 
+  const roleCheck = isTeamAdminOrOwner(session)
+
   const project = await ProjectService.getDefaultProjectResponse(
     pid,
     session.user.teamId,
+    session.user.id ?? '',
+    roleCheck,
   )
 
   return Response.json(project, { status: 200 })
@@ -47,9 +51,13 @@ const getProjectAssignees = async (req: NextRequest, session: Session) => {
   // Extracting ID from route
   const pid = getDynamicRoute(req)
 
+  const isAdminOrOwner = isTeamAdminOrOwner(session)
+
   const users = await ProjectService.getProjectAssignees(
     pid,
     session.user.teamId,
+    session.user.id ?? '',
+    isAdminOrOwner,
   )
 
   return Response.json(users, { status: 200 })

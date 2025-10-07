@@ -1,12 +1,11 @@
-import db from '@server/utils/db'
-import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
+import type { FavouriteType } from '@prisma/client'
 import type { CreateFavouriteType } from '@server/domain/favouriteSchema'
 import { FavouriteMapper } from '@server/mapping/general/favouriteMapping'
+import db from '@server/utils/db'
 
-const getFavouritesByType = async (userId: string, type: string) => {
-  const parsedType = FavouriteTypeSchema.parse(type)
+const getFavouritesByType = async (userId: string, type: FavouriteType) => {
   const res = await db.favourite.findMany({
-    where: { userId, type: parsedType },
+    where: { userId, type: type },
     orderBy: {
       data: 'asc',
     },
