@@ -1,63 +1,44 @@
-import type React from 'react'
-import type { FC, PropsWithChildren } from 'react'
+'use client'
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@src/components/ui/dialog'
-import { Button } from '@src/components/ui/button'
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@ui/alert-dialog'
 
-interface ConfirmationDialogProps {
-  open?: boolean
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
-  dialogTitle: string
-  dialogDesc: string
-  submitButtonText: string
-  onConfirmation: (id?: string) => void
+type ConfirmationAlertDialogProps = {
+  title: string
+  description: string
+  onCancel: () => void
+  onSubmit: () => void
+  children: React.ReactNode
 }
 
-const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> = ({
-  dialogTitle,
-  dialogDesc,
-  submitButtonText,
+export const ConfirmationDialog = ({
+  title,
+  description,
+  onCancel,
+  onSubmit,
   children,
-  onConfirmation,
-  open,
-  setOpen,
-}) => {
+}: ConfirmationAlertDialogProps) => {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{dialogTitle}</DialogTitle>
-          <DialogDescription>{dialogDesc}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="link">
-              Close
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="default"
-              onClick={() => onConfirmation()}
-              className="bg-red-600 hover:bg-red-500 dark:text-white"
-            >
-              {submitButtonText}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onSubmit}>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
-
-export default ConfirmationDialog

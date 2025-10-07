@@ -1,21 +1,21 @@
 'use client'
-import { type FC, useState } from 'react'
-import UserAvatar from './UserAvatar'
 import type { User } from '@prisma/client'
+import { deleteResources } from '@src/lib/api/deleteResource'
 import { capitalize, isRoleHigher, isTeamAdminOrOwner } from '@src/lib/utils'
-import { Button } from '../ui/button'
 import { Pencil, PencilLine, Trash2 } from 'lucide-react'
+import type { Session } from 'next-auth'
+import type { UpdateSession } from 'next-auth/react'
+import { type FC, useState } from 'react'
+import { ConfirmationDialogWithOpenState } from '../Dialogs/ConfirmationDialogWithOpenState'
+import EditUserDialog from '../Dialogs/EditUserDialog'
+import { Button } from '../ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import type { Session } from 'next-auth'
-import ConfirmationDialog from '../Dialogs/ConfirmationDialog'
-import type { UpdateSession } from 'next-auth/react'
-import EditUserDialog from '../Dialogs/EditUserDialog'
+import UserAvatar from './UserAvatar'
 
 interface UserCardProps {
   user: User
@@ -81,17 +81,17 @@ const UserCard: FC<UserCardProps> = ({
           </div>
         )}
 
-      <ConfirmationDialog
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-        dialogTitle={'Are you sure?'}
-        dialogDesc={'Removing a User is final.'}
-        submitButtonText={'Remove'}
-        onConfirmation={() =>
+      <ConfirmationDialogWithOpenState
+        isOpen={deleteDialogOpen}
+        title={'Are you sure?'}
+        description={'Removing a User is final.'}
+        onCancel={() => setDeleteDialogOpen(false)}
+        onSubmit={() => {
           deleteResources('team/member', [user.id], {
             mutate: mutate,
           })
-        }
+          setDeleteDialogOpen(false)
+        }}
       />
 
       <EditUserDialog

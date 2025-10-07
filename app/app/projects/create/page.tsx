@@ -9,7 +9,7 @@ import {
 } from '@server/domain/projectSchema'
 import { CreateTagSchema } from '@server/domain/tagSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { Button } from '@src/components/ui/button'
@@ -46,6 +46,7 @@ import { ColorPicker } from '@ui/color-picker'
 import {
   Calendar,
   ClipboardPen,
+  Loader2,
   MessageCircleWarning,
   Milestone,
   Plus,
@@ -180,10 +181,10 @@ const CreateProjectForm = () => {
         >
           <div className="flex items-center gap-3">
             <ConfirmationDialog
-              dialogTitle={'Discard changes?'}
-              dialogDesc={'All progress will be lost'}
-              submitButtonText={'Return'}
-              onConfirmation={() => router.push('/app/projects')}
+              title={'Discard changes?'}
+              description={'All progress will be lost'}
+              onCancel={() => null}
+              onSubmit={() => router.push('/app/projects')}
             >
               <Button
                 type="button"
@@ -202,7 +203,11 @@ const CreateProjectForm = () => {
               aria-label="Save Project Button"
               disabled={isPending || !form.formState.isDirty}
             >
-              <Save className="w-4 h-4" />
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
               <span>Save Project</span>
             </Button>
           </div>

@@ -42,9 +42,12 @@ const getProjectById = async (req: NextRequest, session: Session) => {
 const deleteProjectById = async (req: NextRequest, session: Session) => {
   const pid = getDynamicRoute(req)
 
-  const project = await ProjectService.deleteProject(pid, session.user.teamId)
+  await ProjectService.deleteProject(pid, session.user.teamId)
 
-  return Response.json(project, { status: 200 })
+  return Response.json(
+    { success: true, message: 'Deleted successfully' },
+    { status: 200 },
+  )
 }
 
 const getProjectAssignees = async (req: NextRequest, session: Session) => {

@@ -1,6 +1,6 @@
 'use client'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
 import { Button } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'
@@ -78,10 +78,10 @@ const AccountTab: FC<AccountTabProps> = ({ session }) => {
         <Label className="text-2xl">Critical Actions</Label>
         <div>
           <ConfirmationDialog
-            dialogTitle={'Are you sure?'}
-            dialogDesc={'Removing your Account can not be undone.'}
-            submitButtonText={'Delete'}
-            onConfirmation={() => undefined}
+            title={'Are you sure?'}
+            description={'Removing your Account can not be undone.'}
+            onCancel={() => null}
+            onSubmit={() => undefined}
           >
             <Button
               className="gap-2 hover:text-red-500 hover:no-underline hover:bg-hover"

@@ -18,8 +18,9 @@ import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralAccordion from '@src/components/GeneralAccordion'
+import HoverLink from '@src/components/HoverLink'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import SubTasksGroup from '@src/components/Task/SubTasksGroup'
 import { Button } from '@src/components/ui/button'
@@ -61,7 +62,6 @@ import {
   Undo,
   User as UserIcon,
 } from 'lucide-react'
-import Link from 'next/link'
 import { notFound, useParams, useRouter } from 'next/navigation'
 import { useContext, useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -175,28 +175,22 @@ const EditTaskForm = () => {
             <div>|</div>
             {form.formState.isDirty ? (
               <ConfirmationDialog
-                dialogTitle={'Are you sure?'}
-                dialogDesc={'All progress will be lost'}
-                submitButtonText={'Return'}
-                onConfirmation={() => router.push(`/app/${params.name}`)}
+                title={'Are you sure?'}
+                description={'All progress will be lost'}
+                onCancel={() => null}
+                onSubmit={() => router.push(`/app/${params.name}`)}
               >
-                <Link
-                  href={`/app/projects/${params.name}`}
-                  prefetch={false}
-                  className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="gap-2 bg-transparent"
                 >
-                  <Undo width={10} className="ml-2" />
-                  <Button
-                    type="button"
-                    style={{ textDecoration: 'none', fontSize: 12 }}
-                    variant={'link'}
-                  >
-                    Return to Project View
-                  </Button>
-                </Link>
+                  <Undo className="w-4 h-4" />
+                  Cancel
+                </Button>
               </ConfirmationDialog>
             ) : (
-              <Link
+              <HoverLink
                 href={`/app/projects/${params.name}`}
                 prefetch={false}
                 className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
@@ -209,7 +203,7 @@ const EditTaskForm = () => {
                 >
                   Return to Project View
                 </Button>
-              </Link>
+              </HoverLink>
             )}
           </div>
 
