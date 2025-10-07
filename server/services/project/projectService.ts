@@ -254,9 +254,13 @@ const createProject = async (input: CreateProjectInput, teamId: string) => {
 }
 
 const deleteProject = async (pid: string, teamId: string) => {
-  await db.project.delete({
-    where: { id: pid, teamId },
-  })
+  try {
+    await db.project.delete({
+      where: { id: pid, teamId },
+    })
+  } catch (err) {
+    console.info(err)
+  }
 }
 
 const archiveProject = async (

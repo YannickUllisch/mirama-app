@@ -32,12 +32,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/select'
+import { Plus } from 'lucide-react'
 import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
+  // States
   const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  // Form State
   const form = useForm<CreateInvitationInput>({
     resolver: zodResolver(CreateInvitationSchema),
     defaultValues: {
@@ -47,9 +51,11 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
     },
   })
 
+  // Hooks
   const { mutate: useCreateInvitation } =
     apiRequest.invitation.create.useMutation()
 
+  // Helper
   const onSubmit = (vals: CreateInvitationInput) => {
     startTransition(() => {
       useCreateInvitation(vals)
@@ -59,7 +65,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Add Member to Team</DialogTitle>
           <DialogDescription>
@@ -140,8 +146,9 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                   Close
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isPending} variant={'success'}>
-                Add
+              <Button type="submit" disabled={isPending} variant={'primary'}>
+                <Plus className="w-4 h-4" />
+                Invite
               </Button>
             </DialogFooter>
           </form>

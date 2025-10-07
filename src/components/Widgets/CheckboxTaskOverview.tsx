@@ -1,26 +1,24 @@
 'use client'
 
-import * as React from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { format } from 'date-fns'
-import { ExternalLink } from 'lucide-react'
-import type { Task, TaskStatusType } from '@prisma/client'
+import type { TaskStatusType } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import { Badge } from '@ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
-import { Badge } from '@ui/badge'
-import type { KeyedMutator } from 'swr'
-import { useMemo } from 'react'
+import { format } from 'date-fns'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import * as React from 'react'
+import { useMemo } from 'react'
 
 interface TaskPriorityWidgetProps {
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
-  tasks: Task[]
-  updatePersonalTasks: KeyedMutator<Task[]>
+  tasks: TaskResponseType[]
 }
 
 const CheckboxTaskOverview = ({
   onTaskUpdate,
-  updatePersonalTasks,
   tasks,
 }: TaskPriorityWidgetProps) => {
   const [updatingTaskId, setUpdatingTaskId] = React.useState<string | null>(
@@ -66,11 +64,11 @@ const CheckboxTaskOverview = ({
 
     try {
       await onTaskUpdate(taskId, newStatus as TaskStatusType)
-      updatePersonalTasks(
-        tasks.map((t) =>
-          t.id === taskId ? { ...t, status: newStatus as TaskStatusType } : t,
-        ),
-      )
+      // updatePersonalTasks(
+      //   tasks.map((t) =>
+      //     t.id === taskId ? { ...t, status: newStatus as TaskStatusType } : t,
+      //   ),
+      // )
     } catch (error) {
       console.error('Failed to update task:', error)
     } finally {

@@ -2,12 +2,13 @@ import {
   createTaskFn,
   fetchPersonalTasksFn,
   fetchTaskById,
+  fetchTasksByProjectFn,
 } from '@hooks/api/task'
 import type { TaskResponseType } from '@server/domain/taskSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-const project = {
+const task = {
   fetchById: {
     useQuery: (id: string) =>
       useQuery<TaskResponseType | null>({
@@ -19,9 +20,9 @@ const project = {
 
   fetchByProject: {
     useQuery: (id: string) =>
-      useQuery<TaskResponseType | null>({
+      useQuery<TaskResponseType[]>({
         queryKey: ['tasks'],
-        queryFn: () => fetchTaskById(id),
+        queryFn: () => fetchTasksByProjectFn(id),
       }),
   },
 
@@ -61,4 +62,4 @@ const project = {
   },
 }
 
-export default project
+export default task

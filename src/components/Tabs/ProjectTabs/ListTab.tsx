@@ -1,13 +1,9 @@
 'use client'
 
 import type { DragEndEvent } from '@dnd-kit/core'
-import {
-  PriorityType,
-  type Task,
-  TaskStatusType,
-  type TaskType,
-  type User,
-} from '@prisma/client'
+import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
@@ -44,7 +40,6 @@ import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import { useContext, useEffect, useRef, useState } from 'react'
-import useSWR from 'swr'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -54,7 +49,13 @@ const ViewTaskSheet = dynamic(
   },
 )
 
-const ListTab = () => {
+const ListTab = ({
+  project,
+  tasks,
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+}) => {
   // States
   const { data: session } = useSession()
   const [showAllTasks, setShowAllTasks] = useState(true)
@@ -76,16 +77,6 @@ const ListTab = () => {
   const inputContainerRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const {
-    data: tasks,
-    mutate,
-    isLoading: isTasksLoading,
-  } = useSWR<(Task & { assignedTo: User; parent: Task })[]>({
-    url: projectContext
-      ? `task/personal/${projectContext.projectId}?showAll=${showAllTasks}`
-      : null,
-  })
-
   // Functions
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -104,7 +95,7 @@ const ListTab = () => {
       return
     }
 
-    updateResourceById('task', active.id.toString(), { status }, { mutate })
+    updateResourceById('task', active.id.toString(), { status })
   }
 
   const onAddItem = (
@@ -121,20 +112,16 @@ const ListTab = () => {
 
   const handleInputSave = () => {
     if (newItem?.title.trim()) {
-      postResource(
-        'task',
-        {
-          type: newItem.type,
-          title: newItem.title.trim(),
-          status: newItem.status,
-          priority: PriorityType.LOW,
-          projectId: projectContext?.projectId,
-          assignedToId: session?.user.id,
-          parentId: newItem.parentId,
-          dueDate: DateTime.now().plus({ week: 1 }).toJSDate(),
-        },
-        { mutate },
-      )
+      postResource('task', {
+        type: newItem.type,
+        title: newItem.title.trim(),
+        status: newItem.status,
+        priority: PriorityType.LOW,
+        projectId: projectContext?.projectId,
+        assignedToId: session?.user.id,
+        parentId: newItem.parentId,
+        dueDate: DateTime.now().plus({ week: 1 }).toJSDate(),
+      })
       // Call the final save function here
       setNewItem(null)
     }
@@ -188,7 +175,6 @@ const ListTab = () => {
         open={isTaskSheetOpen}
         setOpen={setIsTaskSheetOpen}
         taskId={selectedTaskId ?? ''}
-        mutate={mutate}
       />
       <div className="flex flex-col flex-grow min-h-0 rounded-xl border">
         <ListProvider onDragEnd={handleDragEnd}>
@@ -266,7 +252,7 @@ const ListTab = () => {
                   color={getColorByTaskStatusType(status) as string}
                 />
 
-                {isTasksLoading ? (
+                {!project ? (
                   <div className="w-full flex justify-center items-center min-h-[100px]">
                     <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
                   </div>
@@ -311,7 +297,6 @@ const ListTab = () => {
                             </ListItem>
                           </ContextMenuTrigger>
                           <TaskContextContent
-                            mutate={mutate}
                             projectName={projectContext?.projectName ?? ''}
                             taskId={feature.id}
                           />

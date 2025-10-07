@@ -1,6 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PriorityType, StatusType, type Tag, type User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { PriorityType, StatusType } from '@prisma/client'
 import { AttachNewMilestoneToProjectSchema } from '@server/domain/milestoneSchema'
 import {
   type CreateProjectInput,
@@ -40,7 +41,6 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { postResource } from '@src/lib/api/postResource'
 import { capitalize } from '@src/lib/utils'
 import { ColorPicker } from '@ui/color-picker'
 import {
@@ -59,17 +59,14 @@ import {
   Users,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import useSWR, { mutate } from 'swr'
 
 const CreateProjectForm = () => {
   // Routing used to return to previous page.
   const router = useRouter()
 
   // States
-  const [isPending, startTransition] = useTransition()
-
   const [newMilestone, setNewMilestone] = useState({
     title: '',
     date: new Date(),
@@ -77,8 +74,11 @@ const CreateProjectForm = () => {
   })
   const [newTag, setNewTag] = useState('')
 
-  const { data: users } = useSWR<User[]>('team/member')
-  const { data: tags } = useSWR<Tag[]>('tag')
+  // Hooks
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: tags } = apiRequest.tag.fetchAll.useQuery()
+  const { mutate: useCreateProject, isPending } =
+    apiRequest.project.create.useMutation()
 
   // Form Logic and Functions
   const form = useForm<CreateProjectInput>({
@@ -94,6 +94,8 @@ const CreateProjectForm = () => {
       tags: [],
       users: [],
       newMilestones: [],
+      archived: false,
+      newTags: [],
     },
   })
 
@@ -154,16 +156,14 @@ const CreateProjectForm = () => {
   }
 
   const onSubmit = (vals: CreateProjectInput) => {
-    startTransition(() => {
-      // Optimistically update SWR cache globally
-
-      postResource('project', vals)
-        .then(() => {
-          mutate('project')
-        })
-        .catch(() => {
-          mutate('project')
-        })
+    useCreateProject(vals, {
+      onSuccess(data) {
+        if (data.id) {
+          router.push(`/app/projects/edit/${data.id}`)
+        } else {
+          router.push('/app/projects')
+        }
+      },
     })
   }
 

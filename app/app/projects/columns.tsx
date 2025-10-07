@@ -4,7 +4,6 @@ import { PriorityType, StatusType } from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import type { UserResponseType } from '@server/domain/userSchema'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import HoverLink from '@src/components/HoverLink'
 import {
   EditableCell,
@@ -14,20 +13,13 @@ import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
-import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
-import {
-  ArchiveRestore,
-  CalendarDays,
-  Ellipsis,
-  PenSquareIcon,
-  Trash,
-} from 'lucide-react'
+import { Archive, CalendarDays, Ellipsis, PenSquareIcon } from 'lucide-react'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
@@ -38,20 +30,12 @@ export const useProjectColumns = ({
   session,
   users,
   handleFieldUpdate,
-  deleteMutation,
   archiveMutation,
 }: {
   session: Session | null
   users: UserResponseType[]
   handleFieldUpdate: HandleFieldUpdate<ProjectResponseInput>
-  deleteMutation: UseMutateFunction<
-    {
-      success: boolean
-    },
-    Error,
-    string,
-    unknown
-  >
+
   archiveMutation: UseMutateFunction<
     {
       success: boolean
@@ -303,7 +287,6 @@ export const useProjectColumns = ({
         ),
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
-          const [delDialogOpen, setDelDialogOpen] = useState(false)
 
           if (isTeamAdminOrOwner(session)) {
             return (
@@ -315,15 +298,7 @@ export const useProjectColumns = ({
                   {isTeamAdminOrOwner(session) && (
                     <>
                       <HoverLink href={`/app/projects/edit/${row.original.id}`}>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            archiveMutation({
-                              id: row.original.id,
-                              archive: !row.original.archived,
-                            })
-                          }
-                          className="gap-2"
-                        >
+                        <DropdownMenuItem className="gap-2">
                           <PenSquareIcon className="w-3.5 h-3.5" />
                           Edit
                         </DropdownMenuItem>
@@ -337,26 +312,8 @@ export const useProjectColumns = ({
                         }
                         className="gap-2"
                       >
-                        <ArchiveRestore className="w-3.5 h-3.5" />
-                        Unarchive
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="gap-3"
-                        onClick={() => setDelDialogOpen(true)}
-                      >
-                        <ConfirmationDialog
-                          open={delDialogOpen}
-                          setOpen={setDelDialogOpen}
-                          dialogTitle={'Are you sure?'}
-                          dialogDesc={'Deleting a project can not be undone!'}
-                          submitButtonText={'Delete'}
-                          onConfirmation={() => deleteMutation(row.original.id)}
-                        >
-                          <Centering>
-                            <Trash className="h-4 w-4" />
-                            Delete
-                          </Centering>
-                        </ConfirmationDialog>
+                        <Archive className="w-3.5 h-3.5" />
+                        Archive
                       </DropdownMenuItem>
                     </>
                   )}

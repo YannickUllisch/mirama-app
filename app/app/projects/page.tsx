@@ -23,7 +23,7 @@ const ProjectsPage = () => {
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
   const { mutate: useArchiveMutation } =
     apiRequest.project.archive.useMutation()
-  const { mutate: useDeleteMutation } = apiRequest.project.delete.useMutation()
+
   // Column Update handler
   const { handleFieldUpdate } = useEditableColumns<
     ProjectResponseInput,
@@ -60,7 +60,6 @@ const ProjectsPage = () => {
           users: users ?? [],
           handleFieldUpdate,
           archiveMutation: useArchiveMutation,
-          deleteMutation: useDeleteMutation,
         })}
         data={projects ?? []}
         dataLoading={isLoading}

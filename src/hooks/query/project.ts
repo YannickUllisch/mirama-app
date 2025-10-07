@@ -46,7 +46,7 @@ const project = {
   fetchArchived: {
     useQuery: () =>
       useQuery<ProjectResponseInput[]>({
-        queryKey: ['projects'],
+        queryKey: ['archivedProjects'],
         queryFn: () => fetchArchivedProjectsFn(),
       }),
   },
@@ -165,30 +165,48 @@ const project = {
         { success: boolean },
         Error,
         string,
-        { previous: ProjectResponseInput[] }
+        {
+          previousProjects: ProjectResponseInput[]
+          previousArchived: ProjectResponseInput[]
+        }
       >({
         mutationFn: deleteProjectFn,
         onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
 
-          const previous =
+          const previousProjects =
             queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
+
+          const previousArchived =
+            queryClient.getQueryData<ProjectResponseInput[]>([
+              'archivedProjects',
+            ]) ?? []
 
           queryClient.setQueryData<ProjectResponseInput[]>(
             ['projects'],
             (old = []) => old.filter((p) => p.id !== id),
           )
 
-          return { previous }
+          queryClient.setQueryData<ProjectResponseInput[]>(
+            ['archivedProjects'],
+            (old = []) => old.filter((p) => p.id !== id),
+          )
+
+          return { previousProjects, previousArchived }
         },
         onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['projects'], ctx.previous)
+          if (ctx?.previousProjects) {
+            queryClient.setQueryData(['projects'], ctx.previousProjects)
+          }
+
+          if (ctx?.previousArchived) {
+            queryClient.setQueryData(['archivedProjects'], ctx.previousArchived)
           }
           toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
+          queryClient.invalidateQueries({ queryKey: ['archivedProjects'] })
         },
       })
     },
@@ -204,41 +222,73 @@ const project = {
         {
           previousProject: ProjectResponseInput | null
           previousProjects: ProjectResponseInput[]
+          previousArchived: ProjectResponseInput[]
         }
       >({
         mutationFn: ({ id, archive }) => archiveProjectFn(id, archive),
         onMutate: async ({ id, archive }) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
+          await queryClient.cancelQueries({ queryKey: ['archivedProjects'] })
           await queryClient.cancelQueries({ queryKey: ['project', id] })
 
           const previousProject =
             queryClient.getQueryData<ProjectResponseInput>(['project', id])
           const previousProjects =
             queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
+          const previousArchived =
+            queryClient.getQueryData<ProjectResponseInput[]>([
+              'archivedProjects',
+            ]) ?? []
 
-          queryClient.setQueryData<ProjectResponseInput[]>(
-            ['projects'],
-            (old = []) =>
-              old.map((p) => (p.id === id ? { ...p, archived: archive } : p)),
+          // Optimistically move project between caches
+          if (archive) {
+            // Archiving
+            const archivedProject = previousProjects.find((p) => p.id === id)
+            if (archivedProject) {
+              queryClient.setQueryData(
+                ['projects'],
+                previousProjects.filter((p) => p.id !== id),
+              )
+              queryClient.setQueryData(
+                ['archivedProjects'],
+                [{ ...archivedProject, archived: true }, ...previousArchived],
+              )
+            }
+          } else {
+            // Unarchiving
+            const unarchivedProject = previousArchived.find((p) => p.id === id)
+            if (unarchivedProject) {
+              queryClient.setQueryData(
+                ['archivedProjects'],
+                previousArchived.filter((p) => p.id !== id),
+              )
+              queryClient.setQueryData(
+                ['projects'],
+                [
+                  { ...unarchivedProject, archived: false },
+                  ...previousProjects,
+                ],
+              )
+            }
+          }
+
+          queryClient.setQueryData(['project', id], (old = []) =>
+            old ? { ...old, archived: archive } : old,
           )
 
-          queryClient.setQueryData<ProjectResponseInput>(
-            ['project', id],
-            (old) =>
-              old
-                ? {
-                    ...old,
-                    archived: old.archived,
-                  }
-                : old,
-          )
-
-          // Ensure previousProject is never undefined
-          return { previousProject: previousProject ?? null, previousProjects }
+          return {
+            previousProject: previousProject ?? null,
+            previousProjects,
+            previousArchived,
+          }
         },
+
         onError: (err, _vars, ctx) => {
           if (ctx?.previousProjects) {
             queryClient.setQueryData(['projects'], ctx.previousProjects)
+          }
+          if (ctx?.previousArchived) {
+            queryClient.setQueryData(['archivedProjects'], ctx.previousArchived)
           }
           if (ctx?.previousProject) {
             queryClient.setQueryData(['project', _vars.id], ctx.previousProject)
@@ -247,6 +297,7 @@ const project = {
         },
         onSettled: (_data, _error, variables) => {
           queryClient.invalidateQueries({ queryKey: ['projects'] })
+          queryClient.invalidateQueries({ queryKey: ['archivedProjects'] })
           if (variables?.id) {
             queryClient.invalidateQueries({
               queryKey: ['project', variables.id],

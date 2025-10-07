@@ -1,5 +1,5 @@
 'use client'
-import type { Task } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import {
   CollapseButton,
   File,
@@ -14,7 +14,7 @@ import type { FC } from 'react'
 
 interface TaskTreeProps {
   projectName: string
-  tasks: (Task & { subtasks: Task[] })[]
+  tasks: TaskResponseType[]
 }
 
 const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {

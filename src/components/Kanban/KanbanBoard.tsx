@@ -12,7 +12,9 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { type Task, TaskStatusType, type User } from '@prisma/client'
+import { TaskStatusType } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { postResource } from '@src/lib/api/postResource'
 import { updateResourceById } from '@src/lib/api/updateResource'
@@ -21,8 +23,6 @@ import type { Board } from '@src/types/types'
 import { Input } from '@ui/input'
 import { useSession } from 'next-auth/react'
 import { type FC, useEffect, useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
-import useSWR from 'swr'
 import { v4 } from 'uuid'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import KanbanContainer from './KanbanContainer'
@@ -34,17 +34,14 @@ import { createBoards } from './createBoards'
 interface KanbanBoardProps {
   projectId: string
   projectName: string
-  tasks: (Task & {
-    assignedTo: User
-    subtasks: (Task & { assignedTo: User | undefined })[]
-  })[]
-  mutate: KeyedMutator<any>
+  users: UserResponseType[]
+  tasks: TaskResponseType[]
 }
 
 const KanbanBoard: FC<KanbanBoardProps> = ({
   tasks,
   projectId,
-  mutate,
+  users,
   projectName,
 }) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
@@ -73,11 +70,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
     null,
   )
   const [newItemTitle, setNewItemTitle] = useState<string>('')
-
-  // Data
-  const { data: users } = useSWR<User[]>(
-    projectId ? `project/users?id=${projectId}` : '',
-  )
 
   const onAddItem = (
     columnId: UniqueIdentifier,
@@ -249,15 +241,10 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
         ? movedItem.id.toString().substring(5)
         : movedItem.id
 
-      await updateResourceById(
-        'task',
-        taskId.toString(),
-        {
-          status: newStatus,
-          parentId: newParentId,
-        },
-        { mutate },
-      )
+      await updateResourceById('task', taskId.toString(), {
+        status: newStatus,
+        parentId: newParentId,
+      })
     } catch (error) {
       console.error('Failed to update item:', error)
     }
@@ -291,7 +278,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       const item = column.items.find((item) => item.id === itemId)
       if (item) {
         item.task.title = newItemTitle.trim()
-        postResource('task', item.task, { mutate })
+        postResource('task', item.task)
       }
 
       setBoards([...boards])
@@ -389,7 +376,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
             <div className="display flex gap-2" key={`board-${board.id}`}>
               {/* Board Column Titles */}
               <ContainerHeader
-                mutate={mutate}
                 projectName={projectName}
                 id={board.id}
                 title={board.title}
@@ -445,7 +431,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
                               users={users ?? []}
                               loading={false}
                               projectName={projectName}
-                              mutate={mutate}
                             />
                           )}
                         </div>

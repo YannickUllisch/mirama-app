@@ -46,7 +46,6 @@ const KanbanItem: FC<KanbanItemType> = ({
   task,
   loading,
   onDelete,
-  mutate,
   users,
   projectName,
 }) => {
@@ -214,7 +213,6 @@ const KanbanItem: FC<KanbanItemType> = ({
         projectName={projectName}
         setOpen={setIsOpen}
         taskId={task?.id ?? ''}
-        mutate={mutate}
       />
     </>
   )

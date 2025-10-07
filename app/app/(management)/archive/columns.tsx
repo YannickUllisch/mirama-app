@@ -3,7 +3,6 @@ import {} from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import type { UserResponseType } from '@server/domain/userSchema'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
 import HoverLink from '@src/components/HoverLink'
 import {} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
@@ -20,26 +19,19 @@ import {
 import { ArchiveRestore, Ellipsis, PenSquareIcon, Trash } from 'lucide-react'
 import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
-import { useMemo, useState } from 'react'
+import { type Dispatch, type SetStateAction, useMemo, useState } from 'react'
 
 const columnHelper = createColumnHelper<ProjectResponseInput>()
 
 export const useArchivedProjectsColumns = ({
   session,
   users,
-  deleteMutation,
   archiveMutation,
+  setSelectedId,
 }: {
   session: Session | null
   users: UserResponseType[]
-  deleteMutation: UseMutateFunction<
-    {
-      success: boolean
-    },
-    Error,
-    string,
-    unknown
-  >
+  setSelectedId: Dispatch<SetStateAction<string | null>>
   archiveMutation: UseMutateFunction<
     {
       success: boolean
@@ -150,7 +142,6 @@ export const useArchivedProjectsColumns = ({
         ),
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
-          const [delDialogOpen, setDelDialogOpen] = useState(false)
 
           if (isTeamAdminOrOwner(session)) {
             return (
@@ -162,15 +153,7 @@ export const useArchivedProjectsColumns = ({
                   {isTeamAdminOrOwner(session) && (
                     <>
                       <HoverLink href={`/app/projects/edit/${row.original.id}`}>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            archiveMutation({
-                              id: row.original.id,
-                              archive: !row.original.archived,
-                            })
-                          }
-                          className="gap-2"
-                        >
+                        <DropdownMenuItem className="gap-2">
                           <PenSquareIcon className="w-3.5 h-3.5" />
                           Edit
                         </DropdownMenuItem>
@@ -189,21 +172,12 @@ export const useArchivedProjectsColumns = ({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="gap-3"
-                        onClick={() => setDelDialogOpen(true)}
+                        onClick={() => setSelectedId(row.original.id)}
                       >
-                        <ConfirmationDialog
-                          open={delDialogOpen}
-                          setOpen={setDelDialogOpen}
-                          dialogTitle={'Are you sure?'}
-                          dialogDesc={'Deleting a project can not be undone!'}
-                          submitButtonText={'Delete'}
-                          onConfirmation={() => deleteMutation(row.original.id)}
-                        >
-                          <Centering>
-                            <Trash className="h-4 w-4 text-destructive" />
-                            Delete
-                          </Centering>
-                        </ConfirmationDialog>
+                        <Centering>
+                          <Trash className="h-4 w-4 text-destructive" />
+                          Delete
+                        </Centering>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -214,6 +188,6 @@ export const useArchivedProjectsColumns = ({
         },
       }),
     ],
-    [users, session, archiveMutation, deleteMutation],
+    [users, session, archiveMutation, setSelectedId],
   )
 }

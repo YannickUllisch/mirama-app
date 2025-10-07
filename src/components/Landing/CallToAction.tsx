@@ -1,7 +1,7 @@
-import { MoveRight, Mails } from 'lucide-react'
 import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
-import Link from 'next/link'
+import { Mails, MoveRight } from 'lucide-react'
+import HoverLink from '../HoverLink'
 
 export const CallToAction = () => (
   <div className="w-full">
@@ -25,16 +25,16 @@ export const CallToAction = () => (
         </p>
       </div>
       <div className="flex flex-row gap-4">
-        <Link href={'/contact'}>
+        <HoverLink href={'/contact'}>
           <Button className="gap-4" variant="outline">
             Contact Us <Mails className="w-4 h-4" />
           </Button>
-        </Link>
-        <Link href={'/auth/login'}>
-          <Button className="gap-4">
+        </HoverLink>
+        <HoverLink href={'/auth/login'}>
+          <Button className="gap-4" variant={'primary'}>
             Get Started now <MoveRight className="w-4 h-4" />
           </Button>
-        </Link>
+        </HoverLink>
       </div>
     </div>
   </div>

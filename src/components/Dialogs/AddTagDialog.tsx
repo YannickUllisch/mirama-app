@@ -76,24 +76,26 @@ const AddTagDialog = () => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="Name"
-                      type="text"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="py-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Title"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <DialogFooter>
               <DialogClose asChild>
@@ -108,8 +110,9 @@ const AddTagDialog = () => {
               <Button
                 type="submit"
                 disabled={isPending || isCreatePending}
-                variant="default"
+                variant="primary"
               >
+                <Plus className="w-4 h-4" />
                 Create
               </Button>
             </DialogFooter>

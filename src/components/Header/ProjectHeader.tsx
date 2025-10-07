@@ -1,4 +1,5 @@
-import type { Milestone, Project, User } from '@prisma/client'
+import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
@@ -18,16 +19,11 @@ import AvatarGroup from '../Avatar/AvatarGroup'
 import TaskTypeCreate from '../Task/TaskTypeCreate'
 
 interface HeaderInterface {
-  project?: Project
-  users?: User[]
-  upcomingMilestone?: Milestone
+  project?: ProjectResponseInput
+  upcomingMilestone?: MilestoneProjectResponseInput
 }
 
-const ProjectHeader: FC<HeaderInterface> = ({
-  project,
-  users,
-  upcomingMilestone,
-}) => {
+const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
   const { data: session } = useSession()
   return (
     <header className="mb-2 bg-white dark:bg-neutral-900 rounded-lg p-5 pb-1 overflow-hidden">
@@ -63,7 +59,7 @@ const ProjectHeader: FC<HeaderInterface> = ({
             </div>
             <div className="hidden sm:flex items-center gap-3 ">
               <AvatarGroup
-                usernames={users?.map((u) => u.name) ?? []}
+                usernames={project?.users?.map((u) => u.name) ?? []}
                 avatarSize={8}
                 previewAmount={4}
                 fontSize={14}

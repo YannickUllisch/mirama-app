@@ -42,7 +42,6 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { capitalize } from '@src/lib/utils'
 import { ColorPicker } from '@ui/color-picker'
 import {
@@ -61,9 +60,8 @@ import {
   Users,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { use, useEffect, useState, useTransition } from 'react'
+import { use, useEffect, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import { mutate } from 'swr'
 import { v4 } from 'uuid'
 
 const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -74,7 +72,6 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   const router = useRouter()
 
   // States
-  const [isPending, startTransition] = useTransition()
   const [newMilestone, setNewMilestone] = useState({
     title: '',
     date: new Date(),
@@ -86,6 +83,9 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   const { data: project, isLoading } = apiRequest.project.fetchById.useQuery(id)
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
+
+  const { mutate: useUpdateProject, isPending } =
+    apiRequest.project.update.useMutation()
 
   // Form Logic and Functions
   const form = useForm<UpdateProjectInput>({
@@ -176,17 +176,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   }
 
   const onSubmit = (vals: UpdateProjectInput) => {
-    startTransition(() => {
-      // Optimistically update SWR cache globally
-
-      updateResourceById('project', project?.id ?? '', vals)
-        .then(() => {
-          mutate('project')
-        })
-        .catch(() => {
-          mutate('project')
-        })
-    })
+    useUpdateProject({ id, data: vals })
   }
 
   if (isLoading) {

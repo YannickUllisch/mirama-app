@@ -1,6 +1,8 @@
 'use client'
-import type { Tag, Task, User } from '@prisma/client'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import type {} from '@prisma/client'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -12,40 +14,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { deleteResources } from '@src/lib/api/deleteResource'
 import { createMemoizedTree } from '@src/lib/createTree'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
-import { useContext, useState } from 'react'
-import useSWR from 'swr'
+import { useState } from 'react'
 import { ListTabColumns } from './helper/ListTabColumns'
 
-const TableTab = () => {
-  // Project context
-  const projectContext = useContext(ProjectDataContext)
-
+const TableTab = ({
+  project,
+  tasks,
+  users,
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+  users: UserResponseType[]
+}) => {
   // Personalizations
   const [viewFlattened, setViewFlattened] = useState(false)
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
-
-  // We fetch tasks instead of passing from parent to have more specific control.
-  const {
-    data: tasks,
-    mutate: updateTasks,
-    isLoading: tasksLoading,
-  } = useSWR<
-    (Task & {
-      assignedTo: User
-      tags: Tag[]
-      subtasks: Task[]
-    })[]
-  >(
-    projectContext?.projectId
-      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
-      : undefined,
-  )
-
-  const { data: users } = useSWR<User[]>('team/member')
 
   const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
@@ -63,14 +49,14 @@ const TableTab = () => {
     if (!selectedItems.includes(id)) {
       selectedItems.push(id)
     }
-    updateTasks(
-      (existingTasks = []) =>
-        existingTasks.filter((task) => !selectedItems.includes(task.id)),
-      false,
-    )
-    deleteResources('task', selectedItems).catch(() => {
-      updateTasks()
-    })
+    // updateTasks(
+    //   (existingTasks = []) =>
+    //     existingTasks.filter((task) => !selectedItems.includes(task.id)),
+    //   false,
+    // )
+    // deleteResources('task', selectedItems).catch(() => {
+    //   updateTasks()
+    // })
   }
 
   const ToolbarRight = () => {
@@ -112,21 +98,19 @@ const TableTab = () => {
       <DataTable
         tableIdentifier="task_tab_table"
         columns={ListTabColumns({
-          mutate: updateTasks,
-          projectName: projectContext?.projectName ?? '',
+          projectName: project?.name ?? '',
           users: users ?? [],
           onTaskDelete: deleteTask,
         })}
         data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
         ignoreSubrows={viewFlattened}
         enableRowSelection
-        dataLoading={tasksLoading}
+        dataLoading={!project}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         sortingState={sortingState}
         setSortingState={setSortingState}
         toolbarOptions={{
-          refresh: { mutate: updateTasks },
           showFilterOption: true,
           filterOptionType: 'TASK',
           addToolbarright: <ToolbarRight />,

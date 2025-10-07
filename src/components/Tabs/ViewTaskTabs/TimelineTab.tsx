@@ -1,8 +1,8 @@
-import type { Task } from '@prisma/client'
-import { Card, CardContent } from '@ui/card'
-import { Circle } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import { getColorByTaskStatusType } from '@src/lib/utils'
+import { Card, CardContent } from '@ui/card'
+import { formatDistanceToNow } from 'date-fns'
+import { Circle } from 'lucide-react'
 
 interface TimelineEvent {
   date: Date
@@ -11,10 +11,10 @@ interface TimelineEvent {
 }
 
 interface TimelineTabProps {
-  task?: Task
+  task?: TaskResponseType
 }
 
-export default function TimelineTab({ task }: TimelineTabProps) {
+const TimelineTab = ({ task }: TimelineTabProps) => {
   // In a real application, you would fetch the actual timeline events from your backend
   const timelineEvents: TimelineEvent[] = [
     {
@@ -59,3 +59,5 @@ export default function TimelineTab({ task }: TimelineTabProps) {
     </div>
   )
 }
+
+export default TimelineTab

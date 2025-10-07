@@ -5,6 +5,7 @@ import {
   TaskStatusType,
   type User,
 } from '@prisma/client'
+import type { UserResponseType } from '@server/domain/userSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import EditableCell from '@src/components/Inputs/EditableCell'
@@ -45,24 +46,15 @@ import {
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
 
 export const ListTabColumns = ({
   projectName,
   users,
-  mutate,
   onTaskDelete,
 }: {
   projectName: string
-  users: User[]
+  users: UserResponseType[]
   onTaskDelete: (id: string) => void
-  mutate: KeyedMutator<
-    (Task & {
-      assignedTo: User
-      tags: Tag[]
-      subtasks: Task[]
-    })[]
-  >
 }) => {
   const cols: ColumnDef<
     Task & {
@@ -141,7 +133,6 @@ export const ListTabColumns = ({
                         key={`name${row.id}`}
                         apiRoute="task"
                         id={row.original.id}
-                        mutate={mutate}
                         initialValue={getValue() as string}
                         paramToUpdate="title"
                         autofocus
@@ -237,7 +228,6 @@ export const ListTabColumns = ({
             <GeneralTableSelect
               key={`priority-${row.id}`}
               id={row.original.id}
-              mutate={mutate}
               initialValue={capitalize(
                 (getValue() as string).replace('_', ' '),
               )}
@@ -274,7 +264,6 @@ export const ListTabColumns = ({
             <GeneralTableSelect
               key={`status-${row.id}`}
               id={row.original.id}
-              mutate={mutate}
               initialValue={
                 <div className="flex gap-2 items-center">
                   <div
@@ -324,7 +313,6 @@ export const ListTabColumns = ({
             <GeneralTableSelect
               key={row.id}
               id={row.original.id}
-              mutate={mutate}
               apiRoute="task"
               paramToUpdate="assignedToId"
               clearable
@@ -454,7 +442,7 @@ export const ListTabColumns = ({
         },
       },
     ],
-    [users, projectName, mutate, onTaskDelete],
+    [users, projectName, onTaskDelete],
   )
   return cols
 }

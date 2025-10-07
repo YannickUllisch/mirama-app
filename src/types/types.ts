@@ -1,7 +1,8 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { Role, Task, TaskType, User } from '@prisma/client'
+import type { Role, TaskType } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import type { LucideIcon } from 'lucide-react'
-import type { KeyedMutator } from 'swr'
 
 // Sidebar Interfaces
 export interface AppMenuItem {
@@ -32,19 +33,16 @@ export interface BoardColumn {
   title: string
   items: {
     id: UniqueIdentifier
-    task: Task & {
-      assignedTo: User | undefined
-    }
+    task: TaskResponseType
     loading: boolean
   }[]
 }
 
 export type KanbanItemType = {
   id: UniqueIdentifier
-  task?: Task & { assignedTo: User | undefined }
+  task?: TaskResponseType
   loading?: boolean
   onDelete?: (id: string) => void
-  users?: User[]
+  users?: UserResponseType[]
   projectName: string
-  mutate?: KeyedMutator<unknown>
 }
