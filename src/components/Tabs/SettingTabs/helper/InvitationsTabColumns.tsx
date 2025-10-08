@@ -1,7 +1,7 @@
 'use client'
-import type { RoleType } from '@/prisma/zod/inputTypeSchemas/RoleSchema'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { Role } from '@prisma/client'
+import type { RoleType } from '@server/domain/enumSchemas'
 import type { InvitationResponseType } from '@server/domain/invitationSchema'
 import {
   EditableCell,

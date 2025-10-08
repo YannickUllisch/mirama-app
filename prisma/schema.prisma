@@ -10,13 +10,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-generator zod {
-  provider         = "npx zod-prisma-types"
-  useMultipleFiles = true
-  createInputTypes = false
-  output           = "./zod"
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String

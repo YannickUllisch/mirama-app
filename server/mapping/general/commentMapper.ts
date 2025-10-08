@@ -1,5 +1,4 @@
-import type { User } from '@/prisma/zod'
-import type { Comment } from '@prisma/client'
+import type { Comment, User } from '@prisma/client'
 import type { CommentResponseType } from '@server/domain/commentSchema'
 
 const mapDefaultToApi = (

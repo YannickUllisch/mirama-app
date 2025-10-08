@@ -1,8 +1,10 @@
-import { UserSchema } from '@/prisma/zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { Role, type User } from '@prisma/client'
-import type { UpdateUserType } from '@server/domain/userSchema'
+import {
+  UpdateUserSchema,
+  type UpdateUserType,
+} from '@server/domain/userSchema'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,
@@ -50,7 +52,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
 
   // Form Logic and Functions
   const form = useForm<UpdateUserType>({
-    resolver: zodResolver(UserSchema),
+    resolver: zodResolver(UpdateUserSchema),
     defaultValues: {
       ...user,
     },
