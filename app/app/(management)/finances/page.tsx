@@ -1,9 +1,11 @@
 'use client'
 import type { Expense, Project } from '@prisma/client'
 import { BudgetExpenseBarChart } from '@src/components/Analytics/BudgetExpenseBarChart'
+import PageHeader from '@src/components/PageHeader'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Separator } from '@src/components/ui/separator'
+import { CreditCardIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -33,9 +35,11 @@ const BudgetPage = () => {
 
   return (
     <main className="flex flex-col">
-      <div className="flex items-center gap-4 dark:text-white mb-6">
-        <span style={{ fontSize: 20 }}>Finances</span>
-      </div>
+      <PageHeader
+        icon={CreditCardIcon}
+        title="Finance Management"
+        description={'Finance view and management across projects'}
+      />
       <BudgetExpenseBarChart projects={projects ?? []} />
       <Separator className="my-7" />
       <div>

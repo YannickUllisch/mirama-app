@@ -6,13 +6,17 @@ import { Button } from '@ui/button'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
   SidebarRail,
 } from '@ui/sidebar'
+import { CircleHelp } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
 import HoverLink from '../HoverLink'
-import FavoritesNav from './FavouritesNav'
 import SidebarMainNav from './MainNav'
 import RecentsNav from './RecentsNav'
 
@@ -25,7 +29,9 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
 
-  const isAdminOrOwner = isTeamAdminOrOwner(session)
+  const isAdminOrOwner = useMemo(() => {
+    return isTeamAdminOrOwner(session)
+  }, [session])
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -53,8 +59,20 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
       <SidebarContent className="flex flex-col h-full">
         <SidebarMainNav pathname={pathname} items={AppMenu} session={session} />
         <RecentsNav pathname={pathname} />
-        <FavoritesNav />
       </SidebarContent>
+      <SidebarFooter className="p-2">
+        {/* <div className="flex items-center justify-center p-3 rounded-xl h-[150px] w-full bg-card dark:bg-black/40 overflow-clip">
+          ...
+        </div> */}
+        <SidebarMenu>
+          <HoverLink href={'/contact'}>
+            <SidebarMenuButton>
+              <CircleHelp className="w-4 h-4" />
+              Contact
+            </SidebarMenuButton>
+          </HoverLink>
+        </SidebarMenu>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

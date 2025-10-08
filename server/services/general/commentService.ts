@@ -56,10 +56,27 @@ const createComment = async (input: CreateCommentType) => {
   return CommentMapper.mapDefaultToApi(comment)
 }
 
-const updateComment = async (commentId: string, input: UpdateCommentType) => {
+const updateComment = async (
+  commentId: string,
+  sessionUserId: string,
+  input: UpdateCommentType,
+) => {
+  const val = await db.comment.findFirst({
+    where: {
+      id: commentId,
+      userId: sessionUserId,
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  if (!val) throw new Error('Invalid Permission')
+
   const comment = await db.comment.update({
     where: {
       id: commentId,
+      userId: sessionUserId,
     },
     data: { ...input },
     include: {
@@ -69,7 +86,23 @@ const updateComment = async (commentId: string, input: UpdateCommentType) => {
   return CommentMapper.mapDefaultToApi(comment)
 }
 
-const deleteComment = async (commentId: string, sessionUserId: string) => {
+const deleteComment = async (
+  commentId: string,
+  sessionUserId: string,
+  isAdminOrOwner: boolean,
+) => {
+  const val = await db.comment.findFirst({
+    where: {
+      id: commentId,
+      userId: sessionUserId,
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  if (!val && !isAdminOrOwner) throw new Error('Invalid Permission')
+
   await db.comment.delete({
     where: { id: commentId, userId: sessionUserId },
   })

@@ -1,5 +1,4 @@
 import z from 'zod'
-import { UserResponseSchema } from './userSchema'
 
 export const CommentResponseSchema = z.object({
   id: z.string(),
@@ -7,7 +6,7 @@ export const CommentResponseSchema = z.object({
 
   createdAt: z.date(),
   userId: z.string(),
-  user: UserResponseSchema,
+  userName: z.string(),
 
   parentId: z.string().nullable(),
 })

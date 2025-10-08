@@ -25,11 +25,11 @@ const createComment = async (req: NextRequest, _session: Session) => {
   const body = await req.json()
   const input = CreateCommentSchema.parse(body)
 
-  const tag = await CommentService.createComment(input)
-  return Response.json(tag, { status: 201 })
+  const comment = await CommentService.createComment(input)
+  return Response.json(comment, { status: 201 })
 }
 
-const updateComment = async (req: NextRequest, _session: Session) => {
+const updateComment = async (req: NextRequest, session: Session) => {
   // Fetching ID from query
   const tid = getDynamicRoute(req)
 
@@ -37,14 +37,19 @@ const updateComment = async (req: NextRequest, _session: Session) => {
   const body = await req.json()
   const input = UpdateCommentSchema.parse(body)
 
-  const tag = await CommentService.updateComment(tid, input)
-  return Response.json(tag, { status: 200 })
+  const comment = await CommentService.updateComment(
+    tid,
+    session.user.id ?? '',
+    input,
+  )
+  return Response.json(comment, { status: 200 })
 }
 
-const deleteTag = async (req: NextRequest, session: Session) => {
+const deleteComment = async (req: NextRequest, session: Session) => {
   const tid = getDynamicRoute(req)
 
-  await CommentService.deleteComment(tid, session.user.id ?? '')
+  const roleCheck = isTeamAdminOrOwner(session)
+  await CommentService.deleteComment(tid, session.user.id ?? '', roleCheck)
 
   return Response.json(
     { success: true, message: 'Deleted successfully' },
@@ -55,6 +60,6 @@ const deleteTag = async (req: NextRequest, session: Session) => {
 export const CommentController = {
   getCommentsByTaskId,
   createComment,
-  deleteTag,
+  deleteComment,
   updateComment,
 }

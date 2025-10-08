@@ -1,17 +1,15 @@
 'use client'
-
-import type React from 'react'
-
-import { useEffect, useState, useRef } from 'react'
-import { format, differenceInDays, addDays, min, max } from 'date-fns'
-
-import { cn, getColorByName } from '@src/lib/utils'
-import { TooltipProvider } from '@ui/tooltip'
 import type { Project } from '@prisma/client'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import { cn, getColorByName } from '@src/lib/utils'
 import { Spinner } from '@ui/spinner'
+import { TooltipProvider } from '@ui/tooltip'
+import { addDays, differenceInDays, format, max, min } from 'date-fns'
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface ProjectTimelineProps {
-  projects: Project[]
+  projects: ProjectResponseInput[]
   className?: string
 }
 

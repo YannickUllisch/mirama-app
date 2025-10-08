@@ -1,5 +1,6 @@
 import useLocalStorage from '@hooks/utils/useLocalStorage'
-import type { Project, Task } from '@prisma/client'
+import type {} from '@prisma/client'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
 import { Plus } from 'lucide-react'
@@ -11,7 +12,7 @@ const RecentProjectsWidget = ({
   projects,
   isProjectsLoading,
 }: {
-  projects: (Project & { tasks: Task[] })[]
+  projects: ProjectResponseInput[]
   isProjectsLoading: boolean
 }) => {
   const [recentProjectIds, setRecentProjectIds] = useLocalStorage<string[]>(
@@ -33,10 +34,7 @@ const RecentProjectsWidget = ({
           )}
         </h2>
         <Link href={'/app/projects/create'} prefetch={false}>
-          <Button
-            size="sm"
-            className="gap-1 bg-red-500 hover:bg-red-600 text-white"
-          >
+          <Button size="sm" variant={'default'}>
             <Plus className="h-4 w-4" />
             New Project
           </Button>

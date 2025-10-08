@@ -18,6 +18,7 @@ import {
 import { ChevronDown } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
+import { useCallback } from 'react'
 
 interface MainNavProps {
   items: AppMenuItem[]
@@ -26,11 +27,13 @@ interface MainNavProps {
 }
 
 const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
-  const hasRole = (roles: Role[]) => {
-    if (!session?.user) return false
-    return roles.includes(session.user.role as Role)
-  }
-
+  const hasRole = useCallback(
+    (roles: Role[]) => {
+      if (!session?.user) return false
+      return roles.includes(session.user.role as Role)
+    },
+    [session?.user],
+  )
   return (
     <SidebarGroup>
       <SidebarMenu>

@@ -1,3 +1,4 @@
+import comment from './comment'
 import favourite from './favourite'
 import invitation from './invitation'
 import project from './project'
@@ -12,6 +13,7 @@ const apiRequest = {
   favourite,
   invitation,
   task,
+  comment,
 }
 
 export default apiRequest

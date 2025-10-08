@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@ui/sidebar'
+import { Spinner } from '@ui/spinner'
 import { FolderOpen } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -21,7 +22,7 @@ const RecentsNav = ({ pathname }: { pathname: string }) => {
   )
 
   // Hooks
-  const { data: projects } = apiRequest.project.fetchAll.useQuery()
+  const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
 
   const recents = useMemo(() => {
     if (recentProjectIds.length > 0 && projects) {
@@ -32,6 +33,12 @@ const RecentsNav = ({ pathname }: { pathname: string }) => {
 
   return (
     <SidebarGroup className="p-0 px-2">
+      {isLoading && (
+        <div className="flex items-center justify-center w-full h-[100px]">
+          {' '}
+          <Spinner size="sm" className="bg-black dark:bg-white" />{' '}
+        </div>
+      )}
       {recents.length > 0 && <SidebarGroupLabel>Recents</SidebarGroupLabel>}
 
       <SidebarMenu>

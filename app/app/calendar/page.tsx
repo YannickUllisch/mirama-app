@@ -2,6 +2,8 @@
 import apiRequest from '@hooks/query'
 import FullCalender from '@src/components/Calendar/full-calender'
 import { calendarConfig } from '@src/components/Calendar/full-calender-config'
+import PageHeader from '@src/components/PageHeader'
+import { CalendarIcon } from 'lucide-react'
 
 const CalendarClientPage = () => {
   const { data: _projects } = apiRequest.project.fetchAll.useQuery()
@@ -18,9 +20,14 @@ const CalendarClientPage = () => {
   //   )
   // }, [projects])
   return (
-    <section className="py-10">
+    <>
+      <PageHeader
+        icon={CalendarIcon}
+        title="Calendar"
+        description={'Calendar View of your project and task timeline'}
+      />
       <FullCalender events={[]} config={calendarConfig} />
-    </section>
+    </>
   )
 }
 

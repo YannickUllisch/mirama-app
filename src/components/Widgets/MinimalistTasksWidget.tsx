@@ -1,37 +1,32 @@
 'use client'
-
-import * as React from 'react'
-import { type Project, type Task, TaskStatusType } from '@prisma/client'
-import { ArrowRight, Check, Clock, ExternalLink } from 'lucide-react'
+import { TaskStatusType } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
-import { Badge } from '@ui/badge'
-import type { KeyedMutator } from 'swr'
-import { DateTime } from 'luxon'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import { Spinner } from '@ui/spinner'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import Link from 'next/link'
-import { useMemo } from 'react'
 import Centering from '@ui/centering'
+import { Spinner } from '@ui/spinner'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { ArrowRight, Check, Clock, ExternalLink } from 'lucide-react'
+import { DateTime } from 'luxon'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import HoverLink from '../HoverLink'
 
 interface MinimalistTasksWidgetProps {
-  tasks: (Task & { project: Project })[]
+  tasks: TaskResponseType[]
   isLoading?: boolean
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
-  mutate: KeyedMutator<(Task & { project: Project })[]>
 }
 
 const MinimalistTasksWidget = ({
   tasks,
   isLoading = false,
   onTaskUpdate,
-  mutate,
 }: MinimalistTasksWidgetProps) => {
   // Needed for keeping track of individual task loading state
-  const [updatingTaskId, setUpdatingTaskId] = React.useState<string | null>(
-    null,
-  )
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null)
 
   // Filter tasks by status
   const activeTasks = useMemo(
@@ -77,9 +72,6 @@ const MinimalistTasksWidget = ({
 
     try {
       await onTaskUpdate(taskId, newStatus)
-      mutate(
-        tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)),
-      )
     } catch (error) {
       console.error('Failed to update task:', error)
     } finally {
@@ -115,12 +107,12 @@ const MinimalistTasksWidget = ({
   }
 
   return (
-    <Card className="border-none shadow-sm bg-neutral-50 dark:bg-background">
-      <CardContent className="p-0">
-        <Tabs defaultValue="active" className="w-full">
-          <div className="px-4 pt-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="active">
+    <Card className="flex flex-col h-full bg-background">
+      <CardContent className="flex flex-col flex-1 overflow-hidden">
+        <Tabs defaultValue="active" className="flex flex-col h-full">
+          <div className="pt-4 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-3 overflow-clip">
+              <TabsTrigger value="active" className="overflow-hidden">
                 Active
                 {activeTasks.length > 0 && (
                   <Badge variant="secondary" className="ml-2 h-5 px-1">
@@ -128,17 +120,27 @@ const MinimalistTasksWidget = ({
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger className="overflow-hidden" value="upcoming">
+                Upcoming
+              </TabsTrigger>
+              <TabsTrigger className="overflow-hidden" value="completed">
+                Completed
+              </TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="active">
-            <div className="max-h-[300px] overflow-auto">
+          <TabsContent
+            value="active"
+            className="flex-1 overflow-auto data-[state=active]:flex w-full"
+          >
+            <div className="overflow-auto w-full">
               {activeTasks.length > 0 ? (
                 <div>
                   {activeTasks.map((task) => (
-                    <div className="px-4 py-3 group flex items-center justify-between hover:bg-white dark:hover:bg-background">
+                    <div
+                      key={`active-task-${task.id}`}
+                      className="px-4 py-3 group flex items-center justify-between hover:bg-white dark:hover:bg-background"
+                    >
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -173,16 +175,16 @@ const MinimalistTasksWidget = ({
                         </div>
                       </Centering>
                       <Centering className="gap-4">
-                        <Link
+                        <HoverLink
                           prefetch={false}
-                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                          href={`/app/projects/${task.projectName}/edit/${task.id}`}
                           className="text-text/50 group-hover:opacity-100 opacity-0"
                           aria-label="Go to Task Icon Link"
                         >
                           <ExternalLink size={16} />
-                        </Link>
+                        </HoverLink>
                         <span className="text-text/50 text-sm">
-                          {task.project.name}
+                          {task.projectName}
                         </span>
 
                         {getTaskTypeIcon(task.type)}
@@ -206,7 +208,10 @@ const MinimalistTasksWidget = ({
               {upcomingTasks.length > 0 ? (
                 <div>
                   {upcomingTasks.map((task) => (
-                    <div className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background">
+                    <div
+                      key={`upcoming-task-${task.id}`}
+                      className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background"
+                    >
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -244,14 +249,14 @@ const MinimalistTasksWidget = ({
                       <Centering className="gap-4">
                         <Link
                           prefetch={false}
-                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                          href={`/app/project/${task.projectName}/edit/${task.id}`}
                           className="text-text/50 group-hover:opacity-100 opacity-0"
                           aria-label="Go to Task Icon Link"
                         >
                           <ExternalLink size={16} />
                         </Link>
                         <span className="text-text/50 text-sm">
-                          {task.project.name}
+                          {task.projectName}
                         </span>
 
                         {getTaskTypeIcon(task.type)}
@@ -272,7 +277,10 @@ const MinimalistTasksWidget = ({
               {completedTasks.length > 0 ? (
                 <div>
                   {completedTasks.map((task) => (
-                    <div className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background">
+                    <div
+                      key={`completed-task-${task.id}`}
+                      className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background"
+                    >
                       <Centering>
                         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
@@ -305,16 +313,15 @@ const MinimalistTasksWidget = ({
                         </div>
                       </Centering>
                       <Centering className="gap-4">
-                        <Link
-                          prefetch={false}
-                          href={`/app/project/${task.project.name}/edit/${task.id}`}
+                        <HoverLink
+                          href={`/app/projects/${task.projectName}/edit/${task.id}`}
                           className="text-text/50 group-hover:opacity-100 opacity-0"
                           aria-label="Go to Task Icon Link"
                         >
                           <ExternalLink size={16} />
-                        </Link>
+                        </HoverLink>
                         <span className="text-text/50 text-sm">
-                          {task.project.name}
+                          {task.projectName}
                         </span>
 
                         {getTaskTypeIcon(task.type)}
@@ -332,7 +339,7 @@ const MinimalistTasksWidget = ({
         </Tabs>
       </CardContent>
       <CardFooter className="p-0 ">
-        <Link prefetch={false} href={'/app/tasks'} className="w-[100%]">
+        <HoverLink href={'/app/tasks'} className="w-[100%]">
           <Button
             variant="ghost"
             className="w-full justify-between rounded-none h-10 px-4 text-xs border-t"
@@ -340,7 +347,7 @@ const MinimalistTasksWidget = ({
             <span>View All Tasks</span>
             <ArrowRight className="h-3 w-3" />
           </Button>
-        </Link>
+        </HoverLink>
       </CardFooter>
     </Card>
   )
