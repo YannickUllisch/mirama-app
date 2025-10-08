@@ -9,12 +9,19 @@ export const LoginSchema = z.object({
   }),
 })
 
-export const RegisterSchema = z.object({
-  email: z.string().email({ message: 'Invalid email format' }),
-  password: z
-    .string()
-    .min(6, { message: 'Password needs to include at least 6 characters' }),
-})
+export const RegisterSchema = z
+  .object({
+    name: z.string().min(4, { message: 'Name must contain 4 characters' }),
+    email: z.string().email({ message: 'Invalid email format' }),
+    password: z
+      .string()
+      .min(6, { message: 'Password needs to include at least 6 characters' }),
+  })
+  .refine((data) => /[A-Z]/.test(data.password), {
+    message:
+      'Password must contain at least one uppercase letter and one special character',
+    path: ['password'],
+  })
 
 export const CognitoChangePasswordSchema = z
   .object({
@@ -33,7 +40,7 @@ export const CognitoChangePasswordSchema = z
   })
   .refine((data) => data.newPassword === data.verifyNewPassword, {
     message: 'Passwords must match',
-    path: ['verifyPassword'],
+    path: ['verifyNewPassword'],
   })
   .refine(
     (data) =>
@@ -41,7 +48,7 @@ export const CognitoChangePasswordSchema = z
     {
       message:
         'Password must contain at least one uppercase letter and one symbol',
-      path: ['password'],
+      path: ['newPassword'],
     },
   )
 

@@ -1,3 +1,4 @@
+'use server'
 import { ResendConfirmationCodeCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 

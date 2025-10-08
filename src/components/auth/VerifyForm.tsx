@@ -1,8 +1,8 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { confirmUser } from '@server/auth/cognito/confirmUser'
 import { resendConfirmationCode } from '@server/auth/cognito/resendConfirmation'
 import { VerifySchema } from '@server/auth/schemas'
+import { verify } from '@server/auth/verify'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { Button } from '@src/components/ui/button'
@@ -44,20 +44,13 @@ const VerifyForm = () => {
     setSuccess('')
 
     startTransition(async () => {
-      try {
-        await confirmUser({
-          email: vals.email,
-          code: vals.confirmationCode,
-        })
-
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('verify_email')
+      await verify(vals).then((res) => {
+        if (res.success) {
+          router.push('/auth/login')
+        } else {
+          setError(res.error || 'Verification failed. Please try again.')
         }
-
-        router.push('/auth/login')
-      } catch (err: any) {
-        setError(err.message || 'Verification failed. Please try again.')
-      }
+      })
     })
   }
 
@@ -144,7 +137,7 @@ const VerifyForm = () => {
           <FormSuccess message={success} />
           <FormError message={error} />
 
-          <Button disabled={isPending} type="submit" variant={'default'}>
+          <Button disabled={isPending} type="submit" variant={'primary'}>
             {!isPending ? (
               'Verify Email'
             ) : (

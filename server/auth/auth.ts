@@ -7,27 +7,47 @@ import { getUserById } from './helpers/queries'
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, profile, account }) {
       const adapter = CreatePrismaAdapter()
-      const existingUser = getUserById(user.id ?? '')
+      const existingUser = await getUserById(user.id ?? '')
 
       if (!existingUser) {
-        try {
-          // We call adapter function to reuse logic
+        if (account?.provider === 'credentials') {
           if (typeof adapter.createUser === 'function') {
             await adapter.createUser({
+              email: user.email ?? '',
               emailVerified: new Date(),
               name: user.name ?? '',
-              id: user.id ?? '',
-              email: user.email ?? '',
+              id: user.id ?? profile?.sub ?? '',
             })
           } else {
             console.error('Create User is not Defined')
             return false
           }
-        } catch (e) {
-          console.error('Create User failed:', e)
-          return false
+        }
+
+        if (account?.provider === 'cognito') {
+          if (typeof adapter.createUser === 'function') {
+            await adapter.createUser({
+              email: profile?.email ?? user.email ?? '',
+              emailVerified: new Date(),
+              name: profile?.name ?? user.name ?? '',
+              id: profile?.sub ?? user.id ?? '',
+            })
+          } else {
+            console.error('Create User is not Defined')
+            return false
+          }
+          if (typeof adapter.linkAccount === 'function') {
+            await adapter.linkAccount({
+              ...account,
+              userId: profile?.sub ?? user.id ?? '',
+              type: account.type as any,
+            })
+          } else {
+            console.error('Link Account is not Defined')
+            return false
+          }
         }
       }
 

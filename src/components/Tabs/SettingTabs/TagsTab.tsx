@@ -32,7 +32,7 @@ const TagsTab = () => {
       ...data,
     }),
     onValidationError: (err) => {
-      const firstMessage = err.errors?.[0]?.message || 'Input Error'
+      const firstMessage = err.issues?.[0]?.message || 'Input Error'
       toast.error(`Input Error: ${firstMessage}`)
     },
   })

@@ -82,12 +82,13 @@ export default {
 
           const email = attributes?.find((attr) => attr.Name === 'email')?.Value
           const uuid = attributes?.find((attr) => attr.Name === 'sub')?.Value
+          const name = attributes?.find((attr) => attr.Name === 'name')?.Value
 
           // Attributes are properly added in prisma-adapter
           return {
             id: uuid,
             email,
-            name: '',
+            name: name ?? '',
           }
         } catch (err) {
           console.error('Cognito Auth Error:', err)

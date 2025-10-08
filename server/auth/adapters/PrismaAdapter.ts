@@ -1,12 +1,10 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import type { User } from '@prisma/client'
+import { Role, type User } from '@prisma/client'
 import db from '@server/utils/db'
-import { deleteCognitoUser } from '../cognito/deleteCognitoUser'
 import { getValidCompanyInvitation } from '../helpers/queries'
 
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
-
   adapter.getUser = async (id) => {
     const dbUser = await db.user.findUnique({ where: { id } })
     if (!dbUser) {
@@ -17,26 +15,25 @@ export const CreatePrismaAdapter = () => {
   adapter.createUser = async (user) => {
     const inputUser = user as any as User
 
-    if (!inputUser.name || !inputUser.teamId) {
-      // Look up invitation
-      const invitation = await getValidCompanyInvitation({
-        email: inputUser.email,
-      })
-      if (!invitation) {
-        await deleteCognitoUser(inputUser.email)
-        const error = new Error(
-          'No invitation for this Email was found. Please contact your administrator',
-        )
-        // Add a custom property for NextAuth error handling
-        error.name = 'InvitationError'
-        throw error
-      }
+    const invitation = await getValidCompanyInvitation({
+      email: inputUser.email,
+    })
 
-      // If the invitation is received use the name from it to add to the typedUser (It will be missing otherwise).
+    if (invitation) {
+      // If the invitation is received use the name from it to add to the typedUser
       inputUser.teamId = invitation.teamId
       inputUser.role = invitation.role
       inputUser.email = invitation.email
       inputUser.name = invitation.name
+    } else {
+      // Otherwise create a new Team
+      const newTeam = await db.team.create({
+        data: {
+          name: inputUser.name ?? 'My Team',
+        },
+      })
+      inputUser.teamId = newTeam.id
+      inputUser.role = Role.ADMIN
     }
 
     if (!inputUser.name) {
@@ -66,8 +63,6 @@ export const CreatePrismaAdapter = () => {
         email: createdUser.email,
       },
     })
-
-    // TODO: If we wish we could create a new company once we open for public additions
 
     return createdUser
   }

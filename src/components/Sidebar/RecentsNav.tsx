@@ -1,6 +1,5 @@
 'use client'
 import apiRequest from '@hooks/query'
-import useLocalStorage from '@hooks/utils/useLocalStorage'
 import type {} from '@prisma/client'
 import {
   SidebarGroup,
@@ -12,37 +11,37 @@ import {
 import { Spinner } from '@ui/spinner'
 import { FolderOpen } from 'lucide-react'
 import Link from 'next/link'
-import { useMemo } from 'react'
 
 const RecentsNav = ({ pathname }: { pathname: string }) => {
   // Fetching recently accesses projects via LocalStorage
-  const [recentProjectIds, _setRecentProjectIds] = useLocalStorage<string[]>(
-    'recentProjectIds',
-    [],
-  )
+  // const [recentProjectIds, _setRecentProjectIds] = useLocalStorage<string[]>(
+  //   'recentProjectIds',
+  //   [],
+  // )
 
   // Hooks
   const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
 
-  const recents = useMemo(() => {
-    if (recentProjectIds.length > 0 && projects) {
-      return projects?.filter((p) => recentProjectIds.includes(p.id))
-    }
-    return []
-  }, [projects, recentProjectIds])
+  // const recents = useMemo(() => {
+  //   if (recentProjectIds.length > 0 && projects) {
+  //     return projects?.filter((p) => recentProjectIds.includes(p.id))
+  //   }
+  //   return []
+  // }, [projects, recentProjectIds])
 
   return (
     <SidebarGroup className="p-0 px-2">
-      {isLoading && (
+      {isLoading ? (
         <div className="flex items-center justify-center w-full h-[100px]">
-          {' '}
-          <Spinner size="sm" className="bg-black dark:bg-white" />{' '}
+          <Spinner size="sm" className="bg-black dark:bg-white" />
         </div>
-      )}
-      {recents.length > 0 && <SidebarGroupLabel>Recents</SidebarGroupLabel>}
+      ) : null}
+      {projects?.length && projects.length > 0 ? (
+        <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      ) : null}
 
       <SidebarMenu>
-        {recents.map((item) => (
+        {projects?.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild

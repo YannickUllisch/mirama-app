@@ -123,7 +123,7 @@ const LoginForm = () => {
             <FormError message={error || urlError} />
           </div>
 
-          <Button disabled={isPending} type="submit" variant={'default'}>
+          <Button disabled={isPending} type="submit" variant={'primary'}>
             {!isPending ? (
               'Login'
             ) : (

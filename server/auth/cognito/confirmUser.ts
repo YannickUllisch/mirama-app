@@ -1,7 +1,6 @@
+'use server'
 import { ConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
-
-export const runtime = 'nodejs'
 
 export const confirmUser = async ({
   email,
@@ -20,6 +19,7 @@ export const confirmUser = async ({
     await client.send(command)
     return { success: true }
   } catch (error: any) {
+    console.error(error)
     return { success: false, error: error.message || 'Failed to confirm Code' }
   }
 }

@@ -43,17 +43,13 @@ const SetPasswordForm = () => {
     setSuccess('')
 
     startTransition(async () => {
-      try {
-        const res = await handleAuthChallenge(vals)
-
+      await handleAuthChallenge(vals).then((res) => {
         if (res?.error) {
           setError(`Error: ${res.error}`)
         } else {
           router.push('/auth/login')
         }
-      } catch (err: any) {
-        setError(err.message || ' failed. Please try again.')
-      }
+      })
     })
   }
 
@@ -70,7 +66,7 @@ const SetPasswordForm = () => {
         </div>
 
         <div className="grid gap-6">
-          <div className="grid gap-2">
+          <div className="grid grid-cols-2 gap-5">
             <FormField
               control={form.control}
               name="email"
@@ -91,9 +87,7 @@ const SetPasswordForm = () => {
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="grid gap-2">
             <FormField
               control={form.control}
               name="currentPassword"
@@ -114,9 +108,7 @@ const SetPasswordForm = () => {
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="grid gap-2">
             <FormField
               control={form.control}
               name="newPassword"
@@ -137,9 +129,7 @@ const SetPasswordForm = () => {
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="grid gap-2">
             <FormField
               control={form.control}
               name="verifyNewPassword"
@@ -165,7 +155,7 @@ const SetPasswordForm = () => {
           <FormSuccess message={success} />
           <FormError message={error} />
 
-          <Button disabled={isPending} type="submit" variant={'default'}>
+          <Button disabled={isPending} type="submit" variant={'primary'}>
             {!isPending ? (
               'Update Password'
             ) : (

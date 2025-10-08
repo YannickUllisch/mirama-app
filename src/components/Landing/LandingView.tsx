@@ -25,7 +25,8 @@ export const LandingView = () => {
         <div className="flex gap-8 pt-20 lg:pt-36 items-center justify-center flex-col text-center">
           <div>
             <Button variant="secondary" size="sm" className="gap-4">
-              Open to public soon <LockOpen className="w-4 h-4" />
+              Open for public registrations now!
+              <LockOpen className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex gap-4 flex-col items-center">

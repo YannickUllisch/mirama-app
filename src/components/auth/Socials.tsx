@@ -15,6 +15,7 @@ export const AuthSocial = () => {
         redirect: false,
         callbackUrl: '/app',
       })
+
       if (result?.error) {
         // Show the error returned from NextAuth (from PrismaAdapter)
         setFormError(result.error)

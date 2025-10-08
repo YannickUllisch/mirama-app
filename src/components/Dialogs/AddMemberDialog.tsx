@@ -32,13 +32,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/select'
-import { Plus } from 'lucide-react'
-import { type FC, type PropsWithChildren, useState, useTransition } from 'react'
+import { Loader2, Plus } from 'lucide-react'
+import { type FC, type PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   // States
-  const [isPending, startTransition] = useTransition()
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   // Form State
@@ -52,13 +51,15 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   })
 
   // Hooks
-  const { mutate: useCreateInvitation } =
+  const { mutate: useCreateInvitation, isPending } =
     apiRequest.invitation.create.useMutation()
 
   // Helper
   const onSubmit = (vals: CreateInvitationInput) => {
-    startTransition(() => {
-      useCreateInvitation(vals)
+    useCreateInvitation(vals, {
+      onSuccess: () => {
+        setIsOpen(false)
+      },
     })
   }
 
@@ -147,7 +148,11 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={isPending} variant={'primary'}>
-                <Plus className="w-4 h-4" />
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
                 Invite
               </Button>
             </DialogFooter>
