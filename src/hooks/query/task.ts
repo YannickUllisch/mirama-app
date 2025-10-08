@@ -29,7 +29,7 @@ const task = {
   fetchPersonal: {
     useQuery: (id?: string) =>
       useQuery<TaskResponseType[]>({
-        queryKey: ['tasks'],
+        queryKey: ['personalTasks'],
         queryFn: () => fetchPersonalTasksFn(id),
       }),
   },

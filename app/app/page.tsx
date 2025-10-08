@@ -7,7 +7,6 @@ import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
 import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
 import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Home, Plus } from 'lucide-react'
 import { DateTime } from 'luxon'
 
@@ -35,9 +34,7 @@ const Dashboard = () => {
       </PageHeader>
 
       <div className="mx-auto px-4 py-8">
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Projects & Tasks */}
           <div className="lg:col-span-2 space-y-8">
             {/* Projects Section */}
             <RecentProjectsWidget
@@ -45,18 +42,10 @@ const Dashboard = () => {
               projects={projects ?? []}
             />
 
-            <Card className="bg-neutral-50 dark:bg-background border-none">
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-xl font-medium">
-                  Project Timeline
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <div className="h-[400px] overflow-auto">
-                  <ProjectTimeline projects={projects ?? []} />
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectTimeline
+              projects={projects ?? []}
+              isLoading={isProjectsLoading}
+            />
           </div>
 
           {/* Right Column */}
@@ -65,7 +54,7 @@ const Dashboard = () => {
               <h2 className="text-xl font-medium flex items-center gap-2">
                 <span>My Tasks</span>
                 {tasks && tasks.length > 0 && (
-                  <span className="flex items-center justify-center text-sm h-6 w-6 bg-secondary text-white rounded-full">
+                  <span className="text-sm px-2 py-0.5 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-full">
                     {tasks.length}
                   </span>
                 )}

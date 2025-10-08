@@ -82,7 +82,7 @@ const MinimalistTasksWidget = ({
   // Loading state
   if (isLoading) {
     return (
-      <Card className="border-none shadow-sm bg-neutral-100 dark:bg-background">
+      <Card className="border-none h-full shadow-sm bg-neutral-100 dark:bg-background">
         <CardHeader className="p-4 pb-2">
           <div className="h-6 w-24 bg-white dark:bg-neutral-700 rounded animate-pulse" />
         </CardHeader>
@@ -90,8 +90,8 @@ const MinimalistTasksWidget = ({
           <div className="px-4 pt-4">
             <div className="h-8 bg-white dark:bg-neutral-700 rounded animate-pulse mb-4" />
           </div>
-          <div className="space-y-4 p-4">
-            {[1, 2, 3].map((i) => (
+          <div className="space-y-8 p-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
               <div key={i} className="flex justify-between items-center">
                 <div className="space-y-2">
                   <div className="h-4 w-48 bg-white dark:bg-neutral-700 rounded animate-pulse" />

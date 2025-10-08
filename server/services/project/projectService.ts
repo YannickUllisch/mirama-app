@@ -130,8 +130,18 @@ const updateProject = async (
 ) => {
   const { users, milestones, tags, ...proj } = input
 
+  // 1. Do reads outside the transaction
+  const existingMilestones = await db.milestone.findMany({
+    where: { projectId },
+    select: { id: true },
+  })
+  const inputIds = milestones.filter((m) => m.id).map((m) => m.id)
+  const idsToDelete = existingMilestones
+    .map((m) => m.id)
+    .filter((id) => !inputIds.includes(id))
+
   const res = await db.$transaction(async (prisma) => {
-    // Updating the project main fields and tags
+    // Update project itself
     const project = await prisma.project.update({
       where: { id: projectId, teamId },
       data: {
@@ -156,7 +166,7 @@ const updateProject = async (
       },
     })
 
-    // Syncronizing users by recreation
+    // Update user relations
     await prisma.projectUser.deleteMany({ where: { projectId } })
     if (users && users.length > 0) {
       await prisma.projectUser.createMany({
@@ -164,22 +174,14 @@ const updateProject = async (
       })
     }
 
-    // Syncronizing milestones
-    const existingMilestones = await prisma.milestone.findMany({
-      where: { projectId },
-      select: { id: true },
-    })
-    const inputIds = milestones.filter((m) => m.id).map((m) => m.id)
-    const idsToDelete = existingMilestones
-      .map((m) => m.id)
-      .filter((id) => !inputIds.includes(id))
-
+    // Delete removed milestones
     if (idsToDelete.length > 0) {
       await prisma.milestone.deleteMany({
         where: { id: { in: idsToDelete } },
       })
     }
 
+    // Upsert Milestones
     await Promise.all(
       milestones.map((m) =>
         m.id
@@ -187,7 +189,9 @@ const updateProject = async (
               where: { id: m.id },
               data: { ...m, projectId },
             })
-          : prisma.milestone.create({ data: { ...m, projectId } }),
+          : prisma.milestone.create({
+              data: { ...m, projectId },
+            }),
       ),
     )
 
