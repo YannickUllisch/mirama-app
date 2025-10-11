@@ -3,11 +3,17 @@ import {
   UpdateInvitationSchema,
 } from '@server/domain/invitationSchema'
 import { InvitationService } from '@server/services/general/invitationService'
-import { getDynamicRoute } from '@server/utils/getDynamicRoute'
+import { fromTail } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 
+/**
+ * Assumed route: /api/db/invite
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getInvitations = async (
   _req: NextRequest,
   session: Session,
@@ -19,6 +25,12 @@ const getInvitations = async (
   return Response.json(invitations, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/invite
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const createInvitation = async (
   req: NextRequest,
   session: Session,
@@ -34,12 +46,18 @@ const createInvitation = async (
   return Response.json(inv, { status: 201 })
 }
 
+/**
+ * Assumed route: /api/db/invite/${email}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const updateInvitation = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const id = getDynamicRoute(req)
+  const id = fromTail(req)
 
   const body: string[] = await req.json()
   const input = UpdateInvitationSchema.parse(body)
@@ -52,12 +70,18 @@ const updateInvitation = async (
   return Response.json(invitations, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/invite/${email}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const deleteInvitation = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const id = getDynamicRoute(req)
+  const id = fromTail(req)
 
   await InvitationService.deleteInvitation(id, session.user.teamId)
   return Response.json(

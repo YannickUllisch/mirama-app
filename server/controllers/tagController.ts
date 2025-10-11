@@ -1,10 +1,16 @@
 import { CreateTagSchema, UpdateTagSchema } from '@server/domain/tagSchema'
 import { TagService } from '@server/services/team/tagService'
-import { getDynamicRoute } from '@server/utils/getDynamicRoute'
+import { fromTail } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 
+/**
+ * Assumed route: /api/db/tag
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getTags = async (
   _req: NextRequest,
   session: Session,
@@ -14,6 +20,12 @@ const getTags = async (
   return Response.json(tags, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/tag
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const createTag = async (
   req: NextRequest,
   session: Session,
@@ -27,13 +39,19 @@ const createTag = async (
   return Response.json(tag, { status: 201 })
 }
 
+/**
+ * Assumed route: /api/db/tag/${tagId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const updateTag = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
   // Fetching ID from query
-  const tid = getDynamicRoute(req)
+  const tid = fromTail(req)
 
   // Parsing and validating body
   const body = await req.json()
@@ -43,12 +61,18 @@ const updateTag = async (
   return Response.json(tag, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/tag/${tagId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const deleteTag = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const tid = getDynamicRoute(req)
+  const tid = fromTail(req)
 
   await TagService.deleteTag(tid, session.user.teamId)
 

@@ -1,11 +1,17 @@
 import { FavouriteTypeSchema } from '@server/domain/enumSchemas'
 import { CreateFavouriteSchema } from '@server/domain/favouriteSchema'
 import { FavouriteService } from '@server/services/general/favouriteService'
-import { getDynamicRoute } from '@server/utils/getDynamicRoute'
+import { fromTail } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 
+/**
+ * Assumed route: /api/db/favourite
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getFavourites = async (
   req: NextRequest,
   session: Session,
@@ -32,6 +38,12 @@ const getFavourites = async (
   return Response.json(favourites, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/favourite
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const createFavourite = async (
   req: NextRequest,
   session: Session,
@@ -46,12 +58,18 @@ const createFavourite = async (
   return Response.json(fav, { status: 201 })
 }
 
+/**
+ * Assumed route: /api/db/favourite/${favouriteId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const deleteFavourite = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const id = getDynamicRoute(req)
+  const id = fromTail(req)
 
   await FavouriteService.deleteFavourite(session.user.id ?? '', id)
 

@@ -55,9 +55,12 @@ const ViewTaskSheet = ({
   projectName,
   mutate,
 }: ViewTaskSheet) => {
-  const { data: task } = apiRequest.task.fetchById.useQuery(taskId)
-
   const projectInfo = useContext(ProjectDataContext)
+
+  const { data: task } = apiRequest.task.fetchById.useQuery(
+    taskId,
+    projectInfo?.projectId ?? '',
+  )
 
   const { data: users } = apiRequest.project.fetchAssignees.useQuery(
     projectInfo?.projectId ?? '',

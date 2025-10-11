@@ -66,47 +66,39 @@ const getTasksByProjectId = async (
 
 const getTaskById = async (
   id: string,
+  projectId: string,
   teamId: string,
   sessionUserId: string,
   isTeamAdminOrOwner: boolean,
 ): Promise<TaskResponseType> => {
-  const res = await db.task.findFirst({
-    where: {
-      id,
-      teamId,
-    },
-    include: {
-      assignedTo: true,
-      subtasks: true,
-      tags: true,
-      parent: true,
-      comments: {
-        include: {
-          user: true,
+  // Permission and existence checks
+  const [res, project] = await Promise.all([
+    db.task.findFirst({
+      where: { id, teamId, projectId },
+      include: {
+        assignedTo: true,
+        subtasks: true,
+        tags: true,
+        parent: true,
+        comments: { include: { user: true } },
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
-      project: { select: { id: true, name: true } },
-    },
-    orderBy: { title: 'asc' },
-  })
+      orderBy: { title: 'asc' },
+    }),
+    db.project.findFirst({
+      where: { id: projectId, teamId },
+      select: {
+        users: { select: { userId: true } },
+      },
+    }),
+  ])
 
   if (!res) throw new Error('Task not found')
-
-  // Refined access Permission check
-  const project = await db.project.findFirst({
-    where: {
-      id: res.projectId,
-      teamId,
-    },
-    select: {
-      users: {
-        select: {
-          userId: true,
-        },
-      },
-    },
-  })
-
   if (
     !project?.users.map((p) => p.userId).includes(sessionUserId) &&
     !isTeamAdminOrOwner

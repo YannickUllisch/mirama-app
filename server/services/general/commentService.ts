@@ -7,6 +7,7 @@ import db from '@server/utils/db'
 
 const getCommentsByTaskId = async (
   taskId: string,
+  projectId: string,
   sessionUserId: string,
   isAdminOrOwner: boolean,
 ) => {
@@ -14,6 +15,7 @@ const getCommentsByTaskId = async (
   const task = await db.task.findFirst({
     where: {
       id: taskId,
+      projectId,
     },
     select: {
       project: {
@@ -46,9 +48,9 @@ const getCommentsByTaskId = async (
   return res.map((r) => CommentMapper.mapDefaultToApi(r))
 }
 
-const createComment = async (input: CreateCommentType) => {
+const createComment = async (taskId: string, input: CreateCommentType) => {
   const comment = await db.comment.create({
-    data: { ...input },
+    data: { ...input, taskId },
     include: {
       user: true,
     },
@@ -58,6 +60,8 @@ const createComment = async (input: CreateCommentType) => {
 
 const updateComment = async (
   commentId: string,
+  taskId: string,
+  projectId: string,
   sessionUserId: string,
   input: UpdateCommentType,
 ) => {
@@ -65,6 +69,10 @@ const updateComment = async (
     where: {
       id: commentId,
       userId: sessionUserId,
+      taskId,
+      task: {
+        projectId,
+      },
     },
     select: {
       id: true,
@@ -77,6 +85,7 @@ const updateComment = async (
     where: {
       id: commentId,
       userId: sessionUserId,
+      taskId,
     },
     data: { ...input },
     include: {
@@ -88,6 +97,8 @@ const updateComment = async (
 
 const deleteComment = async (
   commentId: string,
+  taskId: string,
+  projectId: string,
   sessionUserId: string,
   isAdminOrOwner: boolean,
 ) => {
@@ -95,6 +106,10 @@ const deleteComment = async (
     where: {
       id: commentId,
       userId: sessionUserId,
+      taskId,
+      task: {
+        projectId,
+      },
     },
     select: {
       id: true,

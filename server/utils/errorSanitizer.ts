@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-export const sanitizePrismaError = (err: any): Error => {
+export const sanitizeErrorMsg = (err: any): Error => {
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     return new Error('A database error occurred. Please check your input.')
   }

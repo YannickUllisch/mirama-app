@@ -4,12 +4,18 @@ import {
 } from '@server/domain/projectSchema'
 import { ProjectService } from '@server/services/project/projectService'
 import { checkIfManager } from '@server/utils/checkManager'
-import { getDynamicRoute } from '@server/utils/getDynamicRoute'
+import { fromTail, pickFromTail } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 
+/**
+ * Assumed route: /api/db/project
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getAllProjects = async (
   req: NextRequest,
   session: Session,
@@ -29,12 +35,18 @@ const getAllProjects = async (
   return Response.json(res, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/project/${projectId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getProjectById = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const pid = getDynamicRoute(req)
+  const pid = fromTail(req)
 
   const roleCheck = isTeamAdminOrOwner(session)
 
@@ -48,13 +60,19 @@ const getProjectById = async (
   return Response.json(project, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/project/${projectId}/users
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getProjectAssignees = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
   // Extracting ID from route
-  const pid = getDynamicRoute(req)
+  const pid = fromTail(req)
 
   const isAdminOrOwner = isTeamAdminOrOwner(session)
 
@@ -68,6 +86,12 @@ const getProjectAssignees = async (
   return Response.json(users, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/project/${projectId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const deleteProjectById = async (
   req: NextRequest,
   session: Session,
@@ -78,7 +102,7 @@ const deleteProjectById = async (
     op: 'deleteProject',
   })
 
-  const pid = getDynamicRoute(req)
+  const pid = fromTail(req)
   ctrLogger.info({ projectId: pid, msg: 'Deleting Project by ID' })
 
   await ProjectService.deleteProject(pid, session.user.teamId)
@@ -89,6 +113,12 @@ const deleteProjectById = async (
   )
 }
 
+/**
+ * Assumed route: /api/db/project
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const createProject = async (
   req: NextRequest,
   session: Session,
@@ -110,12 +140,18 @@ const createProject = async (
   return Response.json(project, { status: 201 })
 }
 
+/**
+ * Assumed route: /api/db/project/${projectId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const updateProject = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const pid = getDynamicRoute(req)
+  const pid = fromTail(req)
 
   const body = await req.json()
   const parsedBody = UpdateProjectSchema.parse(body)
@@ -136,15 +172,20 @@ const updateProject = async (
   return Response.json(project, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/project/${projectId}/archive||unarchive
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const archiveProject = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
   // Assumed route /api/db/project/{id}/archiveORunarchive
-  const segments = req.nextUrl.pathname.split('/').filter(Boolean)
-  const pid = segments[segments.length - 2]
-  const archiveStatus = segments[segments.length - 1] === 'archive'
+  const [statusSegment, pid] = pickFromTail(req, [0, 1])
+  const archiveStatus = statusSegment === 'archive'
 
   const project = await ProjectService.archiveProject(
     pid,

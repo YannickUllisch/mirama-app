@@ -146,8 +146,15 @@ export const UpdateTaskSchema = z
     path: ['parentId'],
   })
 
+export const DeleteTasksSchema = z.object({
+  ids: z
+    .array(z.string())
+    .min(1, { message: 'At least one task id is required' }),
+})
+
 export type TaskResponseType = z.infer<typeof TaskResponseSchema>
 export type SimpleTaskResponseType = z.infer<typeof SimpleTaskResponseSchema>
 export type TaskProjectResponseType = z.infer<typeof TaskProjectResponseSchema>
 export type CreateTaskType = z.infer<typeof CreateTaskSchema>
 export type UpdateTaskType = z.infer<typeof UpdateTaskSchema>
+export type DeleteTasksType = z.infer<typeof DeleteTasksSchema>

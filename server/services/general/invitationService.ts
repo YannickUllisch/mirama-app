@@ -1,5 +1,4 @@
 import type { Role } from '@prisma/client'
-import { inviteUserCognito } from '@server/auth/cognito/inviteUser'
 import type {
   CreateInvitationInput,
   UpdateInvitationInput,
@@ -43,10 +42,7 @@ const createNewInvitation = async (
   // Expiry logic
   const expiresAt = DateTime.now().plus({ day: 1 }).toJSDate()
 
-  // Create Cognito user before DB entry
-  const cognitoRes = await inviteUserCognito({ email: invitation.email })
-  if (cognitoRes.error)
-    throw new Error(`Cognito invitation failed: ${cognitoRes.error}`)
+  // TODO: Send Invitation Email through SNS Topic here
 
   const newInvitation = await db.companyInvitation.create({
     data: { ...invitation, teamId, expiresAt },

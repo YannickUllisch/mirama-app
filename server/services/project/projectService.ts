@@ -130,7 +130,6 @@ const updateProject = async (
 ) => {
   const { users, milestones, tags, ...proj } = input
 
-  // 1. Do reads outside the transaction
   const existingMilestones = await db.milestone.findMany({
     where: { projectId },
     select: { id: true },

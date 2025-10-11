@@ -9,6 +9,7 @@ import {
   updateProjectFn,
 } from '@hooks/api/project'
 import type {
+  CreateProjectInput,
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
@@ -54,7 +55,12 @@ const project = {
   create: {
     useMutation: () => {
       const queryClient = useQueryClient()
-      return useMutation({
+      return useMutation<
+        ProjectResponseInput, // result
+        Error, // error
+        CreateProjectInput, // variables
+        { previous?: ProjectResponseInput[] } // context
+      >({
         mutationFn: createProjectFn,
         onMutate: async (_newProject) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })

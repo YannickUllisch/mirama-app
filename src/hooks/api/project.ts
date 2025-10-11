@@ -28,7 +28,7 @@ export const fetchProjectByIdFn = async (
 export const fetchProjectAssigneesFn = async (
   id: string,
 ): Promise<UserProjectResponseType[]> => {
-  const { data } = await api.get(`project/users?id=${id}`)
+  const { data } = await api.get(`project/${id}/users`)
   return data ?? null
 }
 

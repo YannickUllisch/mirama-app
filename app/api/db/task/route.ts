@@ -1,18 +1,10 @@
-import db from '@server/utils/db'
-import { Role, type Task } from '@prisma/client'
+import type { Task } from '@prisma/client'
 import { auth } from '@server/auth/auth'
-import { TaskController } from '@server/controllers/taskController'
-import { exceptionHandler } from '@server/utils/exceptionHandler'
+import db from '@server/utils/db'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { validateRequest } from '@src/lib/validateRequest'
-import { withAuth } from '@withAuth'
 import { v4 } from 'uuid'
-
-export const GET = withAuth(
-  Object.values(Role),
-  exceptionHandler(TaskController.getTasksByProject),
-)
 
 export const POST = auth(async (req) => {
   try {

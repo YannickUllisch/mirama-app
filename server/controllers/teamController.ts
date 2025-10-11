@@ -1,9 +1,16 @@
 import { UpdateUserSchema } from '@server/domain/userSchema'
 import { UserService } from '@server/services/team/teamService'
+import { fromTail } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 
+/**
+ * Assumed route: /api/db/team/member
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const getTeamMembers = async (
   _req: NextRequest,
   session: Session,
@@ -13,21 +20,18 @@ const getTeamMembers = async (
   return Response.json(members, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/team/member/${memberId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const updateTeamMember = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  // Fetching ID from query
-  const mid = req.nextUrl.pathname.split('/').pop()
-
-  if (!mid) {
-    return Response.json(
-      { ok: false, message: 'Member ID is required in Request' },
-      { status: 404 },
-    )
-  }
-
+  const mid = fromTail(req)
   // Parsing and validating body
   const body = await req.json()
   const input = UpdateUserSchema.parse(body)
@@ -41,21 +45,20 @@ const updateTeamMember = async (
   return Response.json(member, { status: 200 })
 }
 
+/**
+ * Assumed route: /api/db/team/member/${memberId}
+ * @param req API request object as Next Request Type
+ * @param session Validated Session from request
+ * @param _logger Context Logger
+ */
 const deleteTeamMember = async (
   req: NextRequest,
   session: Session,
   _logger: Logger,
 ) => {
-  const mid = req.nextUrl.pathname.split('/').pop()
+  const mid = fromTail(req)
 
-  if (!mid) {
-    return Response.json(
-      { ok: false, message: 'Member ID is required in Request' },
-      { status: 404 },
-    )
-  }
-
-  if (mid.includes(session.user.id ?? ''))
+  if (mid === session.user.id)
     throw new Error('Can not remove yourself from Team')
 
   await UserService.deleteUser(mid, session.user.role, session.user.teamId)

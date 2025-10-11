@@ -14,16 +14,17 @@ import { toast } from 'sonner'
 
 const comment = {
   fetchByTaskId: {
-    useQuery: (id: string) =>
+    useQuery: (projectId: string, taskId: string) =>
       useQuery<CommentResponseType[]>({
-        enabled: !!id,
-        queryKey: ['taskComments', id],
-        queryFn: () => fetchCommentsByTaskIdFn(id),
+        enabled: !!taskId,
+        queryKey: ['taskComments', taskId],
+        queryFn: () => fetchCommentsByTaskIdFn(projectId, taskId),
       }),
   },
 
   createOnTask: {
     useMutation: (
+      projectId: string,
       taskId: string,
       sessionUserId: string,
       sessionUserName: string,
@@ -35,7 +36,7 @@ const comment = {
         CreateCommentType,
         { previous?: CommentResponseType[] }
       >({
-        mutationFn: createTaskCommentFn,
+        mutationFn: (payload) => createTaskCommentFn(projectId, payload),
         onMutate: async (newComment) => {
           await queryClient.cancelQueries({
             queryKey: ['taskComments', taskId],
@@ -77,7 +78,7 @@ const comment = {
   },
 
   updateTaskComment: {
-    useMutation: () => {
+    useMutation: (projectId: string, taskId: string) => {
       const queryClient = useQueryClient()
       return useMutation<
         CommentResponseType,
@@ -85,7 +86,8 @@ const comment = {
         { id: string; data: UpdateCommentType },
         { previous?: CommentResponseType[] }
       >({
-        mutationFn: ({ id, data }) => updateTaskCommentFn(id, data),
+        mutationFn: ({ id, data }) =>
+          updateTaskCommentFn(projectId, taskId, id, data),
         onMutate: async ({ id, data }) => {
           await queryClient.cancelQueries({ queryKey: ['taskComments', id] })
 
@@ -116,7 +118,7 @@ const comment = {
   },
 
   deleteTaskComment: {
-    useMutation: (taskId: string) => {
+    useMutation: (projectId: string, taskId: string) => {
       const queryClient = useQueryClient()
       return useMutation<
         { success: boolean },
@@ -124,7 +126,8 @@ const comment = {
         string,
         { previous?: CommentResponseType[] }
       >({
-        mutationFn: deleteTaskCommentFn,
+        mutationFn: (commentId) =>
+          deleteTaskCommentFn(projectId, taskId, commentId),
         onMutate: async (id) => {
           await queryClient.cancelQueries({
             queryKey: ['taskComments', taskId],
