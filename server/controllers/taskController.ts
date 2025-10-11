@@ -3,8 +3,13 @@ import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
-const getTasksByProject = async (req: NextRequest, session: Session) => {
+const getTasksByProject = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const pid = req.nextUrl.searchParams.get('projectId')
   const ignoreCompleted =
     req.nextUrl.searchParams.get('ignoreCompleted') === 'true'
@@ -28,7 +33,11 @@ const getTasksByProject = async (req: NextRequest, session: Session) => {
   return Response.json(tasks, { status: 200 })
 }
 
-const getTaskById = async (req: NextRequest, session: Session) => {
+const getTaskById = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const id = getDynamicRoute(req)
 
   const roleCheck = isTeamAdminOrOwner(session)
@@ -42,7 +51,11 @@ const getTaskById = async (req: NextRequest, session: Session) => {
   return Response.json(task, { status: 200 })
 }
 
-const getPersonalTasks = async (req: NextRequest, session: Session) => {
+const getPersonalTasks = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const pid = req.nextUrl.searchParams.get('projectId')
 
   const tasks = await TaskService.getPersonalTasks(

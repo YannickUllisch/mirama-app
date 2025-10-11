@@ -1,5 +1,6 @@
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
 export type AnyController<TArgs extends any[] = any[]> = (
   ...args: TArgs
@@ -8,4 +9,5 @@ export type AnyController<TArgs extends any[] = any[]> = (
 export type Controller = (
   req: NextRequest,
   session: Session,
+  logger: Logger,
 ) => Promise<Response>

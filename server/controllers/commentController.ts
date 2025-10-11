@@ -7,8 +7,13 @@ import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
-const getCommentsByTaskId = async (req: NextRequest, session: Session) => {
+const getCommentsByTaskId = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const cid = getDynamicRoute(req)
 
   const isAdminOrOwner = isTeamAdminOrOwner(session)
@@ -20,7 +25,11 @@ const getCommentsByTaskId = async (req: NextRequest, session: Session) => {
   return Response.json(comments, { status: 200 })
 }
 
-const createComment = async (req: NextRequest, _session: Session) => {
+const createComment = async (
+  req: NextRequest,
+  _session: Session,
+  _logger: Logger,
+) => {
   // Parsing and validating body
   const body = await req.json()
   const input = CreateCommentSchema.parse(body)
@@ -29,7 +38,11 @@ const createComment = async (req: NextRequest, _session: Session) => {
   return Response.json(comment, { status: 201 })
 }
 
-const updateComment = async (req: NextRequest, session: Session) => {
+const updateComment = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   // Fetching ID from query
   const tid = getDynamicRoute(req)
 
@@ -45,7 +58,11 @@ const updateComment = async (req: NextRequest, session: Session) => {
   return Response.json(comment, { status: 200 })
 }
 
-const deleteComment = async (req: NextRequest, session: Session) => {
+const deleteComment = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const tid = getDynamicRoute(req)
 
   const roleCheck = isTeamAdminOrOwner(session)

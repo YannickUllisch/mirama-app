@@ -3,13 +3,22 @@ import { TagService } from '@server/services/team/tagService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
-const getTags = async (_req: NextRequest, session: Session) => {
+const getTags = async (
+  _req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const tags = await TagService.getAllTeamTags(session.user.teamId)
   return Response.json(tags, { status: 200 })
 }
 
-const createTag = async (req: NextRequest, session: Session) => {
+const createTag = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   // Parsing and validating body
   const body = await req.json()
   const input = CreateTagSchema.parse(body)
@@ -18,7 +27,11 @@ const createTag = async (req: NextRequest, session: Session) => {
   return Response.json(tag, { status: 201 })
 }
 
-const updateTag = async (req: NextRequest, session: Session) => {
+const updateTag = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   // Fetching ID from query
   const tid = getDynamicRoute(req)
 
@@ -30,7 +43,11 @@ const updateTag = async (req: NextRequest, session: Session) => {
   return Response.json(tag, { status: 200 })
 }
 
-const deleteTag = async (req: NextRequest, session: Session) => {
+const deleteTag = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const tid = getDynamicRoute(req)
 
   await TagService.deleteTag(tid, session.user.teamId)

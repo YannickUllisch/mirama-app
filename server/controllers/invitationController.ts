@@ -6,15 +6,24 @@ import { InvitationService } from '@server/services/general/invitationService'
 import { getDynamicRoute } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
-const getInvitations = async (_req: NextRequest, session: Session) => {
+const getInvitations = async (
+  _req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const invitations = await InvitationService.getInvitationsByTeam(
     session.user.teamId,
   )
   return Response.json(invitations, { status: 200 })
 }
 
-const createInvitation = async (req: NextRequest, session: Session) => {
+const createInvitation = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const body = await req.json()
   const parsedBody = CreateInvitationSchema.parse(body)
   const inv = await InvitationService.createNewInvitation(
@@ -25,7 +34,11 @@ const createInvitation = async (req: NextRequest, session: Session) => {
   return Response.json(inv, { status: 201 })
 }
 
-const updateInvitation = async (req: NextRequest, session: Session) => {
+const updateInvitation = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const id = getDynamicRoute(req)
 
   const body: string[] = await req.json()
@@ -39,7 +52,11 @@ const updateInvitation = async (req: NextRequest, session: Session) => {
   return Response.json(invitations, { status: 200 })
 }
 
-const deleteInvitation = async (req: NextRequest, session: Session) => {
+const deleteInvitation = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const id = getDynamicRoute(req)
 
   await InvitationService.deleteInvitation(id, session.user.teamId)

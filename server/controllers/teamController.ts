@@ -2,13 +2,22 @@ import { UpdateUserSchema } from '@server/domain/userSchema'
 import { UserService } from '@server/services/team/teamService'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
+import type { Logger } from 'pino'
 
-const getTeamMembers = async (_req: NextRequest, session: Session) => {
+const getTeamMembers = async (
+  _req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const members = await UserService.getUsersByTeam(session.user.teamId)
   return Response.json(members, { status: 200 })
 }
 
-const updateTeamMember = async (req: NextRequest, session: Session) => {
+const updateTeamMember = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   // Fetching ID from query
   const mid = req.nextUrl.pathname.split('/').pop()
 
@@ -32,7 +41,11 @@ const updateTeamMember = async (req: NextRequest, session: Session) => {
   return Response.json(member, { status: 200 })
 }
 
-const deleteTeamMember = async (req: NextRequest, session: Session) => {
+const deleteTeamMember = async (
+  req: NextRequest,
+  session: Session,
+  _logger: Logger,
+) => {
   const mid = req.nextUrl.pathname.split('/').pop()
 
   if (!mid) {
