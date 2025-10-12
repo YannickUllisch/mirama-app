@@ -70,11 +70,17 @@ const updateTag = async (
 const deleteTag = async (
   req: NextRequest,
   session: Session,
-  _logger: Logger,
+  logger: Logger,
 ) => {
+  const tagLogger = logger.child({
+    module: 'TagController',
+    op: 'deleteTag',
+  })
   const tid = fromTail(req)
 
   await TagService.deleteTag(tid, session.user.teamId)
+
+  tagLogger.info({ tagId: tid, msg: 'Tag deleted' })
 
   return Response.json(
     { success: true, message: 'Deleted successfully' },
