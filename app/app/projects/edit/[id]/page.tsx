@@ -260,7 +260,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
               title={'Discard changes?'}
               description={'All progress will be lost'}
               onCancel={() => null}
-              onSubmit={() => router.push('/app/projects')}
+              onSubmit={() => router.back()}
             >
               <Button
                 type="button"

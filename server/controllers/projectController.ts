@@ -73,7 +73,7 @@ export const ProjectController = {
     _logger: Logger,
   ) => {
     // Extracting ID from route
-    const pid = fromTail(req)
+    const [pid] = pickFromTail(req, [1])
 
     const isAdminOrOwner = isTeamAdminOrOwner(session)
 

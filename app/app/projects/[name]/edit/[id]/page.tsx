@@ -1,28 +1,19 @@
 'use client'
 import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  PriorityType,
-  type Tag,
-  type Task,
-  TaskStatusType,
-  TaskType,
-  type User,
-} from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
 import {
   UpdateTaskSchema,
   type UpdateTaskType,
 } from '@server/domain/taskSchema'
-
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import AddSubtaskDialog from '@src/components/Dialogs/AddSubtaskDialog'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralAccordion from '@src/components/GeneralAccordion'
-import HoverLink from '@src/components/HoverLink'
+import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
-import SubTasksGroup from '@src/components/Task/SubTasksGroup'
 import { Button } from '@src/components/ui/button'
 import {
   FormControl,
@@ -48,56 +39,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { Separator } from '@src/components/ui/separator'
 import { Textarea } from '@src/components/ui/textarea'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize } from '@src/lib/utils'
 import {
-  BookCheck,
   BookOpenCheck,
+  FileEdit,
+  Loader2,
   MessageCircleWarning,
   Save,
   Undo,
   User as UserIcon,
 } from 'lucide-react'
-import { notFound, useParams, useRouter } from 'next/navigation'
-import { useContext, useEffect, useTransition } from 'react'
+import { notFound, useRouter } from 'next/navigation'
+import { use, useContext, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import useSWR from 'swr'
 
-const EditTaskForm = () => {
+const EditTaskPage = ({
+  params,
+}: { params: Promise<{ name: string; id: string }> }) => {
   // Dynamic Page Params
-  const params = useParams() as { name: string; id: string }
+  const { id } = use(params)
 
   // Routing used to return to previous page.
   const router = useRouter()
-  const projectContext = useContext(ProjectDataContext)
-  // Data
-  const { data: users } = useSWR<User[]>(
-    projectContext ? `project/users?id=${projectContext?.projectId}` : '',
+  const ctx = useContext(ProjectDataContext)
+
+  // Hooks
+  const { data: task, isLoading: isTaskLoading } =
+    apiRequest.task.fetchById.useQuery(ctx?.projectId ?? '', id)
+  const { data: tasks } = apiRequest.task.fetchByProject.useQuery(
+    ctx?.projectId ?? '',
   )
 
-  const {
-    data: task,
-    isLoading: isTaskLoading,
-    mutate: updateTask,
-  } = useSWR<
-    Task & {
-      subtasks: Task[]
-      tags: Tag[]
-    }
-  >(`task/${params.id}`)
-
-  const { data: tasks, mutate: updateTasks } = useSWR<Task[]>(
-    projectContext ? `task?id=${projectContext?.projectId}` : undefined,
+  const { data: users } = apiRequest.project.fetchAssignees.useQuery(
+    ctx?.projectId ?? '',
   )
+  const { data: tags } = apiRequest.tag.fetchAll.useQuery()
 
-  const { data: tags } = useSWR<Tag[]>('tag')
-
-  // States
-  const [isPending, startTransition] = useTransition()
+  const { mutate: updateTaskMutation, isPending } =
+    apiRequest.task.update.useMutation()
 
   // Form Logic and Functions
   const form = useForm<UpdateTaskType>({
@@ -106,7 +88,6 @@ const EditTaskForm = () => {
 
   useEffect(() => {
     if (task) {
-      // Manually reset form values when defaultExpense changes
       form.reset({
         id: task.id,
 
@@ -123,15 +104,14 @@ const EditTaskForm = () => {
 
         tags: task?.tags.map((t) => t.id),
         newTags: [],
-        parentId: task?.parentId ?? undefined,
+        parentId: task?.parentId ?? null,
 
         subtasks: task.subtasks.map((t) => t.id),
       })
     } else {
-      // If defaultExpense is undefined, reset the form to initial values
       form.reset({
         id: '',
-        assignedToId: undefined,
+        assignedToId: null,
         description: '',
         title: '',
         dueDate: new Date(),
@@ -142,19 +122,22 @@ const EditTaskForm = () => {
         tags: [],
         newTags: [],
         subtasks: [],
-        parentId: undefined,
-        type: 'TASK',
+        parentId: null,
+        type: TaskType.TASK,
       })
     }
   }, [task, form.reset])
 
-  // Functions
   const onSubmit = (vals: UpdateTaskType) => {
-    startTransition(() => {
-      updateResourceById('task', task?.id ?? '', vals).then(() => {
-        router.back()
-      })
-    })
+    if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
+      vals.assignedToId = null
+    }
+
+    if (!ctx?.projectId) {
+      return
+    }
+
+    updateTaskMutation({ id, projectId: ctx.projectId, payload: vals })
   }
 
   if (isTaskLoading) {
@@ -168,76 +151,42 @@ const EditTaskForm = () => {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex justify-between">
-          <div className="flex items-center gap-4 dark:text-white">
-            <BookCheck width={20} />
-            <span style={{ fontSize: 20 }}>Edit Task</span>
-            <div>|</div>
-            {form.formState.isDirty ? (
-              <ConfirmationDialog
-                title={'Are you sure?'}
-                description={'All progress will be lost'}
-                onCancel={() => null}
-                onSubmit={() => router.push(`/app/${params.name}`)}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-2 bg-transparent"
-                >
-                  <Undo className="w-4 h-4" />
-                  Cancel
-                </Button>
-              </ConfirmationDialog>
-            ) : (
-              <HoverLink
-                href={`/app/projects/${params.name}`}
-                prefetch={false}
-                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
-              >
-                <Undo width={10} className="ml-2" />
-                <Button
-                  type="button"
-                  style={{ textDecoration: 'none', fontSize: 12 }}
-                  variant={'link'}
-                >
-                  Return to Project View
-                </Button>
-              </HoverLink>
-            )}
-          </div>
+        <PageHeader
+          title="Edit Task"
+          description="Update task details, adjust scheduling, change assignment, set priority and status, manage tags, and link related work."
+          icon={FileEdit}
+        >
+          <div className="flex items-center gap-3 flex-col md:flex-row">
+            <ConfirmationDialog
+              title={'Discard changes?'}
+              description={'All progress will be lost'}
+              onCancel={() => null}
+              onSubmit={() => router.back()}
+            >
+              <Button type="button" variant="ghost" className="gap-2">
+                <Undo className="w-4 h-4" />
+                Cancel
+              </Button>
+            </ConfirmationDialog>
 
-          <div className="flex items-center gap-3">
             <Button
               type="submit"
-              className={`flex items-cente text-text rounded-sm cursor-pointer gap-2 ${
-                form.watch().title?.length < 1
-                  ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
-                  : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
-              }`}
+              variant={!form.formState.isDirty ? 'outline' : 'secondary'}
+              className={'gap-2'}
               aria-label="Save Task Button"
-              style={{
-                fontSize: 11,
-                textDecoration: 'none',
-              }}
-              disabled={isPending}
+              disabled={isPending || !form.formState.isDirty}
             >
-              <Save width={15} />
-              <span
-                className={`disabled:bg-red-500 ${
-                  form.watch().title?.length < 1
-                    ? 'text-text dark:text-accent'
-                    : 'text-white'
-                }`}
-              >
-                Save
-              </span>
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>Save Task</span>
             </Button>
           </div>
-        </div>
-        <Separator className="mt-2 mb-2" />
+        </PageHeader>
 
-        <div className="form-group">
+        <div className="form-group pt-5">
           <div className="min-h-[30px] text-sm flex items-center gap-3">
             <span className="flex gap-1 text-text-secondary items-center">
               {getTaskTypeIcon(task?.type.toUpperCase() as TaskType)}
@@ -514,7 +463,7 @@ const EditTaskForm = () => {
                         </FormControl>
                         <SelectContent>
                           {tasks
-                            ?.filter((t) => t.id !== params.id)
+                            ?.filter((t) => t.id !== id)
                             .map((task) => (
                               <SelectItem
                                 value={task.id}
@@ -536,10 +485,10 @@ const EditTaskForm = () => {
                   )}
                 />
               ) : null}
-
+              {/* 
               <div className="p-1 mt-2">
                 <SubTasksGroup
-                  projectName={params.name}
+                  projectName={name}
                   tasks={task?.subtasks ?? []}
                   mutate={updateTask}
                 />
@@ -561,7 +510,7 @@ const EditTaskForm = () => {
                 <Button className="mt-5" size={'sm'} variant={'default'}>
                   Link Subtask
                 </Button>
-              </AddSubtaskDialog>
+              </AddSubtaskDialog> */}
             </div>
           </GeneralAccordion>
         </div>
@@ -570,4 +519,4 @@ const EditTaskForm = () => {
   )
 }
 
-export default EditTaskForm
+export default EditTaskPage

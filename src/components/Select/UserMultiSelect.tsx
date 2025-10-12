@@ -1,4 +1,5 @@
-import type { User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import UserAvatar from '@src/components/Avatar/UserAvatar'
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -6,24 +7,24 @@ import {
   MultiSelectorItem,
   MultiSelectorList,
 } from '@src/components/ui/multiselect'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import useSWR from 'swr'
-import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
+import { Button } from '@ui/button'
+import { type FC, type PropsWithChildren, useState } from 'react'
 
 interface UserMultiSelectProps {
-  selectedUserIds: string[] | null
-  setSelectedUserIds: Dispatch<SetStateAction<string[] | null>>
-  onSelectionChange?: (ids: string[]) => void
+  initialUserIds: string[]
+  onSave: (ids: string[]) => void
 }
 
 const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
-  selectedUserIds,
-  setSelectedUserIds,
-  onSelectionChange,
+  initialUserIds,
+  onSave,
   children,
 }) => {
+  const [selectedUserIds, setSelectedUserIds] =
+    useState<string[]>(initialUserIds)
+
   // Fetching users depending on scope.
-  const { data: users } = useSWR<User[]>('team/member')
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
 
   return (
     <MultiSelector
@@ -36,11 +37,6 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
             .map((user) => user.id) ?? []
 
         setSelectedUserIds(updatedUserIds)
-        // Running some function on selection change
-        // Might have to change this to avoid a bunch of API requests
-        if (onSelectionChange) {
-          onSelectionChange(updatedUserIds)
-        }
       }}
       loop
     >
@@ -63,6 +59,7 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
               </div>
             </MultiSelectorItem>
           ))}
+          <Button onClick={() => onSave(selectedUserIds)}>Save</Button>
         </MultiSelectorList>
       </MultiSelectorContent>
     </MultiSelector>

@@ -1,13 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  PriorityType,
-  type Tag,
-  type Task,
-  TaskStatusType,
-  type TaskType,
-  type User,
-} from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
 import {
   CreateTaskSchema,
   type CreateTaskType,
@@ -17,8 +11,8 @@ import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralAccordion from '@src/components/GeneralAccordion'
+import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
-import SubTasksGroup from '@src/components/Task/SubTasksGroup'
 import { Button } from '@src/components/ui/button'
 import {
   FormControl,
@@ -44,163 +38,119 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { Separator } from '@src/components/ui/separator'
 import { Textarea } from '@src/components/ui/textarea'
-import { postResource } from '@src/lib/api/postResource'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize } from '@src/lib/utils'
 import {
-  BookCheck,
   BookOpenCheck,
+  CirclePlus,
+  Loader2,
   MessageCircleWarning,
   Save,
   Undo,
   User as UserIcon,
 } from 'lucide-react'
-import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { useContext, useTransition } from 'react'
+import { useContext } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import useSWR, { mutate } from 'swr'
 
-const CreateTaskForm = () => {
+const CreateTaskPage = () => {
   // Routing used to return to previous page.
   const params = useParams() as { name: string; type: string }
 
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultParentId = searchParams?.get('parentId') ?? ''
-  const projectContext = useContext(ProjectDataContext)
+  const ctx = useContext(ProjectDataContext)
 
-  // States
-  const [isPending, startTransition] = useTransition()
-
-  const { data: tasks } = useSWR<Task[]>(
-    projectContext ? `task?id=${projectContext?.projectId}` : undefined,
+  // Hooks
+  const { data: tasks } = apiRequest.task.fetchByProject.useQuery(
+    ctx?.projectId ?? '',
   )
-
-  const { data: users } = useSWR<User[]>(
-    projectContext ? `project/users?id=${projectContext?.projectId}` : '',
+  const { data: users } = apiRequest.project.fetchAssignees.useQuery(
+    ctx?.projectId ?? '',
   )
-  const { data: tags } = useSWR<Tag[]>('tag')
+  const { data: tags } = apiRequest.tag.fetchAll.useQuery()
+
+  const { mutate: createTaskMutation, isPending } =
+    apiRequest.task.create.useMutation()
 
   // Form Logic and Functions
   const form = useForm<CreateTaskType>({
     resolver: zodResolver(CreateTaskSchema),
     defaultValues: {
-      assignedToId: undefined,
+      assignedToId: null,
       description: '',
       title: '',
       dueDate: new Date(),
       startDate: new Date(),
       priority: PriorityType.LOW,
-      projectId: projectContext?.projectId,
+      projectId: ctx?.projectId,
+      newTags: [],
+      subtasks: [],
       status: TaskStatusType.NEW,
       tags: [],
       parentId:
         defaultParentId &&
         !isTaskTypeContainer(params.type.toUpperCase() as TaskType)
           ? defaultParentId
-          : undefined,
+          : null,
       type: params.type.toUpperCase() as TaskType,
     },
   })
 
   const onSubmit = (vals: CreateTaskType) => {
-    startTransition(() => {
-      if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
-        vals.assignedToId = null
-      }
+    if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
+      vals.assignedToId = null
+    }
 
-      // Optimistically update SWR cache globally
-      const taskKey = `task?id=${projectContext?.projectId}&ignoreCompleted=false`
+    if (!ctx?.projectId) {
+      return
+    }
 
-      // To make returning to unassigned state possible, we have to reset the undefined string
-      postResource('task', vals)
-        .then(() => {
-          mutate(taskKey)
-          router.back()
-        })
-        .catch(() => {
-          mutate(taskKey)
-        })
-    })
+    createTaskMutation({ id: ctx.projectId, payload: vals })
   }
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex justify-between">
-          <div className="flex items-center gap-4 dark:text-white">
-            <BookCheck width={20} />
-            <span style={{ fontSize: 20 }}>Create Task</span>
-            <div>|</div>
-            {form.formState.isDirty ? (
-              <ConfirmationDialog
-                title={'Are you sure?'}
-                description={'All progress will be lost'}
-                onCancel={() => null}
-                onSubmit={() => router.push(`/app/${params.name}`)}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-2 bg-transparent"
-                >
-                  <Undo className="w-4 h-4" />
-                  Cancel
-                </Button>
-              </ConfirmationDialog>
-            ) : (
-              <Link
-                prefetch={false}
-                href={`/app/projects/${params.name}`}
-                className="flex items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer"
-              >
-                <Undo width={10} className="ml-2" />
-                <Button
-                  type="button"
-                  style={{ textDecoration: 'none', fontSize: 12 }}
-                  variant={'link'}
-                >
-                  Return to Project View
-                </Button>
-              </Link>
-            )}
-          </div>
+        <PageHeader
+          title="Create Task"
+          description="Fill out the information to create a new Task"
+          icon={CirclePlus}
+        >
+          <div className="flex items-center gap-3 flex-col md:flex-row">
+            <ConfirmationDialog
+              title={'Discard changes?'}
+              description={'All progress will be lost'}
+              onCancel={() => null}
+              onSubmit={() => router.back()}
+            >
+              <Button type="button" variant="ghost" className="gap-2">
+                <Undo className="w-4 h-4" />
+                Cancel
+              </Button>
+            </ConfirmationDialog>
 
-          <div className="flex items-center gap-3">
             <Button
               type="submit"
-              className={`flex items-cente text-text rounded-sm cursor-pointer gap-2 ${
-                form.watch().title.length < 1
-                  ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
-                  : 'bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-700 text-white'
-              }`}
+              variant={!form.formState.isDirty ? 'outline' : 'secondary'}
+              className={'gap-2'}
               aria-label="Save Task Button"
-              style={{
-                fontSize: 11,
-                textDecoration: 'none',
-              }}
-              disabled={isPending}
+              disabled={isPending || !form.formState.isDirty}
             >
-              <Save width={15} />
-              <span
-                className={`disabled:bg-red-500 ${
-                  form.watch().title.length < 1
-                    ? 'text-text dark:text-accent'
-                    : 'text-white'
-                }`}
-              >
-                Save
-              </span>
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>Save Task</span>
             </Button>
           </div>
-        </div>
-        <Separator className="mt-2 mb-2" />
+        </PageHeader>
 
-        <div className="form-group">
+        <div className="form-group pt-5">
           <div className="min-h-[30px] text-sm flex items-center gap-3">
             <span className="flex gap-1 text-text-secondary items-center">
               {getTaskTypeIcon(params.type.toUpperCase() as TaskType)}
@@ -498,7 +448,7 @@ const CreateTaskForm = () => {
                 )}
               />
             ) : null}
-            <div className="p-1 mt-2">
+            {/* <div className="p-1 mt-2">
               <SubTasksGroup
                 projectName={params.name}
                 tasks={
@@ -507,7 +457,7 @@ const CreateTaskForm = () => {
                   ) ?? []
                 }
               />
-            </div>
+            </div> */}
             {/* <AddSubtaskDialog
               key={'link-subtask-dialog'}
               parentId={''}
@@ -530,4 +480,4 @@ const CreateTaskForm = () => {
   )
 }
 
-export default CreateTaskForm
+export default CreateTaskPage

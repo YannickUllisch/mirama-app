@@ -1,15 +1,15 @@
 'use client'
 import { Calendar } from '@src/components/ui/calendar'
-import { CalendarIcon } from 'lucide-react'
-import { type FC, useState } from 'react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@src/components/ui/popover'
-import { Button } from '../ui/button'
-import { format } from 'date-fns'
 import { cn } from '@src/lib/utils'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { type FC, useState } from 'react'
+import { Button } from '../ui/button'
 
 interface CalendarSelectProps {
   value: Date | undefined | null
@@ -49,10 +49,7 @@ export const CalendarSelect: FC<CalendarSelectProps> = ({
           mode="single"
           onSelect={onChange}
           selected={value ?? new Date()}
-          className={cn(
-            'dark:focus:bg-red-500 rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800',
-            styling?.calendarClassname,
-          )}
+          className={cn(styling?.calendarClassname)}
         />
       </PopoverContent>
     </Popover>

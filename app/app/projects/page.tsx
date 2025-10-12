@@ -35,6 +35,7 @@ const ProjectsPage = () => {
     mapToUpdateInput: (data) => ({
       ...data,
       tags: data.tags.map((t) => t.id),
+      newTags: [],
       users: data.users.map((u) => ({
         isManager: u.isManager,
         userId: u.id,

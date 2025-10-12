@@ -46,11 +46,9 @@ const ClientProjectPage = () => {
   const { data: project, isLoading } = apiRequest.project.fetchById.useQuery(
     projectContext?.projectId ?? '',
   )
-
   const { data: tasks } = apiRequest.task.fetchByProject.useQuery(
     projectContext?.projectId ?? '',
   )
-
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
 
   // Handling Project visit, by storing the project id in local storage (used to show recent projects)
@@ -162,32 +160,29 @@ const ClientProjectPage = () => {
     <>
       <ProjectHeader project={project} upcomingMilestone={upcomingMilestone} />
 
-      <div className="rounded-lg">
-        <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <div className="flex w-full items-center shadow-md dark:shadow-neutral-800  bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
-            {/* Tabs List */}
-            <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
-              {tabs.map((tabHeader) => (
-                <TabsTrigger
-                  style={{ fontSize: 12 }}
-                  value={tabHeader.id}
-                  key={tabHeader.id}
-                >
-                  {tabHeader.headerComponent}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          <div className="p-3">
-            {/* Tab Content */}
-            {tabs.map((tab) => (
-              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                {tab.component}
-              </TabsContent>
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <div className="flex w-full items-center shadow-md dark:shadow-neutral-800 bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
+          <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
+            {tabs.map((tabHeader) => (
+              <TabsTrigger
+                style={{ fontSize: 12 }}
+                value={tabHeader.id}
+                key={tabHeader.id}
+              >
+                {tabHeader.headerComponent}
+              </TabsTrigger>
             ))}
-          </div>
-        </Tabs>
-      </div>
+          </TabsList>
+        </div>
+        <div className="p-3">
+          {/* Tab Content */}
+          {tabs.map((tab) => (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ))}
+        </div>
+      </Tabs>
     </>
   )
 }

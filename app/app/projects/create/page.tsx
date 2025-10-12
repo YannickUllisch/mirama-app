@@ -221,7 +221,7 @@ const CreateProjectForm = () => {
               title={'Discard changes?'}
               description={'All progress will be lost'}
               onCancel={() => null}
-              onSubmit={() => router.push('/app/projects')}
+              onSubmit={() => router.back()}
             >
               <Button type="button" variant="ghost" className="gap-2">
                 <Undo className="w-4 h-4" />
