@@ -43,6 +43,12 @@ const tag = {
 
           return { previous }
         },
+        onSuccess: (data, _vars) => {
+          queryClient.setQueryData<TagResponseType[]>(
+            ['invitation'],
+            (old = []) => [...old, data],
+          )
+        },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['tags'], ctx.previous)
@@ -76,6 +82,11 @@ const tag = {
           )
 
           return { previous }
+        },
+        onSuccess: (data, _vars) => {
+          queryClient.setQueryData<TagResponseType[]>(['tags'], (old = []) =>
+            old.map((p) => (p.id === data.id ? data : p)),
+          )
         },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {

@@ -13,6 +13,7 @@ import type {
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
+import type { TagResponseType } from '@server/domain/tagSchema'
 import type { UserProjectResponseType } from '@server/domain/userSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -62,14 +63,35 @@ const project = {
         { previous?: ProjectResponseInput[] } // context
       >({
         mutationFn: createProjectFn,
-        onMutate: async (_newProject) => {
+        onMutate: async (newProject) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
+
+          if (newProject.newTags.length > 0) {
+            queryClient.setQueryData<TagResponseType[]>(
+              ['tags'],
+              (old = []) => [
+                ...old,
+                ...newProject.newTags.map((tag) => ({
+                  title: tag.title ?? '',
+                  id: `temp-${Math.random()}`,
+                })),
+              ],
+            )
+          }
 
           const previous = queryClient.getQueryData<ProjectResponseInput[]>([
             'projects',
           ])
 
           return { previous }
+        },
+        onSuccess: (serverProject, _vars) => {
+          // Replace optimistic with authoritative data (now includes proper tag titles)
+          queryClient.setQueryData<ProjectResponseInput[]>(
+            ['projects'],
+            (old = []) => [...old, serverProject],
+          )
+          queryClient.setQueryData(['project', serverProject.id], serverProject)
         },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
@@ -78,6 +100,7 @@ const project = {
           toast.error(err?.message || 'An error occurred')
         },
         onSettled: () => {
+          queryClient.invalidateQueries({ queryKey: ['tags'] })
           queryClient.invalidateQueries({ queryKey: ['projects'] })
         },
       })
@@ -107,6 +130,19 @@ const project = {
           const previousProject =
             queryClient.getQueryData<ProjectResponseInput>(['project', id])
 
+          if (data.newTags.length > 0) {
+            queryClient.setQueryData<TagResponseType[]>(
+              ['tags'],
+              (old = []) => [
+                ...old,
+                ...data.newTags.map((tag) => ({
+                  title: tag.title ?? '',
+                  id: `temp-${Math.random()}`,
+                })),
+              ],
+            )
+          }
+
           // TODO: Figure out how to optimistically update types to which we dont have all information in a update request
           queryClient.setQueryData<ProjectResponseInput[]>(
             ['projects'],
@@ -118,7 +154,7 @@ const project = {
                       archived: p.archived,
                       tasks: p.tasks,
                       id: p.id,
-                      tags: p.tags,
+                      tags: p.tags.filter((tag) => data.tags.includes(tag.id)),
                       users: p.users,
                     }
                   : p,
@@ -134,13 +170,21 @@ const project = {
                     archived: old.archived,
                     tasks: old.tasks,
                     id: old.id,
-                    tags: old.tags,
+                    tags: old.tags.filter((tag) => data.tags.includes(tag.id)),
                     users: old.users,
                   }
                 : old,
           )
 
           return { previousProjects, previousProject }
+        },
+        onSuccess: (serverProject, _vars) => {
+          queryClient.setQueryData<ProjectResponseInput[]>(
+            ['projects'],
+            (old = []) =>
+              old.map((p) => (p.id === serverProject.id ? serverProject : p)),
+          )
+          queryClient.setQueryData(['project', serverProject.id], serverProject)
         },
         onError: (err, _vars, ctx) => {
           // Rollback to previous cache on error
@@ -153,6 +197,7 @@ const project = {
           toast.error(err?.message || 'An error occurred')
         },
         onSettled: (_data, _error, variables) => {
+          queryClient.invalidateQueries({ queryKey: ['tags'] })
           queryClient.invalidateQueries({ queryKey: ['projects'] })
           if (variables?.id) {
             queryClient.invalidateQueries({

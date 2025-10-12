@@ -43,8 +43,12 @@ import {
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
+import Centering from '@ui/centering'
 import { ColorPicker } from '@ui/color-picker'
 import {
+  Archive,
+  ArchiveRestore,
   Calendar,
   ClipboardPen,
   Loader2,
@@ -59,10 +63,12 @@ import {
   Trash2,
   Undo,
   Users,
+  X,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { v4 } from 'uuid'
 
 const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -85,8 +91,14 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
 
-  const { mutate: useUpdateProject, isPending } =
+  const { mutate: updateProjectMutation, isPending } =
     apiRequest.project.update.useMutation()
+
+  const { mutate: archiveProjectMutationm, isPending: isArchivePending } =
+    apiRequest.project.archive.useMutation()
+
+  const { mutate: deleteProjectMutation, isPending: isDeletePending } =
+    apiRequest.project.delete.useMutation()
 
   // Form Logic and Functions
   const form = useForm<UpdateProjectInput>({
@@ -100,6 +112,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
       status: StatusType.ON_HOLD,
       budget: 0,
       tags: [],
+      newTags: [],
       users: [],
       milestones: [],
     },
@@ -112,6 +125,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
         ...project,
         milestones: project.milestones.map((m) => ({ ...m })),
         tags: project.tags.map((t) => t.id),
+        newTags: [],
         users: project.users.map((u) => ({
           isManager: u.isManager,
           userId: u.id,
@@ -152,10 +166,12 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     if (result.success) {
       // In a real app, you'd create the tag via API first
       // For now, we'll just add it to the form
-      const currentTags = form.getValues('tags')
-      if (!currentTags.includes(newTag)) {
-        form.setValue('tags', [...currentTags, newTag], {
+      const currentTags = form.getValues('newTags')
+      const titles = currentTags.map((t) => t.title)
+      if (!titles.includes(newTag)) {
+        form.setValue('newTags', [...currentTags, { title: newTag }], {
           shouldValidate: true,
+          shouldDirty: true,
         })
       }
       setNewTag('')
@@ -177,8 +193,52 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   }
 
   const onSubmit = (vals: UpdateProjectInput) => {
-    useUpdateProject({ id, data: vals })
+    updateProjectMutation({ id, data: vals })
   }
+
+  const onDelete = () => {
+    deleteProjectMutation(id, {
+      onSuccess: () => router.push('/app/projects'),
+      onError: (err) => {
+        toast.error(`Project could not be deleted ${err.message}`)
+      },
+    })
+  }
+
+  const onArchive = () => {
+    archiveProjectMutationm(
+      { id, archive: project?.archived !== true },
+      {
+        onError: (err) => {
+          toast.error(`Project could not be deleted ${err.message}`)
+        },
+      },
+    )
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const memoizedNewTags = useMemo(() => {
+    return form.watch('newTags').map((t) => (
+      <Badge
+        variant={'accent'}
+        key={`new-tag-badge-${t.title}`}
+        onClick={() =>
+          form.setValue(
+            'newTags',
+            form.watch('newTags').filter((newTag) => newTag.title !== t.title),
+            {
+              shouldValidate: true,
+              shouldDirty: true,
+            },
+          )
+        }
+        className="gap-2 hover:bg-destructive hover:text-white cursor-pointer"
+      >
+        {t.title}
+        <X className="w-3 h-3" />
+      </Badge>
+    ))
+  }, [form.watch('newTags')])
 
   if (isLoading) {
     return <Loading />
@@ -195,7 +255,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
           description="View and manage your project"
           icon={PenIcon}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-col md:flex-row">
             <ConfirmationDialog
               title={'Discard changes?'}
               description={'All progress will be lost'}
@@ -204,7 +264,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
             >
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 className="gap-2 bg-transparent"
               >
                 <Undo className="w-4 h-4" />
@@ -214,10 +274,15 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
 
             <Button
               type="submit"
-              variant={!form.formState.isDirty ? 'outline' : 'default'}
+              variant={!form.formState.isDirty ? 'outline' : 'secondary'}
               className={'gap-2'}
               aria-label="Save Project Button"
-              disabled={isPending || !form.formState.isDirty}
+              disabled={
+                isPending ||
+                !form.formState.isDirty ||
+                isDeletePending ||
+                isArchivePending
+              }
             >
               {isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -232,17 +297,59 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
         <Card>
           <CardContent>
             <div className="form-group">
-              <div className="min-h-[30px] flex items-center gap-2">
-                <ClipboardPen className="w-5 h-5" />
-                <h3 className="font-medium">Project Title</h3>
-                {form.watch().name.length < 1 ? (
-                  <div className="flex items-center gap-2 text-destructive">
-                    <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
-                    {'Field "Name" cannot be empty.'}{' '}
-                  </div>
-                ) : (
-                  ''
-                )}
+              <div className="min-h-[30px] justify-between flex items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <ClipboardPen className="w-5 h-5" />
+                  <h3 className="font-medium">Project Title</h3>
+                  {form.watch().name.length < 1 ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                      <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
+                      {'Field "Name" cannot be empty.'}{' '}
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                </div>
+                <Centering>
+                  <ConfirmationDialog
+                    title={'Archive project?'}
+                    description={
+                      'Are you sure you want to archive this project?'
+                    }
+                    onCancel={() => null}
+                    onSubmit={onArchive}
+                  >
+                    <Button
+                      type="button"
+                      size={'icon'}
+                      variant="ghost"
+                      className="gap-2"
+                    >
+                      {project?.archived ? (
+                        <ArchiveRestore className="w-4 h-4" />
+                      ) : (
+                        <Archive className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </ConfirmationDialog>
+                  <ConfirmationDialog
+                    title={'Delete project?'}
+                    description={
+                      'All data will be lost and can not be recovered'
+                    }
+                    onCancel={() => null}
+                    onSubmit={onDelete}
+                  >
+                    <Button
+                      type="button"
+                      size={'icon'}
+                      variant="ghost"
+                      className="gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </ConfirmationDialog>
+                </Centering>
               </div>
 
               <FormField
@@ -388,8 +495,8 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                   </h3>
 
                   <div className="space-y-4">
-                    <div className="flex gap-6 items-end">
-                      <div className="flex-1">
+                    <div className="grid w-full gap-4 grid-cols-1 md:grid-cols-[1fr_160px_160px_auto] items-end">
+                      <div className="flex flex-col">
                         <Label htmlFor="milestone-title">Title</Label>
                         <Input
                           id="milestone-title"
@@ -401,41 +508,50 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                             })
                           }
                           placeholder="Enter milestone title"
+                          className="mt-1"
                         />
                       </div>
-                      <div className="w-40">
+
+                      <div className="flex flex-col">
                         <Label>Due Date</Label>
-                        <CalendarSelect
-                          onChange={(date) =>
-                            setNewMilestone({
-                              ...newMilestone,
-                              date: date ?? new Date(),
-                            })
-                          }
-                          value={newMilestone.date}
-                        />
+                        <div className="mt-1">
+                          <CalendarSelect
+                            onChange={(date) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                date: date ?? new Date(),
+                              })
+                            }
+                            value={newMilestone.date}
+                          />
+                        </div>
                       </div>
-                      <div className="w-40">
+                      <div className="flex flex-col md:ml-10">
                         <Label>Color</Label>
-                        <ColorPicker
-                          onChange={(color) =>
-                            setNewMilestone({
-                              ...newMilestone,
-                              colors: color,
-                            })
-                          }
-                          value={newMilestone.colors}
-                        />
+                        <div className="mt-1">
+                          <ColorPicker
+                            onChange={(color) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                colors: color,
+                              })
+                            }
+                            value={newMilestone.colors}
+                          />
+                        </div>
                       </div>
-                      <Button
-                        type="button"
-                        onClick={handleAddMilestone}
-                        disabled={newMilestone.title.length < 4}
-                        className="gap-1"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add
-                      </Button>
+
+                      <div className="flex md:justify-end">
+                        <Button
+                          type="button"
+                          onClick={handleAddMilestone}
+                          disabled={newMilestone.title.length < 4}
+                          className="gap-1 w-full md:w-auto"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add
+                        </Button>
+                      </div>
                     </div>
 
                     {milestoneFields.length > 0 ? (
@@ -560,6 +676,9 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                         Add
                       </Button>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-col md:flex-row p-2">
+                    {memoizedNewTags}
                   </div>
                 </div>
 

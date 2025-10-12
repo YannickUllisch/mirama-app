@@ -40,7 +40,7 @@ const ColorPicker = forwardRef<
           <Button
             {...props}
             className={cn(
-              'block rounded-full outline outline-offset-1',
+              'block rounded-full outline outline-offset-1 outline-accent',
               className,
             )}
             name={name}

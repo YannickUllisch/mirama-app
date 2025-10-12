@@ -129,7 +129,7 @@ export const ProjectService = {
     projectId: string,
     teamId: string,
   ) => {
-    const { users, milestones, tags, ...proj } = input
+    const { users, milestones, tags, newTags, ...proj } = input
 
     const existingMilestones = await db.milestone.findMany({
       where: { projectId },
@@ -147,9 +147,11 @@ export const ProjectService = {
         data: {
           ...proj,
           tags: {
-            connectOrCreate: tags.map((tag) => ({
-              where: { id: tag },
-              create: { title: tag, teamId },
+            connect: tags.map((id) => ({ id })),
+            create: newTags.map((t) => ({
+              id: v4(),
+              title: t.title,
+              teamId,
             })),
           },
           teamId,

@@ -46,6 +46,12 @@ const team = {
 
           return { previous }
         },
+        onSuccess: (data, _vars) => {
+          queryClient.setQueryData<UserResponseType[]>(
+            ['teamMembers'],
+            (old = []) => old.map((p) => (p.id === data.id ? data : p)),
+          )
+        },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['teamMembers'], ctx.previous)

@@ -64,6 +64,12 @@ const comment = {
 
           return { previous }
         },
+        onSuccess: (data, vars) => {
+          queryClient.setQueryData<CommentResponseType[]>(
+            ['taskComments', vars.taskId],
+            (old = []) => old.map((p) => (p.id === data.id ? data : p)),
+          )
+        },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['taskComments', taskId], ctx.previous)
@@ -83,7 +89,7 @@ const comment = {
       return useMutation<
         CommentResponseType,
         Error,
-        { id: string; data: UpdateCommentType },
+        { id: string; projectId: string; data: UpdateCommentType },
         { previous?: CommentResponseType[] }
       >({
         mutationFn: ({ id, data }) =>
@@ -103,6 +109,12 @@ const comment = {
           )
 
           return { previous }
+        },
+        onSuccess: (data, vars) => {
+          queryClient.setQueryData<CommentResponseType[]>(
+            ['taskComments', vars.id],
+            (old = []) => old.map((p) => (p.id === data.id ? data : p)),
+          )
         },
         onError: (err, vars, ctx) => {
           if (ctx?.previous) {

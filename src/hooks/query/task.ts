@@ -50,19 +50,24 @@ const task = {
   },
 
   create: {
-    useMutation: (projectId: string) => {
+    useMutation: () => {
       const qc = useQueryClient()
-      return useMutation<TaskResponseType, Error, CreateTaskType, ListContext>({
-        mutationFn: (payload) => createTaskFn(projectId, payload),
-        onMutate: async (newTask) => {
+      return useMutation<
+        TaskResponseType,
+        Error,
+        { id: string; payload: CreateTaskType },
+        ListContext
+      >({
+        mutationFn: ({ id, payload }) => createTaskFn(id, payload),
+        onMutate: async ({ id, payload }) => {
           await Promise.all([
-            qc.cancelQueries({ queryKey: ['tasks', projectId] }),
+            qc.cancelQueries({ queryKey: ['tasks', id] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
           ])
 
           const previousTasks = qc.getQueryData<TaskResponseType[]>([
             'tasks',
-            projectId,
+            id,
           ])
           const previousPersonal = qc.getQueryData<TaskResponseType[]>([
             'personalTasks',
@@ -71,13 +76,13 @@ const task = {
 
           // Optimistic add (temp id)
           const optimistic: TaskResponseType = {
-            ...(newTask as any),
+            ...(payload as any),
             id: `optimistic-${Date.now()}`,
-            projectId,
+            projectId: id,
           }
           if (previousTasks) {
             qc.setQueryData<TaskResponseType[]>(
-              ['tasks', projectId],
+              ['tasks', id],
               [optimistic, ...previousTasks],
             )
           }
@@ -93,18 +98,19 @@ const task = {
             previousPersonalTasks: previousPersonal,
           }
         },
-        onError: (err, _vars, ctx) => {
+
+        onError: (err, vars, ctx) => {
           if (ctx?.previousTasks) {
-            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', vars.id], ctx.previousTasks)
           }
           if (ctx?.previousPersonalTasks) {
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           }
           toast.error(err.message || 'Create task failed')
         },
-        onSuccess: (created) => {
+        onSuccess: (created, vars) => {
           qc.setQueryData<TaskResponseType[]>(
-            ['tasks', projectId],
+            ['tasks', vars.id],
             (old = []) => {
               // replace optimistic
               const withoutOptimistic = old.filter(
@@ -124,8 +130,9 @@ const task = {
           )
           qc.setQueryData(['task', created.id], created)
         },
-        onSettled: () => {
-          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
+        onSettled: (_data, _err, vars) => {
+          qc.invalidateQueries({ queryKey: ['tags'] })
+          qc.invalidateQueries({ queryKey: ['tasks', vars.id] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
         },
       })
@@ -133,15 +140,21 @@ const task = {
   },
 
   update: {
-    useMutation: (projectId: string, taskId: string) => {
+    useMutation: () => {
       const qc = useQueryClient()
-      return useMutation<TaskResponseType, Error, UpdateTaskType, ListContext>({
-        mutationFn: (payload) => updateTaskFn(projectId, taskId, payload),
-        onMutate: async (payload) => {
+      return useMutation<
+        TaskResponseType,
+        Error,
+        { id: string; projectId: string; payload: UpdateTaskType },
+        ListContext
+      >({
+        mutationFn: ({ id, projectId, payload }) =>
+          updateTaskFn(projectId, id, payload),
+        onMutate: async ({ id, projectId, payload }) => {
           await Promise.all([
             qc.cancelQueries({ queryKey: ['tasks', projectId] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
-            qc.cancelQueries({ queryKey: ['task', taskId] }),
+            qc.cancelQueries({ queryKey: ['task', id] }),
           ])
 
           const previousTasks = qc.getQueryData<TaskResponseType[]>([
@@ -154,12 +167,12 @@ const task = {
           ])
           const previousTask = qc.getQueryData<TaskResponseType | null>([
             'task',
-            taskId,
+            id,
           ])
 
           // TODO: Figure out how to optimistically update types to which we dont have all information in a update request
           const patch = (t: TaskResponseType) =>
-            t.id === taskId
+            t.id === id
               ? { ...t, ...payload, subtasks: t.subtasks, tags: t.tags }
               : t
 
@@ -176,7 +189,7 @@ const task = {
             )
           }
           if (previousTask) {
-            qc.setQueryData(['task', taskId], { ...previousTask, ...payload })
+            qc.setQueryData(['task', id], { ...previousTask, ...payload })
           }
 
           return {
@@ -185,18 +198,18 @@ const task = {
             previousTask,
           }
         },
-        onError: (err, _vars, ctx) => {
+        onError: (err, vars, ctx) => {
           if (ctx?.previousTasks)
-            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', vars.projectId], ctx.previousTasks)
           if (ctx?.previousPersonalTasks)
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           if (ctx?.previousTask)
-            qc.setQueryData(['task', taskId], ctx.previousTask)
+            qc.setQueryData(['task', vars.id], ctx.previousTask)
           toast.error(err.message || 'Update task failed')
         },
-        onSuccess: (updated) => {
+        onSuccess: (updated, vars) => {
           qc.setQueryData<TaskResponseType[]>(
-            ['tasks', projectId],
+            ['tasks', vars.projectId],
             (old = []) => old.map((t) => (t.id === updated.id ? updated : t)),
           )
           qc.setQueryData<TaskResponseType[]>(
@@ -205,29 +218,35 @@ const task = {
           )
           qc.setQueryData(['task', updated.id], updated)
         },
-        onSettled: () => {
-          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
+        onSettled: (_data, _err, vars) => {
+          qc.invalidateQueries({ queryKey: ['tags'] })
+          qc.invalidateQueries({ queryKey: ['tasks', vars.projectId] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
-          qc.invalidateQueries({ queryKey: ['task', taskId] })
+          qc.invalidateQueries({ queryKey: ['task', vars.id] })
         },
       })
     },
   },
 
   delete: {
-    useMutation: (projectId: string, taskId: string) => {
+    useMutation: () => {
       const qc = useQueryClient()
-      return useMutation<{ success: boolean } | any, Error, void, ListContext>({
-        mutationFn: () => deleteTaskFn(projectId, taskId),
-        onMutate: async () => {
+      return useMutation<
+        { success: boolean } | any,
+        Error,
+        { id: string; pid: string },
+        ListContext
+      >({
+        mutationFn: ({ id, pid }) => deleteTaskFn(pid, id),
+        onMutate: async ({ id, pid }) => {
           await Promise.all([
-            qc.cancelQueries({ queryKey: ['tasks', projectId] }),
+            qc.cancelQueries({ queryKey: ['tasks', pid] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
-            qc.cancelQueries({ queryKey: ['task', taskId] }),
+            qc.cancelQueries({ queryKey: ['task', id] }),
           ])
           const previousTasks = qc.getQueryData<TaskResponseType[]>([
             'tasks',
-            projectId,
+            pid,
           ])
           const previousPersonal = qc.getQueryData<TaskResponseType[]>([
             'personalTasks',
@@ -235,41 +254,41 @@ const task = {
           ])
           const previousTask = qc.getQueryData<TaskResponseType | null>([
             'task',
-            taskId,
+            id,
           ])
 
           if (previousTasks) {
             qc.setQueryData<TaskResponseType[]>(
-              ['tasks', projectId],
-              previousTasks.filter((t) => t.id !== taskId),
+              ['tasks', pid],
+              previousTasks.filter((t) => t.id !== id),
             )
           }
           if (previousPersonal) {
             qc.setQueryData<TaskResponseType[]>(
               ['personalTasks', 'all'],
-              previousPersonal.filter((t) => t.id !== taskId),
+              previousPersonal.filter((t) => t.id !== id),
             )
           }
-          qc.removeQueries({ queryKey: ['task', taskId] })
+          qc.removeQueries({ queryKey: ['task', id] })
 
           return {
             previousTasks,
             previousPersonalTasks: previousPersonal,
             previousTask,
-            affectedIds: [taskId],
+            affectedIds: [id],
           }
         },
-        onError: (err, _vars, ctx) => {
+        onError: (err, vars, ctx) => {
           if (ctx?.previousTasks)
-            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', vars.pid], ctx.previousTasks)
           if (ctx?.previousPersonalTasks)
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           if (ctx?.previousTask)
-            qc.setQueryData(['task', taskId], ctx.previousTask)
+            qc.setQueryData(['task', vars.id], ctx.previousTask)
           toast.error(err.message || 'Delete failed')
         },
-        onSettled: () => {
-          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
+        onSettled: (_data, _err, vars) => {
+          qc.invalidateQueries({ queryKey: ['tasks', vars.pid] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
         },
       })
@@ -277,16 +296,17 @@ const task = {
   },
 
   deleteMany: {
-    useMutation: (projectId: string) => {
+    useMutation: () => {
       const qc = useQueryClient()
       return useMutation<
         { success: boolean } | any,
         Error,
-        DeleteTasksType,
+        { projectId: string; payload: DeleteTasksType },
         ListContext
       >({
-        mutationFn: (payload) => deleteTasksFn(projectId, payload),
-        onMutate: async (payload) => {
+        mutationFn: ({ projectId, payload }) =>
+          deleteTasksFn(projectId, payload),
+        onMutate: async ({ projectId, payload }) => {
           await Promise.all([
             qc.cancelQueries({ queryKey: ['tasks', projectId] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
@@ -323,15 +343,15 @@ const task = {
             affectedIds: payload.ids,
           }
         },
-        onError: (err, _vars, ctx) => {
+        onError: (err, vars, ctx) => {
           if (ctx?.previousTasks)
-            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', vars.projectId], ctx.previousTasks)
           if (ctx?.previousPersonalTasks)
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           toast.error(err.message || 'Delete tasks failed')
         },
-        onSettled: () => {
-          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
+        onSettled: (_data, _err, vars) => {
+          qc.invalidateQueries({ queryKey: ['tasks', vars.projectId] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
         },
       })

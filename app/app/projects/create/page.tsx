@@ -42,6 +42,7 @@ import {
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
 import { ColorPicker } from '@ui/color-picker'
 import {
   Calendar,
@@ -58,14 +59,17 @@ import {
   Trash2,
   Undo,
   Users,
+  X,
 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 
 const CreateProjectForm = () => {
   // Routing used to return to previous page.
   const router = useRouter()
+  const { data: session } = useSession()
 
   // States
   const [newMilestone, setNewMilestone] = useState({
@@ -78,7 +82,7 @@ const CreateProjectForm = () => {
   // Hooks
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
-  const { mutate: useCreateProject, isPending } =
+  const { mutate: createProjectMutation, isPending } =
     apiRequest.project.create.useMutation()
 
   // Form Logic and Functions
@@ -93,12 +97,19 @@ const CreateProjectForm = () => {
       status: StatusType.ON_HOLD,
       budget: 0,
       tags: [],
-      users: [],
+      users: [{ isManager: true, userId: session?.user.id ?? '' }],
       newMilestones: [],
       archived: false,
       newTags: [],
     },
   })
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Will result in cyclic dependency update>
+  useEffect(() => {
+    if (session?.user.id) {
+      form.setValue('users', [{ isManager: true, userId: session.user.id }])
+    }
+  }, [session])
 
   const {
     fields: userFields,
@@ -136,6 +147,7 @@ const CreateProjectForm = () => {
       if (!titles.includes(newTag)) {
         form.setValue('newTags', [...currentTags, { title: newTag }], {
           shouldValidate: true,
+          shouldDirty: true,
         })
       }
       setNewTag('')
@@ -146,6 +158,7 @@ const CreateProjectForm = () => {
     const currentValue = form.getValues(`users.${index}.isManager`)
     form.setValue(`users.${index}.isManager`, !currentValue, {
       shouldValidate: true,
+      shouldDirty: true,
     })
   }
 
@@ -157,7 +170,7 @@ const CreateProjectForm = () => {
   }
 
   const onSubmit = (vals: CreateProjectInput) => {
-    useCreateProject(vals, {
+    createProjectMutation(vals, {
       onSuccess(data) {
         if (data.id) {
           router.push(`/app/projects/edit/${data.id}`)
@@ -167,6 +180,30 @@ const CreateProjectForm = () => {
       },
     })
   }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const memoizedNewTags = useMemo(() => {
+    return form.watch('newTags').map((t) => (
+      <Badge
+        variant={'accent'}
+        key={`new-tag-badge-${t.title}`}
+        onClick={() =>
+          form.setValue(
+            'newTags',
+            form.watch('newTags').filter((newTag) => newTag.title !== t.title),
+            {
+              shouldValidate: true,
+              shouldDirty: true,
+            },
+          )
+        }
+        className="gap-2 hover:bg-destructive hover:text-white cursor-pointer"
+      >
+        {t.title}
+        <X className="w-3 h-3" />
+      </Badge>
+    ))
+  }, [form.watch('newTags')])
 
   return (
     <FormProvider {...form}>
@@ -179,18 +216,14 @@ const CreateProjectForm = () => {
           description="Fill out the information to create a new Project"
           icon={PlusCircle}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-col md:flex-row">
             <ConfirmationDialog
               title={'Discard changes?'}
               description={'All progress will be lost'}
               onCancel={() => null}
               onSubmit={() => router.push('/app/projects')}
             >
-              <Button
-                type="button"
-                variant="outline"
-                className="gap-2 bg-transparent"
-              >
+              <Button type="button" variant="ghost" className="gap-2">
                 <Undo className="w-4 h-4" />
                 Cancel
               </Button>
@@ -198,7 +231,7 @@ const CreateProjectForm = () => {
 
             <Button
               type="submit"
-              variant={!form.formState.isDirty ? 'outline' : 'default'}
+              variant={!form.formState.isDirty ? 'outline' : 'secondary'}
               className={'gap-2'}
               aria-label="Save Project Button"
               disabled={isPending || !form.formState.isDirty}
@@ -372,8 +405,8 @@ const CreateProjectForm = () => {
                   </h3>
 
                   <div className="space-y-4">
-                    <div className="flex gap-6 items-end">
-                      <div className="flex-1">
+                    <div className="grid w-full gap-4 grid-cols-1 md:grid-cols-[1fr_160px_160px_auto] items-end">
+                      <div className="flex flex-col">
                         <Label htmlFor="milestone-title">Title</Label>
                         <Input
                           id="milestone-title"
@@ -385,41 +418,50 @@ const CreateProjectForm = () => {
                             })
                           }
                           placeholder="Enter milestone title"
+                          className="mt-1"
                         />
                       </div>
-                      <div className="w-40">
+
+                      <div className="flex flex-col">
                         <Label>Due Date</Label>
-                        <CalendarSelect
-                          onChange={(date) =>
-                            setNewMilestone({
-                              ...newMilestone,
-                              date: date ?? new Date(),
-                            })
-                          }
-                          value={newMilestone.date}
-                        />
+                        <div className="mt-1">
+                          <CalendarSelect
+                            onChange={(date) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                date: date ?? new Date(),
+                              })
+                            }
+                            value={newMilestone.date}
+                          />
+                        </div>
                       </div>
-                      <div className="w-40">
+                      <div className="flex flex-col md:ml-10">
                         <Label>Color</Label>
-                        <ColorPicker
-                          onChange={(color) =>
-                            setNewMilestone({
-                              ...newMilestone,
-                              colors: color,
-                            })
-                          }
-                          value={newMilestone.colors}
-                        />
+                        <div className="mt-1">
+                          <ColorPicker
+                            onChange={(color) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                colors: color,
+                              })
+                            }
+                            value={newMilestone.colors}
+                          />
+                        </div>
                       </div>
-                      <Button
-                        type="button"
-                        onClick={handleAddMilestone}
-                        disabled={newMilestone.title.length < 4}
-                        className="gap-1"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add
-                      </Button>
+
+                      <div className="flex md:justify-end">
+                        <Button
+                          type="button"
+                          onClick={handleAddMilestone}
+                          disabled={newMilestone.title.length < 4}
+                          className="gap-1 w-full md:w-auto"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add
+                        </Button>
+                      </div>
                     </div>
 
                     {milestoneFields.length > 0 ? (
@@ -499,9 +541,12 @@ const CreateProjectForm = () => {
                                   tags?.find((tag) => tag.id === item)?.title ||
                                   item
                                 }
-                                className="w-full"
+                                className="w-full "
                               >
-                                <MultiSelectorInput placeholder="Select tags" />
+                                <MultiSelectorInput
+                                  className="w-full bg-background px-2 rounded-md"
+                                  placeholder="Select tags"
+                                />
                               </MultiSelectorTrigger>
                             </FormControl>
                             <MultiSelectorContent>
@@ -544,6 +589,9 @@ const CreateProjectForm = () => {
                         Add
                       </Button>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-col md:flex-row p-2">
+                    {memoizedNewTags}
                   </div>
                 </div>
 

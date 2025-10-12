@@ -56,6 +56,12 @@ const invitation = {
 
           return { previous }
         },
+        onSuccess: (data, _vars) => {
+          queryClient.setQueryData<InvitationResponseType[]>(
+            ['invitation'],
+            (old = []) => [...old, data],
+          )
+        },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['invitation'], ctx.previous)
@@ -94,6 +100,12 @@ const invitation = {
           )
 
           return { previous }
+        },
+        onSuccess: (data, _vars) => {
+          queryClient.setQueryData<InvitationResponseType[]>(
+            ['invitation'],
+            (old = []) => old.map((p) => (p.id === data.id ? data : p)),
+          )
         },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {

@@ -65,6 +65,7 @@ export const UpdateProjectSchema = z
     status: z.nativeEnum(StatusType),
     budget: z.number(),
     tags: z.string().array(),
+    newTags: z.array(CreateTagSchema),
     users: z.array(ProjectUserLinkSchema),
     milestones: z.array(MilestoneProjectResponseSchema),
   })

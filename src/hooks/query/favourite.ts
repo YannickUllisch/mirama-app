@@ -63,6 +63,12 @@ const favourite = {
 
           return { previous }
         },
+        onSuccess: (serverFav, _vars) => {
+          queryClient.setQueryData<FavouriteResponseType[]>(
+            ['favourites'],
+            (old = []) => [...old, serverFav],
+          )
+        },
         onError: (err, _vars, ctx) => {
           if (ctx?.previous) {
             queryClient.setQueryData(['favourites'], ctx.previous)
