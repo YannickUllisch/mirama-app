@@ -8,11 +8,10 @@ export const GET = withAuth(
   exceptionHandler(TaskController.getTasksByProject),
 )
 
-// export const POST = withAuth(
-//   Object.values(Role),
-//   exceptionHandler(TaskController.createTask),
-// )
-
+export const POST = withAuth(
+  Object.values(Role),
+  exceptionHandler(TaskController.createTask),
+)
 // export const DELETE = withAuth(
 //   Object.values(Role),
 //   exceptionHandler(TaskController.deleteTasks),

@@ -1,3 +1,4 @@
+import { CreateTaskSchema } from '@server/domain/taskSchema'
 import { TaskService } from '@server/services/task/taskService'
 import { pickFromTail } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
@@ -38,16 +39,20 @@ export const TaskController = {
    * @param session Validated Session from request
    * @param _logger Context Logger
    */
-  // createTask: async (
-  //   req: NextRequest,
-  //   session: Session,
-  //   _logger: Logger,
-  // ) => {
-  //   const [pid] = pickFromTail(req, [1])
-  //   const body = await req.json()
-  //   const parsedBody = CreateTaskSchema.parse(body)
-  //   const task = await TaskService.cr
-  // },
+  createTask: async (req: NextRequest, session: Session, _logger: Logger) => {
+    const [pid] = pickFromTail(req, [1])
+    const body = await req.json()
+    const parsedBody = CreateTaskSchema.parse(body)
+    const roleCheck = isTeamAdminOrOwner(session)
+    const task = await TaskService.createTask(
+      pid,
+      session.user.teamId,
+      session.user.id ?? '',
+      roleCheck,
+      parsedBody,
+    )
+    return Response.json(task, { status: 201 })
+  },
 
   /**
    * Assumed route: /api/db/project/{projectId}/tasks

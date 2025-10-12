@@ -1,7 +1,13 @@
 import { TaskStatusType } from '@prisma/client'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type {
+  CreateTaskType,
+  TaskResponseType,
+} from '@server/domain/taskSchema'
 import { TaskMapper } from '@server/mapping/task'
 import db from '@server/utils/db'
+import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
+import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
+import { v4 } from 'uuid'
 
 export const TaskService = {
   getTasksByProjectId: async (
@@ -137,5 +143,83 @@ export const TaskService = {
     })
 
     return res.map((r) => TaskMapper.mapDefaultToApi(r))
+  },
+
+  createTask: async (
+    pid: string,
+    teamId: string,
+    sessionUserId: string,
+    isAdminOrOwner: boolean,
+    payload: CreateTaskType,
+  ) => {
+    const { parentId, tags, newTags, subtasks, ...rest } = payload
+
+    if (parentId && !isTaskTypeContainer(rest.type)) {
+      throw new Error('This task type can not be assigned a parent')
+    }
+
+    const existingProject = await db.project.findFirst({
+      where: {
+        id: pid,
+        teamId,
+      },
+      select: {
+        name: true,
+        users: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    if (!existingProject) {
+      throw new Error('Invalid Project')
+    }
+
+    if (
+      !isAdminOrOwner &&
+      !existingProject?.users.map((u) => u.id).includes(sessionUserId)
+    ) {
+      throw new Error('Invalid permission')
+    }
+
+    const newTaskId = v4()
+    const task = await db.task.create({
+      data: {
+        ...rest,
+        id: newTaskId,
+        tags: {
+          connect: tags.map((id) => ({ id })),
+          create: newTags.map((t) => ({
+            id: v4(),
+            title: t.title,
+            teamId,
+          })),
+        },
+        subtasks: {
+          connect: subtasks.map((id) => ({ id })),
+        },
+        parentId:
+          parentId && !isTaskTypeContainer(rest.type) ? parentId : undefined,
+        projectId: pid,
+        teamId,
+        taskCode: generateTaskId(existingProject.name, newTaskId),
+      },
+      include: {
+        assignedTo: true,
+        subtasks: true,
+        tags: true,
+        parent: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        project: { select: { id: true, name: true } },
+      },
+    })
+
+    return TaskMapper.mapDefaultToApi(task)
   },
 }
