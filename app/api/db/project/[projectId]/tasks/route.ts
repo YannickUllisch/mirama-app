@@ -12,7 +12,7 @@ export const POST = withAuth(
   Object.values(Role),
   exceptionHandler(TaskController.createTask),
 )
-// export const DELETE = withAuth(
-//   Object.values(Role),
-//   exceptionHandler(TaskController.deleteTasks),
-// )
+export const DELETE = withAuth(
+  Object.values(Role),
+  exceptionHandler(TaskController.deleteTasks),
+)

@@ -2,7 +2,7 @@ import type { Role } from '@prisma/client'
 import type { Session } from 'next-auth'
 
 export const validateRequest = (session: Session | null, roles?: Role[]) => {
-  if (!session) {
+  if (!session || !session.user.id) {
     return Response.json(
       { ok: false, message: 'You need to be logged in!' },
       { status: 401 },

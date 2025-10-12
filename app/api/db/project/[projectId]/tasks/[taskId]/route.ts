@@ -8,12 +8,12 @@ export const GET = withAuth(
   exceptionHandler(TaskController.getTaskById),
 )
 
-// export const PUT = withAuth(
-//   Object.values(Role),
-//   exceptionHandler(TaskController.updateTask),
-// )
+export const PUT = withAuth(
+  Object.values(Role),
+  exceptionHandler(TaskController.updateTask),
+)
 
-// export const DELETE = withAuth(
-//   Object.values(Role),
-//   exceptionHandler(TaskController.deleteTask),
-// )
+export const DELETE = withAuth(
+  Object.values(Role),
+  exceptionHandler(TaskController.deleteTask),
+)

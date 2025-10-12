@@ -24,7 +24,7 @@ export const withAuth = (
     try {
       const session = await auth()
 
-      if (!session) {
+      if (!session || !session.user.id) {
         apiLogger.warn(
           {
             requestId,

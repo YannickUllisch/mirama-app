@@ -1,4 +1,8 @@
-import { CreateTaskSchema } from '@server/domain/taskSchema'
+import {
+  CreateTaskSchema,
+  DeleteTasksSchema,
+  UpdateTaskSchema,
+} from '@server/domain/taskSchema'
 import { TaskService } from '@server/services/task/taskService'
 import { pickFromTail } from '@server/utils/getDynamicRoute'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
@@ -58,16 +62,37 @@ export const TaskController = {
    * Assumed route: /api/db/project/{projectId}/tasks
    * @param req API request object as Next Request Type
    * @param session Validated Session from request
-   * @param _logger Context Logger
+   * @param logger Context Logger
    */
-  // deleteTasks: async (
-  //   req: NextRequest,
-  //   session: Session,
-  //   _logger: Logger,
-  // ) => {
-  //   const [pid] = pickFromTail(req, [1])
-  //   const ids = (await req.json()) as string[]
-  // },
+  deleteTasks: async (req: NextRequest, session: Session, _logger: Logger) => {
+    const [pid] = pickFromTail(req, [1])
+
+    // TODO: Check if further processing is required for this to work
+    const ids = req.nextUrl.searchParams.get('ids') as string[] | null
+    if (!ids) {
+      return Response.json({
+        success: false,
+        status: 404,
+        message: 'Ids need to be provided in request Header',
+      })
+    }
+
+    const parsed = DeleteTasksSchema.parse({ ids })
+    const roleCheck = isTeamAdminOrOwner(session)
+    await TaskService.deleteTasksBulk(
+      pid,
+      session.user.teamId,
+      session.user.id ?? '',
+      roleCheck,
+      parsed.ids,
+    )
+
+    return Response.json(
+      { success: true, message: 'Deleted successfully' },
+      { status: 200 },
+    )
+  },
+
   /**
    * Assumed route: /api/db/project/{projectId}/tasks/${taskId}
    * @param req API request object as Next Request Type
@@ -88,6 +113,27 @@ export const TaskController = {
     )
     return Response.json(task, { status: 200 })
   },
+  /**
+   * Assumed route: /api/db/project/{projectId}/tasks/${taskId}
+   * @param req API request object as Next Request Type
+   * @param session Validated Session from request
+   * @param _logger Context Logger
+   */
+  updateTask: async (req: NextRequest, session: Session, _logger: Logger) => {
+    const [tid, pid] = pickFromTail(req, [0, 2])
+    const body = await req.json()
+    const parsedBody = UpdateTaskSchema.parse(body)
+    const roleCheck = isTeamAdminOrOwner(session)
+    const task = await TaskService.updateTask(
+      tid,
+      pid,
+      session.user.teamId,
+      session.user.id ?? '',
+      roleCheck,
+      parsedBody,
+    )
+    return Response.json(task, { status: 200 })
+  },
 
   /**
    * Assumed route: /api/db/project/{projectId}/tasks/${taskId}
@@ -95,30 +141,23 @@ export const TaskController = {
    * @param session Validated Session from request
    * @param _logger Context Logger
    */
-  // updateTask: async (
-  //   req: NextRequest,
-  //   session: Session,
-  //   _logger: Logger,
-  // ) => {
-  //   const id = fromTail(req)
-  //   const body = await req.json()
-  //   const parsedBody = UpdateTaskSchema.parse(body)
-  // },
+  deleteTask: async (req: NextRequest, session: Session, _logger: Logger) => {
+    const [tid, pid] = pickFromTail(req, [0, 2])
+    const roleCheck = isTeamAdminOrOwner(session)
 
-  /**
-   * Assumed route: /api/db/project/{projectId}/tasks/${taskId}
-   * @param req API request object as Next Request Type
-   * @param session Validated Session from request
-   * @param _logger Context Logger
-   */
-  //  deleteTask: async (
-  //   req: NextRequest,
-  //   session: Session,
-  //   _logger: Logger,
-  // ) => {
-  //   const [tid, pid] = pickFromTail(req, [0, 2])
-  //   const ids = (await req.json()) as string[]
-  // },
+    await TaskService.deleteTask(
+      tid,
+      pid,
+      session.user.teamId,
+      session.user.id ?? '',
+      roleCheck,
+    )
+
+    return Response.json(
+      { success: true, message: 'Deleted successfully' },
+      { status: 200 },
+    )
+  },
 
   /**
    * Assumed route: /api/db/team/member/tasks
