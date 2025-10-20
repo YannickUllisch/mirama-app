@@ -276,7 +276,6 @@ const GanttTab = ({
         open={isTaskOpen}
         setOpen={setIsTaskOpen}
         taskId={selectedTaskId ?? ''}
-        projectName={projectContext?.projectName ?? ''}
       />
     </>
   )

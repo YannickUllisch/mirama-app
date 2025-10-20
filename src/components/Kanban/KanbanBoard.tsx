@@ -33,17 +33,11 @@ import { createBoards } from './createBoards'
 
 interface KanbanBoardProps {
   projectId: string
-  projectName: string
   users: UserResponseType[]
   tasks: TaskResponseType[]
 }
 
-const KanbanBoard: FC<KanbanBoardProps> = ({
-  tasks,
-  projectId,
-  users,
-  projectName,
-}) => {
+const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
   // Initializing boards based on given tasks, do be able to instantly change states without
   // waiting for DB updates we simulate the changes through the boards state and update DB in the background
   const { data: session } = useSession()
@@ -376,7 +370,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
             <div className="display flex gap-2" key={`board-${board.id}`}>
               {/* Board Column Titles */}
               <ContainerHeader
-                projectName={projectName}
                 id={board.id}
                 title={board.title}
                 taskType={board.containerTaskType}
@@ -430,7 +423,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
                               onDelete={handleItemDelete}
                               users={users ?? []}
                               loading={false}
-                              projectName={projectName}
                             />
                           )}
                         </div>
@@ -447,11 +439,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({
       <DragOverlay adjustScale={false}>
         {activeId?.toString().includes('item') && (
           <div className="opacity-70">
-            <KanbanItem
-              projectName={projectName}
-              id={activeId}
-              task={findItemTask(activeId)}
-            />
+            <KanbanItem id={activeId} task={findItemTask(activeId)} />
           </div>
         )}
       </DragOverlay>

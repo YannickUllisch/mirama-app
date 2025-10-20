@@ -47,7 +47,6 @@ const KanbanItem: FC<KanbanItemType> = ({
   loading,
   onDelete,
   users,
-  projectName,
 }) => {
   const path = usePathname()
   const {
@@ -210,7 +209,6 @@ const KanbanItem: FC<KanbanItemType> = ({
 
       <ViewTaskSheet
         open={isOpen}
-        projectName={projectName}
         setOpen={setIsOpen}
         taskId={task?.id ?? ''}
       />

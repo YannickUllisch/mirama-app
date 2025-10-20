@@ -1,39 +1,27 @@
-import { useState } from 'react'
-import { Button } from '@ui/button'
-import { Textarea } from '@ui/textarea'
-import { Card, CardContent } from '@ui/card'
+import apiRequest from '@hooks/query'
+import type {} from '@prisma/client'
 import { Avatar, AvatarFallback } from '@ui/avatar'
-import type { Comment, User } from '@prisma/client'
+import { Button } from '@ui/button'
+import { Card, CardContent } from '@ui/card'
+import { Textarea } from '@ui/textarea'
 import { formatDistanceToNow } from 'date-fns'
-import useSWR from 'swr'
+import { useState } from 'react'
 
 interface CommentTabProps {
-  taskId?: string
-  onAddComment?: (comment: string) => Promise<void>
+  projectId: string
+  taskId: string
 }
 
-export default function CommentTab({ taskId, onAddComment }: CommentTabProps) {
+const CommentTab = ({ taskId, projectId }: CommentTabProps) => {
   const [newComment, setNewComment] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const { data: taskComments } = useSWR<
-    (Comment & {
-      user: User
-    })[]
-  >(taskId ? `task/comments?taskId=${taskId}` : null)
+  const { data: comments } = apiRequest.comment.fetchByTaskId.useQuery(
+    projectId,
+    taskId,
+  )
 
   const handleSubmit = async () => {
-    if (!newComment.trim() || !onAddComment) return
-
-    setIsSubmitting(true)
-    try {
-      await onAddComment(newComment)
-      setNewComment('')
-    } catch (error) {
-      console.error('Failed to add comment:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
+    // TODO
   }
 
   return (
@@ -47,7 +35,7 @@ export default function CommentTab({ taskId, onAddComment }: CommentTabProps) {
         />
         <Button
           onClick={handleSubmit}
-          disabled={!newComment.trim() || isSubmitting}
+          disabled={!newComment.trim()}
           className="w-full sm:w-auto"
         >
           Add Comment
@@ -55,18 +43,16 @@ export default function CommentTab({ taskId, onAddComment }: CommentTabProps) {
       </div>
 
       <div className="space-y-4">
-        {taskComments?.map((comment) => (
+        {comments?.map((comment) => (
           <Card key={comment.id}>
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback>
-                    {comment.user?.name?.[0] || 'U'}
-                  </AvatarFallback>
+                  <AvatarFallback>{comment.userName}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{comment.user?.name}</p>
+                    <p className="text-sm font-medium">{comment.userName}</p>
                     <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(comment.createdAt), {
                         addSuffix: true,
@@ -80,7 +66,7 @@ export default function CommentTab({ taskId, onAddComment }: CommentTabProps) {
           </Card>
         ))}
 
-        {taskComments?.length === 0 && (
+        {comments?.length === 0 && (
           <div className="text-center text-muted-foreground text-sm p-4">
             No comments yet
           </div>
@@ -89,3 +75,5 @@ export default function CommentTab({ taskId, onAddComment }: CommentTabProps) {
     </div>
   )
 }
+
+export default CommentTab

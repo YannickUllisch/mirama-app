@@ -12,13 +12,11 @@ interface ContainerHeaderProps {
   itemCount: number
   className?: string
   id: string
-  projectName: string
 }
 
 export const ContainerHeader: FC<ContainerHeaderProps> = ({
   title,
   taskType,
-  projectName,
   itemCount,
   className,
   id,
@@ -29,7 +27,6 @@ export const ContainerHeader: FC<ContainerHeaderProps> = ({
     <>
       <ViewTaskSheet
         open={isOpen}
-        projectName={projectName}
         setOpen={setIsOpen}
         taskId={id.replace('board-', '') ?? ''}
       />

@@ -38,23 +38,18 @@ import type { KeyedMutator } from 'swr'
 import UserAvatar from '../Avatar/UserAvatar'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
-import { CommentTab, RelatedWorkTab, TimelineTab } from '../Tabs/ViewTaskTabs'
+import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
+import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
+import TimelineTab from '../Tabs/ViewTaskTabs/TimelineTab'
 
 interface ViewTaskSheet {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   taskId: string
-  projectName: string
   mutate?: KeyedMutator<any>
 }
 
-const ViewTaskSheet = ({
-  open,
-  setOpen,
-  taskId,
-  projectName,
-  mutate,
-}: ViewTaskSheet) => {
+const ViewTaskSheet = ({ open, setOpen, taskId, mutate }: ViewTaskSheet) => {
   const projectInfo = useContext(ProjectDataContext)
 
   const { data: task } = apiRequest.task.fetchById.useQuery(
@@ -102,7 +97,12 @@ const ViewTaskSheet = ({
           Comments
         </div>
       ),
-      component: <CommentTab taskId={task?.id} />,
+      component: (
+        <CommentTab
+          taskId={task?.id ?? ''}
+          projectId={projectInfo?.projectId ?? ''}
+        />
+      ),
     },
   ]
 
@@ -126,7 +126,9 @@ const ViewTaskSheet = ({
                   </Button>
                 </SheetClose>
                 <Button variant={'ghost'} className="p-1 h-fit" asChild>
-                  <Link href={`/app/projects/${projectName}/edit/${task.id}`}>
+                  <Link
+                    href={`/app/projects/${projectInfo?.projectName}/edit/${task.id}`}
+                  >
                     <Pencil className="text-white" size={15} />
                   </Link>
                 </Button>

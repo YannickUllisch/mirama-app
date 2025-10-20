@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
-import { Role, type User } from '@prisma/client'
+import { Role } from '@prisma/client'
 import {
   UpdateUserSchema,
   type UpdateUserType,
+  type UserResponseType,
 } from '@server/domain/userSchema'
 import { Button } from '@src/components/ui/button'
 import {
@@ -34,11 +35,10 @@ import {
 } from '../ui/select'
 
 interface EditUserDialogProps {
-  user: User
+  user: UserResponseType
   updateSession: UpdateSession
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  mutate?: () => any
 }
 
 const EditUserDialog: FC<EditUserDialogProps> = ({
@@ -58,11 +58,11 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
     },
   })
 
-  const { mutate: useUpdateUser } = apiRequest.team.update.useMutation()
+  const { mutate: mutateUser } = apiRequest.team.update.useMutation()
 
   const onSubmit = (vals: UpdateUserType) => {
     startTransition(() => {
-      useUpdateUser(
+      mutateUser(
         { id: user.id, payload: { ...vals } },
         {
           onSuccess: () => {

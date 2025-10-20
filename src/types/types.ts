@@ -44,5 +44,4 @@ export type KanbanItemType = {
   loading?: boolean
   onDelete?: (id: string) => void
   users?: UserResponseType[]
-  projectName: string
 }

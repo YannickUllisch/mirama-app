@@ -16,7 +16,6 @@ const BoardTab = ({
 }) => {
   return (
     <KanbanBoard
-      projectName={project?.name ?? ''}
       tasks={tasks ?? []}
       projectId={project?.id ?? ''}
       users={users}

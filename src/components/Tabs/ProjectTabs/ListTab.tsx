@@ -171,7 +171,6 @@ const ListTab = ({
         Show all Tasks
       </div>
       <ViewTaskSheet
-        projectName={projectContext?.projectName ?? ''}
         open={isTaskSheetOpen}
         setOpen={setIsTaskSheetOpen}
         taskId={selectedTaskId ?? ''}

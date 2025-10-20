@@ -1,7 +1,7 @@
 'use client'
-import type { User } from '@prisma/client'
-import { deleteResources } from '@src/lib/api/deleteResource'
+import type { UserResponseType } from '@server/domain/userSchema'
 import { capitalize, isRoleHigher, isTeamAdminOrOwner } from '@src/lib/utils'
+import type { UseMutateFunction } from '@tanstack/react-query'
 import { Pencil, PencilLine, Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
 import type { UpdateSession } from 'next-auth/react'
@@ -18,17 +18,26 @@ import {
 import UserAvatar from './UserAvatar'
 
 interface UserCardProps {
-  user: User
-  mutate?: () => any
+  user: UserResponseType
   session: Session | null
   updateSession: UpdateSession
+  deleteMember: UseMutateFunction<
+    {
+      success: boolean
+    },
+    Error,
+    string,
+    {
+      previous?: UserResponseType[]
+    }
+  >
 }
 
 const UserCard: FC<UserCardProps> = ({
   user,
-  mutate,
   session,
   updateSession,
+  deleteMember,
 }) => {
   const [dropDownOpen, setDropDownOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -87,10 +96,11 @@ const UserCard: FC<UserCardProps> = ({
         description={'Removing a User is final.'}
         onCancel={() => setDeleteDialogOpen(false)}
         onSubmit={() => {
-          deleteResources('team/member', [user.id], {
-            mutate: mutate,
+          deleteMember(user.id, {
+            onSettled: () => {
+              setDeleteDialogOpen(false)
+            },
           })
-          setDeleteDialogOpen(false)
         }}
       />
 
@@ -100,7 +110,6 @@ const UserCard: FC<UserCardProps> = ({
         key={`edit-user-${user.id}`}
         open={editDialogOpen}
         setOpen={setEditDialogOpen}
-        mutate={mutate}
       />
     </div>
   )
