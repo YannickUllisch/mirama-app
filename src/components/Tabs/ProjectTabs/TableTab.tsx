@@ -1,7 +1,12 @@
 'use client'
-import type {} from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { useEditableColumns } from '@hooks/utils/useEditableColumns'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import {
+  type TaskResponseType,
+  UpdateTaskSchema,
+  type UpdateTaskType,
+} from '@server/domain/taskSchema'
 import type { UserResponseType } from '@server/domain/userSchema'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
@@ -18,7 +23,8 @@ import { createMemoizedTree } from '@src/lib/createTree'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
 import { useState } from 'react'
-import { ListTabColumns } from './helper/ListTabColumns'
+import { toast } from 'sonner'
+import { useTaskColumns } from './helper/ListTabColumns'
 
 const TableTab = ({
   project,
@@ -41,23 +47,31 @@ const TableTab = ({
     { id: 'taskCode', desc: true },
   ])
 
-  const deleteTask = (id: string) => {
-    // Create a set to ensure we get no duplicate IDs to remove
-    const selectedItems = Array.from(
-      new Set(Object.keys(rowSelection).flatMap((key) => key.split('.'))),
-    )
-    if (!selectedItems.includes(id)) {
-      selectedItems.push(id)
-    }
-    // updateTasks(
-    //   (existingTasks = []) =>
-    //     existingTasks.filter((task) => !selectedItems.includes(task.id)),
-    //   false,
-    // )
-    // deleteResources('task', selectedItems).catch(() => {
-    //   updateTasks()
-    // })
-  }
+  // Hooks
+  const { mutate: mutateTask } = apiRequest.task.update.useMutation(
+    project?.id ?? '',
+  )
+  const { mutate: deleteTask } = apiRequest.task.delete.useMutation()
+
+  // Update
+  const { handleFieldUpdate } = useEditableColumns<
+    TaskResponseType,
+    UpdateTaskType
+  >({
+    mutate: mutateTask,
+    updateSchema: UpdateTaskSchema,
+    getKey: (data) => data.id,
+    mapToUpdateInput: (data) => ({
+      ...data,
+      tags: data.tags.map((t) => t.id),
+      newTags: [],
+      subtasks: data.subtasks.map((s) => s.id),
+    }),
+    onValidationError: (err) => {
+      const firstMessage = err.issues?.[0]?.message || 'Input Error'
+      toast.error(`Input Error: ${firstMessage}`)
+    },
+  })
 
   const ToolbarRight = () => {
     return (
@@ -97,10 +111,10 @@ const TableTab = ({
     <div className="rounded-sm outline-none">
       <DataTable
         tableIdentifier="task_tab_table"
-        columns={ListTabColumns({
-          projectName: project?.name ?? '',
+        columns={useTaskColumns({
           users: users ?? [],
-          onTaskDelete: deleteTask,
+          deleteMutation: deleteTask,
+          handleFieldUpdate: handleFieldUpdate,
         })}
         data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
         ignoreSubrows={viewFlattened}

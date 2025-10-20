@@ -1,5 +1,4 @@
 import apiRequest from '@hooks/query'
-import type {} from '@prisma/client'
 import { Avatar, AvatarFallback } from '@ui/avatar'
 import { Button } from '@ui/button'
 import { Card, CardContent } from '@ui/card'

@@ -140,17 +140,16 @@ const task = {
   },
 
   update: {
-    useMutation: () => {
+    useMutation: (projectId: string) => {
       const qc = useQueryClient()
       return useMutation<
         TaskResponseType,
         Error,
-        { id: string; projectId: string; payload: UpdateTaskType },
+        { id: string; data: UpdateTaskType },
         ListContext
       >({
-        mutationFn: ({ id, projectId, payload }) =>
-          updateTaskFn(projectId, id, payload),
-        onMutate: async ({ id, projectId, payload }) => {
+        mutationFn: ({ id, data }) => updateTaskFn(projectId, id, data),
+        onMutate: async ({ id, data }) => {
           await Promise.all([
             qc.cancelQueries({ queryKey: ['tasks', projectId] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
@@ -173,7 +172,7 @@ const task = {
           // TODO: Figure out how to optimistically update types to which we dont have all information in a update request
           const patch = (t: TaskResponseType) =>
             t.id === id
-              ? { ...t, ...payload, subtasks: t.subtasks, tags: t.tags }
+              ? { ...t, ...data, subtasks: t.subtasks, tags: t.tags }
               : t
 
           if (previousTasks) {
@@ -189,7 +188,7 @@ const task = {
             )
           }
           if (previousTask) {
-            qc.setQueryData(['task', id], { ...previousTask, ...payload })
+            qc.setQueryData(['task', id], { ...previousTask, ...data })
           }
 
           return {
@@ -200,16 +199,16 @@ const task = {
         },
         onError: (err, vars, ctx) => {
           if (ctx?.previousTasks)
-            qc.setQueryData(['tasks', vars.projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
           if (ctx?.previousPersonalTasks)
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           if (ctx?.previousTask)
             qc.setQueryData(['task', vars.id], ctx.previousTask)
           toast.error(err.message || 'Update task failed')
         },
-        onSuccess: (updated, vars) => {
+        onSuccess: (updated) => {
           qc.setQueryData<TaskResponseType[]>(
-            ['tasks', vars.projectId],
+            ['tasks', projectId],
             (old = []) => old.map((t) => (t.id === updated.id ? updated : t)),
           )
           qc.setQueryData<TaskResponseType[]>(
@@ -220,7 +219,7 @@ const task = {
         },
         onSettled: (_data, _err, vars) => {
           qc.invalidateQueries({ queryKey: ['tags'] })
-          qc.invalidateQueries({ queryKey: ['tasks', vars.projectId] })
+          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
           qc.invalidateQueries({ queryKey: ['task', vars.id] })
         },

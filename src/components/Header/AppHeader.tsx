@@ -9,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from '@src/components/ui/breadcrumb'
 import { capitalize } from '@src/lib/utils'
-import {} from '@ui/avatar'
 import { Input } from '@ui/input'
 import { Separator } from '@ui/separator'
 import { Search, Star } from 'lucide-react'

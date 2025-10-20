@@ -1,5 +1,4 @@
 'use client'
-import type {} from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import type { TaskResponseType } from '@server/domain/taskSchema'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'

@@ -1,6 +1,5 @@
 'use client'
 import apiRequest from '@hooks/query'
-import type {} from '@prisma/client'
 import {
   SidebarGroup,
   SidebarGroupLabel,

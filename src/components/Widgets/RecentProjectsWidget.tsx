@@ -1,5 +1,4 @@
 import useLocalStorage from '@hooks/utils/useLocalStorage'
-import type {} from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
