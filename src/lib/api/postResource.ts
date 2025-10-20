@@ -1,12 +1,11 @@
 import { api } from '@src/lib/api'
 import { toast } from 'sonner'
-import type { KeyedMutator } from 'swr'
 
-export const postResource = async <T, U>(
+export const postResource = async <T>(
   route: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
   },
   successMessage?: string,
 ) => {

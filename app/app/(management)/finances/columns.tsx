@@ -1,4 +1,4 @@
-import type { Expense, Project } from '@prisma/client'
+import type { Expense } from '@prisma/client'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { deleteResources } from '@src/lib/api/deleteResource'
@@ -6,18 +6,11 @@ import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
-import type { KeyedMutator } from 'swr'
 
 export const getExpenseColumns = ({
   session,
-  mutate,
 }: {
   session: Session | null
-  mutate: KeyedMutator<
-    (Project & {
-      expenses: Expense[]
-    })[]
-  >
 }) => {
   const cols: ColumnDef<Expense>[] = [
     {
@@ -63,9 +56,7 @@ export const getExpenseColumns = ({
               <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
                 <Trash2
                   onClick={() =>
-                    deleteResources('project/expense', [row.original.id], {
-                      mutate: mutate,
-                    })
+                    deleteResources('project/expense', [row.original.id], {})
                   }
                   className="w-3.5 h-3.5 text-rose-600 cursor-pointer"
                 />

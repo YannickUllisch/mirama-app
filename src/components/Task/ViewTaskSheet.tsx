@@ -34,7 +34,6 @@ import {
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { type Dispatch, type SetStateAction, useContext, useState } from 'react'
-import type { KeyedMutator } from 'swr'
 import UserAvatar from '../Avatar/UserAvatar'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
@@ -46,10 +45,9 @@ interface ViewTaskSheet {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   taskId: string
-  mutate?: KeyedMutator<any>
 }
 
-const ViewTaskSheet = ({ open, setOpen, taskId, mutate }: ViewTaskSheet) => {
+const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
   const projectInfo = useContext(ProjectDataContext)
 
   const { data: task } = apiRequest.task.fetchById.useQuery(
@@ -142,12 +140,7 @@ const ViewTaskSheet = ({ open, setOpen, taskId, mutate }: ViewTaskSheet) => {
                     variant={'default'}
                     onClick={() => {
                       if (task.status !== 'DONE') {
-                        updateResourceById(
-                          'task',
-                          task.id,
-                          { status: 'DONE' },
-                          { mutate },
-                        )
+                        updateResourceById('task', task.id, { status: 'DONE' })
                       }
                     }}
                     className="text-xs p-1 px-2 h-fit text-white flex gap-2 items-center"
@@ -263,7 +256,6 @@ const ViewTaskSheet = ({ open, setOpen, taskId, mutate }: ViewTaskSheet) => {
                     }
                     apiRoute="task"
                     paramToUpdate="status"
-                    mutate={mutate}
                     stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
                   >
                     {Object.keys(TaskStatusType).map((status) => (
@@ -293,7 +285,6 @@ const ViewTaskSheet = ({ open, setOpen, taskId, mutate }: ViewTaskSheet) => {
                   <GeneralTableSelect
                     key={`priority-${task.id}`}
                     id={task.id}
-                    mutate={mutate}
                     initialValue={capitalize(task?.priority ?? '')}
                     apiRoute="task"
                     paramToUpdate="priority"

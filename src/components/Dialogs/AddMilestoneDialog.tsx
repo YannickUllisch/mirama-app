@@ -20,7 +20,6 @@ import { CalendarIcon } from 'lucide-react'
 import type React from 'react'
 import { useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import type { KeyedMutator } from 'swr'
 import type { z } from 'zod'
 import { Calendar } from '../ui/calendar'
 import { ColorPicker } from '../ui/color-picker'
@@ -33,10 +32,8 @@ const AddMilestoneDialog = ({
   isOpen,
   setIsOpen,
   projectId,
-  mutate,
   defaultMilestone,
 }: {
-  mutate: KeyedMutator<Milestone[]>
   children?: React.ReactNode
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -60,7 +57,7 @@ const AddMilestoneDialog = ({
     startTransition(() => {
       if (vals.id === '') {
         // If id is empty we need to create new milestone, else update it
-        postResource('project/milestones', vals, { mutate: mutate })
+        postResource('project/milestones', vals)
           .then(() => {
             form.reset()
             setIsOpen(false)
@@ -69,9 +66,7 @@ const AddMilestoneDialog = ({
             setIsOpen(false)
           })
       } else {
-        updateResourceById('project/milestones', vals.id, vals, {
-          mutate: mutate,
-        })
+        updateResourceById('project/milestones', vals.id, vals, {})
           .then(() => {
             form.reset()
             setIsOpen(false)

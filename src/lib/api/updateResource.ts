@@ -1,13 +1,12 @@
 import { api } from '@src/lib/api'
 import { toast } from 'sonner'
-import type { KeyedMutator } from 'swr'
 
-export const updateResourceById = async <T, U>(
+export const updateResourceById = async <T>(
   route: string,
   id: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
     onSuccess?: () => void
   },
 ) => {
@@ -31,12 +30,12 @@ export const updateResourceById = async <T, U>(
   }
 }
 
-export const updateResourceByIdNoToast = async <T, U>(
+export const updateResourceByIdNoToast = async <T>(
   route: string,
   id: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
     onSuccess?: () => void
   },
 ) => {

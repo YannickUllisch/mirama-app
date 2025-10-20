@@ -1,12 +1,11 @@
 import { api } from '@src/lib/api'
 import { toast } from 'sonner'
-import type { KeyedMutator } from 'swr'
 
-export const deleteResources = async <U>(
+export const deleteResources = async (
   route: string,
   ids: string[],
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
   },
 ) => {
   api

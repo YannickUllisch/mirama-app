@@ -3,7 +3,6 @@ import AppHeader from '@src/components/Header/AppHeader'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
-import SwrProvider from '@src/components/Wrappers/SwrProvider'
 import { SidebarProvider } from '@src/components/ui/sidebar'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
@@ -22,23 +21,21 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SessionWrapper>
-      <SwrProvider>
-        <QueryClientWrapper>
-          <SidebarProvider>
-            <div className="w-full flex flex-col">
-              <AppHeader />
+      <QueryClientWrapper>
+        <SidebarProvider>
+          <div className="w-full flex flex-col">
+            <AppHeader />
 
-              <div className="flex flex-1 pt-14">
-                <AppSidebar session={session} className="flex-shrink-0" />
+            <div className="flex flex-1 pt-14">
+              <AppSidebar session={session} className="flex-shrink-0" />
 
-                <main className="flex-1 overflow-auto bg-card rounded-lg">
-                  <div className="p-5">{children}</div>
-                </main>
-              </div>
+              <main className="flex-1 overflow-auto bg-card rounded-lg">
+                <div className="p-5">{children}</div>
+              </main>
             </div>
-          </SidebarProvider>
-        </QueryClientWrapper>
-      </SwrProvider>
+          </div>
+        </SidebarProvider>
+      </QueryClientWrapper>
     </SessionWrapper>
   )
 }
