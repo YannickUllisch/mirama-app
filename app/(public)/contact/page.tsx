@@ -1,7 +1,6 @@
-'use client'
 import contactImage from '@public/test2.png'
-import Image from 'next/image'
 import ContactForm from '@src/components/auth/ContactForm'
+import Image from 'next/image'
 
 const ContactPage = () => {
   return (

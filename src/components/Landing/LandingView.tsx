@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@src/components/ui/button'
 import { motion } from 'framer-motion'
 import { CheckCircle, LockOpen, MoveRight } from 'lucide-react'
