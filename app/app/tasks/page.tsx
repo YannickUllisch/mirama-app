@@ -17,7 +17,7 @@ const TasksPage = () => {
 
   // Hooks
   const { data: tasks } = apiRequest.task.fetchPersonal.useQuery()
-  const { mutate: updateTask } = apiRequest.task.update.useMutation()
+  const { mutate: updateTask } = apiRequest.task.update.useMutation('TODO')
 
   // Mutation Helper
   const handleTaskUpdate = (taskId: string) => {
@@ -30,8 +30,7 @@ const TasksPage = () => {
     updateTask(
       {
         id: taskId,
-        projectId: task.projectId,
-        payload: {
+        data: {
           ...task,
           status:
             task.status === TaskStatusType.DONE
