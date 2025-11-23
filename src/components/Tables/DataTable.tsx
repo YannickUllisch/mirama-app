@@ -1,28 +1,28 @@
 'use client'
-import {
-  type ColumnDef,
-  type SortingState,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  type VisibilityState,
-  type RowSelectionState,
-  type ColumnSizingState,
-  type ColumnFiltersState,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  type Updater,
-  getExpandedRowModel,
-} from '@tanstack/react-table'
-import { Table } from '@src/components/ui/table'
-import type React from 'react'
-import { useState } from 'react'
-import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
 import DataTableToolbar from '@src/components/Tables/DataTableToolbar'
+import { DataTablePagination } from '@src/components/Tables/TablePagination'
+import { Table } from '@src/components/ui/table'
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type ColumnSizingState,
+  type RowSelectionState,
+  type SortingState,
+  type Updater,
+  type VisibilityState,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import type React from 'react'
+import { useState } from 'react'
 
 export interface TableData<TData> {
   id: string
@@ -37,9 +37,9 @@ export const getLocalStorageItem = ({ item }: { item: string }) => {
   return savedFilters ? JSON.parse(savedFilters) : null
 }
 
-interface DataTableProps<TData extends TableData<TData>, TValue> {
+interface DataTableProps<TData extends TableData<TData>> {
   tableIdentifier: string
-  columns: ColumnDef<TData, TValue>[]
+  columns: ColumnDef<TData, any>[]
   data: TData[]
   dataLoading?: boolean
   ignoreSubrows?: boolean
@@ -65,7 +65,7 @@ interface DataTableProps<TData extends TableData<TData>, TValue> {
   }
 }
 
-export const DataTable = <TData extends TableData<TData>, TValue>({
+export const DataTable = <TData extends TableData<TData>>({
   columns,
   data,
   tableIdentifier,
@@ -79,7 +79,7 @@ export const DataTable = <TData extends TableData<TData>, TValue>({
   expandedContent,
   toolbarOptions,
   footerOptions,
-}: DataTableProps<TData, TValue>) => {
+}: DataTableProps<TData>) => {
   // States
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')

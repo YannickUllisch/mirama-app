@@ -1,20 +1,19 @@
 'use client'
 
-import * as React from 'react'
+import { type Task, TaskStatusType } from '@prisma/client'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ClockArrowUp, ExternalLink } from 'lucide-react'
-import { type Task, TaskStatusType } from '@prisma/client'
+import * as React from 'react'
 
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { capitalize, getColorByPriority } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
-import { Badge } from '@ui/badge'
-import type { KeyedMutator } from 'swr'
-import { useMemo } from 'react'
-import Link from 'next/link'
 import { DateTime } from 'luxon'
-import { capitalize, getColorByPriority } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import Link from 'next/link'
+import { useMemo } from 'react'
 import MyTaskWidgetSkeleton from '../Skeletons/MyTaskWidgetSkeleton'
 
 interface MyTasksProps {
@@ -22,14 +21,12 @@ interface MyTasksProps {
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
   tasks: Task[]
   isTasksLoading?: boolean
-  updatePersonalTasks: KeyedMutator<Task[]>
 }
 
 const MyTasksWidget = ({
   initialVisibleCount = 4,
   onTaskUpdate,
   isTasksLoading,
-  updatePersonalTasks,
   tasks,
 }: MyTasksProps) => {
   const [expanded, setExpanded] = React.useState(false)
@@ -80,11 +77,6 @@ const MyTasksWidget = ({
 
     try {
       await onTaskUpdate(taskId, newStatus as TaskStatusType)
-      updatePersonalTasks(
-        tasks.map((t) =>
-          t.id === taskId ? { ...t, status: newStatus as TaskStatusType } : t,
-        ),
-      )
     } catch (error) {
       console.error('Failed to update task:', error)
     } finally {

@@ -1,80 +1,167 @@
-import type { CompanyInvitation } from '@prisma/client'
+'use client'
+import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import { Role } from '@prisma/client'
+import type { RoleType } from '@server/domain/enumSchemas'
+import type { InvitationResponseType } from '@server/domain/invitationSchema'
+import {
+  EditableCell,
+  EditableCellType,
+} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import type { UseMutateFunction } from '@tanstack/react-query'
+import { createColumnHelper } from '@tanstack/react-table'
+import { Button } from '@ui/button'
+import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@src/components/ui/dropdown-menu'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Ellipsis } from 'lucide-react'
+} from '@ui/dropdown-menu'
+import { Ellipsis, RefreshCcw, Trash } from 'lucide-react'
+import { DateTime } from 'luxon'
+import type { Session } from 'next-auth'
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
 
-export const InvitationsTabColumns = ({
-  mutate,
-}: { mutate: KeyedMutator<CompanyInvitation[]> }) => {
-  const cols: ColumnDef<CompanyInvitation & { id: string }>[] = useMemo(
+const columnHelper = createColumnHelper<
+  InvitationResponseType & { id: string }
+>()
+
+export const useInvitationColumns = ({
+  session,
+  handleFieldUpdate,
+  deleteMutation,
+}: {
+  session: Session | null
+  handleFieldUpdate: HandleFieldUpdate<InvitationResponseType>
+  deleteMutation: UseMutateFunction<
+    {
+      success: boolean
+    },
+    Error,
+    string,
+    {
+      previous?: InvitationResponseType[]
+    }
+  >
+}) => {
+  return useMemo(
     () => [
-      {
-        accessorKey: 'email',
-        size: 200,
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Email" />
-        ),
-        cell: ({ getValue, row }) => {
-          const [menuOpen, setMenuOpen] = useState(false)
-
-          return (
-            <div className="flex items-center justify-between group w-full">
-              {getValue() as string}
-
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis
-                    size={28}
-                    className={`cursor-pointer ${
-                      !menuOpen ? 'invisible group-hover:visible' : 'visible'
-                    } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50`}
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      deleteResources('invite', [row.original.email], {
-                        mutate: mutate,
-                      })
-                    }
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )
-        },
-      },
-      {
-        accessorKey: 'name',
+      columnHelper.accessor('name', {
+        id: 'name',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Name" />
         ),
-      },
-      {
-        accessorKey: 'role',
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'name', value as string)
+            }
+            type={EditableCellType.TEXT}
+          />
+        ),
+      }),
+
+      columnHelper.accessor('email', {
+        id: 'email',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Email" />
+        ),
+        cell: ({ getValue }) => (
+          <Link
+            href={`mailto:${getValue()}`}
+            className="hover:underline text-primary"
+          >
+            {getValue()}
+          </Link>
+        ),
+      }),
+
+      columnHelper.accessor('role', {
+        id: 'role',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Role" />
         ),
-      },
-      {
-        accessorKey: 'expiresAt',
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            options={
+              Object.values(Role).map((r) => ({
+                label: capitalize(r) as string,
+                value: r,
+              })) ?? []
+            }
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'role', value as RoleType)
+            }
+            type={EditableCellType.SELECT}
+          />
+        ),
+      }),
+
+      columnHelper.accessor('expiresAt', {
+        id: 'expiresAt',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Expires At" />
         ),
-      },
+        cell: ({ row, getValue }) => {
+          const date = new Date(getValue())
+          return (
+            <div>
+              <span>
+                {DateTime.fromJSDate(date).toFormat('dd.MM.yyyy HH:mm')}
+              </span>
+              <Button
+                variant={'ghost'}
+                onClick={() =>
+                  handleFieldUpdate(
+                    row.original,
+                    'expiresAt',
+                    DateTime.utc().plus({ day: 1 }).toJSDate(),
+                  )
+                }
+              >
+                <RefreshCcw className="w-3 h-3" />
+              </Button>
+            </div>
+          )
+        },
+      }),
+
+      columnHelper.display({
+        id: 'actions',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => {
+          const [menuOpen, setMenuOpen] = useState(false)
+
+          if (!isTeamAdminOrOwner(session)) return null
+
+          return (
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => deleteMutation(row.original.id)}
+                >
+                  <Centering>
+                    <Trash className="h-4 w-4 text-destructive" />
+                    Delete
+                  </Centering>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      }),
     ],
-    [mutate],
+    [session, handleFieldUpdate, deleteMutation],
   )
-  return cols
 }

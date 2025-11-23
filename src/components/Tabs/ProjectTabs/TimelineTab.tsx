@@ -1,12 +1,12 @@
 'use client'
-import type { Tag, Milestone, Task, User, Project } from '@prisma/client'
+import Loading from '@/app/loading'
+import type { Milestone } from '@prisma/client'
+import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import AddMilestoneDialog from '@src/components/Dialogs/AddMilestoneDialog'
-import GeneralSelect from '@src/components/Select/GeneralSelect'
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-} from '@src/components/ui/context-menu'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { ViewControls } from '@src/components/Gantt/ViewOptions'
 import {
   GanttCreateMarkerTrigger,
   GanttFeatureItem,
@@ -21,22 +21,23 @@ import {
   GanttTimeline,
   GanttToday,
 } from '@src/components/Gantt/gantt'
+import GeneralSelect from '@src/components/Select/GeneralSelect'
+import TaskContextContent from '@src/components/Task/TaskContextContent'
+import { Checkbox } from '@src/components/ui/checkbox'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+} from '@src/components/ui/context-menu'
+import { Label } from '@src/components/ui/label'
 import { deleteResources } from '@src/lib/api/deleteResource'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { capitalize } from '@src/lib/utils'
+import get from 'lodash.get'
 import groupBy from 'lodash.groupby'
+import dynamic from 'next/dynamic'
 import { useContext, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import useSWR from 'swr'
-import get from 'lodash/get'
-import { capitalize } from '@src/lib/utils'
-import { updateResourceById } from '@src/lib/api/updateResource'
-import { Checkbox } from '@src/components/ui/checkbox'
-import { Label } from '@src/components/ui/label'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import dynamic from 'next/dynamic'
-import TaskContextContent from '@src/components/Task/TaskContextContent'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import Loading from '@/app/loading'
-import { ViewControls } from '@src/components/Gantt/ViewOptions'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(
@@ -66,7 +67,13 @@ const groupOptions: {
   { label: 'Type', key: 'type' },
 ]
 
-const GanttTab = () => {
+const GanttTab = ({
+  project,
+  tasks,
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+}) => {
   // Project context
   const projectContext = useContext(ProjectDataContext)
 
@@ -82,37 +89,10 @@ const GanttTab = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>()
 
   // Milestone States
-  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] =
+  const [_isMilestoneDialogOpen, setIsMilestoneDialogOpen] =
     useState<boolean>(false)
-  const [selectedMilestone, setSelectedMilestone] =
-    useState<Milestone>(defaultMilestone)
-
-  // Fetching Data
-  // Update the type definition for tasks to include the isEditing property
-  const { data: tasks, mutate: updateTasks } = useSWR<
-    (Task & {
-      assignedTo: User
-      subtasks: Task[]
-      tags: Tag[]
-      isEditing?: boolean
-    })[]
-  >(
-    projectContext?.projectId
-      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
-      : null,
-  )
-
-  const { data: project } = useSWR<Project>({
-    url: projectContext ? `project/${projectContext?.projectId}` : '',
-    select: {
-      endDate: true,
-      startDate: true,
-    },
-  })
-
-  const { data: milestones, mutate: updateMilestones } = useSWR<Milestone[]>(
-    `project/milestones?id=${projectContext?.projectId}`,
-  )
+  const [_selectedMilestone, setSelectedMilestone] =
+    useState<MilestoneProjectResponseInput>(defaultMilestone)
 
   // Sorting and grouping Data
   const groupedTasks = useMemo(() => {
@@ -137,7 +117,7 @@ const GanttTab = () => {
   }
 
   const handleInteractMarker = (id: string) => {
-    const marker = milestones?.find((milestone) => milestone.id === id)
+    const marker = project?.milestones?.find((milestone) => milestone.id === id)
     setSelectedMilestone(marker ?? defaultMilestone)
     setIsMilestoneDialogOpen(true)
   }
@@ -151,12 +131,7 @@ const GanttTab = () => {
     if (!endAt) {
       return
     }
-    updateResourceById(
-      'task',
-      id,
-      { startDate: startAt, dueDate: endAt },
-      { mutate: updateTasks },
-    )
+    updateResourceById('task', id, { startDate: startAt, dueDate: endAt })
   }
 
   const handleAddFeature = (date: Date) =>
@@ -187,13 +162,13 @@ const GanttTab = () => {
           </Label>
         </div>
       </div>
-      <AddMilestoneDialog
+      {/* <AddMilestoneDialog
         isOpen={isMilestoneDialogOpen}
         setIsOpen={setIsMilestoneDialogOpen}
         projectId={projectContext?.projectId ?? ''}
         mutate={updateMilestones}
         defaultMilestone={selectedMilestone}
-      />
+      /> */}
       <div className="border border-border/50 dark:border-border rounded-md pb-5 h-[80vh]">
         {project ? (
           <GanttProvider
@@ -267,7 +242,6 @@ const GanttTab = () => {
                             </button>
                           </ContextMenuTrigger>
                           <TaskContextContent
-                            mutate={updateTasks}
                             projectName={projectContext?.projectName ?? ''}
                             taskId={task.id}
                           />
@@ -277,7 +251,7 @@ const GanttTab = () => {
                   </GanttFeatureListGroup>
                 ))}
               </GanttFeatureList>
-              {milestones?.map((milestone) => (
+              {project?.milestones?.map((milestone) => (
                 <GanttMarker
                   key={milestone.id}
                   date={new Date(milestone.date)}
@@ -285,9 +259,7 @@ const GanttTab = () => {
                   label={milestone.title}
                   backgroundHex={milestone.colors}
                   onRemove={() =>
-                    deleteResources('project/milestones', [milestone.id], {
-                      mutate: updateMilestones,
-                    })
+                    deleteResources('project/milestones', [milestone.id], {})
                   }
                   onInteract={handleInteractMarker}
                 />
@@ -304,8 +276,6 @@ const GanttTab = () => {
         open={isTaskOpen}
         setOpen={setIsTaskOpen}
         taskId={selectedTaskId ?? ''}
-        projectName={projectContext?.projectName ?? ''}
-        mutate={updateTasks}
       />
     </>
   )

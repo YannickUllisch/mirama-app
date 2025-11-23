@@ -1,5 +1,6 @@
 'use client'
-import { type Favourite, FavouriteType } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { FavouriteType } from '@prisma/client'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,25 +8,28 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@src/components/ui/breadcrumb'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import { postResource } from '@src/lib/api/postResource'
 import { capitalize } from '@src/lib/utils'
-import { Ellipsis, Share2, Star } from 'lucide-react'
-import Link from 'next/link'
+import { Input } from '@ui/input'
+import { Separator } from '@ui/separator'
+import { Search, Star } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
-import useSWR, { mutate } from 'swr'
+import HoverLink from '../HoverLink'
 import { Button } from '../ui/button'
-import { Separator } from '../ui/separator'
 import { SidebarTrigger } from '../ui/sidebar'
+import HeaderProfile from './HeaderProfile'
 
 const AppHeader = () => {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
-  const { data: favs, mutate: updateFavs } = useSWR<Favourite[]>({
-    url: 'favourite',
-    type: FavouriteType.ROUTE,
-  })
+  const { data: favs } = apiRequest.favourite.fetchByType.useQuery(
+    FavouriteType.ROUTE,
+  )
+
+  const { mutate: useDeleteFavs } = apiRequest.favourite.delete.useMutation()
+  const { mutate: useCreateFav } = apiRequest.favourite.create.useMutation()
 
   const currFav = useMemo(() => {
     return favs?.find((fav) => fav.data === pathname)
@@ -49,108 +53,94 @@ const AppHeader = () => {
   }, [pathname])
 
   return (
-    <header
-      style={{ zIndex: 50 }}
-      className={'sticky w-full bg-inherit flex gap-2 p-2 justify-between '}
-    >
-      <div className="flex items-center justify-start gap-4 pl-2">
-        <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mr-2 h-4 md:block hidden"
-        />
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background">
+      <div className="flex h-14 items-center gap-4 px-4 justify-between">
+        <div className="flex items-center gap-3">
+          <SidebarTrigger className="text-sidebar-foreground" />
+          <HoverLink href="/" className="flex items-center gap-2">
+            <span className="text-lg font-semibold text-sidebar-foreground">
+              .mirama
+            </span>
+          </HoverLink>
 
-        {pathSegments.map((segment, index) => (
-          <Breadcrumb key={segment} className="md:block hidden">
-            <BreadcrumbList>
-              {index < pathSegments.length - 1 ? (
-                <>
+          <Separator
+            orientation="vertical"
+            className="h-4 md:block hidden bg-text"
+          />
+
+          {pathSegments.map((segment, index) => (
+            <Breadcrumb key={segment} className="md:block hidden">
+              <BreadcrumbList>
+                {index < pathSegments.length - 1 ? (
+                  <>
+                    <BreadcrumbItem>
+                      <HoverLink
+                        href={accumulatedPaths[index]}
+                        passHref
+                        prefetch={false}
+                        className="text-xs"
+                      >
+                        {capitalize(
+                          segment
+                            .replace(/-/g, ' ')
+                            .replace('app', 'Dashboard'),
+                        )}
+                      </HoverLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                  </>
+                ) : (
                   <BreadcrumbItem>
-                    <Link
-                      href={accumulatedPaths[index]}
-                      passHref
-                      prefetch={false}
-                    >
-                      {capitalize(
-                        segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
-                      )}
-                    </Link>
+                    <BreadcrumbPage>
+                      <div className="flex gap-2 items-center text-xs">
+                        {capitalize(
+                          segment
+                            .replace(/-/g, ' ')
+                            .replace('app', 'Dashboard'),
+                        )}
+                      </div>
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                </>
-              ) : (
-                <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    <div className="flex gap-2 items-center">
-                      {capitalize(
-                        segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
-                      )}
-                    </div>
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
-        ))}
-      </div>
-      <div className="flex justify-center items-center md:hidden">
-        <Link href={'/app'}>
-          <span className="font-semibold text-lg">.mirama</span>
-        </Link>
-      </div>
-      <div className="flex justify-center items-center md:block gap-0 ">
-        <Button
-          variant={'ghost'}
-          className={`p-2 ${currFav ? 'text-yellow-500' : ''}`}
-          onClick={() => {
-            if (!currFav) {
-              const newFav = {
-                id: Date.now().toString(),
-                type: FavouriteType.ROUTE,
-                data: pathname,
-                userId: '',
+                )}
+              </BreadcrumbList>
+            </Breadcrumb>
+          ))}
+        </div>
+
+        <div className="flex-1 max-w-2xl">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search projects, tasks, recents, and more..."
+              className="w-full pl-9 bg-card border-sidebar-border focus-visible:ring-sidebar-ring"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant={'ghost'}
+            className={`p-2 ${currFav ? 'text-yellow-500' : ''}`}
+            onClick={() => {
+              if (!currFav) {
+                const newFav = {
+                  id: Date.now().toString(),
+                  type: FavouriteType.ROUTE,
+                  data: pathname,
+                  userId: session?.user.id ?? '',
+                }
+
+                useCreateFav(newFav)
+              } else {
+                useDeleteFavs(currFav.id)
               }
-
-              updateFavs((existingFavs: Favourite[] = []) => [
-                ...existingFavs,
-                newFav,
-              ])
-
-              postResource('favourite', {
-                type: FavouriteType.ROUTE,
-                data: pathname,
-              })
-                .then(() => {
-                  mutate({ url: 'favourite', type: FavouriteType.ROUTE })
-                })
-                .catch(() => {
-                  // Rollback if the request fails
-                  mutate({ url: 'favourite', type: FavouriteType.ROUTE }, favs)
-                })
-            } else {
-              updateFavs((existingFavs?: Favourite[]) => {
-                if (!existingFavs) return []
-                return existingFavs.filter((fav) => fav.id !== currFav?.id)
-              })
-
-              deleteResources('favourite', [currFav.id])
-                .then(() => {
-                  mutate({ url: 'favourite', type: FavouriteType.ROUTE })
-                })
-                .catch(() => {
-                  mutate({ url: 'favourite', type: FavouriteType.ROUTE }, favs)
-                })
-            }
-          }}
-        >
-          <Star size={14} />
-        </Button>
-        <Button className="p-2" variant={'ghost'}>
-          <Share2 size={14} />
-        </Button>
-        <Button className="p-2" variant={'ghost'}>
-          <Ellipsis size={14} />
-        </Button>
+            }}
+          >
+            <Star size={14} />
+          </Button>
+          <HeaderProfile session={session} />
+        </div>
       </div>
     </header>
   )

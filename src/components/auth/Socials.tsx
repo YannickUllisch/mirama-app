@@ -1,5 +1,5 @@
 'use client'
-import { GoogleColoredIcon } from '@src/lib/ui/CompanyIcons'
+import { GoogleColoredIcon } from '@src/lib/CompanyIcons'
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { Button } from '../ui/button'
@@ -15,6 +15,7 @@ export const AuthSocial = () => {
         redirect: false,
         callbackUrl: '/app',
       })
+
       if (result?.error) {
         // Show the error returned from NextAuth (from PrismaAdapter)
         setFormError(result.error)

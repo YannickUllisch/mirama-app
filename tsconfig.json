@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "es2022"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,14 +20,15 @@
       }
     ],
     "paths": {
-      "@auth": ["./src/lib/auth/auth.ts"],
-      "@db": ["./src/lib/db.ts"],
-      "@api": ["./src/lib/api/api.ts"],
+      "@auth": ["./server/auth/auth.ts"],
+      "@db": ["./server/utils/db.ts"],
+      "@api": ["./src/lib/api.ts"],
+      "@logger": ["./server/utils/logger.ts"],
+      "@withAuth": ["./server/auth/withAuth.ts"],
+      "@server/*": ["./server/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@store/*": ["./src/store/*"],
       "@services/*": ["./src/services/*"],
       "@ui/*": ["./src/components/ui/*"],
-      "@markdown/*": ["./src/markdown"],
       "@public/*": ["./public/*"],
       "@src/*": ["./src/*"],
       "@/*": ["./*"]

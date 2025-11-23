@@ -10,13 +10,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-generator zod {
-  provider         = "npx zod-prisma-types"
-  useMultipleFiles = true
-  createInputTypes = false
-  output           = "./zod"
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -61,17 +54,16 @@ model User {
   name              String    
   email             String   @unique
   emailVerified     DateTime?
-  password          String?
   role              Role      @default(USER)
-  teamId            String? 
-  accounts          Account[]
-  // These are needed for overview of personal projets and tasks a user is assigned to.
-  tasks             Task[]
 
+  accounts          Account[]
+  tasks             Task[]
+  
+  teamId            String? 
   team              Team?     @relation(fields: [teamId], references: [id])
   preferredDateType String    @default("dd-MM-yyyy")
 
-  projects          ProjectUser[]  // Relation to ProjectUser for managing the many-to-many relationship
+  projects          ProjectUser[]
   comments          Comment[]
   notifications     Notification[]
   favourites        Favourite[]
@@ -89,7 +81,8 @@ model VerificationToken {
 }
 
 model CompanyInvitation {
-  email     String   @id
+  id        String      @default(cuid())
+  email     String      @id
   name      String  
   role      Role
   teamId    String
@@ -97,25 +90,24 @@ model CompanyInvitation {
 }
 
 model Project {
-  id          String       @id @default(cuid())
-  name        String
-  description String?
-  startDate   DateTime
-  endDate     DateTime
-  priority    PriorityType @default(LOW)
-  status      StatusType
-  budget      Int?         @default(0)
-  archived    Boolean      @default(false)
-  teamId      String
+  id            String       @id @default(cuid())
+  name          String
+  description   String?
+  startDate     DateTime
+  endDate       DateTime
+  priority      PriorityType @default(LOW)
+  status        StatusType
+  budget        Int         @default(0)
+  archived      Boolean      @default(false)
+  teamId        String
 
-  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team          Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   // Relation to ProjectUser for managing the many-to-many relationship
-  users       ProjectUser[]
-  tasks       Task[]
-  tag         Tag[]
-  expenses    Expense[]
-  notifications Notification[]
+  users         ProjectUser[]
+  tasks         Task[]
+  tags          Tag[]
+  expenses      Expense[]
   milestones    Milestone[]
 
   @@index([name, teamId], map: "name_team_idx")
@@ -137,15 +129,14 @@ model ProjectUser {
     @@index([userId], map: "project_user_user_idx")
 }
 
-
 model Milestone {
   id      String    @id @default(cuid())
   date    DateTime 
   title   String
   colors  String
 
-  projectId  String?
-  project    Project?  @relation(fields: [projectId], references: [id])
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -174,7 +165,7 @@ model Task {
   project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
   teamId       String
   team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  tags         TaskTagJoin[]
+  tags         Tag[]
   comments     Comment[]
   
   @@index([projectId], map: "task_project_id_idx")
@@ -217,22 +208,8 @@ model Tag {
   teamId       String
   team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  projectId   String?
-  project     Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  tasks       TaskTagJoin[]
-}
-
-model TaskTagJoin {
-  id      String @id @default(cuid())
-
-  taskId  String
-  task    Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  tagId   String
-  tag     Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  @@unique([taskId, tagId]) // Prevent duplicate associations
+  project     Project[]
+  tasks       Task[]
 }
 
 // Expense modelling
@@ -285,9 +262,6 @@ model Notification {
   id    String    @id @default(cuid())
   userId          String?
   user            User?     @relation(fields: [userId], references: [id])
-
-  projectId       String?
-  project         Project?     @relation(fields: [projectId], references: [id])
 
   sender          String
   title           String

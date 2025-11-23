@@ -1,4 +1,4 @@
-import authConfig from '@src/lib/auth/auth.config'
+import authConfig from '@server/auth/auth.config'
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,

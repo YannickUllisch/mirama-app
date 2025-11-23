@@ -1,12 +1,12 @@
 'use client'
-import type { Task } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import {
-  Folder,
-  File,
-  Tree,
   CollapseButton,
+  File,
+  Folder,
+  Tree,
 } from '@src/components/Tree/TreeViewAPI'
-import { createTree } from '@src/lib/data-structures/Tree'
+import { createTree } from '@src/lib/createTree'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'
@@ -14,7 +14,7 @@ import type { FC } from 'react'
 
 interface TaskTreeProps {
   projectName: string
-  tasks: (Task & { subtasks: Task[] })[]
+  tasks: TaskResponseType[]
 }
 
 const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {

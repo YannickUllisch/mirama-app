@@ -1,19 +1,19 @@
-import { api } from '@api'
+import { api } from '@src/lib/api'
 import { toast } from 'sonner'
-import type { KeyedMutator } from 'swr'
 
-export const postResource = async <T, U>(
+export const postResource = async <T>(
   route: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
   },
   successMessage?: string,
 ) => {
   try {
     toast.promise(api.post(route, params), {
       loading: 'Creating..',
-      error: (err) => err.response.statusText ?? err,
+      error: (err) =>
+        err?.response?.data.message ?? err?.message ?? JSON.stringify(err),
       success: () => {
         if (options?.mutate) {
           options.mutate()

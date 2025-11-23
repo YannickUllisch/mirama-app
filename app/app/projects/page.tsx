@@ -1,76 +1,77 @@
 'use client'
-import type { Project, ProjectUser, User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import {
+  type ProjectResponseInput,
+  type UpdateProjectInput,
+  UpdateProjectSchema,
+} from '@server/domain/projectSchema'
+import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { TableCell, TableFooter, TableRow } from '@src/components/ui/table'
+import { Folders } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import useSWR from 'swr'
-import { ProjectColumns } from './columns'
+import { toast } from 'sonner'
+import { useProjectColumns } from './columns'
 
 const ProjectsPage = () => {
-  // Fetching Project Data
-  const {
-    data: projects,
-    mutate: updateProjects,
-    isLoading: projectsLoading,
-  } = useSWR<
-    (Project & {
-      users: ProjectUser[]
-    })[]
-  >({
-    url: 'project',
-    archived: false,
-    select: {
-      name: true,
-      users: true,
-      startDate: true,
-      endDate: true,
-      priority: true,
-      status: true,
-      budget: true,
-    },
-  })
+  // Session
   const { data: session } = useSession({ required: true })
 
-  const { data: users } = useSWR<User[]>('team/member')
+  // Hooks
+  const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { mutate: projectMutation } = apiRequest.project.update.useMutation()
+  const { mutate: useArchiveMutation } =
+    apiRequest.project.archive.useMutation()
 
-  const FooterRow = () => {
-    return (
-      <TableFooter>
-        <TableRow className="dark:bg-neutral-900 bg-neutral-50">
-          <TableCell className="dark:text-white cursor-default" colSpan={8}>
-            Total
-          </TableCell>
-          <TableCell className="dark:text-white cursor-default" colSpan={2}>
-            Total:{' '}
-            {projects?.reduce((acc, curr) => acc + (curr.budget || 0), 0)}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    )
-  }
+  // Column Update handler
+  const { handleFieldUpdate } = useEditableColumns<
+    ProjectResponseInput,
+    UpdateProjectInput
+  >({
+    mutate: projectMutation,
+    updateSchema: UpdateProjectSchema,
+    getKey: (data) => data.id,
+    mapToUpdateInput: (data) => ({
+      ...data,
+      tags: data.tags.map((t) => t.id),
+      newTags: [],
+      users: data.users.map((u) => ({
+        isManager: u.isManager,
+        userId: u.id,
+      })),
+    }),
+    onValidationError: (err) => {
+      const firstMessage = err.issues?.[0]?.message || 'Input Error'
+      toast.error(`Input Error: ${firstMessage}`)
+    },
+  })
 
   return (
-    <div>
+    <>
+      <PageHeader
+        title="Your Projects"
+        description="Manage your projects"
+        icon={Folders}
+      />
       <DataTable
         tableIdentifier="projectPageTable"
-        columns={ProjectColumns({
-          mutate: updateProjects,
+        columns={useProjectColumns({
           session: session,
           users: users ?? [],
+          handleFieldUpdate,
+          archiveMutation: useArchiveMutation,
         })}
         data={projects ?? []}
-        dataLoading={projectsLoading}
+        dataLoading={isLoading}
         toolbarOptions={{
           showFilterOption: true,
-          filterOptionType: 'PROJECT',
-          refresh: { mutate: updateProjects },
         }}
         footerOptions={{
-          addFooterRow: <FooterRow />,
           showPagination: true,
         }}
       />
-    </div>
+    </>
   )
 }
 

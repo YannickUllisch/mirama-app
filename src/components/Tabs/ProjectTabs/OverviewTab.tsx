@@ -1,18 +1,8 @@
 'use client'
-import { useContext } from 'react'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import { useSession } from 'next-auth/react'
-import useSWR from 'swr'
-import { DateTime } from 'luxon'
 import TaskTree from '@src/components/Task/TaskTree'
-import type {
-  Project,
-  Task,
-  Milestone,
-  Comment,
-  ProjectUser,
-  User,
-} from '@prisma/client'
 import {
   Timeline,
   TimelineContent,
@@ -23,28 +13,14 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@ui/timeline'
+import { DateTime } from 'luxon'
+import { useContext } from 'react'
 
-const OverviewTab = () => {
+const OverviewTab = ({
+  project,
+  tasks,
+}: { project: ProjectResponseInput | null; tasks: TaskResponseType[] }) => {
   const projectContext = useContext(ProjectDataContext)
-  const { data: session } = useSession({ required: true })
-
-  // Data
-  const { data: project } = useSWR<Project>(
-    projectContext ? `project/${projectContext?.projectId}` : undefined,
-  )
-  const { data: tasks } = useSWR<
-    (Task & { subtasks: Task[]; comments: Comment[] })[]
-  >(projectContext ? `task?id=${projectContext?.projectId}` : undefined)
-  const { data: milestones } = useSWR<Milestone[]>(
-    projectContext
-      ? `project/milestones?id=${projectContext?.projectId}`
-      : undefined,
-  )
-  const { data: projectUsers } = useSWR<(ProjectUser & { user: User })[]>(
-    projectContext
-      ? `projectuser?projectId=${projectContext.projectId}`
-      : undefined,
-  )
 
   return (
     <div className="space-y-6 pt-10">
@@ -54,7 +30,7 @@ const OverviewTab = () => {
           tasks={tasks ?? []}
         />
         <Timeline defaultValue={3} orientation="horizontal">
-          {milestones?.map((item, index) => (
+          {project?.milestones.map((item, index) => (
             <TimelineItem key={item.id} step={index}>
               <TimelineHeader>
                 <TimelineSeparator className="bg-text" />

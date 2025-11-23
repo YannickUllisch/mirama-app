@@ -1,19 +1,21 @@
-import type { Task } from '@prisma/client'
+import type { SimpleTaskResponseType } from '@server/domain/taskSchema'
+import { getColorByTaskStatusType } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
 import { Card, CardContent } from '@ui/card'
 import { ChevronRight, FolderTree } from 'lucide-react'
 import Link from 'next/link'
-import { Badge } from '@ui/badge'
-import { getColorByTaskStatusType } from '@src/lib/utils'
 
 interface RelatedWorkTabProps {
-  parent?: Task | null
-  subtasks?: Task[]
+  parent?: SimpleTaskResponseType | null
+  subtasks?: SimpleTaskResponseType[]
+  projectId: string
 }
 
-export default function RelatedWorkTab({
+const RelatedWorkTab = ({
   parent,
   subtasks,
-}: RelatedWorkTabProps) {
+  projectId,
+}: RelatedWorkTabProps) => {
   return (
     <div className="space-y-4 p-4">
       {parent && (
@@ -25,7 +27,7 @@ export default function RelatedWorkTab({
           <Card>
             <CardContent className="p-4">
               <Link
-                href={`/app/${parent.projectId}/task/${parent.id}`}
+                href={`/app/${projectId}/task/${parent.id}`}
                 className="flex items-center justify-between hover:bg-muted rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-2">
@@ -56,7 +58,7 @@ export default function RelatedWorkTab({
                 {subtasks.map((subtask) => (
                   <Link
                     key={subtask.id}
-                    href={`/app/${subtask.projectId}/task/${subtask.id}`}
+                    href={`/app/${projectId}/task/${subtask.id}`}
                     className="flex items-center justify-between hover:bg-muted rounded-lg p-2 transition-colors"
                   >
                     <div className="flex items-center gap-2">
@@ -85,3 +87,5 @@ export default function RelatedWorkTab({
     </div>
   )
 }
+
+export default RelatedWorkTab

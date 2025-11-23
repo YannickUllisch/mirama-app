@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'My Tasks',
-  description: 'Overview of Personal Tasks',
+  description: 'Overview of all personal Tasks',
 }
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
-  return children
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="min-h-[100vh]">{children}</div>
 }
 
 export default Layout

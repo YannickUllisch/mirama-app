@@ -1,6 +1,12 @@
 'use client'
 
-import { useContext, useState, type Dispatch, type SetStateAction } from 'react'
+import apiRequest from '@hooks/query'
+import { PriorityType, TaskStatusType } from '@prisma/client'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Separator } from '@ui/separator'
 import {
   Sheet,
   SheetClose,
@@ -8,14 +14,8 @@ import {
   SheetFooter,
   SheetTitle,
 } from '@ui/sheet'
-import {
-  PriorityType,
-  TaskStatusType,
-  type Tag,
-  type Task,
-  type User,
-} from '@prisma/client'
-import { Separator } from '@ui/separator'
+import { SelectItem } from '@ui/tableSelect'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import {
   CalendarClock,
   CheckSquare,
@@ -31,49 +31,32 @@ import {
   UserCheckIcon,
   UserIcon,
 } from 'lucide-react'
-import { Button } from '@ui/button'
 import { DateTime } from 'luxon'
-import UserAvatar from '../Avatar/UserAvatar'
-import { Badge } from '@ui/badge'
-import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
-import useSWR, { type KeyedMutator } from 'swr'
 import Link from 'next/link'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import GeneralTableSelect from '../Select/GeneralTableSelect'
-import { SelectItem } from '@ui/tableSelect'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { type Dispatch, type SetStateAction, useContext, useState } from 'react'
+import UserAvatar from '../Avatar/UserAvatar'
 import { ProjectDataContext } from '../Contexts/ProjectDataContext'
-import { CommentTab, RelatedWorkTab, TimelineTab } from '../Tabs/ViewTaskTabs'
+import GeneralTableSelect from '../Select/GeneralTableSelect'
+import CommentTab from '../Tabs/ViewTaskTabs/CommentTab'
+import RelatedWorkTab from '../Tabs/ViewTaskTabs/RelatedWorkTab'
+import TimelineTab from '../Tabs/ViewTaskTabs/TimelineTab'
 
 interface ViewTaskSheet {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   taskId: string
-  projectName: string
-  mutate?: KeyedMutator<any>
 }
 
-const ViewTaskSheet = ({
-  open,
-  setOpen,
-  taskId,
-  projectName,
-  mutate,
-}: ViewTaskSheet) => {
-  const { data: task, mutate: updateTask } = useSWR<
-    Task & {
-      subtasks: Task[]
-      tags: Tag[]
-      assignedTo: User
-      parent: Task
-    }
-  >(taskId && open ? `task/${taskId}` : null)
-
+const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
   const projectInfo = useContext(ProjectDataContext)
 
-  // Data
-  const { data: users } = useSWR<User[]>(
-    projectInfo && open ? `project/users?id=${projectInfo?.projectId}` : '',
+  const { data: task } = apiRequest.task.fetchById.useQuery(
+    taskId,
+    projectInfo?.projectId ?? '',
+  )
+
+  const { data: users } = apiRequest.project.fetchAssignees.useQuery(
+    projectInfo?.projectId ?? '',
   )
 
   // Tab definitions
@@ -86,7 +69,7 @@ const ViewTaskSheet = ({
           Timeline
         </div>
       ),
-      component: <TimelineTab task={task} />,
+      component: <TimelineTab task={task ?? undefined} />,
     },
     {
       id: 'related_work',
@@ -97,7 +80,11 @@ const ViewTaskSheet = ({
         </div>
       ),
       component: (
-        <RelatedWorkTab parent={task?.parent} subtasks={task?.subtasks} />
+        <RelatedWorkTab
+          parent={task?.parent}
+          subtasks={task?.subtasks}
+          projectId={projectInfo?.projectId ?? ''}
+        />
       ),
     },
     {
@@ -108,7 +95,12 @@ const ViewTaskSheet = ({
           Comments
         </div>
       ),
-      component: <CommentTab taskId={task?.id} />,
+      component: (
+        <CommentTab
+          taskId={task?.id ?? ''}
+          projectId={projectInfo?.projectId ?? ''}
+        />
+      ),
     },
   ]
 
@@ -132,7 +124,9 @@ const ViewTaskSheet = ({
                   </Button>
                 </SheetClose>
                 <Button variant={'ghost'} className="p-1 h-fit" asChild>
-                  <Link href={`/app/projects/${projectName}/edit/${task.id}`}>
+                  <Link
+                    href={`/app/projects/${projectInfo?.projectName}/edit/${task.id}`}
+                  >
                     <Pencil className="text-white" size={15} />
                   </Link>
                 </Button>
@@ -146,12 +140,7 @@ const ViewTaskSheet = ({
                     variant={'default'}
                     onClick={() => {
                       if (task.status !== 'DONE') {
-                        updateResourceById(
-                          'task',
-                          task.id,
-                          { status: 'DONE' },
-                          { mutate },
-                        )
+                        updateResourceById('task', task.id, { status: 'DONE' })
                       }
                     }}
                     className="text-xs p-1 px-2 h-fit text-white flex gap-2 items-center"
@@ -179,12 +168,6 @@ const ViewTaskSheet = ({
                   <GeneralTableSelect
                     key={'assignedTo-select'}
                     id={task.id}
-                    mutate={() => {
-                      updateTask()
-                      if (mutate) {
-                        mutate()
-                      }
-                    }}
                     apiRoute="task"
                     paramToUpdate="assignedToId"
                     clearable
@@ -273,7 +256,6 @@ const ViewTaskSheet = ({
                     }
                     apiRoute="task"
                     paramToUpdate="status"
-                    mutate={mutate}
                     stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
                   >
                     {Object.keys(TaskStatusType).map((status) => (
@@ -303,7 +285,6 @@ const ViewTaskSheet = ({
                   <GeneralTableSelect
                     key={`priority-${task.id}`}
                     id={task.id}
-                    mutate={mutate}
                     initialValue={capitalize(task?.priority ?? '')}
                     apiRoute="task"
                     paramToUpdate="priority"
@@ -327,7 +308,9 @@ const ViewTaskSheet = ({
                   </div>
                   <span>
                     {task?.tags?.map((tag) => (
-                      <Badge variant={'outline'}>{tag.title}</Badge>
+                      <Badge key={`tag-${tag.id}`} variant={'outline'}>
+                        {tag.title}
+                      </Badge>
                     ))}
                   </span>
                 </div>

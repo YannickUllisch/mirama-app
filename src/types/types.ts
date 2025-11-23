@@ -1,8 +1,8 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { Role, Task, TaskType, User } from '@prisma/client'
+import type { Role, TaskType } from '@prisma/client'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import type { LucideIcon } from 'lucide-react'
-import type { ReactNode } from 'react'
-import type { KeyedMutator } from 'swr'
 
 // Sidebar Interfaces
 export interface AppMenuItem {
@@ -10,20 +10,13 @@ export interface AppMenuItem {
   href?: string
   isCollapsible: boolean
   isActive?: boolean
-  icon?: LucideIcon
+  icon: LucideIcon
   items?: {
     title: string
     href: string
     roles?: Role[]
   }[]
   roles?: Role[]
-}
-
-export interface SecondaryAppMenuItem {
-  title: string
-  href: string
-  icon: LucideIcon
-  menuAction?: ReactNode
 }
 
 // Kanban Board
@@ -40,26 +33,15 @@ export interface BoardColumn {
   title: string
   items: {
     id: UniqueIdentifier
-    task: Task & {
-      assignedTo: User | undefined
-    }
+    task: TaskResponseType
     loading: boolean
   }[]
 }
 
 export type KanbanItemType = {
   id: UniqueIdentifier
-  task?: Task & { assignedTo: User | undefined }
+  task?: TaskResponseType
   loading?: boolean
   onDelete?: (id: string) => void
-  users?: User[]
-  projectName: string
-  mutate?: KeyedMutator<unknown>
-}
-
-export interface GoogleCalendarEvent {
-  summary: string
-  description?: string
-  startDateISO: string
-  endDateISO: string
+  users?: UserResponseType[]
 }

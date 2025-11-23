@@ -6,18 +6,15 @@ import { Separator } from '@ui/separator'
 import { CheckSquare, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import type { FC } from 'react'
-import type { KeyedMutator } from 'swr'
 
 interface TaskContextContentProps {
   taskId: string
-  mutate: KeyedMutator<any>
   projectName: string
 }
 
 const TaskContextContent: FC<TaskContextContentProps> = ({
   taskId,
   projectName,
-  mutate,
 }) => {
   // Copying URL of Task
   const handleCopyLink = () => {
@@ -33,12 +30,7 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
       <ContextMenuItem
         className="flex items-center gap-2"
         onClick={() =>
-          updateResourceById(
-            '/task',
-            taskId,
-            { status: TaskStatusType.DONE },
-            { mutate },
-          )
+          updateResourceById('/task', taskId, { status: TaskStatusType.DONE })
         }
       >
         <CheckSquare size={16} className="text-muted-foreground" />
@@ -60,11 +52,7 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
       </ContextMenuItem>
       <ContextMenuItem
         className="flex items-center gap-2 text-destructive"
-        onClick={() =>
-          deleteResources('task', [taskId], {
-            mutate,
-          })
-        }
+        onClick={() => deleteResources('task', [taskId])}
       >
         <TrashIcon size={16} />
         Delete Task

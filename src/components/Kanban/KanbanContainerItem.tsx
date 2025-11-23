@@ -1,11 +1,10 @@
-import { useState, type FC } from 'react'
-import { CircleOff } from 'lucide-react'
-import { Card, CardContent } from '@ui/card'
-import { cn } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import type { TaskType } from '@prisma/client'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { cn } from '@src/lib/utils'
+import { Card, CardContent } from '@ui/card'
+import { CircleOff } from 'lucide-react'
+import { type FC, useState } from 'react'
 import ViewTaskSheet from '../Task/ViewTaskSheet'
-import type { KeyedMutator } from 'swr'
 
 interface ContainerHeaderProps {
   title: string
@@ -13,15 +12,11 @@ interface ContainerHeaderProps {
   itemCount: number
   className?: string
   id: string
-  projectName: string
-  mutate: KeyedMutator<any>
 }
 
 export const ContainerHeader: FC<ContainerHeaderProps> = ({
   title,
   taskType,
-  mutate,
-  projectName,
   itemCount,
   className,
   id,
@@ -32,10 +27,8 @@ export const ContainerHeader: FC<ContainerHeaderProps> = ({
     <>
       <ViewTaskSheet
         open={isOpen}
-        projectName={projectName}
         setOpen={setIsOpen}
         taskId={id.replace('board-', '') ?? ''}
-        mutate={mutate}
       />
 
       <Card

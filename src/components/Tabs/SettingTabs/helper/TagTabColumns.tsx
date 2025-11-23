@@ -1,81 +1,92 @@
-import type { Tag } from '@prisma/client'
+'use client'
+
+import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import type { TagResponseType } from '@server/domain/tagSchema'
+import {
+  EditableCell,
+  EditableCellType,
+} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { Checkbox } from '@src/components/ui/checkbox'
+import { isTeamAdminOrOwner } from '@src/lib/utils'
+import type { UseMutateFunction } from '@tanstack/react-query'
+import { createColumnHelper } from '@tanstack/react-table'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@src/components/ui/dropdown-menu'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Ellipsis } from 'lucide-react'
+} from '@ui/dropdown-menu'
+import { Ellipsis, Trash } from 'lucide-react'
+import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
 
-export const TagTabColumns = ({ mutate }: { mutate: KeyedMutator<Tag[]> }) => {
-  const cols: ColumnDef<Tag>[] = useMemo(
+const columnHelper = createColumnHelper<TagResponseType>()
+
+export const useTagColumns = ({
+  session,
+  handleFieldUpdate,
+  deleteMutation,
+}: {
+  session: Session | null
+  handleFieldUpdate: HandleFieldUpdate<TagResponseType>
+  deleteMutation: UseMutateFunction<
+    {
+      success: boolean
+    },
+    Error,
+    string,
+    {
+      previous?: TagResponseType[]
+    }
+  >
+}) => {
+  return useMemo(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        size: 30,
-        enableHiding: false,
-        enableSorting: false,
-      },
-      {
-        accessorKey: 'title',
-        size: 400,
+      columnHelper.accessor('title', {
+        id: 'title',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Title" />
         ),
-        cell: ({ getValue, row }) => {
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'title', value as string)
+            }
+            type={EditableCellType.TEXT}
+          />
+        ),
+      }),
+
+      columnHelper.display({
+        id: 'actions',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
 
-          return (
-            <div className="flex items-center justify-between group w-full">
-              {getValue() as string}
+          if (!isTeamAdminOrOwner(session)) return null
 
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis
-                    size={28}
-                    className={`cursor-pointer ${
-                      !menuOpen && !row.getIsSelected()
-                        ? 'invisible group-hover:visible'
-                        : 'visible'
-                    } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50`}
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      deleteResources('tag', [row.original.id], {
-                        mutate: mutate,
-                      })
-                    }
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          return (
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="gap-3"
+                  onClick={() => deleteMutation(row.original.id)}
+                >
+                  <Trash className="h-4 w-4 text-destructive" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )
         },
-      },
+      }),
     ],
-    [mutate],
+    [session, handleFieldUpdate, deleteMutation],
   )
-  return cols
 }

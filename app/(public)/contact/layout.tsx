@@ -2,11 +2,11 @@ import ContactFooter from '@src/components/Footer/ContactFooter'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact | Mirama',
+  title: 'Contact',
   description: 'Contact Us Form',
 }
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       {children}

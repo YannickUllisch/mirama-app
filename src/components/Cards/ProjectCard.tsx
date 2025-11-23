@@ -1,6 +1,8 @@
-import type { Project } from '@prisma/client'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
+import Centering from '@ui/centering'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,18 +20,17 @@ import {
   Trash2,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import type React from 'react'
-import { getDaysRemaining } from '../../../app/app/helpers'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
-import Centering from '@ui/centering'
+import Link from 'next/link'
+import type React from 'react'
+import { getDaysRemaining } from '../../../app/app/_helpers'
+import HoverLink from '../HoverLink'
 
 const ProjectCard = ({
   project,
   setRecentProjectIds,
 }: {
-  project: Project
+  project: ProjectResponseInput
   setRecentProjectIds: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
   const { data: session } = useSession()
@@ -76,19 +77,14 @@ const ProjectCard = ({
                     </DropdownMenuItem>
                   </Link>
                   {isTeamAdminOrOwner(session) && (
-                    <>
-                      <Link
-                        prefetch={false}
-                        href={`/app/projects/edit/${project.id}`}
-                      >
-                        <DropdownMenuItem>
-                          <Centering>
-                            <Edit size={14} />
-                            <span> Edit Project </span>
-                          </Centering>
-                        </DropdownMenuItem>
-                      </Link>
-                    </>
+                    <HoverLink href={`/app/projects/edit/${project.id}`}>
+                      <DropdownMenuItem>
+                        <Centering>
+                          <Edit size={14} />
+                          <span> Edit Project </span>
+                        </Centering>
+                      </DropdownMenuItem>
+                    </HoverLink>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem

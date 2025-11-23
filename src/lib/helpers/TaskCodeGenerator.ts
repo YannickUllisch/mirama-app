@@ -11,7 +11,7 @@ const hashString = (str: string) => {
 }
 
 // We generate a Unique Task ID given the projects name and a unique task uuid.
-export const generateTaskId = async (name: string, taskUuid: string) => {
+export const generateTaskId = (name: string, taskUuid: string) => {
   // We generate the Prefix based on the given name.
   // Prefix is currently set to length 3.
   const normalized = name.toLowerCase().replace(/[^a-z0-9]/g, '')

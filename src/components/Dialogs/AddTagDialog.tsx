@@ -1,6 +1,8 @@
 'use client'
-import type React from 'react'
-import { type FC, useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import apiRequest from '@hooks/query'
+import { CreateTagSchema, type CreateTagType } from '@server/domain/tagSchema'
+import { Button } from '@src/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -11,42 +13,60 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@src/components/ui/dialog'
-import { Button } from '@src/components/ui/button'
-import { Label } from '@src/components/ui/label'
 import { Input } from '@src/components/ui/input'
-import type { Tag } from '@prisma/client'
-import { postResource } from '@src/lib/api/postResource'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@ui/form'
+import { Plus } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
 
-interface AddProjectDialogProps {
-  mutate?(): any
-  button: React.ReactNode
-}
-
-const AddTagDialog: FC<AddProjectDialogProps> = (props) => {
+const AddTagDialog = () => {
   // States
-  const [tag, setTag] = useState<Tag>({
-    id: '',
-    teamId: '',
-    title: '',
-  } as Tag)
+  const [isPending, startTransition] = useTransition()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const createProject = () => {
-    postResource('tag', tag, { mutate: props.mutate }).then(() => {
-      handleClose()
+  // Form States
+  const form = useForm<CreateTagType>({
+    resolver: zodResolver(CreateTagSchema),
+    defaultValues: {
+      title: '',
+    },
+  })
+
+  // Hooks
+  const { mutate: useCreateTag, isPending: isCreatePending } =
+    apiRequest.tag.create.useMutation()
+
+  // Helper functions
+  const onSubmit = (vals: CreateTagType) => {
+    startTransition(() => {
+      useCreateTag(vals, {
+        onSuccess: () => {
+          handleClose()
+        },
+      })
     })
   }
 
   const handleClose = () => {
-    setTag({
-      id: '',
-      teamId: '',
-      title: '',
-    } as Tag)
+    form.reset()
+    setIsOpen(false)
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{props.button}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button size={'sm'}>
+          <Plus className="w-4 h-4" />
+          Create
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add Tag</DialogTitle>
@@ -54,35 +74,50 @@ const AddTagDialog: FC<AddProjectDialogProps> = (props) => {
             Tags can be applied to both Projects and Tasks.
           </DialogDescription>
         </DialogHeader>
-        <div className="gap-4 py-4">
-          <div className="flex items-center gap-4">
-            <Label>Title</Label>
-            <Input
-              id="title"
-              className="col-span-3"
-              onChangeCapture={(e) =>
-                setTag({ ...tag, title: e.currentTarget.value })
-              }
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="link">
-              Close
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="default"
-              onClick={createProject}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
-            >
-              Create
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="py-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Title"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  disabled={isPending || isCreatePending}
+                  variant="link"
+                >
+                  Close
+                </Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                disabled={isPending || isCreatePending}
+                variant="primary"
+              >
+                <Plus className="w-4 h-4" />
+                Create
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )

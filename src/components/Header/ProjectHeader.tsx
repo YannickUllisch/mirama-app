@@ -1,36 +1,32 @@
-import type { Milestone, Project, User } from '@prisma/client'
-import type { FC } from 'react'
-import AvatarGroup from '../Avatar/AvatarGroup'
-import TaskTypeCreate from '../Task/TaskTypeCreate'
+import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Spinner } from '@ui/spinner'
 import {
   CalendarClock,
   ClockArrowUp,
   Flag,
   PanelBottomClose,
-  UserPlus,
+  PenIcon,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { Badge } from '@ui/badge'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
-import { Button } from '@ui/button'
-import { Spinner } from '@ui/spinner'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import type { FC } from 'react'
+import AvatarGroup from '../Avatar/AvatarGroup'
+import HoverLink from '../HoverLink'
+import TaskTypeCreate from '../Task/TaskTypeCreate'
 
 interface HeaderInterface {
-  project?: Project
-  users?: User[]
-  upcomingMilestone?: Milestone
+  project?: ProjectResponseInput
+  upcomingMilestone?: MilestoneProjectResponseInput
 }
 
-const ProjectHeader: FC<HeaderInterface> = ({
-  project,
-  users,
-  upcomingMilestone,
-}) => {
+const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
   const { data: session } = useSession()
   return (
-    <header className="mb-2 bg-white dark:bg-neutral-900 rounded-lg p-5 pb-1 overflow-hidden">
+    <header className="mb-2 bg-transparent rounded-lg p-5 pb-1 overflow-hidden">
       {!project ? (
         <div className="w-full h-[140px] pb-5 flex justify-center items-center">
           <Spinner className="bg-text" size={'md'} />
@@ -42,7 +38,7 @@ const ProjectHeader: FC<HeaderInterface> = ({
               <h1 className="text-5xl md:text-6xl max-w-4xl tracking-tighter font-bold">
                 {project?.name}
               </h1>
-              <div className="flex gap-1 items-center">
+              <div className="hidden sm:flex gap-1 items-center">
                 <Badge
                   variant={'secondary'}
                   className="flex items-center gap-2"
@@ -61,20 +57,27 @@ const ProjectHeader: FC<HeaderInterface> = ({
                 </Badge>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-3 ">
+            <div className="hidden sm:flex items-center gap-3">
               <AvatarGroup
-                usernames={users?.map((u) => u.name) ?? []}
+                usernames={project?.users?.map((u) => u.name) ?? []}
                 avatarSize={8}
                 previewAmount={4}
                 fontSize={14}
               />
-              <Button
-                size={'icon'}
-                variant={'ghost'}
-                className="border-2 border-dashed rounded-full h-[35px] w-[35px]"
+              {/* <UserMultiSelect
+                initialUserIds={project.users.map((u) => u.id) ?? []}
+                onSave={() => console.log('hey')}
               >
-                <UserPlus size={17} />
-              </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  type="button"
+                  className="border-2 border-dashed rounded-full h-[35px] w-[35px]"
+                  title="Add / Manage Members"
+                >
+                  <UserPlus size={17} />
+                </Button>
+              </UserMultiSelect> */}
             </div>
           </div>
           <div className="flex gap-1 pt-5">
@@ -93,16 +96,19 @@ const ProjectHeader: FC<HeaderInterface> = ({
               </div>
               <div className="flex gap-2 items-center text-sm ">
                 <Flag size={15} />
-                <span>{upcomingMilestone?.title}</span>
+                <span>Upcoming Milestone: {upcomingMilestone?.title}</span>
               </div>
             </div>
 
             <div className="hidden sm:flex items-center gap-2 rounded-sm cursor-pointer ml-auto mt-6">
               <TaskTypeCreate projectName={'Mirama'} />
               {isTeamAdminOrOwner(session) && (
-                <Link href={`app/project/edit/${project.id}`} prefetch={false}>
-                  <Button variant={'secondary'}>Edit Project</Button>
-                </Link>
+                <HoverLink href={`/app/projects/edit/${project.id}`}>
+                  <Button variant={'secondary'} size={'sm'}>
+                    <PenIcon className="w-4 h-4" />
+                    <span>Edit Project</span>
+                  </Button>
+                </HoverLink>
               )}
             </div>
           </div>

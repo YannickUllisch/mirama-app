@@ -1,154 +1,77 @@
 'use client'
-import {
-  type Project,
-  Role,
-  type Task,
-  type Team,
-  type User,
-} from '@prisma/client'
+import { useIsMobile } from '@hooks/utils/use-mobile'
+import { AppMenu } from '@src/lib/sidebarMenu'
+import { cn, isTeamAdminOrOwner } from '@src/lib/utils'
+import { Button } from '@ui/button'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenuAction,
+  SidebarMenu,
+  SidebarMenuButton,
   SidebarRail,
-} from '@src/components/ui/sidebar'
-import type { AppMenuItem, SecondaryAppMenuItem } from '@src/types/types'
-import {
-  Bell,
-  BookAIcon,
-  ClipboardList,
-  Folders,
-  HelpCircleIcon,
-  Home,
-  Users,
-} from 'lucide-react'
-import { DateTime } from 'luxon'
+} from '@ui/sidebar'
+import { CircleHelp } from 'lucide-react'
 import type { Session } from 'next-auth'
-import FavoritesNav from './FavouritesNav'
+import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
+import HoverLink from '../HoverLink'
 import SidebarMainNav from './MainNav'
-import { ProjectsNav } from './ProjectsNav'
-import SelfSidebarHeader from './SidebarHeader'
-import SidebarUserNav from './UserNav'
-
-const AppMenu: AppMenuItem[] = [
-  {
-    title: 'Dashboard',
-    icon: Home,
-    href: '/app',
-    isCollapsible: false,
-    roles: Object.values(Role) as Role[], // Allow all roles on Dashboard
-  },
-  {
-    title: 'Projects',
-    icon: Folders,
-    href: '/app/projects',
-    isCollapsible: false,
-    roles: Object.values(Role) as Role[],
-  },
-  {
-    title: 'My Tasks',
-    icon: ClipboardList,
-    href: '/app/tasks',
-    isCollapsible: false,
-    roles: Object.values(Role) as Role[],
-  },
-  // {
-  //   title: 'Calendar',
-  //   icon: Calendar,
-  //   href: '/app/calendar',
-  //   isCollapsible: false,
-  //   roles: Object.values(Role) as Role[],
-  // },
-  {
-    title: 'Teams',
-    icon: Users,
-    href: '/app/team',
-    isCollapsible: false,
-    roles: Object.values(Role) as Role[],
-  },
-  {
-    title: 'Management',
-    icon: BookAIcon,
-    isCollapsible: true,
-    isActive: true,
-    roles: Object.values(Role) as Role[],
-    items: [
-      {
-        title: 'Company',
-        href: '/app/company',
-        roles: [Role.ADMIN, Role.OWNER],
-      },
-      // {
-      //   title: 'Finances',
-      //   href: '/app/finances',
-      //   roles: [Role.ADMIN, Role.OWNER],
-      // },
-      {
-        title: 'Archive',
-        href: '/app/archive',
-        roles: Object.values(Role) as Role[],
-      },
-    ],
-  },
-]
-
-const _SecondaryAppMenu: SecondaryAppMenuItem[] = [
-  {
-    href: '/app',
-    title: 'Notifications',
-    icon: Bell,
-    menuAction: (
-      <SidebarMenuAction showOnHover>
-        <div className="text-red-500">x</div>
-      </SidebarMenuAction>
-    ),
-  },
-  {
-    href: '/app',
-    title: 'Support',
-    icon: HelpCircleIcon,
-  },
-]
+import RecentsNav from './RecentsNav'
 
 interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'props'> {
-  user: User
-  projects: (Project & { tasks: Task[] })[]
-  team: Team | null
   session: Session | null
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({
-  projects,
-  user,
-  team,
-  session,
-  ...props
-}) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
+  const pathname = usePathname()
+  const isMobile = useIsMobile()
+
+  const isAdminOrOwner = useMemo(() => {
+    return isTeamAdminOrOwner(session)
+  }, [session])
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SelfSidebarHeader />
+      <SidebarHeader
+        className={cn('border-sidebar-border ', isMobile ? '' : 'mt-[55px]')}
+      >
+        {isMobile && (
+          <HoverLink href="/" className="flex items-center gap-2 p-2">
+            <span className="text-lg font-semibold text-sidebar-foreground">
+              .mirama
+            </span>
+          </HoverLink>
+        )}
+        {isAdminOrOwner && (
+          <HoverLink href={'/app/projects/create'}>
+            <Button className="w-full justify-start gap-2 p-3">
+              <span className="text-sidebar-primary">+</span>
+              <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
+                New
+              </span>
+            </Button>
+          </HoverLink>
+        )}
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
-        <SidebarMainNav items={AppMenu} session={session} />
-        <FavoritesNav />
-        <ProjectsNav
-          session={session}
-          projects={projects.map((p) => ({
-            href: `/app/projects/${p.name}`,
-            original: p,
-            isActive:
-              DateTime.fromJSDate(p.startDate) <= DateTime.now() &&
-              DateTime.fromJSDate(p.endDate) >= DateTime.now(),
-            tasks: p.tasks,
-          }))}
-        />
+        <SidebarMainNav pathname={pathname} items={AppMenu} session={session} />
+        <RecentsNav pathname={pathname} />
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarUserNav user={user} />
+      <SidebarFooter className="p-2">
+        {/* <div className="flex items-center justify-center p-3 rounded-xl h-[150px] w-full bg-card dark:bg-black/40 overflow-clip">
+          ...
+        </div> */}
+        <SidebarMenu>
+          <HoverLink href={'/contact'}>
+            <SidebarMenuButton>
+              <CircleHelp className="w-4 h-4" />
+              Contact
+            </SidebarMenuButton>
+          </HoverLink>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

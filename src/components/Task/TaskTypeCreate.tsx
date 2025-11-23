@@ -1,6 +1,3 @@
-import type { FC } from 'react'
-import { ChevronDown, Plus } from 'lucide-react'
-import { capitalize } from '@src/lib/utils'
 import { Button } from '@src/components/ui/button'
 import {
   DropdownMenu,
@@ -10,12 +7,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import Link from 'next/link'
-import { getTaskTypeIcon } from '../../lib/helpers/TaskTypeIcons'
 import {
   containerTaskTypes,
   individualTaskTypes,
 } from '@src/lib/helpers/TaskTypeHelpers'
+import { capitalize } from '@src/lib/utils'
+import { ChevronDown, Plus } from 'lucide-react'
+import Link from 'next/link'
+import type { FC } from 'react'
+import { getTaskTypeIcon } from '../../lib/helpers/TaskTypeIcons'
 
 interface TaskTypeCreateProps {
   projectName: string
@@ -38,9 +38,7 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({ projectName }) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel className="text-xs">
-          Container Types
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs">Root</DropdownMenuLabel>
         {containerTaskTypes.map((type) => (
           <DropdownMenuItem key={`select-container-${type}`} asChild>
             <Link
@@ -54,9 +52,7 @@ const TaskTypeCreate: FC<TaskTypeCreateProps> = ({ projectName }) => {
         ))}
 
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs">
-          Individual Types
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs">General</DropdownMenuLabel>
         {/* Render Individual Tasks */}
         {individualTaskTypes.map((type) => (
           <DropdownMenuItem key={`select-individual-${type}`} asChild>

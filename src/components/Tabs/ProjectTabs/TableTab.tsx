@@ -1,11 +1,15 @@
 'use client'
-import type { Tag, Task, TaskTagJoin, User } from '@prisma/client'
-import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import { useContext, useState } from 'react'
-import useSWR from 'swr'
+import apiRequest from '@hooks/query'
+import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import {
+  type TaskResponseType,
+  UpdateTaskSchema,
+  type UpdateTaskType,
+} from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { ListTabColumns } from './helper/ListTabColumns'
-import { createMemoizedTree } from '@src/lib/data-structures/Tree'
+import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
   DropdownMenu,
@@ -15,37 +19,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
+import { createMemoizedTree } from '@src/lib/createTree'
+import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
-import { Button } from '@src/components/ui/button'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import { deleteResources } from '@src/lib/api/deleteResource'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useTaskColumns } from './helper/ListTabColumns'
 
-const TableTab = () => {
-  // Project context
-  const projectContext = useContext(ProjectDataContext)
-
+const TableTab = ({
+  project,
+  tasks,
+  users,
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+  users: UserResponseType[]
+}) => {
   // Personalizations
   const [viewFlattened, setViewFlattened] = useState(false)
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
-
-  // We fetch tasks instead of passing from parent to have more specific control.
-  const {
-    data: tasks,
-    mutate: updateTasks,
-    isLoading: tasksLoading,
-  } = useSWR<
-    (Task & {
-      assignedTo: User
-      tags: (TaskTagJoin & { tag: Tag })[]
-      subtasks: Task[]
-    })[]
-  >(
-    projectContext?.projectId
-      ? `task?id=${projectContext?.projectId}&ignoreCompleted=${ignoreCompleted}`
-      : undefined,
-  )
-
-  const { data: users } = useSWR<User[]>('team/member')
 
   const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
@@ -55,23 +47,31 @@ const TableTab = () => {
     { id: 'taskCode', desc: true },
   ])
 
-  const deleteTask = (id: string) => {
-    // Create a set to ensure we get no duplicate IDs to remove
-    const selectedItems = Array.from(
-      new Set(Object.keys(rowSelection).flatMap((key) => key.split('.'))),
-    )
-    if (!selectedItems.includes(id)) {
-      selectedItems.push(id)
-    }
-    updateTasks(
-      (existingTasks = []) =>
-        existingTasks.filter((task) => !selectedItems.includes(task.id)),
-      false,
-    )
-    deleteResources('task', selectedItems).catch(() => {
-      updateTasks()
-    })
-  }
+  // Hooks
+  const { mutate: mutateTask } = apiRequest.task.update.useMutation(
+    project?.id ?? '',
+  )
+  const { mutate: deleteTask } = apiRequest.task.delete.useMutation()
+
+  // Update
+  const { handleFieldUpdate } = useEditableColumns<
+    TaskResponseType,
+    UpdateTaskType
+  >({
+    mutate: mutateTask,
+    updateSchema: UpdateTaskSchema,
+    getKey: (data) => data.id,
+    mapToUpdateInput: (data) => ({
+      ...data,
+      tags: data.tags.map((t) => t.id),
+      newTags: [],
+      subtasks: data.subtasks.map((s) => s.id),
+    }),
+    onValidationError: (err) => {
+      const firstMessage = err.issues?.[0]?.message || 'Input Error'
+      toast.error(`Input Error: ${firstMessage}`)
+    },
+  })
 
   const ToolbarRight = () => {
     return (
@@ -111,22 +111,20 @@ const TableTab = () => {
     <div className="rounded-sm outline-none">
       <DataTable
         tableIdentifier="task_tab_table"
-        columns={ListTabColumns({
-          mutate: updateTasks,
-          projectName: projectContext?.projectName ?? '',
+        columns={useTaskColumns({
           users: users ?? [],
-          onTaskDelete: deleteTask,
+          deleteMutation: deleteTask,
+          handleFieldUpdate: handleFieldUpdate,
         })}
         data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
         ignoreSubrows={viewFlattened}
         enableRowSelection
-        dataLoading={tasksLoading}
+        dataLoading={!project}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         sortingState={sortingState}
         setSortingState={setSortingState}
         toolbarOptions={{
-          refresh: { mutate: updateTasks },
           showFilterOption: true,
           filterOptionType: 'TASK',
           addToolbarright: <ToolbarRight />,

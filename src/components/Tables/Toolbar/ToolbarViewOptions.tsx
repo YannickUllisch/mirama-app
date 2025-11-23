@@ -1,6 +1,6 @@
 'use client'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import type { Table } from '@tanstack/react-table'
+import { Button } from '@src/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -8,8 +8,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
-import { Button } from '@src/components/ui/button'
-import { ScanEye } from 'lucide-react'
+import type { Table } from '@tanstack/react-table'
+import { EyeIcon } from 'lucide-react'
 
 interface ToolbarViewOptionsProps<TData> {
   table: Table<TData>
@@ -21,12 +21,8 @@ export function ToolbarViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto border-none hidden h-8 lg:flex bg-inherit gap-2"
-        >
-          <ScanEye className="h-4 w-4" />
+        <Button variant="ghost" size="sm">
+          <EyeIcon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">

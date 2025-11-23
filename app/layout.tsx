@@ -11,8 +11,8 @@ const dmMono = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Start | Mirama',
-  description: 'Entry Page for Management System',
+  title: 'Mirama',
+  description: 'Landing Page',
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

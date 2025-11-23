@@ -1,21 +1,39 @@
 'use client'
-import type { Milestone, Project, User } from '@prisma/client'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { addProjectIdToLocalStorage } from '@/app/app/_helpers'
+import Loading from '@/app/loading'
+import apiRequest from '@hooks/query'
+import useLocalStorage from '@hooks/utils/useLocalStorage'
+import { Role } from '@prisma/client'
+import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import ProjectHeader from '@src/components/Header/ProjectHeader'
+import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
+import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
+import OverviewTab from '@src/components/Tabs/ProjectTabs/OverviewTab'
+import TableTab from '@src/components/Tabs/ProjectTabs/TableTab'
+import GanttTab from '@src/components/Tabs/ProjectTabs/TimelineTab'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import useSWR from 'swr'
-import { projectTabs } from './tabs'
-import ProjectHeader from '@src/components/Header/ProjectHeader'
-import useLocalStorage from '@src/hooks/useLocalStorage'
-import { addProjectIdToLocalStorage } from '@/app/app/helpers'
+import {
+  ClipboardList,
+  GanttChart,
+  ListTodo,
+  MapIcon,
+  Table2,
+} from 'lucide-react'
+import {
+  notFound,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const ClientProjectPage = () => {
+  // Context for ProjectId and Name
   const projectContext = useContext(ProjectDataContext)
 
   const router = useRouter()
@@ -24,21 +42,14 @@ const ClientProjectPage = () => {
   const currentTab = searchParams?.get('tab')
   const [tab, setTab] = useState(currentTab ?? 'overview')
 
-  const { data: project } = useSWR<Project & { milestones: Milestone[] }>({
-    url: projectContext ? `project/${projectContext.projectId}` : undefined,
-    select: {
-      startDate: true,
-      endDate: true,
-      priority: true,
-      status: true,
-      archived: true,
-      name: true,
-      milestones: true,
-    },
-  })
-  const { data: users } = useSWR<User[]>(
-    projectContext ? `project/users?id=${projectContext.projectId}` : undefined,
+  // Hooks
+  const { data: project, isLoading } = apiRequest.project.fetchById.useQuery(
+    projectContext?.projectId ?? '',
   )
+  const { data: tasks } = apiRequest.task.fetchByProject.useQuery(
+    projectContext?.projectId ?? '',
+  )
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
 
   // Handling Project visit, by storing the project id in local storage (used to show recent projects)
   const [_, setRecentProjects] = useLocalStorage<string[]>(
@@ -68,40 +79,110 @@ const ClientProjectPage = () => {
       .find((milestone) => new Date(milestone.date) >= new Date())
   }, [project?.milestones])
 
+  const tabs = useMemo(() => {
+    return [
+      {
+        id: 'overview',
+        roles: Object.values(Role),
+        component: (
+          <OverviewTab project={project ?? null} tasks={tasks ?? []} />
+        ),
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <MapIcon width={15} /> Overview
+          </div>
+        ),
+      },
+      {
+        id: 'table',
+        roles: Object.values(Role),
+        component: (
+          <TableTab
+            project={project ?? null}
+            tasks={tasks ?? []}
+            users={users ?? []}
+          />
+        ),
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <Table2 width={15} /> Table
+          </div>
+        ),
+      },
+      {
+        id: 'list',
+        roles: Object.values(Role),
+        component: <ListTab project={project ?? null} tasks={tasks ?? []} />,
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <ListTodo width={15} /> List
+          </div>
+        ),
+      },
+      {
+        id: 'kanban',
+        roles: Object.values(Role),
+        component: (
+          <BoardTab
+            project={project ?? null}
+            tasks={tasks ?? []}
+            users={users ?? []}
+          />
+        ),
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <ClipboardList width={15} /> Board
+          </div>
+        ),
+      },
+      {
+        id: 'timeline',
+        roles: Object.values(Role),
+        component: <GanttTab project={project ?? null} tasks={tasks ?? []} />,
+        headerComponent: (
+          <div className="flex justify-center gap-1 items-center">
+            <GanttChart width={15} /> Timeline
+          </div>
+        ),
+      },
+    ]
+  }, [project, tasks, users])
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  if (!project) {
+    notFound()
+  }
+
   return (
     <>
-      <ProjectHeader
-        project={project}
-        users={users}
-        upcomingMilestone={upcomingMilestone}
-      />
+      <ProjectHeader project={project} upcomingMilestone={upcomingMilestone} />
 
-      <div className="rounded-lg">
-        <Tabs value={tab} onValueChange={setTab} className="w-full ">
-          <div className="flex w-full items-center shadow-md dark:shadow-neutral-800  bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
-            {/* Tabs List */}
-            <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
-              {projectTabs.map((tabHeader) => (
-                <TabsTrigger
-                  style={{ fontSize: 12 }}
-                  value={tabHeader.id}
-                  key={tabHeader.id}
-                >
-                  {tabHeader.headerComponent}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          <div className="p-3">
-            {/* Tab Content */}
-            {projectTabs.map((tab) => (
-              <TabsContent value={tab.id} key={`${tab.id}-tab`}>
-                {tab.component}
-              </TabsContent>
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
+        <div className="flex w-full items-center shadow-md dark:shadow-neutral-800 bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
+          <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
+            {tabs.map((tabHeader) => (
+              <TabsTrigger
+                style={{ fontSize: 12 }}
+                value={tabHeader.id}
+                key={tabHeader.id}
+              >
+                {tabHeader.headerComponent}
+              </TabsTrigger>
             ))}
-          </div>
-        </Tabs>
-      </div>
+          </TabsList>
+        </div>
+        <div className="p-3">
+          {/* Tab Content */}
+          {tabs.map((tab) => (
+            <TabsContent value={tab.id} key={`${tab.id}-tab`}>
+              {tab.component}
+            </TabsContent>
+          ))}
+        </div>
+      </Tabs>
     </>
   )
 }

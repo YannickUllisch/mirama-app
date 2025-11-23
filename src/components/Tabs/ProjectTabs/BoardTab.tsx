@@ -1,27 +1,23 @@
 'use client'
-import { useContext } from 'react'
-import type { Task, User } from '@prisma/client'
-import useSWR from 'swr'
+import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import KanbanBoard from '@src/components/Kanban/KanbanBoard'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 
-const BoardTab = () => {
-  // Project context
-  const projectContext = useContext(ProjectDataContext)
-
-  const { data: tasks, mutate: updateTasks } = useSWR<
-    (Task & {
-      assignedTo: User
-      subtasks: (Task & { assignedTo: User | undefined })[]
-    })[]
-  >(projectContext ? `task?id=${projectContext.projectId}` : undefined)
-
+const BoardTab = ({
+  project,
+  tasks,
+  users,
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+  users: UserResponseType[]
+}) => {
   return (
     <KanbanBoard
-      projectName={projectContext?.projectName ?? ''}
       tasks={tasks ?? []}
-      projectId={projectContext?.projectId ?? ''}
-      mutate={updateTasks}
+      projectId={project?.id ?? ''}
+      users={users}
     />
   )
 }

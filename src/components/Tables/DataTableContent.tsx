@@ -1,14 +1,14 @@
-import {
-  flexRender,
-  type RowSelectionState,
-  type ColumnDef,
-  type Table,
-} from '@tanstack/react-table'
-import React from 'react'
 import type { TableData } from '@src/components/Tables/DataTable'
-import { TableBody, TableCell, TableRow } from '@src/components/ui/table'
 import { Checkbox } from '@src/components/ui/checkbox'
+import { TableBody, TableCell, TableRow } from '@src/components/ui/table'
+import {
+  type ColumnDef,
+  type RowSelectionState,
+  type Table,
+  flexRender,
+} from '@tanstack/react-table'
 import { Spinner } from '@ui/spinner'
+import React from 'react'
 
 interface DataTableContentProps<TData extends TableData<TData>, TValue> {
   table: Table<TData>
@@ -32,7 +32,6 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
           <React.Fragment key={`cell${row.id}`}>
             <TableRow
               key={row.id}
-              className="group"
               // onClick={(event) => {
               //   const target = event.target as Element
               //   const isCheckbox = target.closest('.shadcn-checkbox')
@@ -59,6 +58,7 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
+                  className="group"
                   style={{
                     // width: cell.column.getSize(),
                     minWidth: cell.column.columnDef.minSize,

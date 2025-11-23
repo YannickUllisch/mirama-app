@@ -1,12 +1,20 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PriorityType, StatusType, type Tag, type User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { PriorityType, StatusType } from '@prisma/client'
+import { AttachNewMilestoneToProjectSchema } from '@server/domain/milestoneSchema'
+import {
+  type CreateProjectInput,
+  CreateProjectSchema,
+} from '@server/domain/projectSchema'
+import { CreateTagSchema } from '@server/domain/tagSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import ConfirmationDialog from '@src/components/Dialogs/ConfirmationDialog'
+import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
+import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
-import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
 import { Card, CardContent } from '@src/components/ui/card'
+import { Checkbox } from '@src/components/ui/checkbox'
 import {
   FormControl,
   FormField,
@@ -32,60 +40,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { Separator } from '@src/components/ui/separator'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@src/components/ui/tabs'
 import { Textarea } from '@src/components/ui/textarea'
-import { postResource } from '@src/lib/api/postResource'
-import { ProjectSchema } from '@src/lib/schemas'
 import { capitalize } from '@src/lib/utils'
+import { Badge } from '@ui/badge'
+import { ColorPicker } from '@ui/color-picker'
 import {
-  Briefcase,
   Calendar,
-  Flag,
-  Lightbulb,
+  ClipboardPen,
+  Loader2,
   MessageCircleWarning,
   Milestone,
   Plus,
+  PlusCircle,
   Save,
-  Sparkles,
+  ShoppingCart,
+  TagIcon,
+  Text,
   Trash2,
   Undo,
   Users,
+  X,
 } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import useSWR, { mutate } from 'swr'
-import type { z } from 'zod'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 
 const CreateProjectForm = () => {
-  // Dynamic Page Params
-  const params = useParams() as { name: string }
-
   // Routing used to return to previous page.
   const router = useRouter()
+  const { data: session } = useSession()
 
   // States
-  const [isPending, startTransition] = useTransition()
-  const [managerIds, setManagerIds] = useState<string[]>([])
-  const [memberIds, setMemberIds] = useState<string[]>([])
-  const [milestones, setMilestones] = useState<
-    { title: string; dueDate: Date }[]
-  >([])
-  const [milestoneTitle, setMilestoneTitle] = useState('')
-  const [milestoneDueDate, setMilestoneDueDate] = useState<Date>(new Date())
+  const [newMilestone, setNewMilestone] = useState({
+    title: '',
+    date: new Date(),
+    colors: '',
+  })
+  const [newTag, setNewTag] = useState('')
 
-  const { data: users } = useSWR<User[]>('team/member')
-  const { data: tags } = useSWR<Tag[]>('tag')
+  // Hooks
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: tags } = apiRequest.tag.fetchAll.useQuery()
+  const { mutate: createProjectMutation, isPending } =
+    apiRequest.project.create.useMutation()
 
   // Form Logic and Functions
-  const form = useForm<z.infer<typeof ProjectSchema>>({
-    resolver: zodResolver(ProjectSchema),
+  const form = useForm<CreateProjectInput>({
+    resolver: zodResolver(CreateProjectSchema),
     defaultValues: {
       name: '',
       description: '',
@@ -94,217 +96,200 @@ const CreateProjectForm = () => {
       priority: PriorityType.LOW,
       status: StatusType.ON_HOLD,
       budget: 0,
-      teamId: '',
       tags: [],
-      users: [],
+      users: [{ isManager: true, userId: session?.user.id ?? '' }],
+      newMilestones: [],
+      archived: false,
+      newTags: [],
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof ProjectSchema>) => {
-    startTransition(() => {
-      // Combine manager and member IDs
-      vals.users = [...managerIds, ...memberIds]
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Will result in cyclic dependency update>
+  useEffect(() => {
+    if (session?.user.id) {
+      form.setValue('users', [{ isManager: true, userId: session.user.id }])
+    }
+  }, [session])
 
-      // Add milestones data (in a real app, you'd handle this properly)
-      const projectData = {
-        ...vals,
-        milestones: milestones,
-      }
+  const {
+    fields: userFields,
+    append: appendUser,
+    remove: removeUser,
+  } = useFieldArray({
+    control: form.control,
+    name: 'users',
+  })
 
-      // Optimistically update SWR cache globally
-      const projectKey = 'project'
+  const {
+    fields: milestoneFields,
+    append: appendMilestone,
+    remove: removeMilestone,
+  } = useFieldArray({
+    control: form.control,
+    name: 'newMilestones',
+  })
 
-      postResource('project', projectData)
-        .then(() => {
-          mutate(projectKey)
-          router.back()
-        })
-        .catch(() => {
-          mutate(projectKey)
-        })
-    })
-  }
-
-  const addMilestone = () => {
-    if (milestoneTitle.trim() !== '') {
-      setMilestones([
-        ...milestones,
-        { title: milestoneTitle, dueDate: milestoneDueDate },
-      ])
-      setMilestoneTitle('')
-      setMilestoneDueDate(new Date())
+  const handleAddMilestone = () => {
+    const result = AttachNewMilestoneToProjectSchema.safeParse(newMilestone)
+    if (result.success) {
+      appendMilestone(result.data)
+      setNewMilestone({ title: '', date: new Date(), colors: '' })
     }
   }
 
-  const removeMilestone = (index: number) => {
-    setMilestones(milestones.filter((_, i) => i !== index))
+  const handleAddTag = () => {
+    const result = CreateTagSchema.safeParse({ title: newTag })
+    if (result.success) {
+      // In a real app, you'd create the tag via API first
+      // For now, we'll just add it to the form
+      const currentTags = form.getValues('newTags')
+      const titles = currentTags.map((t) => t.title)
+      if (!titles.includes(newTag)) {
+        form.setValue('newTags', [...currentTags, { title: newTag }], {
+          shouldValidate: true,
+          shouldDirty: true,
+        })
+      }
+      setNewTag('')
+    }
   }
 
-  const getManagersAndMembers = () => {
-    const managers = users?.filter((user) => managerIds.includes(user.id)) || []
-    const members = users?.filter((user) => memberIds.includes(user.id)) || []
-    return { managers, members }
+  const toggleUserManager = (index: number) => {
+    const currentValue = form.getValues(`users.${index}.isManager`)
+    form.setValue(`users.${index}.isManager`, !currentValue, {
+      shouldValidate: true,
+      shouldDirty: true,
+    })
   }
 
-  const { managers, members } = getManagersAndMembers()
+  const handleAddUser = (userId: string) => {
+    const exists = userFields.some((field) => field.userId === userId)
+    if (!exists) {
+      appendUser({ userId, isManager: false })
+    }
+  }
+
+  const onSubmit = (vals: CreateProjectInput) => {
+    createProjectMutation(vals, {
+      onSuccess(data) {
+        if (data.id) {
+          router.push(`/app/projects/edit/${data.id}`)
+        } else {
+          router.push('/app/projects')
+        }
+      },
+    })
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const memoizedNewTags = useMemo(() => {
+    return form.watch('newTags').map((t) => (
+      <Badge
+        variant={'accent'}
+        key={`new-tag-badge-${t.title}`}
+        onClick={() =>
+          form.setValue(
+            'newTags',
+            form.watch('newTags').filter((newTag) => newTag.title !== t.title),
+            {
+              shouldValidate: true,
+              shouldDirty: true,
+            },
+          )
+        }
+        className="gap-2 hover:bg-destructive hover:text-white cursor-pointer"
+      >
+        {t.title}
+        <X className="w-3 h-3" />
+      </Badge>
+    ))
+  }, [form.watch('newTags')])
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 rounded-lg shadow-sm">
-          <div className="flex items-center gap-4 dark:text-white">
-            <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-              <Briefcase
-                width={24}
-                className="text-blue-600 dark:text-blue-400"
-              />
-            </div>
-            <div>
-              <span className="text-2xl font-bold">Create Project</span>
-              <p className="text-sm text-muted-foreground">
-                Launch your next big idea
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {form.formState.isDirty ? (
-              <ConfirmationDialog
-                dialogTitle={'Discard changes?'}
-                dialogDesc={'All progress will be lost'}
-                submitButtonText={'Return'}
-                onConfirmation={() => router.push(`/app/${params.name}`)}
-              >
-                <Button type="button" variant="outline" className="gap-2">
-                  <Undo width={16} />
-                  Cancel
-                </Button>
-              </ConfirmationDialog>
-            ) : (
-              <Button
-                type="button"
-                variant="outline"
-                className="gap-2"
-                onClick={() => router.back()}
-              >
-                <Undo width={16} />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 pb-[50px]"
+      >
+        <PageHeader
+          title="Create Project"
+          description="Fill out the information to create a new Project"
+          icon={PlusCircle}
+        >
+          <div className="flex items-center gap-3 flex-col md:flex-row">
+            <ConfirmationDialog
+              title={'Discard changes?'}
+              description={'All progress will be lost'}
+              onCancel={() => null}
+              onSubmit={() => router.back()}
+            >
+              <Button type="button" variant="ghost" className="gap-2">
+                <Undo className="w-4 h-4" />
                 Cancel
               </Button>
-            )}
+            </ConfirmationDialog>
 
             <Button
               type="submit"
-              className={`gap-2 ${
-                form.watch().name.length < 1
-                  ? 'bg-neutral-100 dark:bg-neutral-900 dark:text-accent'
-                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white'
-              }`}
+              variant={!form.formState.isDirty ? 'outline' : 'secondary'}
+              className={'gap-2'}
               aria-label="Save Project Button"
-              disabled={isPending}
+              disabled={isPending || !form.formState.isDirty}
             >
-              <Save width={16} />
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
               <span>Save Project</span>
             </Button>
           </div>
-        </div>
-        <Separator />
+        </PageHeader>
 
-        <div className="form-group">
-          <div className="min-h-[30px] text-sm flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="flex gap-1 items-center px-3 py-1 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
-            >
-              <Sparkles className="w-[14px] h-[14px]" />
-              NEW PROJECT
-            </Badge>
-            {form.watch().name.length < 1 ? (
-              <div className="flex items-center gap-2 text-red-500 ">
-                <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
-                {'Field "Name" cannot be empty.'}{' '}
+        <Card>
+          <CardContent>
+            <div className="form-group">
+              <div className="min-h-[30px] flex items-center gap-2">
+                <ClipboardPen className="w-5 h-5" />
+                <h3 className="font-medium">Project Title</h3>
+                {form.watch().name.length < 1 ? (
+                  <div className="flex items-center gap-2 text-destructive">
+                    <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
+                    {'Field "Name" cannot be empty.'}{' '}
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
-            ) : (
-              ''
-            )}
-          </div>
 
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="w-full mt-2">
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    placeholder="Enter Project Name"
-                    type="text"
-                    autoComplete="off"
-                    className="text-lg font-medium"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="w-full mt-2">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        type="text"
+                        autoComplete="off"
+                        className="text-sm"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="col-span-1 lg:col-span-2">
-            <CardContent className="p-6">
+            <CardContent>
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                    <Lightbulb className="w-5 h-5 text-amber-500" />
-                    Project Details
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="tags"
-                      render={({ field: { ref, ...field } }) => (
-                        <FormItem>
-                          <FormLabel>Tags</FormLabel>
-                          <MultiSelector
-                            {...form.register('tags')}
-                            values={field.value ?? []}
-                            onValuesChange={field.onChange}
-                            loop
-                            onBlur={field.onBlur}
-                          >
-                            <FormControl>
-                              <MultiSelectorTrigger
-                                renderValue={(item) =>
-                                  tags?.find((tag) => tag.id === item)?.title
-                                }
-                                className="w-full"
-                              >
-                                <MultiSelectorInput placeholder="Add Tag" />
-                              </MultiSelectorTrigger>
-                            </FormControl>
-                            <MultiSelectorContent>
-                              <MultiSelectorList>
-                                {tags?.map((tag) => (
-                                  <MultiSelectorItem
-                                    value={tag.id}
-                                    key={`tag${tag.id}`}
-                                  >
-                                    {tag.title}
-                                  </MultiSelectorItem>
-                                ))}
-                              </MultiSelectorList>
-                            </MultiSelectorContent>
-                          </MultiSelector>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                    <Calendar className="w-5 h-5 text-green-500" />
+                    <Calendar className="w-5 h-5 text-accent-foreground" />
                     Timeline & Priority
                   </h3>
 
@@ -313,7 +298,7 @@ const CreateProjectForm = () => {
                       control={form.control}
                       name="startDate"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col">
                           <FormLabel>Start Date</FormLabel>
                           <CalendarSelect
                             onChange={field.onChange}
@@ -328,7 +313,7 @@ const CreateProjectForm = () => {
                       control={form.control}
                       name="endDate"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col">
                           <FormLabel>End Date</FormLabel>
                           <CalendarSelect
                             onChange={field.onChange}
@@ -365,18 +350,7 @@ const CreateProjectForm = () => {
                                   key={`priority-item-${type}`}
                                   value={type}
                                 >
-                                  <div className="flex items-center gap-2">
-                                    <Flag
-                                      className={`w-4 h-4 ${
-                                        type === 'HIGH'
-                                          ? 'text-red-500'
-                                          : type === 'MEDIUM'
-                                            ? 'text-amber-500'
-                                            : 'text-blue-500'
-                                      }`}
-                                    />
-                                    {capitalize(type.replace('_', ' '))}
-                                  </div>
+                                  {capitalize(type.replace('_', ' '))}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -426,68 +400,100 @@ const CreateProjectForm = () => {
 
                 <div>
                   <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                    <Milestone className="w-5 h-5 text-purple-500" />
+                    <Milestone className="w-5 h-5 text-accent-foreground" />
                     Milestones
                   </h3>
 
                   <div className="space-y-4">
-                    <div className="flex gap-4 items-end">
-                      <div className="flex-1">
+                    <div className="grid w-full gap-4 grid-cols-1 md:grid-cols-[1fr_160px_160px_auto] items-end">
+                      <div className="flex flex-col">
                         <Label htmlFor="milestone-title">Title</Label>
                         <Input
                           id="milestone-title"
-                          value={milestoneTitle ?? ''}
-                          onChange={(e) => setMilestoneTitle(e.target.value)}
-                          placeholder="Enter milestone title"
-                        />
-                      </div>
-                      <div className="w-40">
-                        <Label>Due Date</Label>
-                        <CalendarSelect
-                          onChange={(date) =>
-                            setMilestoneDueDate(date ?? new Date())
+                          value={newMilestone.title}
+                          onChange={(e) =>
+                            setNewMilestone({
+                              ...newMilestone,
+                              title: e.target.value,
+                            })
                           }
-                          value={milestoneDueDate ?? new Date()}
+                          placeholder="Enter milestone title"
+                          className="mt-1"
                         />
                       </div>
-                      <Button
-                        type="button"
-                        onClick={addMilestone}
-                        disabled={!milestoneTitle.trim()}
-                        className="gap-1"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add
-                      </Button>
+
+                      <div className="flex flex-col">
+                        <Label>Due Date</Label>
+                        <div className="mt-1">
+                          <CalendarSelect
+                            onChange={(date) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                date: date ?? new Date(),
+                              })
+                            }
+                            value={newMilestone.date}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col md:ml-10">
+                        <Label>Color</Label>
+                        <div className="mt-1">
+                          <ColorPicker
+                            onChange={(color) =>
+                              setNewMilestone({
+                                ...newMilestone,
+                                colors: color,
+                              })
+                            }
+                            value={newMilestone.colors}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex md:justify-end">
+                        <Button
+                          type="button"
+                          onClick={handleAddMilestone}
+                          disabled={newMilestone.title.length < 4}
+                          className="gap-1 w-full md:w-auto"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add
+                        </Button>
+                      </div>
                     </div>
 
-                    {milestones.length > 0 ? (
+                    {milestoneFields.length > 0 ? (
                       <ScrollArea className="h-[200px] border rounded-md p-4">
                         <div className="space-y-3">
-                          {milestones.map((milestone, index) => (
+                          {milestoneFields.map((milestone, index) => (
                             <div
-                              key={milestone.title}
-                              className="flex items-center justify-between p-3 bg-muted/50 rounded-md"
+                              key={milestone.id}
+                              className="flex items-center justify-between p-3 bg-accent text-accent-foreground rounded-md"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full">
-                                  <Milestone className="w-4 h-4 text-purple-500" />
+                                <div className="bg-accent p-2 rounded-full">
+                                  <Milestone className="w-4 h-4 text-accent-foreground" />
                                 </div>
                                 <div>
                                   <p className="font-medium">
                                     {milestone.title}
                                   </p>
-                                  <p className="text-sm text-muted-foreground">
+                                  <p className="text-sm ">
                                     Due:{' '}
-                                    {milestone.dueDate.toLocaleDateString()}
+                                    {new Date(
+                                      milestone.date,
+                                    ).toLocaleDateString()}
                                   </p>
                                 </div>
                               </div>
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                type="button"
                                 onClick={() => removeMilestone(index)}
-                                className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -496,8 +502,8 @@ const CreateProjectForm = () => {
                         </div>
                       </ScrollArea>
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-[200px] border rounded-md p-4 bg-muted/20">
-                        <Milestone className="w-12 h-12 text-muted mb-2" />
+                      <div className="flex flex-col items-center justify-center h-[200px] border rounded-md p-4 bg-secondary/10">
+                        <Milestone className="w-12 h-12 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           No milestones added yet
                         </p>
@@ -509,6 +515,90 @@ const CreateProjectForm = () => {
                   </div>
                 </div>
 
+                <div>
+                  <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
+                    <TagIcon className="w-5 h-5 text-accent-foreground" />
+                    Tags
+                  </h3>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="tags"
+                      render={({ field: { ref, ...field } }) => (
+                        <FormItem>
+                          <FormLabel>Select Existing Tags</FormLabel>
+                          <MultiSelector
+                            {...form.register('tags')}
+                            values={field.value ?? []}
+                            onValuesChange={field.onChange}
+                            loop
+                            onBlur={field.onBlur}
+                          >
+                            <FormControl>
+                              <MultiSelectorTrigger
+                                renderValue={(item) =>
+                                  tags?.find((tag) => tag.id === item)?.title ||
+                                  item
+                                }
+                                className="w-full "
+                              >
+                                <MultiSelectorInput
+                                  className="w-full bg-background px-2 rounded-md"
+                                  placeholder="Select tags"
+                                />
+                              </MultiSelectorTrigger>
+                            </FormControl>
+                            <MultiSelectorContent>
+                              <MultiSelectorList>
+                                {tags?.map((tag) => (
+                                  <MultiSelectorItem
+                                    value={tag.id}
+                                    key={`tag${tag.id}`}
+                                  >
+                                    {tag.title}
+                                  </MultiSelectorItem>
+                                ))}
+                              </MultiSelectorList>
+                            </MultiSelectorContent>
+                          </MultiSelector>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Create new tag"
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            handleAddTag()
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleAddTag}
+                        disabled={newTag.length < 2}
+                        className="gap-1"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-col md:flex-row p-2">
+                    {memoizedNewTags}
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
+                  <ShoppingCart className="w-5 h-5 text-accent-foreground" />
+                  Expense Management
+                </h3>
                 <FormField
                   control={form.control}
                   name="budget"
@@ -520,7 +610,11 @@ const CreateProjectForm = () => {
                           type="number"
                           {...field}
                           onChange={(e) =>
-                            field.onChange(Number(e.target.value))
+                            field.onChange(
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           value={field.value ?? ''}
                           placeholder="Enter budget amount"
@@ -538,209 +632,121 @@ const CreateProjectForm = () => {
           <div className="space-y-6">
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                  <Users className="w-5 h-5 text-blue-500" />
+                <h3 className="text-lg font-medium flex items-center gap-2 text-text">
+                  <Users className="w-5 h-5" />
                   Team Members
                 </h3>
 
-                <Tabs defaultValue="managers" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-4">
-                    <TabsTrigger value="managers">Managers</TabsTrigger>
-                    <TabsTrigger value="members">Team Members</TabsTrigger>
-                  </TabsList>
+                <div className="space-y-4">
+                  <Select onValueChange={handleAddUser}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Add Team Member" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users
+                        ?.filter(
+                          (user) =>
+                            !userFields.some(
+                              (field) => field.userId === user.id,
+                            ),
+                        )
+                        .map((user) => (
+                          <SelectItem
+                            value={user.id}
+                            key={`user-select-${user.id}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <UserAvatar
+                                avatarSize={24}
+                                fontSize={10}
+                                username={user.name}
+                              />
+                              {user.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
 
-                  <TabsContent value="managers" className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Select
-                        onValueChange={(value) => {
-                          if (!managerIds.includes(value)) {
-                            setManagerIds([...managerIds, value])
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Add Project Manager" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {users
-                            ?.filter(
-                              (user) =>
-                                !managerIds.includes(user.id) &&
-                                !memberIds.includes(user.id),
-                            )
-                            .map((user) => (
-                              <SelectItem
-                                value={user.id}
-                                key={`manager-select-${user.id}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <UserAvatar
-                                    avatarSize={24}
-                                    fontSize={10}
-                                    username={user.name}
-                                  />
-                                  {user.name}
-                                </div>
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <ScrollArea className="h-[400px] border rounded-md p-2">
+                    <div className="space-y-3">
+                      {userFields.length > 0 ? (
+                        userFields.map((userField, index) => {
+                          const user = users?.find(
+                            (u) => u.id === userField.userId,
+                          )
+                          if (!user) return null
 
-                    <ScrollArea className="h-[250px] border rounded-md p-2">
-                      <div className="space-y-3">
-                        {managers.length > 0 ? (
-                          managers.map((user) => (
+                          return (
                             <div
-                              key={user.id}
-                              className="flex items-center justify-between p-3 bg-muted/50 rounded-md"
+                              key={userField.id}
+                              className="flex items-center justify-between p-3 bg-accent rounded-md"
                             >
-                              <div className="flex items-center space-x-3">
+                              <div className="flex items-center space-x-3 flex-1 text-accent-foreground">
                                 <UserAvatar
                                   avatarSize={36}
                                   username={user.name}
                                   fontSize={14}
                                 />
-                                <div>
+                                <div className="flex-1">
                                   <p className="font-medium">{user.name}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {user.email}
-                                  </p>
+                                  <p className="text-sm">{user.email}</p>
                                 </div>
                               </div>
-                              <Badge variant="secondary" className="mr-2">
-                                Manager
-                              </Badge>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() =>
-                                  setManagerIds(
-                                    managerIds.filter((id) => id !== user.id),
-                                  )
-                                }
-                                className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="flex flex-col items-center justify-center h-[200px]">
-                            <Users className="w-12 h-12 text-muted mb-2" />
-                            <p className="text-muted-foreground">
-                              No managers assigned
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Add project managers to lead this project
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </ScrollArea>
-                  </TabsContent>
 
-                  <TabsContent value="members" className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Select
-                        onValueChange={(value) => {
-                          if (
-                            !memberIds.includes(value) &&
-                            !managerIds.includes(value)
-                          ) {
-                            setMemberIds([...memberIds, value])
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Add Team Member" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {users
-                            ?.filter(
-                              (user) =>
-                                !memberIds.includes(user.id) &&
-                                !managerIds.includes(user.id),
-                            )
-                            .map((user) => (
-                              <SelectItem
-                                value={user.id}
-                                key={`member-select-${user.id}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <UserAvatar
-                                    avatarSize={24}
-                                    fontSize={10}
-                                    username={user.name}
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 text-accent-foreground">
+                                  <Checkbox
+                                    id={`manager-${userField.id}`}
+                                    checked={form.watch(
+                                      `users.${index}.isManager`,
+                                    )}
+                                    onCheckedChange={() =>
+                                      toggleUserManager(index)
+                                    }
                                   />
-                                  {user.name}
+                                  <Label
+                                    htmlFor={`manager-${userField.id}`}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    Manager
+                                  </Label>
                                 </div>
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
 
-                    <ScrollArea className="h-[250px] border rounded-md p-2">
-                      <div className="space-y-3">
-                        {members.length > 0 ? (
-                          members.map((user) => (
-                            <div
-                              key={user.id}
-                              className="flex items-center justify-between p-3 bg-muted/50 rounded-md"
-                            >
-                              <div className="flex items-center space-x-3">
-                                <UserAvatar
-                                  avatarSize={36}
-                                  username={user.name}
-                                  fontSize={14}
-                                />
-                                <div>
-                                  <p className="font-medium">{user.name}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {user.email}
-                                  </p>
-                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  type="button"
+                                  onClick={() => removeUser(index)}
+                                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
                               </div>
-                              <Badge variant="outline" className="mr-2">
-                                Member
-                              </Badge>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() =>
-                                  setMemberIds(
-                                    memberIds.filter((id) => id !== user.id),
-                                  )
-                                }
-                                className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
                             </div>
-                          ))
-                        ) : (
-                          <div className="flex flex-col items-center justify-center h-[200px]">
-                            <Users className="w-12 h-12 text-muted mb-2" />
-                            <p className="text-muted-foreground">
-                              No team members assigned
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Add team members to work on this project
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </ScrollArea>
-                  </TabsContent>
-                </Tabs>
+                          )
+                        })
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-[350px]">
+                          <Users className="w-12 h-12 text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">
+                            No team members assigned
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Add team members to work on this project
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
+                  <Text className="w-5 h-5 text-accent-foreground" />
                   Description
                 </h3>
 

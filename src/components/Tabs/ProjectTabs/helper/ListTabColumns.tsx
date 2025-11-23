@@ -1,15 +1,14 @@
-import {
-  PriorityType,
-  TaskStatusType,
-  type TaskTagJoin,
-  type Tag,
-  type Task,
-  type User,
-} from '@prisma/client'
+import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import { PriorityType, TaskStatusType } from '@prisma/client'
+import type { TagResponseType } from '@server/domain/tagSchema'
+import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { UserResponseType } from '@server/domain/userSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
-import GeneralTooltip from '@src/components/GeneralTooltip'
-import EditableCell from '@src/components/Inputs/EditableCell'
-import GeneralTableSelect from '@src/components/Select/GeneralTableSelect'
+import HoverLink from '@src/components/HoverLink'
+import {
+  EditableCell,
+  EditableCellType,
+} from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { Badge } from '@src/components/ui/badge'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -24,57 +23,44 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@src/components/ui/hover-card'
-import { SelectItem } from '@src/components/ui/tableSelect'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
-import type { ColumnDef } from '@tanstack/react-table'
-import Centering from '@ui/centering'
+import type { UseMutateFunction } from '@tanstack/react-query'
+import { createColumnHelper } from '@tanstack/react-table'
+import { Button } from '@ui/button'
 import {
   BetweenHorizonalStart,
-  CalendarClock,
   ChevronUp,
-  ClockArrowDown,
   Ellipsis,
-  PanelBottomClose,
   Pencil,
-  PencilLine,
   Tag as TagIcon,
-  Text,
   Trash,
-  UserRoundPen,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
-import type { KeyedMutator } from 'swr'
+import { useMemo } from 'react'
 
-export const ListTabColumns = ({
-  projectName,
+const columnHelper = createColumnHelper<TaskResponseType>()
+
+export const useTaskColumns = ({
   users,
-  mutate,
-  onTaskDelete,
+  handleFieldUpdate,
+  deleteMutation,
 }: {
-  projectName: string
-  users: User[]
-  onTaskDelete: (id: string) => void
-  mutate: KeyedMutator<
-    (Task & {
-      assignedTo: User
-      tags: (TaskTagJoin & { tag: Tag })[]
-      subtasks: Task[]
-    })[]
+  users: UserResponseType[]
+  handleFieldUpdate: HandleFieldUpdate<TaskResponseType>
+  deleteMutation: UseMutateFunction<
+    any,
+    Error,
+    {
+      id: string
+      pid: string
+    },
+    any
   >
-}) => {
-  const cols: ColumnDef<
-    Task & {
-      assignedTo: User | null
-      tags: Tag[]
-      subtasks: Task
-    }
-  >[] = useMemo(
+}) =>
+  useMemo(
     () => [
-      {
-        size: 50,
+      columnHelper.display({
         id: 'select',
         header: ({ table }) => (
           <Checkbox
@@ -88,13 +74,21 @@ export const ListTabColumns = ({
             aria-label="Select all"
           />
         ),
-        enableHiding: false,
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
         enableSorting: false,
+        enableHiding: false,
         enableResizing: false,
-      },
+        size: 50,
+      }),
 
-      {
-        accessorKey: 'taskCode',
+      columnHelper.accessor((row) => row.taskCode, {
+        id: 'taskCode',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Code" />
         ),
@@ -117,265 +111,129 @@ export const ListTabColumns = ({
             </div>
           </div>
         ),
-      },
-      {
-        accessorKey: 'title',
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Title"
-            icon={<Text className="dark:text-neutral-400" size={15} />}
-          />
-        ),
+      }),
+
+      columnHelper.accessor((row) => row.title, {
         id: 'title',
-        cell: ({ getValue, row }) => {
-          const [menuOpen, setMenuOpen] = useState(false)
-          const [isEditing, setIsEditing] = useState(false)
-          return (
-            <div className="flex justify-between group w-full">
-              <Centering>
-                <span className="overflow-ellipsis flex-1 min-w-0">
-                  {isEditing ? (
-                    <Centering>
-                      {getTaskTypeIcon(row.original.type)}
-                      <EditableCell
-                        key={`name${row.id}`}
-                        apiRoute="task"
-                        id={row.original.id}
-                        mutate={mutate}
-                        initialValue={getValue() as string}
-                        paramToUpdate="title"
-                        autofocus
-                        onBlueNoChange={() => setIsEditing(false)}
-                      />
-                      <GeneralTooltip tipText="Stop Edit">
-                        <Pencil
-                          aria-label="Stop Title Edit"
-                          onClick={() => setIsEditing(false)}
-                          className="w-[12px] h-[12px]"
-                        />
-                      </GeneralTooltip>
-                    </Centering>
-                  ) : (
-                    <Centering>
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        href={`/app/projects/${projectName}/edit/${row.original.id}`}
-                        className="hover:underline flex gap-2 items-center underline-offset-4"
-                      >
-                        {getTaskTypeIcon(row.original.type)}
-                        {getValue() as string}
-                      </Link>
-                      <GeneralTooltip tipText="Start Edit">
-                        <PencilLine
-                          aria-label="Start Title Edit"
-                          onClick={() => setIsEditing(true)}
-                          className="w-[12px] h-[12px] opacity-0 group-hover:opacity-100"
-                        />
-                      </GeneralTooltip>
-                    </Centering>
-                  )}
-                </span>
-              </Centering>
-
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis
-                    className={`cursor-pointer flex-shrink-0 ${
-                      !menuOpen && !row.getIsSelected()
-                        ? 'invisible group-hover:visible'
-                        : 'visible'
-                    } bg-neutral-100 dark:bg-neutral-800 p-2 rounded-sm z-50 w-[25px] h-[25px]`}
-                  />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/app/projects/${projectName}/edit/${row.original.id}`}
-                      className="gap-3"
-                    >
-                      <Pencil className="h-4 w-4 " />
-                      Edit Task
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/app/projects/${projectName}/create/${row.original.type}?parentId=${row.original.id}`}
-                      className="gap-3"
-                    >
-                      <BetweenHorizonalStart className="h-4 w-4 " />
-                      Add Subtask
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="gap-3"
-                    onClick={() => onTaskDelete(row.original.id)}
-                  >
-                    <Trash className="h-4 w-4 text-red-500" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )
-        },
-      },
-
-      {
-        accessorKey: 'priority',
         header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Priority"
-            icon={
-              <ClockArrowDown className="dark:text-neutral-400" size={15} />
+          <DataTableColumnHeader column={column} title="Title" />
+        ),
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            displayValue={
+              <HoverLink
+                href={`/app/projects/${row.original.title}`}
+                className="hover:underline underline-offset-4"
+              >
+                {getValue()}
+              </HoverLink>
             }
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'title', value as string)
+            }
+            type={EditableCellType.TEXT}
           />
         ),
+      }),
+
+      columnHelper.accessor((row) => row.priority, {
         id: 'priority',
-        cell: ({ row, getValue }) => {
-          return (
-            <GeneralTableSelect
-              key={`priority-${row.id}`}
-              id={row.original.id}
-              mutate={mutate}
-              initialValue={capitalize(
-                (getValue() as string).replace('_', ' '),
-              )}
-              apiRoute="task"
-              paramToUpdate="priority"
-              stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
-            >
-              {Object.keys(PriorityType).map((priority) => (
-                <SelectItem key={`priority-item-${priority}`} value={priority}>
-                  {capitalize(priority.replace('_', ' '))}
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        },
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorKey: 'status',
         header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Status"
-            icon={
-              <PanelBottomClose className="dark:text-neutral-400" size={15} />
+          <DataTableColumnHeader column={column} title="Priority" />
+        ),
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            displayValue={capitalize((getValue() as string).replace('_', ' '))}
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'priority', value as PriorityType)
             }
+            options={Object.keys(PriorityType).map((priority) => ({
+              label: String(capitalize(priority.replace('_', ' '))),
+              value: priority,
+            }))}
+            type={EditableCellType.SELECT}
           />
         ),
-        id: 'status',
-        cell: ({ getValue, row }) => {
-          return (
-            <GeneralTableSelect
-              key={`status-${row.id}`}
-              id={row.original.id}
-              mutate={mutate}
-              initialValue={
-                <div className="flex gap-2 items-center">
-                  <div
-                    className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
-                      getValue() as string,
-                    )}`}
-                  />
-                  {capitalize(getValue() as string)}
-                </div>
-              }
-              apiRoute="task"
-              paramToUpdate="status"
-              stylingProps={{ triggerStyle: 'w-fit h-fit p-1' }}
-            >
-              {Object.keys(TaskStatusType).map((status) => (
-                <SelectItem key={`status-item-${status}`} value={status}>
-                  <div className="flex gap-2 items-center">
-                    <div
-                      className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
-                        status,
-                      )}`}
-                    />
-                    {capitalize(status)}
-                  </div>
-                </SelectItem>
-              ))}
-            </GeneralTableSelect>
-          )
-        },
         filterFn: (row, id, value) => {
           return value.includes(row.getValue(id))
         },
-      },
-      {
-        accessorFn: (val) => val.assignedTo?.name ?? '',
+      }),
+
+      columnHelper.accessor((row) => row.status, {
+        id: 'status',
         header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Assignee"
-            icon={<UserRoundPen className="dark:text-neutral-400" size={15} />}
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ row, getValue }) => (
+          <EditableCell
+            displayValue={
+              <div className="flex gap-2 items-center">
+                <div
+                  className={`rounded-full h-2 w-2 ${getColorByTaskStatusType(
+                    getValue() as string,
+                  )}`}
+                />
+                {capitalize(getValue() as string)}
+              </div>
+            }
+            value={getValue()}
+            onSave={(value) =>
+              handleFieldUpdate(row.original, 'status', value as TaskStatusType)
+            }
+            options={Object.keys(TaskStatusType).map((status) => ({
+              label: String(capitalize(status.replace('_', ' '))),
+              value: status,
+            }))}
+            type={EditableCellType.SELECT}
           />
         ),
-        id: 'Assignee',
-        cell: ({ row }) => {
-          const assignedTo = row.original.assignedTo as User | undefined
+      }),
+
+      columnHelper.accessor((row) => row.assignedTo, {
+        id: 'assignedTo',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Assigned To" />
+        ),
+        cell: ({ row, getValue }) => {
+          const user = getValue() as UserResponseType | null
+
           return (
-            <GeneralTableSelect
-              key={row.id}
-              id={row.original.id}
-              mutate={mutate}
-              apiRoute="task"
-              paramToUpdate="assignedToId"
-              clearable
-              stylingProps={{
-                triggerStyle: !assignedTo ? '' : 'w-fit h-fit p-1',
-              }}
-              initialValue={
-                assignedTo ? (
+            <EditableCell
+              displayValue={
+                user ? (
                   <div className="flex items-center gap-1">
                     <UserAvatar
-                      username={assignedTo.name}
+                      username={user.name}
                       avatarSize={25}
                       fontSize={10}
                     />
-                    {assignedTo.name}
+                    {user.name}
                   </div>
                 ) : (
                   ''
                 )
               }
-            >
-              {/* We iterate over project.users to only allow members connected to the current project */}
-              {users
-                ? users.map((user) => (
-                    <SelectItem value={user.id} key={`user-item-${user.id}`}>
-                      <div className="flex items-center gap-1">
-                        <UserAvatar
-                          avatarSize={25}
-                          fontSize={10}
-                          username={user.name}
-                        />
-                        {user.name}
-                      </div>
-                    </SelectItem>
-                  ))
-                : null}
-            </GeneralTableSelect>
+              value={user?.id}
+              onSave={(value) =>
+                handleFieldUpdate(row.original, 'assignedToId', value as string)
+              }
+              options={users.map((user) => ({
+                label: user.name,
+                value: user.id,
+              }))}
+              type={EditableCellType.SELECT}
+            />
           )
         },
-      },
-      {
-        accessorKey: 'dueDate',
+      }),
+
+      columnHelper.accessor((row) => row.dueDate, {
+        id: 'dueDate',
         header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Estimation"
-            icon={<CalendarClock className="dark:text-neutral-400" size={15} />}
-          />
+          <DataTableColumnHeader column={column} title="Estimation" />
         ),
-        id: 'Estimation',
         cell: ({ row }) => {
           return (
             <div
@@ -391,9 +249,9 @@ export const ListTabColumns = ({
           )
         },
         filterFn: 'equalsString',
-      },
-      {
-        accessorKey: 'tags',
+      }),
+
+      columnHelper.accessor((row) => row.tags, {
         id: 'tags',
         enableSorting: false,
         header: ({ column }) => (
@@ -404,11 +262,11 @@ export const ListTabColumns = ({
           />
         ),
         cell: ({ row, getValue }) => {
-          const tasks = getValue() as (TaskTagJoin & { tag: Tag })[]
-          const taskCount = tasks.length
+          const tags = getValue() as TagResponseType[]
+          const tagCount = tags.length
 
           // If there are more than 2 tasks, we will show the "X tasks left" badge
-          const remainingTasks = taskCount > 2 ? tasks.slice(2) : []
+          const remainingTasks = tagCount > 2 ? tags.slice(2) : []
 
           return (
             <div
@@ -416,13 +274,13 @@ export const ListTabColumns = ({
               key={`tag-${row.index}`}
             >
               {/* Render up to 2 task badges */}
-              {tasks.slice(0, 2).map((tag) => (
+              {tags.slice(0, 2).map((tag) => (
                 <Badge
                   variant="outline"
                   className="flex-nowrap whitespace-nowrap text-ellipsis"
-                  key={`status-item-${tag.tag.title}`}
+                  key={`status-item-${tag.title}`}
                 >
-                  {tag.tag.title}
+                  {tag.title}
                 </Badge>
               ))}
 
@@ -444,7 +302,7 @@ export const ListTabColumns = ({
                         key={`remaining-task-${task.id}`}
                         className="text-xs"
                       >
-                        {task.tag.title}
+                        {task.title}
                       </div>
                     ))}
                   </HoverCardContent>
@@ -453,9 +311,58 @@ export const ListTabColumns = ({
             </div>
           )
         },
-      },
+      }),
+
+      columnHelper.display({
+        id: 'actions',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={'ghost'} size={'icon'}>
+                <Ellipsis className={'flex-shrink-0 w-4 h-4'} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <HoverLink
+                  href={`/app/projects/${row.original.projectName}/edit/${row.original.id}`}
+                  className="gap-3"
+                >
+                  <Pencil className="h-4 w-4 " />
+                  Edit Task
+                </HoverLink>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/app/projects/${row.original.projectName}/create/${row.original.type}?parentId=${row.original.id}`}
+                  className="gap-3"
+                >
+                  <BetweenHorizonalStart className="h-4 w-4 " />
+                  Add Subtask
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="gap-3"
+                onClick={() =>
+                  deleteMutation({
+                    id: row.original.id,
+                    pid: row.original.projectId,
+                  })
+                }
+              >
+                <Trash className="h-4 w-4 text-red-500" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        size: 50,
+      }),
     ],
-    [users, projectName, mutate, onTaskDelete],
+    [handleFieldUpdate, deleteMutation, users],
   )
-  return cols
-}

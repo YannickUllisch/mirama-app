@@ -1,5 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { register } from '@server/auth/register'
+import { RegisterSchema } from '@server/auth/schemas'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { Button } from '@src/components/ui/button'
@@ -12,9 +14,8 @@ import {
   FormMessage,
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
-import { register } from '@src/lib/auth/register'
-import { RegisterSchema } from '@src/lib/schemas'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import type * as z from 'zod'
@@ -24,12 +25,14 @@ const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: '',
       password: '',
+      name: '',
     },
   })
 
@@ -37,8 +40,17 @@ const RegisterForm = () => {
     setError('')
     setSuccess('')
 
-    startTransition(() => {
-      register(vals)
+    startTransition(async () => {
+      await register(vals).then((res) => {
+        if (res.success) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('verify_email', vals.email)
+          }
+          router.push('/auth/verify')
+        } else {
+          setError(res.error)
+        }
+      })
     })
   }
 
@@ -58,6 +70,28 @@ const RegisterForm = () => {
             </p>
           </div>
           <div className="grid gap-6">
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Username"
+                        required
+                        className="focus-visible:ring-black dark:focus-visible:ring-white"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className="grid gap-2">
               <FormField
                 control={form.control}
@@ -103,7 +137,7 @@ const RegisterForm = () => {
             </div>
             <FormSuccess message={success} />
             <FormError message={error} />
-            <Button disabled={isPending} type="submit" variant={'default'}>
+            <Button disabled={isPending} type="submit" variant={'primary'}>
               {!isPending ? (
                 'Create Account'
               ) : (

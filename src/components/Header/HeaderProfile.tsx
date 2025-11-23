@@ -1,85 +1,119 @@
 'use client'
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
+  DropdownMenuGroup,
   DropdownMenuLabel,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback } from '@src/components/ui/avatar'
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@src/components/ui/dropdown-menu'
-import Link from 'next/link'
-import { signOut } from 'next-auth/react'
-import { capitalize, extractFirstLetters, getColorByName } from '@src/lib/utils'
-import { ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import { Check, LogOut, Settings, Sparkles, SunMoon } from 'lucide-react'
 import type { Session } from 'next-auth'
+import { signOut } from 'next-auth/react'
+import { useTheme } from 'next-themes'
+import Link from 'next/link'
+import UserAvatar from '../Avatar/UserAvatar'
 
-const HeaderProfile = ({
-  session,
-  onlyAvatar,
-}: { session: Session | null; onlyAvatar?: boolean }) => {
-  const userColor = session?.user?.name
-    ? getColorByName(session?.user?.name)
-    : 'bg-neutral-400/20'
+const HeaderProfile = ({ session }: { session: Session | null }) => {
+  const { theme, setTheme } = useTheme()
+
+  const DropdownItem = ({
+    label,
+    icon,
+    onClick,
+  }: {
+    label: string
+    icon: React.ReactNode
+    onClick?: React.MouseEventHandler<HTMLDivElement> | undefined
+  }) => {
+    return (
+      <DropdownMenuItem className="cursor-pointer" onClick={onClick}>
+        <div className="flex items-center gap-3">
+          {icon}
+          {label}
+        </div>
+      </DropdownMenuItem>
+    )
+  }
+
+  const SubItemChecked = ({ subItem }: { subItem: string }) => {
+    return (
+      <div className="flex items-center gap-2 justify-between w-full">
+        {subItem}
+        {theme === subItem.toLowerCase() && <Check width={13} />}
+      </div>
+    )
+  }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div
-          className={`flex items-center gap-3 cursor-pointer p-1 rounded-md ${
-            onlyAvatar ? '' : 'hover:bg-neutral-50 hover:dark:bg-neutral-900'
-          } `}
-        >
-          <Avatar className="w-10 h-10">
-            <AvatarFallback className={userColor} style={{ fontSize: 13 }}>
-              {extractFirstLetters(session?.user.name ?? '')}
-            </AvatarFallback>
-          </Avatar>
-          {!onlyAvatar && (
-            <>
-              <div className="flex flex-col">
-                <span style={{ fontSize: 12 }}>{session?.user.name}</span>
-                <span
-                  key={`session-role-${session?.user.role}`}
-                  style={{ fontSize: 9 }}
-                >
-                  {capitalize(session?.user.role.toLowerCase() ?? 'No role')}
-                </span>
-              </div>
-              <ChevronsUpDown width={15} />
-            </>
-          )}
-        </div>
+      <DropdownMenuTrigger>
+        <UserAvatar
+          avatarSize={30}
+          username={session?.user.name ?? ''}
+          fontSize={10}
+        />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="md:w-[200px]">
-        <DropdownMenuLabel>
-          <div className="flex flex-col">
-            <span className="font-normal" style={{ fontSize: 11 }}>
-              Signed in as
-            </span>
-            <span style={{ fontSize: 12 }}>{session?.user.email}</span>
+      <DropdownMenuContent
+        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        side={'bottom'}
+        align="end"
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <UserAvatar
+              avatarSize={25}
+              username={session?.user.name ?? ''}
+              fontSize={10}
+            />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">
+                {session?.user.name}
+              </span>
+              <span className="truncate text-xs">{session?.user.email}</span>
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={'/app/settings'} legacyBehavior passHref>
-          <DropdownMenuItem className="cursor-pointer">
-            <div className="flex items-center gap-3">
-              <Settings width={17} />
-              Account settings
-            </div>
-          </DropdownMenuItem>
-        </Link>
-        <DropdownMenuItem
-          className="cursor-pointer"
+        <DropdownMenuGroup>
+          <DropdownItem icon={<Sparkles width={17} />} label="Upgrade to Pro" />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <div className="flex items-center gap-3">
+                <SunMoon width={17} />
+                Change Theme
+              </div>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => setTheme('light')}>
+                <SubItemChecked subItem="Light" />
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <SubItemChecked subItem="Dark" />
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
+                <SubItemChecked subItem="System" />
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <Link href={'/app/settings'}>
+            <DropdownItem icon={<Settings width={17} />} label="Settings" />
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownItem
+          icon={<LogOut width={17} />}
+          label="Sign out"
           onClick={() => signOut({ callbackUrl: '/', redirect: true })}
-        >
-          <div className="flex items-center gap-3">
-            <LogOut width={17} />
-            Sign out
-          </div>
-        </DropdownMenuItem>
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   )

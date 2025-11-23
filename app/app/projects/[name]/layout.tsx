@@ -1,12 +1,12 @@
-import { auth } from '@auth'
-import db from '@db'
-import ProjectUsersContext from '@src/components/Contexts/ProjectDataContext'
+import { auth } from '@server/auth/auth'
+import db from '@server/utils/db'
+import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
 import { isTeamAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
-  title: 'Projects | Mirama',
+  title: 'Projects',
   description: 'Project and Task Management',
 }
 
@@ -47,9 +47,9 @@ const Layout = async ({
   }
 
   return (
-    <ProjectUsersContext projectId={project.id} projectName={project.name}>
+    <ProjectViewContext projectId={project.id} projectName={project.name}>
       {children}
-    </ProjectUsersContext>
+    </ProjectViewContext>
   )
 }
 

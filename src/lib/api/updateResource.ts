@@ -1,20 +1,19 @@
-import { api } from '@api'
+import { api } from '@src/lib/api'
 import { toast } from 'sonner'
-import type { KeyedMutator } from 'swr'
 
-export const updateResourceById = async <T, U>(
+export const updateResourceById = async <T>(
   route: string,
   id: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
     onSuccess?: () => void
   },
 ) => {
   try {
     toast.promise(api.put(`${route}?id=${id}`, params), {
       loading: 'Updating..',
-      error: (err) => err.response.statusText ?? err,
+      error: (error) => error.response?.data.message ?? error.message ?? error,
       success: () => {
         if (options?.mutate) {
           options.mutate()
@@ -31,12 +30,12 @@ export const updateResourceById = async <T, U>(
   }
 }
 
-export const updateResourceByIdNoToast = async <T, U>(
+export const updateResourceByIdNoToast = async <T>(
   route: string,
   id: string,
   params: T,
   options?: {
-    mutate?: KeyedMutator<U[]>
+    mutate?: any
     onSuccess?: () => void
   },
 ) => {
@@ -51,6 +50,6 @@ export const updateResourceByIdNoToast = async <T, U>(
     })
   } catch (error: any) {
     toast.error(error)
-    throw error.response?.statusText ?? error
+    throw error.response?.data.message ?? error.message ?? error
   }
 }

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import { MoveRight, CheckCircle, LockOpen } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
+import { motion } from 'framer-motion'
+import { CheckCircle, LockOpen, MoveRight } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 
 export const LandingView = () => {
   const [titleNumber, setTitleNumber] = useState(0)
@@ -25,7 +25,8 @@ export const LandingView = () => {
         <div className="flex gap-8 pt-20 lg:pt-36 items-center justify-center flex-col text-center">
           <div>
             <Button variant="secondary" size="sm" className="gap-4">
-              Open to public soon <LockOpen className="w-4 h-4" />
+              Open for public registrations now!
+              <LockOpen className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex gap-4 flex-col items-center">
@@ -62,7 +63,7 @@ export const LandingView = () => {
               Get a Demo <CheckCircle className="w-4 h-4" />
             </Button>
             <Link href={'/auth/login'}>
-              <Button size="lg" className="gap-4">
+              <Button size="lg" className="gap-4" variant={'primary'}>
                 Get Started <MoveRight className="w-4 h-4" />
               </Button>
             </Link>

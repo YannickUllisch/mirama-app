@@ -1,53 +1,67 @@
 'use client'
-import type { Project, ProjectUser, User } from '@prisma/client'
+import apiRequest from '@hooks/query'
+import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
+import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { ArchiveIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import useSWR from 'swr'
-import { ArchiveColumns } from './columns'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useArchivedProjectsColumns } from './columns'
 
 const ArchivePage = () => {
   const { data: session } = useSession()
-  const {
-    data: projects,
-    mutate: updateProjects,
-    isLoading: projectsLoading,
-  } = useSWR<
-    (Project & {
-      users: ProjectUser[]
-    })[]
-  >({
-    url: 'project',
-    archived: true,
-    select: {
-      name: true,
-      users: true,
-      startDate: true,
-      endDate: true,
-      priority: true,
-      status: true,
-      budget: true,
-    },
-  })
 
-  const { data: users } = useSWR<User[]>('team/member')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  // Hooks
+  const { data: projects, isLoading } =
+    apiRequest.project.fetchArchived.useQuery()
+  const { mutate: useArchiveMutation } =
+    apiRequest.project.archive.useMutation()
+  const { mutate: useDeleteMutation } = apiRequest.project.delete.useMutation()
+  const { data: users } = apiRequest.team.fetchMembers.useQuery()
 
   return (
-    <DataTable
-      tableIdentifier="archivedTable"
-      toolbarOptions={{
-        showFilterOption: true,
-        filterOptionType: 'PROJECT',
-      }}
-      footerOptions={{ showPagination: true }}
-      expandedContent
-      columns={ArchiveColumns({
-        mutate: updateProjects,
-        session: session,
-        users: users ?? [],
-      })}
-      data={projects ?? []}
-      dataLoading={projectsLoading}
-    />
+    <>
+      <PageHeader
+        title="Archive"
+        description="Archived projects overview"
+        icon={ArchiveIcon}
+      />
+      <DataTable
+        tableIdentifier="archivedTable"
+        toolbarOptions={{
+          showFilterOption: true,
+        }}
+        footerOptions={{ showPagination: true }}
+        expandedContent
+        columns={useArchivedProjectsColumns({
+          archiveMutation: useArchiveMutation,
+          session: session,
+          users: users ?? [],
+          setSelectedId: setSelectedId,
+        })}
+        data={projects ?? []}
+        dataLoading={isLoading}
+      />
+
+      <ConfirmationDialogWithOpenState
+        isOpen={!!selectedId}
+        key={'confirmation-dialog-deletion'}
+        title="Are you sure?"
+        description="Deleting a project can not be undone. All associated data will be lost. Are you sure you want to proceed?"
+        onCancel={() => setSelectedId(null)}
+        onSubmit={() => {
+          if (selectedId) {
+            useDeleteMutation(selectedId)
+            setSelectedId(null)
+          } else {
+            toast.error('Error on Delete..')
+          }
+        }}
+      />
+    </>
   )
 }
 

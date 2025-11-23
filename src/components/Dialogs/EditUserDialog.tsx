@@ -1,11 +1,12 @@
-import { UserSchema } from '@/prisma/zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Role, type User } from '@prisma/client'
-import type { UpdateSession } from 'next-auth/react'
-import type React from 'react'
-import { type FC, useTransition } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import type { z } from 'zod'
+import apiRequest from '@hooks/query'
+import { Role } from '@prisma/client'
+import {
+  UpdateUserSchema,
+  type UpdateUserType,
+  type UserResponseType,
+} from '@server/domain/userSchema'
+import { Button } from '@src/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -14,15 +15,10 @@ import {
   DialogTitle,
 } from '@src/components/ui/dialog'
 import { Input } from '@src/components/ui/input'
-import { Button } from '@src/components/ui/button'
-import { updateResourceById } from '@src/lib/api/updateResource'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
+import type { UpdateSession } from 'next-auth/react'
+import type React from 'react'
+import { type FC, useTransition } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import {
   FormControl,
   FormField,
@@ -30,13 +26,19 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
 interface EditUserDialogProps {
-  user: User
+  user: UserResponseType
   updateSession: UpdateSession
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  mutate?: () => any
 }
 
 const EditUserDialog: FC<EditUserDialogProps> = ({
@@ -44,28 +46,30 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
   updateSession,
   open,
   setOpen,
-  mutate,
 }) => {
   // States
   const [isPending, startTransition] = useTransition()
 
   // Form Logic and Functions
-  const form = useForm<z.infer<typeof UserSchema>>({
-    resolver: zodResolver(UserSchema),
+  const form = useForm<UpdateUserType>({
+    resolver: zodResolver(UpdateUserSchema),
     defaultValues: {
       ...user,
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof UserSchema>) => {
+  const { mutate: mutateUser } = apiRequest.team.update.useMutation()
+
+  const onSubmit = (vals: UpdateUserType) => {
     startTransition(() => {
-      // To make returning to unassigned state possible, we have to reset the undefined string
-      updateResourceById('team/member', user.id, vals, {
-        mutate: mutate,
-        onSuccess: updateSession,
-      }).then(() => {
-        setOpen(false)
-      })
+      mutateUser(
+        { id: user.id, payload: { ...vals } },
+        {
+          onSuccess: () => {
+            updateSession()
+          },
+        },
+      )
     })
   }
 

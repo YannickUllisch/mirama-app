@@ -1,74 +1,41 @@
-import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
+import { auth } from '@server/auth/auth'
 import AppHeader from '@src/components/Header/AppHeader'
-import type { Metadata } from 'next'
-import SwrProvider from '@src/components/Wrappers/SwrProvider'
-import { auth } from '@auth'
-import { SidebarProvider } from '@src/components/ui/sidebar'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
+import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
+import { SidebarProvider } from '@src/components/ui/sidebar'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import db from '@db'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Dashboard | Mirama',
+  title: 'Dashboard',
   description: 'App Dashboard',
 }
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
 
-  const userQ = db.user.findUnique({
-    where: { id: session?.user.id ?? 'undef' },
-  })
-
-  const project = await db.project.findMany({
-    where: {
-      teamId: session?.user.teamId,
-      archived: false,
-      ...(isTeamAdminOrOwner(session)
-        ? {} // Admins should see all projects, so remove the `users` filter
-        : {
-            users: {
-              some: {
-                userId: session?.user.id,
-              },
-            },
-          }),
-    },
-    include: {
-      tasks: true,
-    },
-  })
-
-  const [user, projects] = await Promise.all([userQ, project])
-
-  if (!session || !user) {
+  if (!session) {
     return redirect('/auth/login?callbackUrl=/app')
   }
 
   return (
     <SessionWrapper>
-      <SwrProvider>
+      <QueryClientWrapper>
         <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            <AppSidebar
-              projects={projects}
-              user={user}
-              session={session}
-              className="flex-shrink-0"
-              team={null}
-            />
-            <div className="flex-1 overflow-hidden min-h-[100vh] ">
-              <AppHeader />
-              <main className="flex flex-col overflow-y-auto w-full h-[100%] rounded-lg border border-hover">
-                <div className="bg-white h-[100%] dark:bg-neutral-900 flex-1 px-6 pt-5">
-                  {children}
-                </div>
+          <div className="w-full flex flex-col">
+            <AppHeader />
+
+            <div className="flex flex-1 pt-14">
+              <AppSidebar session={session} className="flex-shrink-0" />
+
+              <main className="flex-1 overflow-auto bg-card rounded-lg">
+                <div className="p-5">{children}</div>
               </main>
             </div>
           </div>
         </SidebarProvider>
-      </SwrProvider>
+      </QueryClientWrapper>
     </SessionWrapper>
   )
 }
