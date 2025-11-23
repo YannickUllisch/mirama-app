@@ -1,10 +1,11 @@
-import { Badge } from '@src/components/ui/badge'
+'use client'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@src/components/ui/accordion'
+import { Badge } from '@src/components/ui/badge'
 
 export const LandingFAQ = () => (
   <div className="w-full py-20 lg:py-40 bg-background">

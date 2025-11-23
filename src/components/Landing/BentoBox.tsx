@@ -1,5 +1,6 @@
-import { ClipboardCheck, Clock, MessageSquare, Users } from 'lucide-react'
+'use client'
 import { Badge } from '@src/components/ui/badge'
+import { ClipboardCheck, Clock, MessageSquare, Users } from 'lucide-react'
 
 export const LandingBentoBox = () => (
   <div className="w-full py-20 lg:py-40 bg-secondary">
