@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
 import {
   motion,
   useAnimationFrame,
@@ -10,6 +9,7 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@src/lib/utils'
 
@@ -56,6 +56,7 @@ export function VelocityScroll({
     const containerRef = useRef<HTMLDivElement>(null)
     const textRef = useRef<HTMLSpanElement>(null)
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
       const calculateRepetitions = () => {
         if (containerRef.current && textRef.current) {
@@ -75,7 +76,7 @@ export function VelocityScroll({
     const x = useTransform(baseX, (v) => `${wrap(-100 / repetitions, 0, v)}%`)
 
     const directionFactor = React.useRef<number>(1)
-    useAnimationFrame((t, delta) => {
+    useAnimationFrame((_, delta) => {
       let moveBy = directionFactor.current * baseVelocity * (delta / 1000)
 
       if (velocityFactor.get() < 0) {
@@ -96,7 +97,7 @@ export function VelocityScroll({
       >
         <motion.div className={cn('inline-block', className)} style={{ x }}>
           {Array.from({ length: repetitions }).map((_, i) => (
-            <span key={i} ref={i === 0 ? textRef : null}>
+            <span key={i.toString()} ref={i === 0 ? textRef : null}>
               {children}{' '}
             </span>
           ))}

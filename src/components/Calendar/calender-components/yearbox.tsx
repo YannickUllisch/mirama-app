@@ -45,7 +45,6 @@ export function YearBox({ isAnimating, onSelect, currentYear }: ComboboxProps) {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           className=" justify-between"
         >

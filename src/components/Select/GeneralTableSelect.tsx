@@ -1,5 +1,3 @@
-import type React from 'react'
-import type { FC, PropsWithChildren } from 'react'
 import {
   Select,
   SelectContent,
@@ -8,8 +6,10 @@ import {
   SelectValue,
 } from '@src/components/ui/tableSelect'
 import { updateResourceById } from '@src/lib/api/updateResource'
-import { SelectItem } from '../ui/select'
 import { UserIcon } from 'lucide-react'
+import type React from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { SelectItem } from '../ui/select'
 
 interface GeneralTableSelectProps {
   initialValue: string | React.ReactNode
@@ -35,7 +35,7 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
   stylingProps,
   clearable,
 }) => {
-  const onValueChange = async (val: string) => {
+  const onValueChange = (val: string) => {
     updateResourceById(
       apiRoute,
       id,

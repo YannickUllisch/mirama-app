@@ -1,14 +1,14 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
-import Image from 'next/image'
 import { Badge } from '@ui/badge'
+import { motion, useInView } from 'framer-motion'
 import { GripVertical, Moon, Sun } from 'lucide-react'
+import Image from 'next/image'
+import { useRef, useState } from 'react'
 
 export const ThemeShowcase = () => {
-  const [sliderPosition, setSliderPosition] = useState(50)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [sliderPosition, _setSliderPosition] = useState(50)
+
   const headerRef = useRef(null)
   const isInView = useInView(headerRef, { once: true })
 

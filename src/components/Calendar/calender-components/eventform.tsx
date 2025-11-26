@@ -26,6 +26,7 @@ import {
 } from '@src/components/ui/select' // Fixed import path
 import { Textarea } from '@src/components/ui/textarea'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Command,
   CommandEmpty,
@@ -34,20 +35,8 @@ import {
   CommandItem,
   CommandList,
 } from '@src/components/ui/command'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 
-import {
-  Calendar as CalendarIcon,
-  Check,
-  ChevronsUpDown,
-  X,
-} from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import type * as z from 'zod'
-import { cn } from '@src/lib/utils'
-import { formSchema } from '../validation/event'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,6 +48,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@src/components/ui/alert-dialog'
+import { cn } from '@src/lib/utils'
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  X,
+} from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import type * as z from 'zod'
+import { formSchema } from '../validation/event'
 
 const halls = [
   {
@@ -187,7 +187,7 @@ export default function EventForm({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values)
+      console.info(values)
       toast(
         <div>
           <h2 className="text-lg font-semibold">Event Created</h2>
@@ -235,7 +235,6 @@ export default function EventForm({
                       <FormControl>
                         <Button
                           variant="outline"
-                          role="combobox"
                           className={cn(
                             'w-full justify-between',
                             !field.value && 'text-muted-foreground',
