@@ -122,7 +122,7 @@ export const useTaskColumns = ({
           <EditableCell
             displayValue={
               <HoverLink
-                href={`/app/projects/${row.original.title}`}
+                href={`/app/projects/${row.original.projectName}/edit/${row.original.id}`}
                 className="hover:underline underline-offset-4"
               >
                 {getValue()}
@@ -337,7 +337,7 @@ export const useTaskColumns = ({
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/app/projects/${row.original.projectName}/create/${row.original.type}?parentId=${row.original.id}`}
+                  href={`/app/projects/${row.original.projectName}/create/task?parentId=${row.original.id}`}
                   className="gap-3"
                 >
                   <BetweenHorizonalStart className="h-4 w-4 " />

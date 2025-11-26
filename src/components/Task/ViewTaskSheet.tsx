@@ -26,7 +26,6 @@ import {
   MessagesSquareIcon,
   PanelBottomClose,
   Pencil,
-  Star,
   TagIcon,
   UserCheckIcon,
   UserIcon,
@@ -51,8 +50,8 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
   const projectInfo = useContext(ProjectDataContext)
 
   const { data: task } = apiRequest.task.fetchById.useQuery(
-    taskId,
     projectInfo?.projectId ?? '',
+    taskId,
   )
 
   const { data: users } = apiRequest.project.fetchAssignees.useQuery(
@@ -83,7 +82,7 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
         <RelatedWorkTab
           parent={task?.parent}
           subtasks={task?.subtasks}
-          projectId={projectInfo?.projectId ?? ''}
+          projectName={projectInfo?.projectName ?? ''}
         />
       ),
     },
@@ -109,6 +108,7 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTitle />
       <SheetContent hideSheetClose className="p-0 w-[800px] overflow-y-scroll ">
         {!task ? (
           <div className="w-full flex justify-center items-center min-h-[100vh]">
@@ -130,17 +130,16 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
                     <Pencil className="text-white" size={15} />
                   </Link>
                 </Button>
-                <Button variant={'ghost'} className="p-1 h-fit">
-                  <Star className="text-white" size={15} />
-                </Button>
               </div>
-              {task.status !== 'DONE' && (
+              {task.status !== TaskStatusType.DONE && (
                 <div className="flex gap-2 items-center mt-1.5">
                   <Button
-                    variant={'default'}
+                    variant={'primary'}
                     onClick={() => {
-                      if (task.status !== 'DONE') {
-                        updateResourceById('task', task.id, { status: 'DONE' })
+                      if (task.status !== TaskStatusType.DONE) {
+                        updateResourceById('task', task.id, {
+                          status: TaskStatusType.DONE,
+                        })
                       }
                     }}
                     className="text-xs p-1 px-2 h-fit text-white flex gap-2 items-center"

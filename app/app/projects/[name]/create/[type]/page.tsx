@@ -109,7 +109,14 @@ const CreateTaskPage = () => {
       return
     }
 
-    createTaskMutation({ id: ctx.projectId, payload: vals })
+    createTaskMutation(
+      { id: ctx.projectId, payload: vals },
+      {
+        onSuccess() {
+          router.back()
+        },
+      },
+    )
   }
 
   return (

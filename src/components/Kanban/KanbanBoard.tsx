@@ -27,7 +27,6 @@ import { v4 } from 'uuid'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
 import KanbanContainer from './KanbanContainer'
 import { ContainerHeader } from './KanbanContainerItem'
-import { KanbanHeader } from './KanbanHeader'
 import KanbanItem from './KanbanItem'
 import { createBoards } from './createBoards'
 
@@ -342,7 +341,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
-      <KanbanHeader />
       {/* Header (Single Instance) */}
       <div className="overflow-auto">
         <header className="sticky top-0 rounded-sm bg-background z-10">
