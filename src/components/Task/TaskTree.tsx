@@ -1,4 +1,5 @@
 'use client'
+import type { TaskStatusType } from '@prisma/client'
 import type { TaskResponseType } from '@server/domain/taskSchema'
 import {
   CollapseButton,
@@ -8,6 +9,7 @@ import {
 } from '@src/components/Tree/TreeViewAPI'
 import { createTree } from '@src/lib/createTree'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { Badge } from '@ui/badge'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'
 import type { FC } from 'react'
@@ -15,6 +17,12 @@ import type { FC } from 'react'
 interface TaskTreeProps {
   projectName: string
   tasks: TaskResponseType[]
+}
+
+const statusColors = {
+  DONE: 'bg-green-500/10 text-green-600',
+  ACTIVE: 'bg-yellow-500/10 text-yellow-600',
+  NEW: 'bg-muted text-muted-foreground',
 }
 
 const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {
@@ -39,11 +47,24 @@ const TaskTree: FC<TaskTreeProps> = ({ tasks, projectName }) => {
           fileIcon={getTaskTypeIcon(element.type)}
           key={element.id}
           value={element.id}
-          className="flex gap-2 items-center"
+          className="flex gap-2 items-center group"
         >
-          <p>{element.title}</p>
-          <Link href={`/app/projects/${projectName}/edit/${element.id}`}>
-            <SquareArrowOutUpRight size={10} />
+          <p className="flex-1">{element.title}</p>
+          <Badge
+            variant="secondary"
+            className={`text-[10px] h-4 px-1.5 ${statusColors[element.status as TaskStatusType] || ''}`}
+          >
+            {element.status}
+          </Badge>
+          <Link
+            href={`/app/projects/${projectName}/edit/${element.id}`}
+            className="opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Open task"
+          >
+            <SquareArrowOutUpRight
+              size={12}
+              className="text-muted-foreground hover:text-foreground"
+            />
           </Link>
         </File>
       )

@@ -155,7 +155,7 @@ export const TaskService = {
   ) => {
     const { parentId, tags, newTags, subtasks, ...rest } = payload
 
-    if (parentId && !isTaskTypeContainer(rest.type)) {
+    if (parentId && isTaskTypeContainer(rest.type)) {
       throw new Error('This task type can not be assigned a parent')
     }
 
@@ -263,7 +263,7 @@ export const TaskService = {
     }
 
     const { parentId, tags, newTags, subtasks, ...rest } = payload
-    if (parentId && !isTaskTypeContainer(rest.type)) {
+    if (parentId && isTaskTypeContainer(rest.type)) {
       throw new Error('This task type can not be assigned a parent')
     }
 
@@ -275,6 +275,7 @@ export const TaskService = {
       },
       data: {
         ...rest,
+        parentId,
         tags: {
           connect: tags.map((id) => ({ id })),
           create: newTags.map((t) => ({

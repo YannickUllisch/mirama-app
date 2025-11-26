@@ -186,14 +186,11 @@ export const ProjectService = {
       // Upsert Milestones
       await Promise.all(
         milestones.map((m) =>
-          m.id
-            ? prisma.milestone.update({
-                where: { id: m.id },
-                data: { ...m, projectId },
-              })
-            : prisma.milestone.create({
-                data: { ...m, projectId },
-              }),
+          prisma.milestone.upsert({
+            where: { id: m.id ?? '' }, // If m.id is undefined, use an impossible id to force create
+            update: { ...m, projectId },
+            create: { ...m, id: m.id ?? v4(), projectId },
+          }),
         ),
       )
 
