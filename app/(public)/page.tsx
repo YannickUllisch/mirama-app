@@ -1,24 +1,20 @@
 import { LandingBentoBox } from '@src/components/Landing/BentoBox'
 import { CallToAction } from '@src/components/Landing/CallToAction'
 import { LandingFAQ } from '@src/components/Landing/FAQ'
-import { LandingView } from '@src/components/Landing/LandingView'
-import { ScrollAnimationWrapper } from '@src/components/Landing/ScrollWrapper'
+import FeaturesShowcase from '@src/components/Landing/FeaturesShowcase'
+import HeroSection from '@src/components/Landing/HeroSection'
 import type { FC } from 'react'
 
 const LandingPage: FC = () => {
   return (
     <>
-      <ScrollAnimationWrapper>
-        <LandingView />
-      </ScrollAnimationWrapper>
+      <HeroSection />
 
-      <ScrollAnimationWrapper>
-        <LandingBentoBox />
-      </ScrollAnimationWrapper>
+      <LandingBentoBox />
 
-      <ScrollAnimationWrapper>
-        <LandingFAQ />
-      </ScrollAnimationWrapper>
+      <FeaturesShowcase />
+
+      <LandingFAQ />
 
       <CallToAction />
     </>
