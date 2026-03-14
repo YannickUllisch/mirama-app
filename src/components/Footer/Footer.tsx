@@ -1,8 +1,8 @@
 'use server'
-import Link from 'next/link'
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 
-const Footer = () => {
+const Footer = async () => {
   return (
     <div className="bg-secondary mx-auto flex h-[60px] text-muted dark:text-white/80 w-full ">
       <div className="w-full mx-[5%] text-xs align-center justify-center md:justify-between flex">

@@ -4,7 +4,7 @@ import type { Session } from 'next-auth'
 import Link from 'next/link'
 import HoverLink from '../HoverLink'
 
-const PublicHeader = ({ session }: { session: Session | null }) => {
+const PublicHeader = async ({ session }: { session: Session | null }) => {
   return (
     <header className="sticky top-0 bg-background z-50 sm:flex py-1 px-4 mx-auto ">
       <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
