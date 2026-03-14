@@ -76,7 +76,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
     const column = board.columns.find((col) => col.id === columnId)
     if (!column) return
 
-    let parentId: string | undefined = undefined
+    let parentId: string | undefined
     if (boardId.includes('board')) {
       parentId = boardId.substring(6)
     }

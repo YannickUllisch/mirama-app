@@ -1,6 +1,27 @@
 'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@src/components/ui/alert-dialog'
 import { Button } from '@src/components/ui/button'
 import { Calendar } from '@src/components/ui/calendar'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@src/components/ui/command'
 import {
   Form,
   FormControl,
@@ -25,30 +46,8 @@ import {
   SelectValue,
 } from '@src/components/ui/select' // Fixed import path
 import { Textarea } from '@src/components/ui/textarea'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@src/components/ui/command'
-import { format } from 'date-fns'
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@src/components/ui/alert-dialog'
 import { cn } from '@src/lib/utils'
+import { format } from 'date-fns'
 import {
   Calendar as CalendarIcon,
   Check,
@@ -164,7 +163,10 @@ function DeleteEvent() {
 export default function EventForm({
   values,
   currentDate,
-}: { values?: Event; currentDate?: Date }) {
+}: {
+  values?: Event
+  currentDate?: Date
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -336,7 +338,7 @@ export default function EventForm({
                         const value = e.target.value
                         field.onChange(
                           value
-                            ? Number.parseInt(value.replace(/\D/g, ''))
+                            ? Number.parseInt(value.replace(/\D/g, ''), 10)
                             : null,
                         ) // Convert to number
                       }}

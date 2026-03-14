@@ -29,7 +29,10 @@ const features = [
 const FeatureSection = ({
   feature,
   index,
-}: { feature: (typeof features)[0]; index: number }) => {
+}: {
+  feature: (typeof features)[0]
+  index: number
+}) => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 

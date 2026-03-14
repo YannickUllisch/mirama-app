@@ -29,7 +29,9 @@ const chartConfig: ChartConfig = {
 
 export const BudgetExpenseBarChart = ({
   projects,
-}: { projects: (Project & { expenses: Expense[] })[] }) => {
+}: {
+  projects: (Project & { expenses: Expense[] })[]
+}) => {
   // Transform projects into chartData
   const chartData: BudgetExpenseChartData[] | undefined = useMemo(() => {
     if (!projects) {

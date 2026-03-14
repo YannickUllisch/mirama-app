@@ -31,7 +31,7 @@ export function YearBox({ isAnimating, onSelect, currentYear }: ComboboxProps) {
 
       // If it's exactly 4 digits, trigger the onSelect callback
       if (value.length === 4 && onSelect) {
-        onSelect(Number.parseInt(value))
+        onSelect(Number.parseInt(value, 10))
       }
     }
   }

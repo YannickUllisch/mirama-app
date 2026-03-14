@@ -9,7 +9,11 @@ const SubTasksGroup = ({
   tasks,
   projectName,
   mutate,
-}: { tasks: Task[]; projectName: string; mutate?: () => any }) => {
+}: {
+  tasks: Task[]
+  projectName: string
+  mutate?: () => any
+}) => {
   return (
     <div className="flex flex-col">
       <Label className="mb-3">Subtasks</Label>

@@ -31,7 +31,10 @@ import { useMemo } from 'react'
 const OverviewTab = ({
   project,
   tasks,
-}: { project: ProjectResponseInput | null; tasks: TaskResponseType[] }) => {
+}: {
+  project: ProjectResponseInput | null
+  tasks: TaskResponseType[]
+}) => {
   const taskStats = useMemo(() => {
     if (!tasks) return { total: 0, completed: 0, inProgress: 0, todo: 0 }
     const completed = tasks.filter(

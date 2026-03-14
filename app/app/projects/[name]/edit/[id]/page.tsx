@@ -58,7 +58,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 
 const EditTaskPage = ({
   params,
-}: { params: Promise<{ name: string; id: string }> }) => {
+}: {
+  params: Promise<{ name: string; id: string }>
+}) => {
   // Dynamic Page Params
   const { id } = use(params)
 
