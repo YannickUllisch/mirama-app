@@ -1,6 +1,6 @@
 'use server'
 import { auth } from '@server/auth/auth'
-import Footer from '@src/components/Footer/Footer'
+import { Footer } from '@src/components/Footer/Footer'
 import PublicHeader from '@src/components/Header/PublicHeader'
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
