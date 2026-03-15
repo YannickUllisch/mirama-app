@@ -1,6 +1,6 @@
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
-import { Activity, ArrowRight, Box, LayoutGrid, Sparkles } from 'lucide-react'
+import { Activity, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 
 const features = [
@@ -29,22 +29,7 @@ const features = [
 
 const FeaturesShowcase = () => {
   return (
-    <section className="relative w-full overflow-hidden py-24 lg:py-40">
-      {/* --- Bottom Ribbon (Mirroring Hero) --- */}
-      <div className="relative w-full py-5 bg-secondary -rotate-1 -top-20 shadow-2xl z-20">
-        <div className="flex whitespace-nowrap animate-marquee-reverse">
-          {[...Array(6)].map((_, i) => (
-            <span
-              key={i}
-              className="text-background text-[10px] font-black uppercase tracking-[0.4em] mx-12 flex items-center gap-4"
-            >
-              Precision Management <Box className="w-3 h-3 text-accent" />
-              Strategic Alignment <Sparkles className="w-3 h-3" />
-              Velocity Optimization <LayoutGrid className="w-3 h-3" />
-            </span>
-          ))}
-        </div>
-      </div>
+    <section className="relative w-full overflow-hidden py-24 lg:py-20">
       <div
         className="absolute inset-0 -z-10 opacity-[0.05] pointer-events-none"
         style={{
@@ -62,7 +47,6 @@ const FeaturesShowcase = () => {
       </div>
 
       <div className="container mx-auto px-6">
-        {/* --- Header --- */}
         <header className="relative flex flex-col items-center text-center mb-32">
           <Badge
             variant="outline"
@@ -141,22 +125,6 @@ const FeaturesShowcase = () => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* --- Marquee Ribbon --- */}
-      <div className="mt-40 relative w-full py-6 bg-blue-600 -rotate-1 shadow-2xl">
-        <div className="flex whitespace-nowrap animate-marquee">
-          {[...Array(6)].map((_, i) => (
-            <span
-              key={i}
-              className="text-white text-[10px] font-black uppercase tracking-[0.4em] mx-12 flex items-center gap-4"
-            >
-              System Integrity <Box className="w-3 h-3 text-red-400" />
-              Peak Velocity <Sparkles className="w-3 h-3" />
-              Strategic Alignment <LayoutGrid className="w-3 h-3" />
-            </span>
           ))}
         </div>
       </div>

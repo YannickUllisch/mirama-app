@@ -1,49 +1,70 @@
-import { ArrowUpRight, Box, Dribbble, Github, Linkedin } from 'lucide-react'
+import { BehanceIcon } from '@src/lib/CompanyIcons'
+import { ArrowUpRight, Box, Github, Linkedin } from 'lucide-react'
 import Link from 'next/link'
+import GridDecoration from '../Background/GridDecoration'
 
+const footerRoutes = {
+  information: [
+    { name: 'About Us', href: '/about-us' },
+    { name: 'Contact', href: '/contact' },
+  ],
+  compliance: [
+    { name: 'Privacy Policy', href: '/privacy' },
+    { name: 'Terms of Service', href: '/termsofservice' },
+    { name: 'Cookie Policy', href: '/cookies' },
+  ],
+}
+
+const socials = [
+  {
+    icon: <Github className="w-4 h-4" />,
+    href: 'https://github.com/yannickullisch',
+  },
+  {
+    icon: <Linkedin className="w-4 h-4" />,
+    href: 'https://linkedin.com/in/yannickullisch',
+  },
+  {
+    icon: <BehanceIcon width="25" height="25" />,
+    href: 'https://behance.net/aprex',
+  },
+]
 export const Footer = () => {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="w-full bg-background border-t-4 border-primary pt-20 pb-10 overflow-hidden relative">
-      {/* Background Decorative Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, #3b82f6 1px, transparent 1px), linear-gradient(to bottom, #3b82f6 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
+    <footer className="w-full bg-background pt-20 pb-10 overflow-hidden relative">
+      <GridDecoration size="30" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
-          {/* Brand Column */}
           <div className="md:col-span-5 space-y-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-accent flex items-center justify-center">
+              <div className="w-10 h-10 bg-accent flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(59,130,246,0.2)]">
                 <Box className="w-6 h-6 text-accent-foreground" />
               </div>
               <span className="text-3xl font-black uppercase tracking-tighter">
-                .mirama
+                MIRAMA<span className="text-primary">.</span>
               </span>
             </div>
-            <p className="max-w-sm text-muted-foreground text-sm font-light italic leading-relaxed border-l-2 border-[#3b82f6] pl-6">
-              A high-precision framework for institutional-grade project
-              execution. Built for teams that prioritize structural certainty.
+
+            <p className="max-w-sm text-muted-foreground text-sm font-light italic leading-relaxed border-l-2 border-tertiary pl-6">
+              A high-fidelity workspace designed to turn complex roadmaps into
+              finished projects. Built for teams that value{' '}
+              <span className="text-foreground font-medium">
+                clarity, speed, and effortless collaboration.
+              </span>
             </p>
 
-            {/* Social Matrix */}
+            {/* Social Media Links */}
             <div className="flex gap-4">
-              {[
-                { icon: <Github className="w-4 h-4" />, href: '#' },
-                { icon: <Linkedin className="w-4 h-4" />, href: '#' },
-                { icon: <Linkedin className="w-4 h-4" />, href: '#' },
-                { icon: <Dribbble className="w-4 h-4" />, href: '#' },
-              ].map((social, i) => (
+              {socials.map((social, i) => (
                 <a
                   key={i}
                   href={social.href}
-                  className="w-10 h-10 border border-border flex items-center justify-center hover:bg-[#3b82f6] hover:text-white transition-all group shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 border border-border flex items-center justify-center hover:bg-tertiary hover:text-white transition-all group shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
                 >
                   {social.icon}
                 </a>
@@ -51,20 +72,20 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Links Matrix */}
           <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-12">
+            {/* Information Section */}
             <div className="space-y-6">
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                 Information
               </h4>
               <ul className="space-y-4">
-                {['About Us', 'Case Studies', 'Executive Team'].map((link) => (
-                  <li key={link}>
+                {footerRoutes.information.map((route) => (
+                  <li key={route.name}>
                     <Link
-                      href="#"
-                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-[#3b82f6] flex items-center gap-1 group"
+                      href={route.href}
+                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-tertiary flex items-center gap-1 group"
                     >
-                      {link}{' '}
+                      {route.name}
                       <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
@@ -72,36 +93,38 @@ export const Footer = () => {
               </ul>
             </div>
 
+            {/* Compliance Section */}
             <div className="space-y-6">
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                 Compliance
               </h4>
               <ul className="space-y-4">
-                {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(
-                  (link) => (
-                    <li key={link}>
-                      <Link
-                        href="#"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-[#3b82f6] flex items-center gap-1 group"
-                      >
-                        {link}
-                      </Link>
-                    </li>
-                  ),
-                )}
+                {footerRoutes.compliance.map((route) => (
+                  <li key={route.name}>
+                    <Link
+                      href={route.href}
+                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-tertiary flex items-center gap-1 group"
+                    >
+                      {route.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
+            {/* Technical Specs Section */}
             <div className="space-y-6">
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">
-                Regional
+                Frontend Stack
               </h4>
               <p className="text-[10px] font-mono text-muted-foreground leading-loose">
-                HQ_NORTH_AMERICA
+                CORE: NEXT_JS_15
                 <br />
-                EST_OPERATIONS_2024
+                STYLE: TAILWIND_V4
                 <br />
-                LATENCY_OPTIMIZED
+                DB: POSTGRES_EDGE, REDIS.IO
+                <br />
+                STATUS: DEV_STABLE_V2.0
               </p>
             </div>
           </div>
@@ -116,11 +139,11 @@ export const Footer = () => {
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-                System_Stable
+                System Stable
               </span>
             </div>
             <span className="text-[9px] font-mono text-muted-foreground/40 italic">
-              v2.0.44_BUILD
+              v2.0.0_PRODUCTION
             </span>
           </div>
         </div>

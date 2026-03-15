@@ -1,54 +1,65 @@
 import { Button } from '@ui/button'
-import { LayoutGrid } from 'lucide-react'
+import { ArrowUpRight, BoxIcon, Fingerprint, HomeIcon } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Link from 'next/link'
+import MiramaIcon from '../MiramaIcon'
 
 const PublicHeader = async ({ session }: { session: Session | null }) => {
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b-2 border-primary/10">
-      <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-        {/* Logo Section */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-primary flex items-center justify-center rotate-45 group-hover:rotate-90 transition-transform duration-500">
-              <LayoutGrid className="w-4 h-4 text-white -rotate-45 group-hover:-rotate-90 transition-transform duration-500" />
-            </div>
-            <span className="text-2xl font-black uppercase tracking-tighter text-foreground">
-              .mirama
-            </span>
-          </Link>
+    <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-border/40">
+      <div className="w-full h-1 bg-gradient-to-r from-primary via-accent to-transparent opacity-20" />
 
-          {/* Engineering Mark */}
-          <div className="hidden md:flex items-center gap-2 border-l border-border pl-8">
-            <div className="w-2 h-2 rounded-full bg-[#3b82f6]" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Ref_System_2026
-            </span>
-          </div>
+      <div className="w-full px-8 lg:px-16 h-20 flex items-center justify-between">
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="relative flex items-center justify-center">
+              <div className="w-9 h-9 border-2 border-primary rounded-full flex items-center justify-center group-hover:bg-primary transition-all duration-300">
+                <BoxIcon className="w-4 h-4 text-primary group-hover:text-background transition-colors" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full border-2 border-background" />
+            </div>
+            <MiramaIcon />
+          </Link>
         </div>
 
         {/* Navigation Section */}
-        <div className="flex items-center gap-6">
-          <Link
-            href="/contact"
-            className="text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
-          >
-            Contact
-          </Link>
+        <div className="flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-10">
+            <Link
+              href="/about"
+              className="group flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all"
+            >
+              About
+              <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-y-1" />
+            </Link>
+            <Link
+              href="/contact"
+              className="group flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all"
+            >
+              Contact
+            </Link>
+          </nav>
 
-          {session ? (
-            <Link href="/app">
-              <Button className="h-11 px-6 bg-primary text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-none shadow-[4px_4px_0px_0px_#3b82f6] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                Dashboard
-              </Button>
-            </Link>
-          ) : (
-            <Link href="/auth/login">
-              <Button className="h-11 px-6 bg-primary text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-none shadow-[4px_4px_0px_0px_#3b82f6] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                Sign In
-              </Button>
-            </Link>
-          )}
+          <div className="flex items-center gap-4">
+            {session ? (
+              <Link href="/app">
+                <Button className="h-11 px-8 bg-secondary text-background border-2 border-foreground/10 font-black text-[11px] uppercase tracking-[0.3em] rounded-none hover:border-primary hover:text-primary transition-all relative overflow-hidden group">
+                  <span className="relative z-10 flex items-center gap-2">
+                    Dashboard <HomeIcon className="w-4 h-4" />
+                  </span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/auth/login">
+                <Button className="h-11 px-8 bg-secondary text-background border-2 border-foreground/10 font-black text-[11px] uppercase tracking-[0.3em] rounded-none hover:border-primary hover:text-primary transition-all relative overflow-hidden group">
+                  <span className="relative z-10 flex items-center gap-2">
+                    Sign In <Fingerprint className="w-4 h-4" />
+                  </span>
+                  <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>
