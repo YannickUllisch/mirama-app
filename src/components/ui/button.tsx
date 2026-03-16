@@ -4,17 +4,10 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-black uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-black uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
   {
     variants: {
       variant: {
-        brutalist:
-          'bg-blue-600 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:bg-red-500 hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
-        neo: 'bg-secondary text-white shadow-[8px_8px_0px_0px_hsl(var(--accent))] hover:translate-x-1 hover:translate-y-1 hover:shadow-none',
-
-        'industrial-icon':
-          'border border-border bg-background hover:bg-tertiary hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] hover:shadow-none hover:translate-x-1 hover:translate-y-1',
-
         default: 'border border-primary/30 bg-primary/10 hover:bg-primary/30',
         primary: 'bg-primary hover:bg-primary/80 text-white shadow-sm',
         destructive:
@@ -25,6 +18,14 @@ const buttonVariants = cva(
         ghost: 'hover:text-primary',
         link: 'text-text underline-offset-4 hover:underline',
         success: 'bg-emerald-600 hover:bg-emerald-500 text-white',
+
+        // Used in public pages
+        brutalist:
+          'rounded-none bg-blue-600 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:bg-red-500 hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
+        neo: 'rounded-none bg-secondary text-white shadow-[8px_8px_0px_0px_hsl(var(--accent))] hover:translate-x-1 hover:translate-y-1 hover:shadow-none',
+
+        'industrial-icon':
+          'border border-border bg-background hover:bg-tertiary hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] hover:shadow-none hover:translate-x-1 hover:translate-y-1',
       },
       size: {
         default: 'h-11 px-6 py-2',
@@ -35,7 +36,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'brutalist',
+      variant: 'default',
       size: 'default',
     },
   },

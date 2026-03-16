@@ -32,7 +32,7 @@ export const AuthSocial = () => {
     <div className="space-y-3">
       <Button
         variant="outline"
-        className="w-full h-12 gap-3 border-2 border-muted hover:bg-muted/50 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+        className="w-full h-12 gap-3 border-2 border-muted hover:bg-muted/50 rounded-xl font-bold text-xs hover:border hover:border-primary uppercase tracking-wider transition-all"
         onClick={handleGoogleSignIn}
       >
         <GoogleColoredIcon height="18" width="18" />
