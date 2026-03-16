@@ -43,7 +43,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
           <div className="flex items-center gap-4">
             {session ? (
               <Link href="/app">
-                <Button className="h-11 px-8 bg-secondary text-background border-2 border-foreground/10 font-black text-[11px] uppercase tracking-[0.3em] rounded-none hover:border-primary hover:text-primary transition-all relative overflow-hidden group">
+                <Button variant={'neo'}>
                   <span className="relative z-10 flex items-center gap-2">
                     Dashboard <HomeIcon className="w-4 h-4" />
                   </span>
@@ -51,11 +51,10 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
               </Link>
             ) : (
               <Link href="/auth/login">
-                <Button className="h-11 px-8 bg-secondary text-background border-2 border-foreground/10 font-black text-[11px] uppercase tracking-[0.3em] rounded-none hover:border-primary hover:text-primary transition-all relative overflow-hidden group">
+                <Button variant={'neo'}>
                   <span className="relative z-10 flex items-center gap-2">
                     Sign In <Fingerprint className="w-4 h-4" />
                   </span>
-                  <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </Button>
               </Link>
             )}
