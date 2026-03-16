@@ -2,6 +2,7 @@ import Loading from '@/app/loading'
 import image from '@public/test2.png'
 import LoginForm from '@src/components/auth/LoginForm'
 import { AuthSocial } from '@src/components/auth/Socials'
+import GridDecoration from '@src/components/Background/GridDecoration'
 import MiramaIcon from '@src/components/MiramaIcon'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
@@ -10,18 +11,11 @@ import { Suspense } from 'react'
 
 const LoginPage = () => {
   return (
-    <div className="relative min-h-svh w-full  overflow-hidden flex">
-      {/* Background Decorative Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, #3b82f6 1px, transparent 1px), linear-gradient(to bottom, #3b82f6 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
-      />
+    <div className="relative min-h-svh w-full overflow-hidden flex">
+      <GridDecoration size="40" />
 
       <div className="grid w-full lg:grid-cols-2">
-        {/* Left Side: The Form */}
+        {/* Left Side */}
         <div className="flex flex-col p-6 md:p-10 z-10">
           <div className="flex justify-center md:justify-start">
             <Link href="/" className="flex items-center gap-2 group">
@@ -59,14 +53,13 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right Side: The "Blueprint" Image Frame */}
+        {/* Right Side */}
         <div className="relative hidden lg:flex items-center justify-center  p-20 overflow-hidden">
           <div className="absolute top-10 right-10 text-[10px] font-mono text-primary/20 rotate-90 select-none">
             SECURE_AUTH_NODE_01
           </div>
 
           <div className="relative w-full max-w-xl aspect-[4/5] group">
-            {/* Asymmetric Frames (Mirama Style) */}
             <div className="absolute -top-6 -right-6 w-full h-full border-2 border-dashed border-primary/20 rounded-[3rem] rotate-3 transition-transform duration-500 group-hover:rotate-1" />
             <div className="absolute -bottom-4 -left-4 w-full h-full bg-red-500/5 rounded-[3rem] -rotate-2 border-2 border-dashed border-red-500/20 group-hover:rotate-0 transition-transform duration-500" />
 
