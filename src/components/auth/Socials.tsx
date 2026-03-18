@@ -29,21 +29,16 @@ export const AuthSocial = () => {
     }
   }
   return (
-    <div className="my-5 flex items-center w-full gap-x-2 flex-col gap-y-2">
+    <div className="space-y-3">
       <Button
-        className="w-full gap-2"
-        variant={'outline'}
+        variant="outline"
+        className="w-full h-12 gap-3 border-2 border-border/30 hover:bg-muted/50 rounded-xl font-bold text-xs hover:border hover:border-primary uppercase tracking-wider transition-all"
         onClick={handleGoogleSignIn}
       >
-        <GoogleColoredIcon height="15" width="15" />
-        <span>Sign in with Google</span>
+        <GoogleColoredIcon height="18" width="18" />
+        <span>Continue with Google</span>
       </Button>
-      {formError && (
-        <div className="w-full">
-          {' '}
-          <FormError message={formError} />{' '}
-        </div>
-      )}
+      {formError && <FormError message={formError} />}
     </div>
   )
 }

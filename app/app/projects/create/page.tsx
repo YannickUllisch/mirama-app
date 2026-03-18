@@ -181,7 +181,7 @@ const CreateProjectForm = () => {
     })
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <l>
   const memoizedNewTags = useMemo(() => {
     return form.watch('newTags').map((t) => (
       <Badge

@@ -1,20 +1,21 @@
 import type { SimpleTaskResponseType } from '@server/domain/taskSchema'
+import HoverLink from '@src/components/HoverLink'
+import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { getColorByTaskStatusType } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Card, CardContent } from '@ui/card'
-import { ChevronRight, FolderTree } from 'lucide-react'
-import Link from 'next/link'
+import { FolderTree } from 'lucide-react'
 
 interface RelatedWorkTabProps {
   parent?: SimpleTaskResponseType | null
   subtasks?: SimpleTaskResponseType[]
-  projectId: string
+  projectName: string
 }
 
 const RelatedWorkTab = ({
   parent,
   subtasks,
-  projectId,
+  projectName,
 }: RelatedWorkTabProps) => {
   return (
     <div className="space-y-4 p-4">
@@ -26,12 +27,12 @@ const RelatedWorkTab = ({
           </h3>
           <Card>
             <CardContent className="p-4">
-              <Link
-                href={`/app/${projectId}/task/${parent.id}`}
+              <HoverLink
+                href={`/app/projects/${projectName}/edit/${parent.id}`}
                 className="flex items-center justify-between hover:bg-muted rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  {getTaskTypeIcon(parent.type)}
                   <span className="text-sm">{parent.title}</span>
                 </div>
                 <Badge
@@ -40,7 +41,7 @@ const RelatedWorkTab = ({
                 >
                   {parent.status}
                 </Badge>
-              </Link>
+              </HoverLink>
             </CardContent>
           </Card>
         </div>
@@ -56,13 +57,13 @@ const RelatedWorkTab = ({
             <CardContent className="p-4">
               <div className="space-y-2">
                 {subtasks.map((subtask) => (
-                  <Link
+                  <HoverLink
                     key={subtask.id}
-                    href={`/app/${projectId}/task/${subtask.id}`}
+                    href={`/app/projects/${projectName}/edit/${subtask.id}`}
                     className="flex items-center justify-between hover:bg-muted rounded-lg p-2 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      {getTaskTypeIcon(subtask.type)}
                       <span className="text-sm">{subtask.title}</span>
                     </div>
                     <Badge
@@ -71,7 +72,7 @@ const RelatedWorkTab = ({
                     >
                       {subtask.status}
                     </Badge>
-                  </Link>
+                  </HoverLink>
                 ))}
               </div>
             </CardContent>

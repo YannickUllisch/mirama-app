@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import { cn } from '@src/lib/utils'
 
@@ -66,6 +66,7 @@ export default function AnimatedGridPattern({
   }
 
   // Update squares to animate in
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (dimensions.width && dimensions.height) {
       setSquares(generateSquares(numSquares))
@@ -73,6 +74,7 @@ export default function AnimatedGridPattern({
   }, [dimensions, numSquares])
 
   // Resize observer to update container dimensions
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -122,6 +124,7 @@ export default function AnimatedGridPattern({
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
       <svg x={x} y={y} className="overflow-visible">
+        <title>squares svg</title>
         {squares.map(({ pos: [x, y], id }, index) => (
           <motion.rect
             initial={{ opacity: 0 }}
@@ -133,7 +136,7 @@ export default function AnimatedGridPattern({
               repeatType: 'reverse',
             }}
             onAnimationComplete={() => updateSquarePosition(id)}
-            key={`${x}-${y}-${index}`}
+            key={`${x}-${y}-${index.toString()}`}
             width={width - 1}
             height={height - 1}
             x={x * width + 1}

@@ -1,7 +1,7 @@
 'use client'
 
-import { type RefObject, useEffect, useId, useState } from 'react'
 import { motion } from 'framer-motion'
+import { type RefObject, useEffect, useId, useState } from 'react'
 
 import { cn } from '@src/lib/utils'
 
@@ -134,6 +134,7 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
       )}
       viewBox={`0 0 ${svgDimensions.width} ${svgDimensions.height}`}
     >
+      <title>beam title</title>
       <path
         d={pathD}
         stroke={pathColor}

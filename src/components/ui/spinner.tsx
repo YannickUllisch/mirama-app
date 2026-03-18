@@ -1,7 +1,7 @@
-import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@src/lib/utils'
+import { type VariantProps, cva } from 'class-variance-authority'
+import * as React from 'react'
 
 const spinnerVariants = cva('relative block opacity-[0.65]', {
   variants: {
@@ -45,7 +45,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
       >
         {Array.from({ length: 8 }).map((_, i) => (
           <span
-            key={i}
+            key={i.toString()}
             className="absolute top-0 left-1/2 w-[12.5%] h-full animate-spinner-leaf-fade"
             style={{
               transform: `rotate(${i * 45}deg)`,

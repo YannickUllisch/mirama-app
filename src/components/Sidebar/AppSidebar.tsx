@@ -61,9 +61,6 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
         <RecentsNav pathname={pathname} />
       </SidebarContent>
       <SidebarFooter className="p-2">
-        {/* <div className="flex items-center justify-center p-3 rounded-xl h-[150px] w-full bg-card dark:bg-black/40 overflow-clip">
-          ...
-        </div> */}
         <SidebarMenu>
           <HoverLink href={'/contact'}>
             <SidebarMenuButton>

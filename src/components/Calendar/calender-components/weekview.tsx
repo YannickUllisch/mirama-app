@@ -77,7 +77,7 @@ interface WeekViewProps {
   events: Event[]
 }
 
-export function WeekView({ currentDate, events }: WeekViewProps) {
+export function WeekView({ currentDate }: WeekViewProps) {
   const weekNumber = getISOWeek(currentDate)
   const firstWeekDay = startOfWeek(currentDate, { weekStartsOn: 1 })
   const weekDays = Array.from({ length: 7 }).map((_, i) =>

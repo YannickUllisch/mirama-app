@@ -1,5 +1,8 @@
 'use client'
 
+import { DndContext, MouseSensor, useDraggable, useSensor } from '@dnd-kit/core'
+import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
+import { cn } from '@src/lib/utils'
 import { Card } from '@ui/card'
 import {
   ContextMenu,
@@ -7,9 +10,6 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@ui/context-menu'
-import { cn } from '@src/lib/utils'
-import { DndContext, MouseSensor, useDraggable, useSensor } from '@dnd-kit/core'
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
 import { useMouse, useThrottle, useWindowScroll } from '@uidotdev/usehooks'
 import { formatDate, getDate } from 'date-fns'
 import { formatDistance, isSameDay } from 'date-fns'
@@ -326,9 +326,9 @@ export const GanttContentHeader: FC<GanttContentHeaderProps> = ({
           gridTemplateColumns: `repeat(${columns}, var(--gantt-column-width))`,
         }}
       >
-        {Array.from({ length: columns }).map((i, index) => (
+        {Array.from({ length: columns }).map((_, index) => (
           <div
-            key={`${id}-${i}`}
+            key={`${id}-${index.toString()}`}
             className="shrink-0 border-border/50 border-b py-1 text-center text-xs"
           >
             {renderHeaderItem(index)}
@@ -479,10 +479,8 @@ export const GanttSidebarItem: FC<GanttSidebarItemProps> = ({
 
   return (
     <div
-      role="button"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
       key={feature.id}
       className={cn(
         'relative flex items-center gap-2.5 p-2.5 text-xs',
@@ -669,9 +667,9 @@ export const GanttColumns: FC<GanttColumnsProps> = ({
         gridTemplateColumns: `repeat(${columns}, var(--gantt-column-width))`,
       }}
     >
-      {Array.from({ length: columns }).map((i, index) => (
+      {Array.from({ length: columns }).map((_, index) => (
         <GanttColumn
-          key={`${id}-${i}`}
+          key={`${id}-${index.toString()}`}
           index={index}
           isColumnSecondary={isColumnSecondary}
         />

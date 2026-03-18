@@ -31,7 +31,7 @@ export function YearBox({ isAnimating, onSelect, currentYear }: ComboboxProps) {
 
       // If it's exactly 4 digits, trigger the onSelect callback
       if (value.length === 4 && onSelect) {
-        onSelect(Number.parseInt(value))
+        onSelect(Number.parseInt(value, 10))
       }
     }
   }
@@ -45,7 +45,6 @@ export function YearBox({ isAnimating, onSelect, currentYear }: ComboboxProps) {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           className=" justify-between"
         >

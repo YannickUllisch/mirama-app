@@ -162,9 +162,10 @@ const ListTab = ({
   }, [newItem])
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex gap-2 text-text-secondary items-center">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-2 text-text-secondary text-sm items-center justify-end">
         <Checkbox
+          className="w-4 h-4"
           checked={showAllTasks}
           onCheckedChange={(e) => setShowAllTasks(Boolean(e))}
         />

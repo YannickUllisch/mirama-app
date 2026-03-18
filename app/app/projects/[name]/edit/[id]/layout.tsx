@@ -5,11 +5,7 @@ export const metadata: Metadata = {
   description: 'Edit your Task',
 }
 
-const Layout = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return children
 }
 

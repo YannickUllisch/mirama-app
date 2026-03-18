@@ -163,7 +163,7 @@ const AddMilestoneDialog = ({
                   Close
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isPending} variant={'auth'}>
+              <Button type="submit" disabled={isPending} variant={'default'}>
                 Add
               </Button>
             </DialogFooter>

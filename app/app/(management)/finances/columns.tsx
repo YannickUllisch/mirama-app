@@ -7,11 +7,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
 
-export const getExpenseColumns = ({
-  session,
-}: {
-  session: Session | null
-}) => {
+export const getExpenseColumns = ({ session }: { session: Session | null }) => {
   const cols: ColumnDef<Expense>[] = [
     {
       accessorKey: 'id',

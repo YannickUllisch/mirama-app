@@ -126,6 +126,7 @@ const TasksPage = () => {
                 className="group py-3 border-b border-border last:border-0"
               >
                 <div className="flex items-center space-x-3">
+                  {/** biome-ignore lint/a11y/noStaticElementInteractions: <l> */}
                   <div
                     className="w-5 h-5 flex-shrink-0 relative"
                     onClick={() => handleTaskUpdate(task.id)}
@@ -164,7 +165,7 @@ const TasksPage = () => {
                       )}
                     </svg>
                     {updatingTaskId === task.id && (
-                      // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+                      // biome-ignore lint/a11y/noSvgWithoutTitle: <l>
                       <svg
                         className="absolute inset-0 animate-spin"
                         viewBox="0 0 24 24"

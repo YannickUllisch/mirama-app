@@ -16,7 +16,9 @@ export const getUserById = async (id: string) => {
 
 export const getValidCompanyInvitation = async ({
   email,
-}: { email: string }) => {
+}: {
+  email: string
+}) => {
   try {
     const invitation = await client.companyInvitation.findUnique({
       where: {
