@@ -7,7 +7,7 @@ import createPrismaRedisCache from './redis/index'
 export const redisClient = new Redis(process.env.REDIS_URL ?? '') // Uses default options for Redis connection
 
 redisClient.on('error', (error) => {
-  console.dir(error)
+  console.info(error)
 })
 
 const prismaClientSingleton = () => {
