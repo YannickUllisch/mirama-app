@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact',
+  title: 'Register',
   description:
-    'Get in touch with the Mirama team. Reach out for support, feedback, partnership opportunities, or general inquiries. We’re here to help and answer your questions.',
+    'Create your Mirama account to unlock powerful project and task management tools. Join your team, collaborate, and start organizing your work today.',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

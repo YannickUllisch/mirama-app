@@ -3,10 +3,10 @@ import image from '@public/test2.png'
 import LoginForm from '@src/components/auth/LoginForm'
 import { AuthSocial } from '@src/components/auth/Socials'
 import GridDecoration from '@src/components/Background/GridDecoration'
+import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Suspense } from 'react'
 
 const LoginPage = () => {
@@ -18,12 +18,12 @@ const LoginPage = () => {
         {/* Left Side */}
         <div className="flex flex-col p-6 md:p-10 z-10">
           <div className="flex justify-center md:justify-start">
-            <Link href="/" className="flex items-center gap-2 group">
+            <HoverLink href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 bg-primary flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(59,130,246,0.2)]">
                 <ArrowLeft className="w-5 h-5 text-white" />
               </div>
               <MiramaIcon />
-            </Link>
+            </HoverLink>
           </div>
 
           <div className="flex flex-1 items-center justify-center">
@@ -42,12 +42,12 @@ const LoginPage = () => {
               <AuthSocial />
               <p className="text-center text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                 New to the platform?{' '}
-                <Link
+                <HoverLink
                   href="/auth/register"
                   className="text-primary underline underline-offset-4 hover:text-blue-700"
                 >
                   Create Account
-                </Link>
+                </HoverLink>
               </p>
             </div>
           </div>

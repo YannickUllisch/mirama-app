@@ -3,6 +3,7 @@ import image from '@public/test.png'
 import RegisterForm from '@src/components/auth/RegisterForm'
 import { AuthSocial } from '@src/components/auth/Socials'
 import GridDecoration from '@src/components/Background/GridDecoration'
+import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
@@ -41,12 +42,12 @@ const RegisterPage = () => {
         {/* Left Side */}
         <div className="flex flex-col p-6 md:p-10 z-10">
           <div className="flex justify-center md:justify-start">
-            <Link href="/" className="flex items-center gap-2 group">
+            <HoverLink href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 bg-primary flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(59,130,246,0.2)]">
                 <ArrowLeft className="w-5 h-5 text-white" />
               </div>
               <MiramaIcon />
-            </Link>
+            </HoverLink>
           </div>
 
           <div className="flex flex-1 items-center justify-center">

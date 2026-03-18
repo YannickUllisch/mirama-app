@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import type * as z from 'zod'
+import HoverLink from '../HoverLink'
 import { Label } from '../ui/label'
 import { PasswordInput } from './PasswordInput'
 
@@ -85,7 +86,7 @@ const RegisterForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="USERNAME"
-                        className="h-10 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-9"
+                        className="h-10 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-9"
                       />
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-600 transition-colors" />
                     </div>
@@ -109,7 +110,7 @@ const RegisterForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="NAME@SYSTEM.IO"
-                        className="h-10 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-9"
+                        className="h-10 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-9"
                       />
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-600 transition-colors" />
                     </div>
@@ -133,7 +134,7 @@ const RegisterForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="••••••••"
-                        className="h-10 border-2 placeholder:text-text/50 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none pl-9"
+                        className="h-10 border-2 placeholder:text-text/50 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none pl-9"
                       />
                       <ShieldPlus className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-600 transition-colors" />
                     </div>
@@ -147,7 +148,25 @@ const RegisterForm = () => {
           <div className="space-y-2 pt-1">
             <FormSuccess message={success} />
             <FormError message={error} />
-
+            <div className="py-2">
+              <p className="text-[9px] font-mono leading-relaxed text-muted-foreground uppercase tracking-tighter">
+                By initializing this account, you acknowledge the
+                <HoverLink
+                  href="/termsofservice"
+                  className="text-blue-600 hover:text-red-500 underline underline-offset-2 mx-1"
+                >
+                  Terms of Service
+                </HoverLink>
+                and authorize the
+                <HoverLink
+                  href="/privacy"
+                  className="text-blue-600 hover:text-red-500 underline underline-offset-2 mx-1"
+                >
+                  Privacy Policy
+                </HoverLink>
+                .
+              </p>
+            </div>
             <Button
               disabled={isPending}
               type="submit"

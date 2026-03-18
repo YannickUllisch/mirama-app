@@ -24,7 +24,7 @@ const HeroSection = () => {
         <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.5em] mx-12 lg:mx-16 flex items-center gap-5">
           Task Management
           <Box className="w-3 h-3 lg:w-4 lg:h-4 text-accent" />
-          Sprint Velocity
+          Sprint Planning
           <Sparkles className="w-3 h-3 lg:w-4 lg:h-4" />
         </span>
       </MiramaRibbon>

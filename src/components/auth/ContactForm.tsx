@@ -69,7 +69,7 @@ const ContactForm = () => {
                       {...field}
                       disabled={isPending}
                       placeholder="FIRST"
-                      className="h-10 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
+                      className="h-10 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
                     />
                   </FormControl>
                   <FormMessage className="text-[8px] uppercase" />
@@ -89,7 +89,7 @@ const ContactForm = () => {
                       {...field}
                       disabled={isPending}
                       placeholder="LAST"
-                      className="h-10 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
+                      className="h-10 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
                     />
                   </FormControl>
                   <FormMessage className="text-[8px] uppercase" />
@@ -111,7 +111,7 @@ const ContactForm = () => {
                     {...field}
                     disabled={isPending}
                     placeholder="YOU@COMPANY.COM"
-                    className="h-10 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
+                    className="h-10 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 rounded-none font-mono text-xs uppercase tracking-widest"
                   />
                 </FormControl>
                 <FormMessage className="text-[8px] uppercase" />
@@ -154,7 +154,7 @@ const ContactForm = () => {
                     {...field}
                     disabled={isPending}
                     placeholder="LEAVE US A MESSAGE..."
-                    className="focus-visible:ring-0 focus-visible:border-blue-600 min-h-[80px] rounded-none border-2 border-muted bg-transparent font-mono text-xs uppercase tracking-widest"
+                    className="focus-visible:ring-0 focus-visible:border-blue-600 min-h-[80px] rounded-none border-2 border-border/60 bg-transparent font-mono text-xs uppercase tracking-widest"
                   />
                 </FormControl>
                 <FormMessage className="text-[8px] uppercase" />

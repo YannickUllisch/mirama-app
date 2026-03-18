@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact',
+  title: 'Cookie Policy',
   description:
-    'Get in touch with the Mirama team. Reach out for support, feedback, partnership opportunities, or general inquiries. We’re here to help and answer your questions.',
+    'Learn how Mirama uses cookies to enhance your experience, analyze site usage, and personalize content. Review our practices and your choices regarding cookies.',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

@@ -2,6 +2,7 @@ import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Activity, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import HoverLink from '../HoverLink'
 
 const features = [
   {
@@ -65,7 +66,7 @@ const FeaturesShowcase = () => {
           </p>
         </header>
 
-        {/* --- Features Grid --- */}
+        {/* Features Grid */}
         <div className="space-y-40">
           {features.map((feature, index) => (
             <div
@@ -90,20 +91,20 @@ const FeaturesShowcase = () => {
                   {feature.description}
                 </p>
 
+                <HoverLink  href={'https://docs.yannickullisch.com/'}> 
                 <Button
                   variant="ghost"
                   className="group/btn p-0 h-auto text-[11px] font-black uppercase tracking-[0.2em] text-red-500 hover:text-blue-600 hover:bg-transparent transition-colors"
                 >
-                  Explore Architecture
+                  Technical Documentation
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                 </Button>
+                </HoverLink>
               </div>
 
-              {/* Feature Image with Blueprint Frame */}
               <div
                 className={`relative ${index % 2 === 1 ? 'lg:order-1' : ''}`}
               >
-                {/* Asymmetric Red/Blue Frames */}
                 <div className="absolute -top-6 -right-6 w-full h-full bg-blue-500/5 rounded-[3rem] rotate-3 border-2 border-dashed border-blue-500/20 -z-10 group-hover:rotate-1 transition-transform duration-500" />
                 <div className="absolute -bottom-4 -left-4 w-full h-full bg-red-500/5 rounded-[3rem] -rotate-2 border-2 border-dashed border-red-500/20 -z-10 group-hover:rotate-0 transition-transform duration-500" />
 
@@ -115,7 +116,6 @@ const FeaturesShowcase = () => {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
-                  {/* Digital Overlay UI */}
                   <div className="absolute top-6 right-6 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-sm flex items-center gap-3">
                     <Activity className="w-3 h-3 text-red-500 animate-pulse" />
                     <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic">

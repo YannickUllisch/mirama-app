@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact',
+  title: 'Forgot Password',
   description:
-    'Get in touch with the Mirama team. Reach out for support, feedback, partnership opportunities, or general inquiries. We’re here to help and answer your questions.',
+    'Recover access to your Mirama account. Request a password reset link and follow the instructions to securely set a new password.',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

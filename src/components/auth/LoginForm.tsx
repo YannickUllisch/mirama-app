@@ -15,11 +15,11 @@ import {
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
 import { Loader2, Lock, ShieldCheck } from 'lucide-react'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import type * as z from 'zod'
+import HoverLink from '../HoverLink'
 import { Label } from '../ui/label'
 import { PasswordInput } from './PasswordInput'
 
@@ -85,7 +85,7 @@ const LoginForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="NAME@EMAIL.COM"
-                        className="h-11 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-10"
+                        className="h-11 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none font-mono text-xs tracking-widest pl-10"
                       />
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-600 transition-colors" />
                     </div>
@@ -103,12 +103,12 @@ const LoginForm = () => {
                     <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                       Security Key
                     </Label>
-                    <Link
-                      href="/"
+                    <HoverLink
+                      href="/auth/forgot-password"
                       className="text-[9px] font-bold uppercase text-blue-600 hover:text-red-500 transition-colors"
                     >
                       Recover?
-                    </Link>
+                    </HoverLink>
                   </div>
                   <FormControl>
                     <div className="relative group">
@@ -116,7 +116,7 @@ const LoginForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="••••••••"
-                        className="h-11 border-2 border-muted bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none pl-10"
+                        className="h-11 border-2 border-border/60 bg-transparent focus-visible:ring-0 focus-visible:border-blue-600 transition-all rounded-none pl-10"
                       />
                       <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-600 transition-colors" />
                     </div>
