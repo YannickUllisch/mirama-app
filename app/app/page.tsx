@@ -1,79 +1,119 @@
 'use client'
 import apiRequest from '@hooks/query'
-import type { TaskStatusType } from '@prisma/client'
+import HoverLink from '@src/components/HoverLink'
 import PageHeader from '@src/components/PageHeader'
-import MinimalistTasksWidget from '@src/components/Widgets/MinimalistTasksWidget'
-import ProjectTimeline from '@src/components/Widgets/ProjectsTimelineWidget'
-import RecentProjectsWidget from '@src/components/Widgets/RecentProjectsWidget'
+import MetricCard from '@src/components/ProjectDashboard/MetricCard'
+import ProjectGrid from '@src/components/ProjectDashboard/ProjectGrid'
+import MinimalistTasksWidget from '@src/components/ProjectDashboard/TaskSidebar'
+import TimelineCard from '@src/components/ProjectDashboard/TimelineCard'
 import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
 import { Button } from '@ui/button'
-import { Home, Plus } from 'lucide-react'
+import {
+  ChevronRight,
+  Clock,
+  Kanban,
+  ListChecks,
+  Plus,
+  User,
+} from 'lucide-react'
 import { DateTime } from 'luxon'
 
 const Dashboard = () => {
-  // Hooks
   const { data: projects, isLoading: isProjectsLoading } =
     apiRequest.project.fetchAll.useQuery()
   const { data: tasks, isLoading: isTasksLoading } =
     apiRequest.task.fetchPersonal.useQuery()
 
-  const handleTaskUpdate = async (taskId: string, status: TaskStatusType) => {
+  //   const { mutateAsync: useTaskMutate, isPending: isTaskUpdatePending } =
+  // apiRequest.task.update.useMutation()
+
+  const handleTaskUpdate = async (
+    _projectId: string,
+    taskId: string,
+    status: any,
+  ) => {
+    console.info(taskId, status)
     await updateResourceByIdNoToast('task', taskId, { status })
   }
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <PageHeader
-        title="Dashboard"
-        description="Welcome back. Here's an overview of your projects and tasks."
-        icon={Home}
+        title="Overview"
+        icon={User}
+        description={DateTime.now().toFormat('EEEE, d MMMM')}
       >
-        <div className="text-sm text-muted-foreground">
-          {DateTime.utc().toFormat('EEEE, MMMM d, yyyy')}
-        </div>
+        <HoverLink href={'/app/projects/create'}>
+          <Button variant={'tertiary'}>
+            <Plus className="w-4 h-4" />
+            <span>New Project</span>
+          </Button>
+        </HoverLink>
       </PageHeader>
 
-      <div className="mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            {/* Projects Section */}
-            <RecentProjectsWidget
-              isProjectsLoading={isProjectsLoading}
-              projects={projects ?? []}
-            />
-
-            <ProjectTimeline
-              projects={projects ?? []}
-              isLoading={isProjectsLoading}
-            />
-          </div>
-
-          {/* Right Column */}
-          <div className="flex flex-col h-full min-h-0 space-y-4">
-            <div className="flex items-center justify-between mb-4 flex-shrink-0">
-              <h2 className="text-xl font-medium flex items-center gap-2">
-                <span>My Tasks</span>
-                {tasks && tasks.length > 0 && (
-                  <span className="text-sm px-2 py-0.5 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-full">
-                    {tasks.length}
-                  </span>
-                )}
-              </h2>
-              <Button variant="primary" size="sm">
-                <Plus className="h-4 w-4" />
-                New Task
-              </Button>
-            </div>
-            <div className="flex-1 min-h-0">
-              <MinimalistTasksWidget
-                tasks={tasks ?? []}
-                isLoading={isTasksLoading}
-                onTaskUpdate={handleTaskUpdate}
+      <main className="flex-1 px-8 py-6 overflow-y-auto">
+        <div className="grid grid-cols-12 gap-8 max-w-[1600px] mx-auto">
+          {/* Left Content: Stats & Projects */}
+          <div className="col-span-12 lg:col-span-8 space-y-10">
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <MetricCard
+                label="Active Projects"
+                value={projects?.length || 0}
+                icon={Kanban}
+                trend="+2 this month"
+              />
+              <MetricCard
+                label="Open Tasks"
+                value={tasks?.filter((t) => t.status !== 'DONE').length || 0}
+                icon={ListChecks}
+              />
+              <MetricCard
+                label="Hours Tracked"
+                value="124.5"
+                icon={Clock}
+                trend="On track"
               />
             </div>
+
+            {/* Project Section */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold tracking-tight">
+                  Recent Projects
+                </h2>
+                <HoverLink href={'/app/projects'}>
+                  <Button variant={'ghost'}>
+                    View all <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </HoverLink>
+              </div>
+              <ProjectGrid
+                projects={projects || []}
+                loading={isProjectsLoading}
+              />
+            </section>
+
+            {/* Timeline Section */}
+            <section className="space-y-4">
+              <h2 className="text-lg font-semibold tracking-tight">Schedule</h2>
+              <TimelineCard
+                projects={projects || []}
+                loading={isProjectsLoading}
+              />
+            </section>
+          </div>
+
+          {/* Right Content: Tasks Sidebar */}
+          <div className="col-span-12 lg:col-span-4">
+            <MinimalistTasksWidget
+              tasks={tasks || []}
+              isLoading={isTasksLoading}
+              onTaskUpdate={handleTaskUpdate}
+            />
           </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

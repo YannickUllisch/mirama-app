@@ -26,7 +26,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
         <div className="flex items-center gap-8">
           <nav className="hidden md:flex items-center gap-10">
             <Link
-              href="/about-us"
+              href="/about"
               className="group flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all"
             >
               About

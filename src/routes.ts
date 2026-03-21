@@ -9,7 +9,7 @@ export const publicRoutes = [
   '/cookies',
   '/privacy',
   '/termsofservice',
-  '/about-us',
+  '/about',
   '/not-found',
   '/unauthorized',
 ]

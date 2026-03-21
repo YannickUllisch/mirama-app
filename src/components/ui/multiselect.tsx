@@ -12,9 +12,9 @@ import { Command as CommandPrimitive } from 'cmdk'
 import { Check, X as RemoveIcon } from 'lucide-react'
 import type React from 'react'
 import {
-  type KeyboardEvent,
   createContext,
   forwardRef,
+  type KeyboardEvent,
   useCallback,
   useContext,
   useState,
@@ -320,9 +320,9 @@ MultiSelectorItem.displayName = 'MultiSelectorItem'
 
 export {
   MultiSelector,
-  MultiSelectorTrigger,
-  MultiSelectorInput,
   MultiSelectorContent,
-  MultiSelectorList,
+  MultiSelectorInput,
   MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
 }

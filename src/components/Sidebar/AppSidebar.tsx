@@ -17,6 +17,7 @@ import type { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import HoverLink from '../HoverLink'
+import MiramaIcon from '../MiramaIcon'
 import SidebarMainNav from './MainNav'
 import RecentsNav from './RecentsNav'
 
@@ -40,9 +41,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
       >
         {isMobile && (
           <HoverLink href="/" className="flex items-center gap-2 p-2">
-            <span className="text-lg font-semibold text-sidebar-foreground">
-              .mirama
-            </span>
+            <MiramaIcon />
           </HoverLink>
         )}
         {isAdminOrOwner && (

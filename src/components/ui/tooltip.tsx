@@ -1,23 +1,29 @@
-import * as React from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-
 import { cn } from '@src/lib/utils'
+import * as React from 'react'
 
 const TooltipProvider = TooltipPrimitive.Provider
-
 const Tooltip = TooltipPrimitive.Root
-
 const TooltipTrigger = TooltipPrimitive.Trigger
 
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
+>(({ className, sideOffset = 8, ...props }, ref) => (
   <TooltipPrimitive.Content
     ref={ref}
     sideOffset={sideOffset}
     className={cn(
-      'z-50 overflow-hidden border rounded-md bg-white px-3 py-1.5 text-xs text-black animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+      'z-50 overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800',
+      'bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md px-3 py-1.5 shadow-xl',
+      'text-[11px] font-bold tracking-tight text-neutral-900 dark:text-neutral-100',
+      'animate-in fade-in-0 zoom-in-95 duration-200',
+      'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+      'data-[side=bottom]:slide-in-from-top-2',
+      'data-[side=left]:slide-in-from-right-2',
+      'data-[side=right]:slide-in-from-left-2',
+      'data-[side=top]:slide-in-from-bottom-2',
+
       className,
     )}
     {...props}
@@ -25,4 +31,4 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }

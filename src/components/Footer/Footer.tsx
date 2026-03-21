@@ -5,7 +5,7 @@ import GridDecoration from '../Background/GridDecoration'
 
 const footerRoutes = {
   information: [
-    { name: 'About Us', href: '/about-us' },
+    { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ],
   compliance: [

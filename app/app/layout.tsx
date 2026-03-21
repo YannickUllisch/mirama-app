@@ -1,9 +1,9 @@
 import { auth } from '@server/auth/auth'
 import AppHeader from '@src/components/Header/AppHeader'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import { SidebarProvider } from '@src/components/ui/sidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
-import { SidebarProvider } from '@src/components/ui/sidebar'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 

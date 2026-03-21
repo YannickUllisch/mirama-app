@@ -1,4 +1,5 @@
 'use client'
+
 import apiRequest from '@hooks/query'
 import { FavouriteType } from '@prisma/client'
 import {
@@ -8,14 +9,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@src/components/ui/breadcrumb'
-import { capitalize } from '@src/lib/utils'
+import { capitalize, cn } from '@src/lib/utils'
 import { Input } from '@ui/input'
-import { Separator } from '@ui/separator'
-import { Search, Star } from 'lucide-react'
+import { Command, Search, Star } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import HoverLink from '../HoverLink'
+import MiramaIcon from '../MiramaIcon'
 import { Button } from '../ui/button'
 import { SidebarTrigger } from '../ui/sidebar'
 import HeaderProfile from './HeaderProfile'
@@ -27,19 +28,15 @@ const AppHeader = () => {
   const { data: favs } = apiRequest.favourite.fetchByType.useQuery(
     FavouriteType.ROUTE,
   )
-
-  const { mutate: useDeleteFavs } = apiRequest.favourite.delete.useMutation()
-  const { mutate: useCreateFav } = apiRequest.favourite.create.useMutation()
+  const createFavMutation = apiRequest.favourite.create.useMutation()
+  const deleteFavMutation = apiRequest.favourite.delete.useMutation()
 
   const currFav = useMemo(() => {
     return favs?.find((fav) => fav.data === pathname)
   }, [favs, pathname])
 
-  // We extract all segments from the URL for breadcrumbs.
-  // We filter out specific segments with length = 25. This is the length of ID's, which we do not want to show up.
   const { pathSegments, accumulatedPaths } = useMemo(() => {
     if (!pathname) return { pathSegments: [], accumulatedPaths: [] }
-
     const segments = pathname
       .split('/')
       .filter((segment) => segment && segment.length < 25)
@@ -48,97 +45,99 @@ const AppHeader = () => {
     const paths = segments.map(
       (_, index) => `/${segments.slice(0, index + 1).join('/')}`,
     )
-
     return { pathSegments: segments, accumulatedPaths: paths }
   }, [pathname])
 
+  const handleToggleFav = () => {
+    if (!currFav) {
+      createFavMutation.mutate({
+        type: FavouriteType.ROUTE,
+        data: pathname,
+        userId: session?.user.id ?? '',
+      })
+    } else {
+      deleteFavMutation.mutate(currFav.id)
+    }
+  }
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background border-b border-neutral-100 dark:border-neutral-900">
       <div className="flex h-14 items-center gap-4 px-4 justify-between">
-        <div className="flex items-center gap-3">
-          <SidebarTrigger className="text-sidebar-foreground" />
-          <HoverLink href="/" className="flex items-center gap-2">
-            <span className="text-lg font-semibold text-sidebar-foreground">
-              .mirama
-            </span>
+        <div className="flex items-center gap-4">
+          <SidebarTrigger className="h-8 w-8 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors" />
+
+          <HoverLink href="/" className="flex items-center shrink-0">
+            <MiramaIcon />
           </HoverLink>
 
-          <Separator
-            orientation="vertical"
-            className="h-4 md:block hidden bg-text"
-          />
+          <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-800 mx-1 hidden sm:block" />
 
-          {pathSegments.map((segment, index) => (
-            <Breadcrumb key={segment} className="md:block hidden">
-              <BreadcrumbList>
-                {index < pathSegments.length - 1 ? (
-                  <>
+          <Breadcrumb className="hidden md:block">
+            <BreadcrumbList className="gap-1">
+              {pathSegments.map((segment, index) => {
+                const isLast = index === pathSegments.length - 1
+                const label = capitalize(
+                  segment.replace(/-/g, ' ').replace('app', 'Dashboard'),
+                )
+
+                return (
+                  <React.Fragment key={segment}>
                     <BreadcrumbItem>
-                      <HoverLink
-                        href={accumulatedPaths[index]}
-                        passHref
-                        prefetch={false}
-                        className="text-xs"
-                      >
-                        {capitalize(
-                          segment
-                            .replace(/-/g, ' ')
-                            .replace('app', 'Dashboard'),
-                        )}
-                      </HoverLink>
+                      {isLast ? (
+                        <BreadcrumbPage className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-neutral-100">
+                          {label}
+                        </BreadcrumbPage>
+                      ) : (
+                        <HoverLink
+                          href={accumulatedPaths[index]}
+                          className="text-[10px] font-bold uppercase tracking-tighter text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                        >
+                          {label}
+                        </HoverLink>
+                      )}
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                  </>
-                ) : (
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>
-                      <div className="flex gap-2 items-center text-xs">
-                        {capitalize(
-                          segment
-                            .replace(/-/g, ' ')
-                            .replace('app', 'Dashboard'),
-                        )}
-                      </div>
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                )}
-              </BreadcrumbList>
-            </Breadcrumb>
-          ))}
+                    {!isLast && (
+                      <BreadcrumbSeparator className="text-neutral-200 dark:text-neutral-800 scale-75" />
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
 
-        <div className="flex-1 max-w-2xl">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex-1 max-w-sm hidden lg:block">
+          <div className="group relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-neutral-400 group-focus-within:text-primary transition-colors" />
             <Input
               type="search"
-              placeholder="Search projects, tasks, recents, and more..."
-              className="w-full pl-9 bg-card border-sidebar-border focus-visible:ring-sidebar-ring"
+              placeholder="System search..."
+              className="h-8 w-full pl-9 pr-10 bg-neutral-100/50 dark:bg-neutral-900/50 border-transparent focus-visible:bg-white dark:focus-visible:bg-black focus-visible:border-neutral-200 dark:focus-visible:border-neutral-800 focus-visible:ring-0 text-[11px] font-medium rounded-lg transition-all"
             />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1 py-0.5 rounded border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black pointer-events-none opacity-50">
+              <Command className="size-2" />
+              <span className="text-[8px] font-bold">K</span>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
-            variant={'ghost'}
-            className={`p-2 ${currFav ? 'text-yellow-500' : ''}`}
-            onClick={() => {
-              if (!currFav) {
-                const newFav = {
-                  id: Date.now().toString(),
-                  type: FavouriteType.ROUTE,
-                  data: pathname,
-                  userId: session?.user.id ?? '',
-                }
-
-                useCreateFav(newFav)
-              } else {
-                useDeleteFavs(currFav.id)
-              }
-            }}
+            variant="default"
+            size="icon"
+            className={cn(
+              'h-8 w-8 rounded-lg transition-all',
+              currFav
+                ? 'text-yellow-500 border-yellow-500/30 bg-yellow-500/10'
+                : 'text-neutral-400 border-transparent bg-transparent',
+            )}
+            onClick={handleToggleFav}
           >
-            <Star size={14} />
+            <Star size={13} className={cn(currFav && 'fill-yellow-500')} />
           </Button>
+
+          <div className="h-6 w-px bg-text/30 mx-1" />
+
           <HeaderProfile session={session} />
         </div>
       </div>
