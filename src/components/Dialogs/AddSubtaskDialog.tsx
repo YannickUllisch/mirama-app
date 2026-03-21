@@ -1,5 +1,8 @@
 import type { Task } from '@prisma/client'
-import { type PropsWithChildren, useState, type FC } from 'react'
+import { updateResourceById } from '@src/lib/api/updateResource'
+import { capitalize } from '@src/lib/utils'
+import { type FC, type PropsWithChildren, useState } from 'react'
+import { Button } from '../ui/button'
 import {
   Dialog,
   DialogClose,
@@ -10,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { Button } from '../ui/button'
 import {
   Select,
   SelectContent,
@@ -18,8 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
-import { capitalize } from '@src/lib/utils'
-import { updateResourceById } from '@src/lib/api/updateResource'
 
 interface AddSubtaskdialogProps {
   parentId: string
@@ -79,12 +79,7 @@ const AddSubtaskDialog: FC<PropsWithChildren<AddSubtaskdialogProps>> = ({
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button
-              type="button"
-              variant="success"
-              onClick={LinkSubtask}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
-            >
+            <Button type="button" variant="tertiary" onClick={LinkSubtask}>
               Link
             </Button>
           </DialogClose>
