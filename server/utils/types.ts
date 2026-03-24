@@ -1,11 +1,11 @@
+import type { AppContext } from '@/serverNew/shared/infrastructure/types'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
-import type { Logger } from 'pino'
 
 export type Controller = (
   req: NextRequest,
   session: Session,
-  logger: Logger,
+  ctx: AppContext,
 ) => Promise<Response>
 
 // Error Types

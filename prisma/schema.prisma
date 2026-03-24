@@ -9,7 +9,37 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-// Modelling Account Domain
+
+// ### IDENTITY & BILLING AGGREGATES ###
+model Tenant {
+  id String @id @default(cuid())
+
+  name                 String
+  adminUserId          String
+  isActive             Boolean
+  brandingColor        String?
+  logoUrl              String?
+  receiveNotifications Boolean @default(true)
+
+  organizations Organization[]
+
+  userId String @unique
+  user   User   @relation(name: "UserToTenant", fields: [userId], references: [id])
+}
+
+model User {
+  id            String     @id @default(uuid())
+
+  name          String
+  email         String     @unique
+  emailVerified DateTime?
+  image         String?
+  role          TenantRole @default(USER)
+
+  tenant       Tenant?       @relation("UserToTenant")
+  accounts     Account[]
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -35,30 +65,8 @@ enum TenantRole {
   USER
 }
 
-enum OrganizationRole {
-  OWNER
-  ADMIN
-  USER
-  FREELANCE
-  CLIENT
-}
 
-model Tenant {
-  id String @id @default(cuid())
-
-  name                 String
-  adminUserId          String
-  isActive             Boolean
-  brandingColor        String?
-  logoUrl              String?
-  receiveNotifications Boolean @default(true)
-
-  organizations Organization[]
-
-  userId String @unique
-  user   User   @relation(name: "UserToTenant", fields: [userId], references: [id])
-}
-
+// ### ORGANIZATION AGGREGATE ROOT SECTION ###
 model Organization {
   id String @id @default(cuid())
 
@@ -79,6 +87,14 @@ model Organization {
   members     Member[]
   teams       Team[]
   tags        Tag[]
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  USER
+  FREELANCE
+  CLIENT
 }
 
 model Team {
@@ -105,38 +121,12 @@ model Member {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  projects      ProjectMember[]
+  projectLinks  ProjectMember[]
   comments      Comment[]
   notifications Notification[]
   favourites    Favourite[]
 
   @@index([organizationId, id], map: "member_organization_project_idx")
-}
-
-model User {
-  id            String     @id @default(uuid())
-  name          String
-  email         String     @unique
-  emailVerified DateTime?
-  image         String?
-  role          TenantRole @default(USER)
-
-  tenant       Tenant?       @relation("UserToTenant")
-  accounts     Account[]
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
 }
 
 model OrganizationInvitation {
@@ -153,7 +143,24 @@ model OrganizationInvitation {
   expiresAt      DateTime     @default(now())
 }
 
-// Modelling Project & Task domain
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  title String
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  project Project[]
+  tasks   Task[]
+}
+
+// ### PROJECT AGGREGATE ROOT SECTION ###
 model Project {
   id             String       @id @default(cuid())
   name           String
@@ -205,6 +212,20 @@ model Milestone {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
+enum PriorityType {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum StatusType {
+  ACTIVE
+  CANCELLED
+  ON_HOLD
+  FINISHED
+}
+
+// ### TASK AGGREGATE ROOT SECTION ###
 model Task {
   id       String @id @default(cuid())
   taskCode String
@@ -247,37 +268,31 @@ enum TaskType {
   EPIC
 }
 
-enum PriorityType {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum StatusType {
-  ACTIVE
-  CANCELLED
-  ON_HOLD
-  FINISHED
-}
-
 enum TaskStatusType {
   NEW
   ACTIVE
   DONE
 }
 
-model Tag {
-  id    String @id @default(cuid())
-  title String
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
 
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Relations
+  taskId String?
+  task   Task?   @relation(fields: [taskId], references: [id])
 
-  project Project[]
-  tasks   Task[]
+  parentId String? // This field is null for top-level comments
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+
+  // Author of the comment
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
 }
 
-// Expense modelling
+// ### EXPENSE AGGREGATE ROOT SECTION ###
 model Expense {
   id          String   @id @default(cuid())
   amount      Float
@@ -305,24 +320,7 @@ enum ExpenseType {
   MISC
 }
 
-model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-
-  // Relations
-  taskId String?
-  task   Task?   @relation(fields: [taskId], references: [id])
-
-  parentId String? // This field is null for top-level comments
-  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies  Comment[] @relation("CommentReplies")
-
-  // Author of the comment
-  memberId String
-  member   Member @relation(fields: [memberId], references: [id])
-}
-
+// ### NOTIFICATION AGGREGATE ROOT SECTION ###
 model Notification {
   id String @id @default(cuid())
 
@@ -337,12 +335,7 @@ model Notification {
   createdAt DateTime @default(now())
 }
 
-enum FavouriteType {
-  PROJECT
-  TASK
-  ROUTE
-}
-
+// ### FAVOURITE AGGREGATE ROOT SECTION ###
 model Favourite {
   id String @id @default(cuid())
 
@@ -351,4 +344,19 @@ model Favourite {
 
   type FavouriteType
   data String
+}
+
+enum FavouriteType {
+  PROJECT
+  TASK
+  ROUTE
+}
+
+// ### OTHER MODELS ###
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

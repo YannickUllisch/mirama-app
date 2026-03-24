@@ -22,6 +22,8 @@
     "paths": {
       "@auth": ["./server/auth/auth.ts"],
       "@db": ["./server/utils/db.ts"],
+      "@scopedDb": ["./serverNew/shared/infrastructure/scoped-db.ts"],
+      "@authMiddleware": ["./serverNew/middleware/auth-middleware.ts"],
       "@api": ["./src/lib/api.ts"],
       "@logger": ["./server/utils/logger.ts"],
       "@withAuth": ["./server/auth/withAuth.ts"],

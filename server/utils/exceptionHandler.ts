@@ -1,13 +1,15 @@
+import type { AppContext } from '@/serverNew/shared/infrastructure/types'
 import logger from '@logger'
+import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
 import { sanitizeErrorMsg } from './errorSanitizer'
-import { type Controller, RouteSegmentNotFoundError } from './types'
+import { RouteSegmentNotFoundError } from './types'
 
-export const exceptionHandler = (controller: Controller): Controller => {
-  return async (req, session, logger) => {
+export const exceptionHandler = (handler: any) => {
+  return async (req: NextRequest, session?: Session, ctx?: AppContext) => {
     try {
-      return await controller(req, session, logger)
+      return await handler(req, session, ctx)
     } catch (err: any) {
       const sanitized = sanitizeErrorMsg(err)
       let status = 400
@@ -18,15 +20,21 @@ export const exceptionHandler = (controller: Controller): Controller => {
         returnMsg = 'Not found'
       }
 
+      // Specifically handle our Prisma Scope Guards
+      if (err.message.includes('GUARD')) {
+        status = 403
+        returnMsg = 'Access Denied: Invalid Context'
+      }
+
       logger.error(
         { err, sanitized: sanitized.message, status },
         'API Exception Caught',
       )
-      return Response.json({ ok: false, message: returnMsg }, { status })
+
+      return Response.json({ success: false, message: returnMsg }, { status })
     }
   }
 }
-
 export const genericExceptionHandler = (
   controller: (req: NextRequest, logger: Logger) => Promise<Response>,
 ) => {

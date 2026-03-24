@@ -1,9 +1,10 @@
+import type { AppContext } from '@/serverNew/shared/infrastructure/types'
 import logger from '@logger'
 import type { OrganizationRole } from '@prisma/client'
+import { getScopedDb } from '@scopedDb'
 import { auth } from '@server/auth/auth'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
-import type { Logger } from 'pino'
 import { v4 } from 'uuid'
 
 export const withAuth = (
@@ -11,7 +12,7 @@ export const withAuth = (
   handler: (
     req: NextRequest,
     session: Session,
-    logger: Logger,
+    ctx: AppContext,
   ) => Promise<Response>,
 ) => {
   return async (req: NextRequest) => {
@@ -91,7 +92,12 @@ export const withAuth = (
         organizationId: session.user.organizationId,
       })
 
-      const res = await handler(req, session, ctxLogger)
+      const ctx: AppContext = {
+        db: getScopedDb(session.user.tenantId, session.user.organizationId),
+        logger: ctxLogger,
+      }
+
+      const res = await handler(req, session, ctx)
 
       ctxLogger.info(
         {
