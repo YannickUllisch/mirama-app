@@ -4,7 +4,7 @@ import type {
   TaskResponseType,
   UpdateTaskType,
 } from '@server/domain/taskSchema'
-import { TaskMapper } from '@server/mapping/task'
+import { TaskMapper } from '@server/mapping/task/taskMapper'
 import db from '@server/utils/db'
 import { generateTaskId } from '@src/lib/helpers/TaskCodeGenerator'
 import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
@@ -13,28 +13,28 @@ import { v4 } from 'uuid'
 export const TaskService = {
   getTasksByProjectId: async (
     pid: string,
-    teamId: string,
+    organizationId: string,
     ignoreCompleted: boolean,
     sessionUserId: string,
-    isTeamAdminOrOwner: boolean,
+    isOrgAdminOrOwner: boolean,
   ): Promise<TaskResponseType[]> => {
     const project = await db.project.findFirst({
       where: {
         id: pid,
-        teamId,
+        organizationId,
       },
       select: {
-        users: {
+        members: {
           select: {
-            userId: true,
+            memberId: true,
           },
         },
       },
     })
 
     if (
-      !project?.users.map((p) => p.userId).includes(sessionUserId) &&
-      !isTeamAdminOrOwner
+      !project?.members.map((p) => p.memberId).includes(sessionUserId) &&
+      !isOrgAdminOrOwner
     ) {
       throw new Error('Invalid Permission')
     }
@@ -43,7 +43,7 @@ export const TaskService = {
       where: {
         project: {
           id: pid,
-          teamId,
+          organizationId,
         },
         ...(ignoreCompleted && {
           status: {
@@ -59,7 +59,7 @@ export const TaskService = {
         parent: true,
         comments: {
           include: {
-            user: true,
+            member: true,
           },
         },
         project: { select: { id: true, name: true } },
@@ -75,20 +75,20 @@ export const TaskService = {
   getTaskById: async (
     id: string,
     projectId: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
-    isTeamAdminOrOwner: boolean,
+    isOrgAdminOrOwner: boolean,
   ): Promise<TaskResponseType> => {
     // Permission and existence checks
     const [res, project] = await Promise.all([
       db.task.findFirst({
-        where: { id, teamId, projectId },
+        where: { id, organizationId, projectId },
         include: {
           assignedTo: true,
           subtasks: true,
           tags: true,
           parent: true,
-          comments: { include: { user: true } },
+          comments: { include: { member: true } },
           project: {
             select: {
               id: true,
@@ -99,17 +99,17 @@ export const TaskService = {
         orderBy: { title: 'asc' },
       }),
       db.project.findFirst({
-        where: { id: projectId, teamId },
+        where: { id: projectId, organizationId },
         select: {
-          users: { select: { userId: true } },
+          members: { select: { memberId: true } },
         },
       }),
     ])
 
     if (!res) throw new Error('Task not found')
     if (
-      !project?.users.map((p) => p.userId).includes(sessionUserId) &&
-      !isTeamAdminOrOwner
+      !project?.members.map((p) => p.memberId).includes(sessionUserId) &&
+      !isOrgAdminOrOwner
     ) {
       throw new Error('Invalid Permission')
     }
@@ -119,12 +119,12 @@ export const TaskService = {
 
   getPersonalTasks: async (
     userId: string,
-    teamId: string,
+    organizationId: string,
     projectId?: string,
   ): Promise<TaskResponseType[]> => {
     const res = await db.task.findMany({
       where: {
-        teamId,
+        organizationId,
         assignedToId: userId,
         projectId,
       },
@@ -135,7 +135,7 @@ export const TaskService = {
         parent: true,
         comments: {
           include: {
-            user: true,
+            member: true,
           },
         },
         project: { select: { id: true, name: true } },
@@ -148,7 +148,7 @@ export const TaskService = {
 
   createTask: async (
     pid: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
     payload: CreateTaskType,
@@ -162,13 +162,13 @@ export const TaskService = {
     const existingProject = await db.project.findFirst({
       where: {
         id: pid,
-        teamId,
+        organizationId,
       },
       select: {
         name: true,
-        users: {
+        members: {
           select: {
-            userId: true,
+            memberId: true,
           },
         },
       },
@@ -180,7 +180,7 @@ export const TaskService = {
 
     if (
       !isAdminOrOwner &&
-      !existingProject?.users.map((u) => u.userId).includes(sessionUserId)
+      !existingProject?.members.map((u) => u.memberId).includes(sessionUserId)
     ) {
       throw new Error('Invalid permission')
     }
@@ -195,7 +195,7 @@ export const TaskService = {
           create: newTags.map((t) => ({
             id: v4(),
             title: t.title,
-            teamId,
+            organizationId,
           })),
         },
         subtasks: {
@@ -203,7 +203,7 @@ export const TaskService = {
         },
         parentId: parentId,
         projectId: pid,
-        teamId,
+        organizationId,
         taskCode: generateTaskId(existingProject.name, newTaskId),
       },
       include: {
@@ -213,7 +213,7 @@ export const TaskService = {
         parent: true,
         comments: {
           include: {
-            user: true,
+            member: true,
           },
         },
         project: { select: { id: true, name: true } },
@@ -226,7 +226,7 @@ export const TaskService = {
   updateTask: async (
     tid: string,
     pid: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
     payload: UpdateTaskType,
@@ -236,14 +236,14 @@ export const TaskService = {
       where: {
         id: tid,
         projectId: pid,
-        teamId,
+        organizationId,
       },
       select: {
         project: {
           select: {
-            users: {
+            members: {
               select: {
-                userId: true,
+                memberId: true,
               },
             },
           },
@@ -257,7 +257,7 @@ export const TaskService = {
 
     if (
       !isAdminOrOwner &&
-      !task.project?.users.map((u) => u.userId).includes(sessionUserId)
+      !task.project?.members.map((u) => u.memberId).includes(sessionUserId)
     ) {
       throw new Error('Invalid permission')
     }
@@ -271,7 +271,7 @@ export const TaskService = {
       where: {
         id: tid,
         projectId: pid,
-        teamId,
+        organizationId,
       },
       data: {
         ...rest,
@@ -281,7 +281,7 @@ export const TaskService = {
           create: newTags.map((t) => ({
             id: v4(),
             title: t.title,
-            teamId,
+            organizationId,
           })),
         },
         subtasks: {
@@ -290,7 +290,7 @@ export const TaskService = {
         id: undefined,
         taskCode: undefined,
         projectId: undefined,
-        teamId,
+        organizationId,
       },
       include: {
         assignedTo: true,
@@ -299,7 +299,7 @@ export const TaskService = {
         parent: true,
         comments: {
           include: {
-            user: true,
+            member: true,
           },
         },
         project: { select: { id: true, name: true } },
@@ -312,14 +312,14 @@ export const TaskService = {
   /**
    * Deletes Tasks in Bulk for a specific Project, does not work across projects
    * @param pid ProjectId for which to remove tasks
-   * @param teamId Requestee teamId
+   * @param organizationId Requestee organizationId
    * @param sessionUserId requesteeUserId
    * @param isAdminOrOwner Role check
    * @param payload string array containing IDs from query
    */
   deleteTasksBulk: async (
     pid: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
     payload: string[],
@@ -327,12 +327,12 @@ export const TaskService = {
     const project = await db.project.findFirst({
       where: {
         id: pid,
-        teamId,
+        organizationId,
       },
       select: {
-        users: {
+        members: {
           select: {
-            userId: true,
+            memberId: true,
           },
         },
       },
@@ -344,7 +344,7 @@ export const TaskService = {
 
     if (
       !isAdminOrOwner &&
-      !project?.users.map((u) => u.userId).includes(sessionUserId)
+      !project?.members.map((u) => u.memberId).includes(sessionUserId)
     ) {
       throw new Error('Invalid permission')
     }
@@ -354,7 +354,7 @@ export const TaskService = {
         id: {
           in: payload,
         },
-        teamId,
+        organizationId,
         projectId: pid,
       },
     })
@@ -364,7 +364,7 @@ export const TaskService = {
    * Deletes a single task by ID
    * @param tid TaskID to delete
    * @param pid ProjectId for which to remove tasks
-   * @param teamId Requestee teamId
+   * @param organizationId Requestee organizationId
    * @param sessionUserId requesteeUserId
    * @param isAdminOrOwner Role check
    * @param payload string array containing IDs from query
@@ -372,7 +372,7 @@ export const TaskService = {
   deleteTask: async (
     tid: string,
     pid: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
   ) => {
@@ -380,14 +380,14 @@ export const TaskService = {
       where: {
         id: tid,
         projectId: pid,
-        teamId,
+        organizationId,
       },
       select: {
         project: {
           select: {
-            users: {
+            members: {
               select: {
-                userId: true,
+                memberId: true,
               },
             },
           },
@@ -401,7 +401,7 @@ export const TaskService = {
 
     if (
       !isAdminOrOwner &&
-      !task.project?.users.map((u) => u.userId).includes(sessionUserId)
+      !task.project?.members.map((u) => u.memberId).includes(sessionUserId)
     ) {
       throw new Error('Invalid permission')
     }
@@ -409,7 +409,7 @@ export const TaskService = {
     await db.task.delete({
       where: {
         id: tid,
-        teamId,
+        organizationId,
         projectId: pid,
       },
     })

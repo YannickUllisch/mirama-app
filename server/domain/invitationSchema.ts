@@ -1,12 +1,12 @@
 import z from 'zod'
-import { RoleSchema } from './enumSchemas'
+import { OrganizationRoleSchema } from './enumSchemas'
 
 export const InvitationResponseSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
-  role: RoleSchema,
-  teamId: z.string(),
+  organizationRole: OrganizationRoleSchema,
+  organizationId: z.string(),
   expiresAt: z.coerce.date(),
 })
 
@@ -17,14 +17,14 @@ export const CreateInvitationSchema = z.object({
   email: z.string().email({
     message: 'Invalid email format',
   }),
-  role: RoleSchema.default('USER'),
+  role: OrganizationRoleSchema.default('USER'),
 })
 
 export const UpdateInvitationSchema = z.object({
   name: z.string().min(3, {
     message: 'Name must include at least 3 characters',
   }),
-  role: RoleSchema.default('USER'),
+  role: OrganizationRoleSchema.default('USER'),
   extendInvitation: z.boolean().default(false),
 })
 

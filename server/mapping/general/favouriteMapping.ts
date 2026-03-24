@@ -7,7 +7,7 @@ export const FavouriteMapper = {
       data: input.data,
       id: input.id,
       type: input.type,
-      userId: input.userId ?? '',
+      memberId: input.memberId ?? '',
     }
   },
 }

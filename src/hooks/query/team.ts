@@ -6,7 +6,7 @@ import {
 import type {
   UpdateUserType,
   UserResponseType,
-} from '@server/domain/userSchema'
+} from '@server/domain/memberSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 

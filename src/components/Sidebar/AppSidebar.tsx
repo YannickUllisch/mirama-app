@@ -1,7 +1,7 @@
 'use client'
 import { useIsMobile } from '@hooks/utils/use-mobile'
 import { AppMenu } from '@src/lib/sidebarMenu'
-import { cn, isTeamAdminOrOwner } from '@src/lib/utils'
+import { cn, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import {
   Sidebar,
@@ -31,7 +31,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
   const isMobile = useIsMobile()
 
   const isAdminOrOwner = useMemo(() => {
-    return isTeamAdminOrOwner(session)
+    return isOrgAdminOrOwner(session)
   }, [session])
 
   return (

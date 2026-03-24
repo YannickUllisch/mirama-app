@@ -1,5 +1,5 @@
 import { CreateTagSchema, UpdateTagSchema } from '@server/domain/tagSchema'
-import { TagService } from '@server/services/team/tagService'
+import { TagService } from '@server/services/organization/tagService'
 import { fromTail } from '@server/utils/getDynamicRoute'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
@@ -16,7 +16,9 @@ const getTags = async (
   session: Session,
   _logger: Logger,
 ) => {
-  const tags = await TagService.getAllTeamTags(session.user.teamId)
+  const tags = await TagService.getAllTeamTags(
+    session.user.organizationId ?? '',
+  )
   return Response.json(tags, { status: 200 })
 }
 
@@ -35,7 +37,10 @@ const createTag = async (
   const body = await req.json()
   const input = CreateTagSchema.parse(body)
 
-  const tag = await TagService.createNewTeamTag(input, session.user.teamId)
+  const tag = await TagService.createNewTeamTag(
+    input,
+    session.user.organizationId ?? '',
+  )
   return Response.json(tag, { status: 201 })
 }
 
@@ -57,7 +62,11 @@ const updateTag = async (
   const body = await req.json()
   const input = UpdateTagSchema.parse(body)
 
-  const tag = await TagService.updateTag(tid, input, session.user.teamId)
+  const tag = await TagService.updateTag(
+    tid,
+    input,
+    session.user.organizationId ?? '',
+  )
   return Response.json(tag, { status: 200 })
 }
 
@@ -78,7 +87,7 @@ const deleteTag = async (
   })
   const tid = fromTail(req)
 
-  await TagService.deleteTag(tid, session.user.teamId)
+  await TagService.deleteTag(tid, session.user.organizationId ?? '')
 
   tagLogger.info({ tagId: tid, msg: 'Tag deleted' })
 

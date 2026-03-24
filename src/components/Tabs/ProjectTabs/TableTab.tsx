@@ -1,13 +1,13 @@
 'use client'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import {
   type TaskResponseType,
   UpdateTaskSchema,
   type UpdateTaskType,
 } from '@server/domain/taskSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -48,24 +48,27 @@ const TableTab = ({
   ])
 
   // Hooks
-  const { mutate: mutateTask } = apiRequest.task.update.useMutation(
-    project?.id ?? '',
-  )
+  const { mutate: mutateTask } = apiRequest.task.update.useMutation()
   const { mutate: deleteTask } = apiRequest.task.delete.useMutation()
 
   // Update
   const { handleFieldUpdate } = useEditableColumns<
     TaskResponseType,
-    UpdateTaskType
+    UpdateTaskType,
+    { id: string; projectId: string; data: UpdateTaskType }
   >({
     mutate: mutateTask,
     updateSchema: UpdateTaskSchema,
-    getKey: (data) => data.id,
     mapToUpdateInput: (data) => ({
       ...data,
       tags: data.tags.map((t) => t.id),
       newTags: [],
       subtasks: data.subtasks.map((s) => s.id),
+    }),
+    prepareMutation: (id, data) => ({
+      id,
+      data,
+      projectId: project?.id ?? '',
     }),
     onValidationError: (err) => {
       const firstMessage = err.issues?.[0]?.message || 'Input Error'

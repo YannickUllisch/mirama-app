@@ -246,7 +246,7 @@ const CreateProjectForm = () => {
           </div>
         </PageHeader>
 
-        <Card>
+        <Card className="bg-transparent border-none">
           <CardContent>
             <div className="form-group">
               <div className="min-h-[30px] flex items-center gap-2">
@@ -284,7 +284,7 @@ const CreateProjectForm = () => {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="col-span-1 lg:col-span-2">
+          <Card className="col-span-1 lg:col-span-2 bg-transparent border-none">
             <CardContent>
               <div className="space-y-6">
                 <div>
@@ -630,7 +630,7 @@ const CreateProjectForm = () => {
           </Card>
 
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-transparent border-none">
               <CardContent className="p-6">
                 <h3 className="text-lg font-medium flex items-center gap-2 text-text">
                   <Users className="w-5 h-5" />

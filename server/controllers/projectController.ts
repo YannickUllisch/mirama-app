@@ -5,7 +5,7 @@ import {
 import { ProjectService } from '@server/services/project/projectService'
 import { checkIfManager } from '@server/utils/checkManager'
 import { fromTail, pickFromTail } from '@server/utils/getDynamicRoute'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
@@ -24,11 +24,11 @@ export const ProjectController = {
   ) => {
     const archivedStatus = req.nextUrl.searchParams.get('archived') === 'true'
 
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
 
     const res = await ProjectService.getAllProjects(
       session.user.id ?? '',
-      session.user.teamId,
+      session.user.organizationId ?? '',
       archivedStatus,
       roleCheck,
     )
@@ -49,7 +49,7 @@ export const ProjectController = {
   ) => {
     const pid = fromTail(req)
 
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
 
     const project = await ProjectService.getDefaultProjectResponse(
       pid,
@@ -75,7 +75,7 @@ export const ProjectController = {
     // Extracting ID from route
     const [pid] = pickFromTail(req, [1])
 
-    const isAdminOrOwner = isTeamAdminOrOwner(session)
+    const isAdminOrOwner = isOrgAdminOrOwner(session)
 
     const users = await ProjectService.getProjectAssignees(
       pid,
@@ -155,7 +155,7 @@ export const ProjectController = {
 
     const isManager = await checkIfManager(pid, session.user.id ?? '')
 
-    if (!isManager && !isTeamAdminOrOwner(session)) {
+    if (!isManager && !isOrgAdminOrOwner(session)) {
       return Response.json(
         { ok: false, message: 'Not allowed to perform this action' },
         { status: 404 },

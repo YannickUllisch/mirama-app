@@ -13,8 +13,8 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { TaskStatusType } from '@prisma/client'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { TaskResponseType } from '@server/domain/taskSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { postResource } from '@src/lib/api/postResource'
 import { updateResourceById } from '@src/lib/api/updateResource'
@@ -25,10 +25,10 @@ import { useSession } from 'next-auth/react'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { v4 } from 'uuid'
 import { groupTasksByContainer } from '../Tree/ContainerizedTree'
+import { createBoards } from './createBoards'
 import KanbanContainer from './KanbanContainer'
 import { ContainerHeader } from './KanbanContainerItem'
 import KanbanItem from './KanbanItem'
-import { createBoards } from './createBoards'
 
 interface KanbanBoardProps {
   projectId: string

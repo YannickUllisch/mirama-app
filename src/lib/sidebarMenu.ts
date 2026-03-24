@@ -1,4 +1,3 @@
-import { Role } from '@prisma/client'
 import type { AppMenuItem } from '@src/types/types'
 import {
   BookAIcon,

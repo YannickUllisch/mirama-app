@@ -6,7 +6,6 @@ import MetricCard from '@src/components/ProjectDashboard/MetricCard'
 import ProjectGrid from '@src/components/ProjectDashboard/ProjectGrid'
 import MinimalistTasksWidget from '@src/components/ProjectDashboard/TaskSidebar'
 import TimelineCard from '@src/components/ProjectDashboard/TimelineCard'
-import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
 import { Button } from '@ui/button'
 import {
   ChevronRight,
@@ -17,6 +16,7 @@ import {
   User,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
+import { toast } from 'sonner'
 
 const Dashboard = () => {
   const { data: projects, isLoading: isProjectsLoading } =
@@ -24,16 +24,27 @@ const Dashboard = () => {
   const { data: tasks, isLoading: isTasksLoading } =
     apiRequest.task.fetchPersonal.useQuery()
 
-  //   const { mutateAsync: useTaskMutate, isPending: isTaskUpdatePending } =
-  // apiRequest.task.update.useMutation()
+  const { mutateAsync: mutateTask } = apiRequest.task.update.useMutation()
 
-  const handleTaskUpdate = async (
-    _projectId: string,
-    taskId: string,
-    status: any,
-  ) => {
-    console.info(taskId, status)
-    await updateResourceByIdNoToast('task', taskId, { status })
+  const handleTaskUpdate = async (taskId: string, status: any) => {
+    const foundTask = tasks?.find((x) => x.id === taskId)
+    console.info(tasks, taskId)
+    if (!foundTask) {
+      toast.error('Task error occurred')
+      return
+    }
+
+    await mutateTask({
+      projectId: foundTask.projectId,
+      id: foundTask.id,
+      data: {
+        ...foundTask,
+        subtasks: foundTask.subtasks.map((s) => s.id),
+        tags: foundTask.tags.map((t) => t.id),
+        newTags: [],
+        status,
+      },
+    })
   }
 
   return (

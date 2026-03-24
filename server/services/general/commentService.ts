@@ -2,7 +2,7 @@ import type {
   CreateCommentType,
   UpdateCommentType,
 } from '@server/domain/commentSchema'
-import { CommentMapper } from '@server/mapping/general/commentMapper'
+import { CommentMapper } from '@server/mapping/task/commentMapper'
 import db from '@server/utils/db'
 
 export const CommentService = {
@@ -21,9 +21,9 @@ export const CommentService = {
       select: {
         project: {
           select: {
-            users: {
+            members: {
               select: {
-                userId: true,
+                member: true,
               },
             },
           },
@@ -34,7 +34,7 @@ export const CommentService = {
     if (!task) throw new Error('Task not found')
 
     if (
-      !task.project.users.map((u) => u.userId).includes(sessionUserId) &&
+      !task.project.members.map((u) => u.member.id).includes(sessionUserId) &&
       !isAdminOrOwner
     ) {
       throw new Error('Invalid permission')
@@ -43,7 +43,7 @@ export const CommentService = {
     const res = await db.comment.findMany({
       where: { taskId },
       include: {
-        user: true,
+        member: true,
       },
     })
     return res.map((r) => CommentMapper.mapDefaultToApi(r))
@@ -53,7 +53,7 @@ export const CommentService = {
     const comment = await db.comment.create({
       data: { ...input, taskId },
       include: {
-        user: true,
+        member: true,
       },
     })
     return CommentMapper.mapDefaultToApi(comment)
@@ -69,7 +69,7 @@ export const CommentService = {
     const val = await db.comment.findFirst({
       where: {
         id: commentId,
-        userId: sessionUserId,
+        memberId: sessionUserId,
         taskId,
         task: {
           projectId,
@@ -85,12 +85,12 @@ export const CommentService = {
     const comment = await db.comment.update({
       where: {
         id: commentId,
-        userId: sessionUserId,
+        memberId: sessionUserId,
         taskId,
       },
       data: { ...input },
       include: {
-        user: true,
+        member: true,
       },
     })
     return CommentMapper.mapDefaultToApi(comment)
@@ -106,7 +106,7 @@ export const CommentService = {
     const val = await db.comment.findFirst({
       where: {
         id: commentId,
-        userId: sessionUserId,
+        memberId: sessionUserId,
         taskId,
         task: {
           projectId,
@@ -120,7 +120,7 @@ export const CommentService = {
     if (!val && !isAdminOrOwner) throw new Error('Invalid Permission')
 
     await db.comment.delete({
-      where: { id: commentId, userId: sessionUserId },
+      where: { id: commentId, memberId: sessionUserId },
     })
   },
 }

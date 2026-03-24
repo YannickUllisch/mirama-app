@@ -9,7 +9,7 @@ import {
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import { Plus, UserPlus } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { toast } from 'sonner'
@@ -37,6 +37,10 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
       name: data.name,
       role: data.role,
     }),
+    prepareMutation: (id, data) => ({
+      id,
+      data,
+    }),
     onValidationError: (err) => {
       const firstMessage = err.issues?.[0]?.message || 'Input Error'
       toast.error(`Input Error: ${firstMessage}`)
@@ -61,7 +65,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
         dataLoading={isLoading}
         toolbarOptions={{
           showFilterOption: true,
-          addToolbarleft: isTeamAdminOrOwner(session) && (
+          addToolbarleft: isOrgAdminOrOwner(session) && (
             <AddMemberDialog>
               <div className="flex px-3 gap-2 items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                 <Plus width={15} />

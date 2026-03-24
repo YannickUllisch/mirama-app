@@ -1,8 +1,8 @@
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, TaskStatusType } from '@prisma/client'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { TagResponseType } from '@server/domain/tagSchema'
 import type { TaskResponseType } from '@server/domain/taskSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import HoverLink from '@src/components/HoverLink'
 import {

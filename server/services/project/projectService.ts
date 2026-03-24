@@ -1,31 +1,31 @@
+import type { MemberResponseType } from '@server/domain/memberSchema'
 import type {
   CreateProjectInput,
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
+import { MemberMapper } from '@server/mapping/organization/memberMapping'
 import { ProjectMapper } from '@server/mapping/project/projectMapping'
-import { UserMapper } from '@server/mapping/user/userMapping'
 import db from '@server/utils/db'
 import { v4 } from 'uuid'
 
 export const ProjectService = {
   getAllProjects: async (
     sessionUserId: string,
-    teamId: string,
+    organizationId: string,
     onlyArchived: boolean,
-    isTeamAdminOrOwner: boolean,
+    isOrgAdminOrOwner: boolean,
   ): Promise<ProjectResponseInput[]> => {
     const res = await db.project.findMany({
       where: {
-        teamId: teamId,
+        organizationId: organizationId,
         archived: onlyArchived,
-        ...(isTeamAdminOrOwner
-          ? {} // Admins should see all projects, so we remove the users filter
+        ...(isOrgAdminOrOwner
+          ? {} // Admins should see all projects, so we remove the members filter
           : {
-              users: {
+              members: {
                 some: {
-                  userId: sessionUserId,
+                  memberId: sessionUserId,
                 },
               },
             }),
@@ -34,9 +34,9 @@ export const ProjectService = {
         milestones: true,
         tags: true,
         tasks: true,
-        users: {
+        members: {
           include: {
-            user: true,
+            member: true,
           },
         },
       },
@@ -50,63 +50,63 @@ export const ProjectService = {
 
   getProjectAssignees: async (
     projectId: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
-  ): Promise<UserResponseType[]> => {
+  ): Promise<MemberResponseType[]> => {
     const project = await db.project.findFirst({
       where: {
         id: projectId,
-        teamId,
+        organizationId,
       },
       select: {
-        users: {
+        members: {
           select: {
-            userId: true,
+            memberId: true,
           },
         },
       },
     })
 
     if (
-      !project?.users.map((u) => u.userId).includes(sessionUserId) &&
+      !project?.members.map((u) => u.memberId).includes(sessionUserId) &&
       !isAdminOrOwner
     ) {
       throw new Error('Invalid permission')
     }
 
-    const res = await db.user.findMany({
+    const res = await db.member.findMany({
       where: {
         projects: {
           some: {
             projectId,
           },
         },
-        teamId: teamId,
+        organizationId: organizationId,
       },
     })
 
-    return res.map((r) => UserMapper.mapDefaultToApi(r))
+    return res.map((r) => MemberMapper.mapDefaultToApi(r))
   },
 
   getDefaultProjectResponse: async (
     projectId: string,
-    teamId: string,
+    organizationId: string,
     sessionUserId: string,
     isAdminOrOwner: boolean,
   ): Promise<ProjectResponseInput | null> => {
     const project = await db.project.findFirst({
       where: {
         id: projectId,
-        teamId,
+        organizationId,
       },
       include: {
         milestones: true,
         tags: true,
         tasks: true,
-        users: {
+        members: {
           include: {
-            user: true,
+            member: true,
           },
         },
       },
@@ -115,7 +115,7 @@ export const ProjectService = {
     if (!project) throw new Error('Project not Found')
 
     if (
-      !project.users.map((u) => u.userId).includes(sessionUserId) &&
+      !project.members.map((u) => u.memberId).includes(sessionUserId) &&
       !isAdminOrOwner
     ) {
       throw new Error('Invalid Permission')
@@ -127,9 +127,9 @@ export const ProjectService = {
   updateProject: async (
     input: UpdateProjectInput,
     projectId: string,
-    teamId: string,
+    organizationId: string,
   ) => {
-    const { users, milestones, tags, newTags, ...proj } = input
+    const { members, milestones, tags, newTags, ...proj } = input
 
     const existingMilestones = await db.milestone.findMany({
       where: { projectId },
@@ -143,7 +143,7 @@ export const ProjectService = {
     const res = await db.$transaction(async (prisma) => {
       // Update project itself
       const project = await prisma.project.update({
-        where: { id: projectId, teamId },
+        where: { id: projectId, organizationId },
         data: {
           ...proj,
           tags: {
@@ -151,28 +151,28 @@ export const ProjectService = {
             create: newTags.map((t) => ({
               id: v4(),
               title: t.title,
-              teamId,
+              organizationId,
             })),
           },
-          teamId,
+          organizationId,
         },
         include: {
           milestones: true,
           tags: true,
           tasks: true,
-          users: {
+          members: {
             include: {
-              user: true,
+              member: true,
             },
           },
         },
       })
 
-      // Update user relations
-      await prisma.projectUser.deleteMany({ where: { projectId } })
-      if (users && users.length > 0) {
-        await prisma.projectUser.createMany({
-          data: users.map((u) => ({ ...u, projectId })),
+      // Update member relations
+      await prisma.projectMember.deleteMany({ where: { projectId } })
+      if (members && members.length > 0) {
+        await prisma.projectMember.createMany({
+          data: members.map((u) => ({ ...u, projectId })),
         })
       }
 
@@ -199,13 +199,13 @@ export const ProjectService = {
 
     return ProjectMapper.mapDefaultToApi(res)
   },
-  createProject: async (input: CreateProjectInput, teamId: string) => {
+  createProject: async (input: CreateProjectInput, organizationId: string) => {
     {
       const { newMilestones, newTags, ...proj } = input
 
       const existingProject = await db.project.findFirst({
         where: {
-          teamId,
+          organizationId,
           name: proj.name,
         },
         select: {
@@ -224,12 +224,12 @@ export const ProjectService = {
             create: input.newTags.map((t) => ({
               id: v4(),
               title: t.title,
-              teamId,
+              organizationId,
             })),
           },
-          users: {
+          members: {
             createMany: {
-              data: input.users,
+              data: input.members,
             },
           },
           milestones: {
@@ -237,15 +237,15 @@ export const ProjectService = {
               data: input.newMilestones,
             },
           },
-          teamId,
+          organizationId,
         },
         include: {
           milestones: true,
           tags: true,
           tasks: true,
-          users: {
+          members: {
             include: {
-              user: true,
+              member: true,
             },
           },
         },
@@ -255,10 +255,10 @@ export const ProjectService = {
     }
   },
 
-  deleteProject: async (pid: string, teamId: string) => {
+  deleteProject: async (pid: string, organizationId: string) => {
     try {
       await db.project.delete({
-        where: { id: pid, teamId },
+        where: { id: pid, organizationId },
       })
     } catch (err) {
       console.info(err)
@@ -267,13 +267,13 @@ export const ProjectService = {
 
   archiveProject: async (
     projectId: string,
-    teamId: string,
+    organizationId: string,
     archive: boolean,
   ) => {
     const res = await db.project.update({
       where: {
         id: projectId,
-        teamId,
+        organizationId,
       },
       data: {
         archived: archive,
@@ -282,9 +282,9 @@ export const ProjectService = {
         milestones: true,
         tags: true,
         tasks: true,
-        users: {
+        members: {
           include: {
-            user: true,
+            member: true,
           },
         },
       },

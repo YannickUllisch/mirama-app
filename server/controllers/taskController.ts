@@ -5,7 +5,7 @@ import {
 } from '@server/domain/taskSchema'
 import { TaskService } from '@server/services/task/taskService'
 import { pickFromTail } from '@server/utils/getDynamicRoute'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
@@ -26,11 +26,11 @@ export const TaskController = {
     const ignoreCompleted =
       req.nextUrl.searchParams.get('ignoreCompleted') === 'true'
 
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
 
     const tasks = await TaskService.getTasksByProjectId(
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       ignoreCompleted,
       session.user.id ?? '',
       roleCheck,
@@ -47,10 +47,10 @@ export const TaskController = {
     const [pid] = pickFromTail(req, [1])
     const body = await req.json()
     const parsedBody = CreateTaskSchema.parse(body)
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
     const task = await TaskService.createTask(
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       session.user.id ?? '',
       roleCheck,
       parsedBody,
@@ -78,10 +78,10 @@ export const TaskController = {
     }
 
     const parsed = DeleteTasksSchema.parse({ ids })
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
     await TaskService.deleteTasksBulk(
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       session.user.id ?? '',
       roleCheck,
       parsed.ids,
@@ -102,12 +102,12 @@ export const TaskController = {
   getTaskById: async (req: NextRequest, session: Session, _logger: Logger) => {
     const [tid, pid] = pickFromTail(req, [0, 2])
 
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
 
     const task = await TaskService.getTaskById(
       tid,
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       session.user.id ?? '',
       roleCheck,
     )
@@ -123,11 +123,11 @@ export const TaskController = {
     const [tid, pid] = pickFromTail(req, [0, 2])
     const body = await req.json()
     const parsedBody = UpdateTaskSchema.parse(body)
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
     const task = await TaskService.updateTask(
       tid,
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       session.user.id ?? '',
       roleCheck,
       parsedBody,
@@ -143,12 +143,12 @@ export const TaskController = {
    */
   deleteTask: async (req: NextRequest, session: Session, _logger: Logger) => {
     const [tid, pid] = pickFromTail(req, [0, 2])
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
 
     await TaskService.deleteTask(
       tid,
       pid,
-      session.user.teamId,
+      session.user.organizationId ?? '',
       session.user.id ?? '',
       roleCheck,
     )
@@ -174,7 +174,7 @@ export const TaskController = {
 
     const tasks = await TaskService.getPersonalTasks(
       session.user.id ?? '',
-      session.user.teamId,
+      session.user.organizationId ?? '',
       pid ?? undefined,
     )
     return Response.json(tasks, { status: 200 })

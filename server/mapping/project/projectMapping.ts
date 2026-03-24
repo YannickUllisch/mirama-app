@@ -1,10 +1,10 @@
 import type {
+  Member,
   Milestone,
   Project,
-  ProjectUser,
+  ProjectMember,
   Tag,
   Task,
-  User,
 } from '@prisma/client'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 
@@ -14,7 +14,7 @@ export const ProjectMapper = {
       milestones: Milestone[]
       tags: Tag[]
       tasks: Task[]
-      users: (ProjectUser & { user: User })[]
+      members: (ProjectMember & { member: Member })[]
     },
   ): ProjectResponseInput => {
     return {
@@ -29,10 +29,11 @@ export const ProjectMapper = {
       status: input.status,
       milestones: input.milestones.map((m) => ({ ...m })),
       tags: input.tags.map((t) => ({ title: t.title, id: t.id })),
-      users: input.users.map((u) => ({
-        ...u.user,
-        id: u.user.id,
-        isManager: u.isManager,
+      members: input.members.map((m) => ({
+        ...m.member,
+        id: m.memberId,
+        organizationRole: m.member.role,
+        isManager: m.isManager,
       })),
       tasks: input.tasks.map((t) => ({ ...t })),
     }

@@ -8,13 +8,13 @@ import {
   fetchProjectsFn,
   updateProjectFn,
 } from '@hooks/api/project'
+import type { UserProjectResponseType } from '@server/domain/memberSchema'
 import type {
   CreateProjectInput,
   ProjectResponseInput,
   UpdateProjectInput,
 } from '@server/domain/projectSchema'
 import type { TagResponseType } from '@server/domain/tagSchema'
-import type { UserProjectResponseType } from '@server/domain/userSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 

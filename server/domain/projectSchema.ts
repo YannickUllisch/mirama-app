@@ -1,16 +1,16 @@
 import { PriorityType, StatusType } from '@prisma/client'
 import z from 'zod'
 import { PriorityTypeSchema, StatusTypeSchema } from './enumSchemas'
+import { MemberProjectJoinResponseSchema } from './memberSchema'
 import {
   AttachNewMilestoneToProjectSchema,
   MilestoneProjectResponseSchema,
 } from './milestoneSchema'
 import { CreateTagSchema, TagResponseSchema } from './tagSchema'
 import { TaskProjectResponseSchema } from './taskSchema'
-import { UserProjectResponseSchema } from './userSchema'
 
-export const ProjectUserLinkSchema = z.object({
-  userId: z.string().min(1, { message: 'User ID must be defined' }),
+export const ProjectMemberLinkSchema = z.object({
+  memberId: z.string().min(1, { message: 'Member ID must be defined' }),
   isManager: z.boolean().default(false),
 })
 
@@ -27,7 +27,7 @@ export const ProjectResponseSchema = z
     budget: z.number().default(0),
     milestones: z.array(MilestoneProjectResponseSchema),
     tags: z.array(TagResponseSchema),
-    users: z.array(UserProjectResponseSchema),
+    members: z.array(MemberProjectJoinResponseSchema),
     tasks: z.array(TaskProjectResponseSchema),
   })
   .refine((data) => data.startDate <= data.endDate, {
@@ -47,7 +47,7 @@ export const CreateProjectSchema = z
     budget: z.number().default(0),
     tags: z.string().array(),
     newTags: z.array(CreateTagSchema),
-    users: z.array(ProjectUserLinkSchema),
+    members: z.array(ProjectMemberLinkSchema),
     newMilestones: z.array(AttachNewMilestoneToProjectSchema),
   })
   .refine((data) => data.startDate <= data.endDate, {
@@ -66,7 +66,7 @@ export const UpdateProjectSchema = z
     budget: z.number(),
     tags: z.string().array(),
     newTags: z.array(CreateTagSchema),
-    users: z.array(ProjectUserLinkSchema),
+    members: z.array(ProjectMemberLinkSchema),
     milestones: z.array(MilestoneProjectResponseSchema),
   })
   .refine((data) => data.startDate <= data.endDate, {

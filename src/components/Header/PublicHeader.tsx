@@ -44,7 +44,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
             {session ? (
               <Link href="/app">
                 <Button variant={'neo'}>
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="relative z-10 flex items-center gap-2 uppercase">
                     Dashboard <HomeIcon className="w-4 h-4" />
                   </span>
                 </Button>
@@ -52,7 +52,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
             ) : (
               <Link href="/auth/login">
                 <Button variant={'neo'}>
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="relative z-10 flex items-center gap-2 uppercase">
                     Sign In <Fingerprint className="w-4 h-4" />
                   </span>
                 </Button>

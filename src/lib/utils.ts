@@ -1,7 +1,7 @@
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-import type { Session } from 'next-auth'
 import { PriorityType, Role, TaskStatusType } from '@prisma/client'
+import { type ClassValue, clsx } from 'clsx'
+import type { Session } from 'next-auth'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -45,7 +45,7 @@ const colorClasses = [
  * @param teamId the teamId for which the role is valid.
  * @returns boolean whether or not user is Admin or Owner
  */
-export const isTeamAdminOrOwner = (session: Session | null) => {
+export const isOrgAdminOrOwner = (session: Session | null) => {
   if (!session) {
     return false
   }

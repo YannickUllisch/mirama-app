@@ -1,7 +1,7 @@
 'use client'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
 import type { TaskResponseType } from '@server/domain/taskSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import KanbanBoard from '@src/components/Kanban/KanbanBoard'
 
 const BoardTab = ({

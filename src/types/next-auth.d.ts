@@ -1,10 +1,11 @@
-import type { Role } from '@prisma/client'
+import type { OrganizationRole } from '@prisma/client'
 import type { DefaultSession } from 'next-auth'
 
 export type ExtendedUser = DefaultSession['user'] & {
-  teamId: string
-  role: Role
-  refreshToken?: string
+  tenantId: string
+  tenantRole: TenantRole
+  organizationId?: string
+  orgRole?: OrganizationRole
 }
 
 declare module 'next-auth' {

@@ -24,11 +24,7 @@ import HoverLink from '../HoverLink'
 interface MinimalistTasksWidgetProps {
   tasks: TaskResponseType[]
   isLoading?: boolean
-  onTaskUpdate?: (
-    projectId: string,
-    taskId: string,
-    status: TaskStatusType,
-  ) => Promise<void>
+  onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
 }
 
 const MinimalistTasksWidget = ({
@@ -55,7 +51,6 @@ const MinimalistTasksWidget = ({
   )
 
   const toggleTaskCompletion = async (
-    projectid: string,
     taskId: string,
     currentStatus: TaskStatusType,
   ) => {
@@ -66,7 +61,7 @@ const MinimalistTasksWidget = ({
         : TaskStatusType.DONE
     setUpdatingTaskId(taskId)
     try {
-      await onTaskUpdate(projectid, taskId, newStatus)
+      await onTaskUpdate(taskId, newStatus)
     } finally {
       setUpdatingTaskId(null)
     }
@@ -207,7 +202,7 @@ const TaskList = ({
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <button
               type="button"
-              onClick={() => onToggle(task.projectId, task.id, task.status)}
+              onClick={() => onToggle(task.id, task.status)}
               disabled={updatingId === task.id}
               className={cn(
                 'mt-0.5 w-5 h-5 rounded-lg border-2 flex flex-shrink-0 items-center justify-center transition-all',

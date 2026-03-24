@@ -1,8 +1,8 @@
-import type { Role } from '@prisma/client'
+import type { OrganizationRole, TenantRole } from '@prisma/client'
 import NextAuth from 'next-auth'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'
-import { getUserById } from './helpers/queries'
+import { getUserById, tryGetOrganization } from './helpers/queries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -53,42 +53,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return true
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (!token.sub) return token
 
+      if (user) {
+      }
       const existingUser = await getUserById(token.sub)
       if (!existingUser) return token
 
-      token.teamId = existingUser.teamId
-      token.role = existingUser.role
+      token.tenantId = existingUser.tenant?.id
+      token.tenantRole = existingUser.role
       token.name = existingUser.name
-      if (user && 'refreshToken' in user) {
-        token.refreshToken = user.refreshToken ?? ''
+
+      if (trigger === 'update' && session?.organizationId) {
+        const foundOrg = await tryGetOrganization(
+          token.sub as string,
+          session.organizationId,
+        )
+
+        if (foundOrg) {
+          token.organizationId = foundOrg.id
+          token.orgRole = foundOrg.members[0].role
+          token.tenantId = foundOrg.tenantId
+        }
       }
 
       return token
     },
     session({ token, session }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub
+      if (session.user) {
+        session.user.id = token.sub as string
+        session.user.name = token.name as string
+        session.user.tenantId = token.tenantId as string
+        session.user.organizationId = token.organizationId as string
+        session.user.orgRole = token.orgRole as OrganizationRole
+        session.user.tenantRole = token.tenantRole as TenantRole
       }
-
-      if (token.role && session.user) {
-        session.user.role = token.role as Role
-      }
-
-      if (token.teamId && session.user) {
-        session.user.teamId = token.teamId as string
-      }
-
-      if (token.name && session.user) {
-        session.user.name = token.name
-      }
-
-      if (token.provider && session.user) {
-        session.user.refreshToken = token.refreshToken as string
-      }
-
       return session
     },
   },

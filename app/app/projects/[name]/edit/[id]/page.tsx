@@ -81,7 +81,7 @@ const EditTaskPage = ({
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
 
   const { mutate: updateTaskMutation, isPending } =
-    apiRequest.task.update.useMutation(ctx?.projectId ?? '')
+    apiRequest.task.update.useMutation()
 
   // Form Logic and Functions
   const form = useForm<UpdateTaskType>({
@@ -139,7 +139,7 @@ const EditTaskPage = ({
       return
     }
 
-    updateTaskMutation({ id, data: vals })
+    updateTaskMutation({ id, data: vals, projectId: ctx.projectId })
   }
 
   if (isTaskLoading) {

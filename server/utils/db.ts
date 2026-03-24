@@ -45,7 +45,7 @@ const prismaClientSingleton = () => {
         cacheTime: 60 * 60, // 1 hour
       },
       {
-        model: 'CompanyInvitation',
+        model: 'OrganizationInvitation',
         cacheTime: 60 * 60, // 1 hour
       },
       {

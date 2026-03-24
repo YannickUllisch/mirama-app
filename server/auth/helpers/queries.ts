@@ -6,12 +6,50 @@ const client = new PrismaClient()
 
 export const getUserById = async (id: string) => {
   try {
-    const user = await client.user.findUnique({ where: { id } })
+    const user = await client.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        role: true,
+        name: true,
+        tenant: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
 
     return user
   } catch {
     return null
   }
+}
+
+export const tryGetOrganization = async (memberId: string, orgId: string) => {
+  const organization = await client.organization.findFirst({
+    where: {
+      id: orgId,
+      members: {
+        some: {
+          id: memberId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      tenantId: true,
+      members: {
+        where: {
+          id: memberId,
+        },
+        select: {
+          role: true,
+        },
+      },
+    },
+  })
+  return organization
 }
 
 export const getValidCompanyInvitation = async ({
@@ -20,7 +58,7 @@ export const getValidCompanyInvitation = async ({
   email: string
 }) => {
   try {
-    const invitation = await client.companyInvitation.findUnique({
+    const invitation = await client.organizationInvitation.findUnique({
       where: {
         email,
       },
@@ -34,7 +72,7 @@ export const getValidCompanyInvitation = async ({
 
     if (expiresAt < DateTime.now()) {
       // Invitation has expired, so remove it from the database
-      await client.companyInvitation.delete({
+      await client.organizationInvitation.delete({
         where: {
           email: invitation.email,
         },

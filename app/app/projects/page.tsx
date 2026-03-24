@@ -31,7 +31,6 @@ const ProjectsPage = () => {
   >({
     mutate: projectMutation,
     updateSchema: UpdateProjectSchema,
-    getKey: (data) => data.id,
     mapToUpdateInput: (data) => ({
       ...data,
       tags: data.tags.map((t) => t.id),
@@ -40,6 +39,10 @@ const ProjectsPage = () => {
         isManager: u.isManager,
         userId: u.id,
       })),
+    }),
+    prepareMutation: (id, data) => ({
+      id,
+      data,
     }),
     onValidationError: (err) => {
       const firstMessage = err.issues?.[0]?.message || 'Input Error'

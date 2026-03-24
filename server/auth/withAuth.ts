@@ -1,5 +1,5 @@
 import logger from '@logger'
-import type { Role } from '@prisma/client'
+import type { OrganizationRole } from '@prisma/client'
 import { auth } from '@server/auth/auth'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
@@ -7,7 +7,7 @@ import type { Logger } from 'pino'
 import { v4 } from 'uuid'
 
 export const withAuth = (
-  allowedRoles: Role[],
+  allowedRoles: OrganizationRole[],
   handler: (
     req: NextRequest,
     session: Session,
@@ -40,14 +40,14 @@ export const withAuth = (
         )
       }
 
-      if (!session.user?.role) {
+      if (!session.user?.orgRole) {
         apiLogger.warn(
           {
             requestId,
             method,
             url,
             userId: session.user.id,
-            teamId: session.user.teamId,
+            organizationId: session.user.organizationId,
             status: 403,
           },
           'API Auth Error: Missing role',
@@ -60,7 +60,7 @@ export const withAuth = (
 
       if (
         allowedRoles.length &&
-        !allowedRoles.includes(session.user.role as Role)
+        !allowedRoles.includes(session.user.orgRole as OrganizationRole)
       ) {
         apiLogger.warn(
           {
@@ -68,8 +68,8 @@ export const withAuth = (
             method,
             url,
             userId: session.user.id,
-            role: session.user.role,
-            teamId: session.user.teamId,
+            role: session.user.orgRole,
+            organizationId: session.user.organizationId,
             allowedRoles,
             status: 403,
           },
@@ -87,8 +87,8 @@ export const withAuth = (
         method,
         url,
         userId: session.user.id,
-        role: session.user.role,
-        teamId: session.user.teamId,
+        role: session.user.orgRole,
+        organizationId: session.user.organizationId,
       })
 
       const res = await handler(req, session, ctxLogger)

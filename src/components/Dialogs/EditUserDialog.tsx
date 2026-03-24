@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
-import { Role } from '@prisma/client'
 import {
   UpdateUserSchema,
   type UpdateUserType,
   type UserResponseType,
-} from '@server/domain/userSchema'
+} from '@server/domain/memberSchema'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,

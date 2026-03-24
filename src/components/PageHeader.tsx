@@ -18,30 +18,32 @@ const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   return (
-    <header className={cn('sticky top-0 z-30 w-full', className)}>
-      <div className="flex items-center justify-between px-8 h-20 max-w-[1600px] mx-auto">
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2 mb-1">
-            <Icon className="w-3.5 h-3.5 text-secondary dark:text-text" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+    <header className={cn(className)}>
+      <div className="flex items-center justify-between px-6 md:px-10 h-20 w-full transition-all duration-300">
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <Icon className="w-3.5 h-3.5 text-text" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
               Currently Viewing
             </span>
           </div>
 
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-xl font-bold tracking-tight text-text">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <h1 className="text-xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 truncate">
               {title}
             </h1>
             {description && (
-              <span className="hidden md:block text-sm text-neutral-500 font-medium">
-                <span className="mx-2 text-neutral-300">/</span>
-                {description}
-              </span>
+              <div className="hidden lg:flex items-center gap-3 shrink-0">
+                <span className="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800 rotate-[20deg]" />
+                <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 tracking-wider">
+                  {description}
+                </span>
+              </div>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">{children}</div>
+        <div className="flex items-center gap-3 shrink-0">{children}</div>
       </div>
     </header>
   )

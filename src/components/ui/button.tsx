@@ -25,7 +25,7 @@ const buttonVariants = cva(
 
         destructive:
           'rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-medium tracking-tight hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all duration-200 shadow-sm shadow-red-500/5',
-        link: 'relative h-auto p-0 text-[11px] font-black uppercase tracking-widest text-primary underline-offset-4 hover:underline transition-all',
+        link: 'relative h-auto p-0 text-[11px] font-bold  text-text/70 underline-offset-4 hover:underline transition-all',
 
         ghost:
           'rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 hover:text-tertiary font-medium tracking-tight',

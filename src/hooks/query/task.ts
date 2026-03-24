@@ -140,16 +140,17 @@ const task = {
   },
 
   update: {
-    useMutation: (projectId: string) => {
+    useMutation: () => {
       const qc = useQueryClient()
       return useMutation<
         TaskResponseType,
         Error,
-        { id: string; data: UpdateTaskType },
+        { projectId: string; id: string; data: UpdateTaskType },
         ListContext
       >({
-        mutationFn: ({ id, data }) => updateTaskFn(projectId, id, data),
-        onMutate: async ({ id, data }) => {
+        mutationFn: ({ projectId, id, data }) =>
+          updateTaskFn(projectId, id, data),
+        onMutate: async ({ projectId, id, data }) => {
           await Promise.all([
             qc.cancelQueries({ queryKey: ['tasks', projectId] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
@@ -199,7 +200,7 @@ const task = {
         },
         onError: (err, vars, ctx) => {
           if (ctx?.previousTasks)
-            qc.setQueryData(['tasks', projectId], ctx.previousTasks)
+            qc.setQueryData(['tasks', vars.projectId], ctx.previousTasks)
           if (ctx?.previousPersonalTasks)
             qc.setQueryData(['personalTasks', 'all'], ctx.previousPersonalTasks)
           if (ctx?.previousTask)
@@ -208,7 +209,7 @@ const task = {
         },
         onSuccess: (updated) => {
           qc.setQueryData<TaskResponseType[]>(
-            ['tasks', projectId],
+            ['tasks', updated.projectId],
             (old = []) => old.map((t) => (t.id === updated.id ? updated : t)),
           )
           qc.setQueryData<TaskResponseType[]>(
@@ -219,7 +220,7 @@ const task = {
         },
         onSettled: (_data, _err, vars) => {
           qc.invalidateQueries({ queryKey: ['tags'] })
-          qc.invalidateQueries({ queryKey: ['tasks', projectId] })
+          qc.invalidateQueries({ queryKey: ['tasks', vars.projectId] })
           qc.invalidateQueries({ queryKey: ['personalTasks'] })
           qc.invalidateQueries({ queryKey: ['task', vars.id] })
         },

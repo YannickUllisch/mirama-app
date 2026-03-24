@@ -21,7 +21,7 @@ export const InvitationController = {
     _logger: Logger,
   ) => {
     const invitations = await InvitationService.getInvitationsByTeam(
-      session.user.teamId,
+      session.user.organizationId ?? '',
     )
     return Response.json(invitations, { status: 200 })
   },
@@ -41,8 +41,8 @@ export const InvitationController = {
     const parsedBody = CreateInvitationSchema.parse(body)
     const inv = await InvitationService.createNewInvitation(
       parsedBody,
-      session.user.role,
-      session.user.teamId,
+      session.user.orgRole,
+      session.user.organizationId ?? '',
     )
     return Response.json(inv, { status: 201 })
   },
@@ -64,7 +64,7 @@ export const InvitationController = {
     const input = UpdateInvitationSchema.parse(body)
 
     const invitations = await InvitationService.updateInvitation(
-      session.user.teamId,
+      session.user.organizationId ?? '',
       id,
       input,
     )
@@ -84,7 +84,10 @@ export const InvitationController = {
   ) => {
     const id = fromTail(req)
 
-    await InvitationService.deleteInvitation(id, session.user.teamId)
+    await InvitationService.deleteInvitation(
+      id,
+      session.user.organizationId ?? '',
+    )
     return Response.json(
       { success: true, message: 'Deleted successfully' },
       { status: 200 },

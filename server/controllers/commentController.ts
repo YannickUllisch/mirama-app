@@ -4,7 +4,7 @@ import {
 } from '@server/domain/commentSchema'
 import { CommentService } from '@server/services/general/commentService'
 import { pickFromTail } from '@server/utils/getDynamicRoute'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
@@ -23,7 +23,7 @@ export const CommentController = {
   ) => {
     const [tid, pid] = pickFromTail(req, [1, 3])
 
-    const isAdminOrOwner = isTeamAdminOrOwner(session)
+    const isAdminOrOwner = isOrgAdminOrOwner(session)
     const comments = await CommentService.getCommentsByTaskId(
       tid,
       pid,
@@ -94,7 +94,7 @@ export const CommentController = {
   ) => {
     const [commentId, taskId, projectId] = pickFromTail(req, [0, 2, 4])
 
-    const roleCheck = isTeamAdminOrOwner(session)
+    const roleCheck = isOrgAdminOrOwner(session)
     await CommentService.deleteComment(
       commentId,
       taskId,

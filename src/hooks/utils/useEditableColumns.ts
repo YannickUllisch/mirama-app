@@ -7,38 +7,37 @@ export type HandleFieldUpdate<ResponseType> = <K extends keyof ResponseType>(
   value: ResponseType[K],
 ) => void
 
-type Mapper<ResponseType, UpdateType> = (data: ResponseType) => UpdateType
-
 export const useEditableColumns = <
   ResponseType extends { id: string },
   UpdateType,
+  MutationInputType = { id: string; data: UpdateType },
 >({
   mutate,
   updateSchema,
-  mapToUpdateInput,
   getKey,
+  mapToUpdateInput,
+  prepareMutation,
   onValidationError,
 }: {
-  mutate: UseMutateFunction<
-    any,
-    Error,
-    { id: string; data: UpdateType },
-    unknown
-  >
+  mutate: UseMutateFunction<any, Error, MutationInputType, unknown>
   updateSchema: ZodType<UpdateType, any, any>
-  getKey: (data: ResponseType) => string
-  mapToUpdateInput: Mapper<ResponseType, UpdateType>
+  getKey?: (data: ResponseType) => string
+  mapToUpdateInput: (data: ResponseType) => UpdateType
+  prepareMutation: (id: string, data: UpdateType) => MutationInputType
   onValidationError?: (error: ZodError<UpdateType>) => void
 }) => {
   const handleUpdate = (data: ResponseType) => {
-    const id = getKey(data)
+    const id = getKey ? getKey(data) : (data as any).id
+
     const mapped = mapToUpdateInput(data)
     const result = updateSchema.safeParse(mapped)
+
     if (!result.success) {
       onValidationError?.(result.error)
       return
     }
-    mutate({ id, data: mapped })
+
+    mutate(prepareMutation(id, result.data))
   }
 
   const handleFieldUpdate: HandleFieldUpdate<ResponseType> = (
@@ -46,12 +45,8 @@ export const useEditableColumns = <
     field,
     value,
   ) => {
-    const updated = { ...rowData, [field]: value }
-    handleUpdate(updated)
+    handleUpdate({ ...rowData, [field]: value })
   }
 
-  return {
-    handleFieldUpdate,
-    handleUpdate,
-  }
+  return { handleFieldUpdate, handleUpdate }
 }

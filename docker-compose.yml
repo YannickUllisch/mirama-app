@@ -1,11 +1,27 @@
 services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
+  # app:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     NODE_ENV: production
+  #     ENV TAILWIND_MODE: build
+  #     ENV DEBUG: "*"
+
+  db:
+    image: postgres:15-alpine
+    container_name: cognito-app-db
+    restart: always
     environment:
-      NODE_ENV: production
-      ENV TAILWIND_MODE: build
-      ENV DEBUG: "*"
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: myauthdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

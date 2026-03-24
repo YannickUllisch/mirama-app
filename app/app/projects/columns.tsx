@@ -1,8 +1,8 @@
 'use client'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import {
@@ -10,7 +10,7 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -57,7 +57,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Name" />
         ),
         cell: ({ row, getValue }) => {
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 displayValue={
@@ -119,7 +119,7 @@ export const useProjectColumns = ({
         ),
         cell: ({ row, getValue }) => {
           const date = new Date(getValue())
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 displayValue={
@@ -151,7 +151,7 @@ export const useProjectColumns = ({
         ),
         cell: ({ row, getValue }) => {
           const date = new Date(getValue())
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 displayValue={
@@ -211,7 +211,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Priority" />
         ),
         cell: ({ row, getValue }) => {
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 value={getValue()}
@@ -240,7 +240,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Status" />
         ),
         cell: ({ row, getValue }) => {
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 value={getValue()}
@@ -265,7 +265,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Budget" />
         ),
         cell: ({ row, getValue }) => {
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <EditableCell
                 value={getValue()}
@@ -288,14 +288,14 @@ export const useProjectColumns = ({
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
 
-          if (isTeamAdminOrOwner(session)) {
+          if (isOrgAdminOrOwner(session)) {
             return (
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger asChild>
                   <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {isTeamAdminOrOwner(session) && (
+                  {isOrgAdminOrOwner(session) && (
                     <>
                       <HoverLink href={`/app/projects/edit/${row.original.id}`}>
                         <DropdownMenuItem className="gap-2">

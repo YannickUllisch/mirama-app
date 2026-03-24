@@ -1,6 +1,6 @@
 'use client'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
-import { Role } from '@prisma/client'
+import { OrganizationRole } from '@prisma/client'
 import type { RoleType } from '@server/domain/enumSchemas'
 import type { InvitationResponseType } from '@server/domain/invitationSchema'
 import {
@@ -8,7 +8,7 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@ui/button'
@@ -89,7 +89,7 @@ export const useInvitationColumns = ({
           <EditableCell
             value={getValue()}
             options={
-              Object.values(Role).map((r) => ({
+              Object.values(OrganizationRole).map((r) => ({
                 label: capitalize(r) as string,
                 value: r,
               })) ?? []
@@ -139,7 +139,7 @@ export const useInvitationColumns = ({
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
 
-          if (!isTeamAdminOrOwner(session)) return null
+          if (!isOrgAdminOrOwner(session)) return null
 
           return (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>

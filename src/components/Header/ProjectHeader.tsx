@@ -1,6 +1,6 @@
 import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import { capitalize, isTeamAdminOrOwner } from '@src/lib/utils'
+import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
@@ -102,7 +102,7 @@ const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
 
             <div className="hidden sm:flex items-center gap-2 rounded-sm cursor-pointer ml-auto mt-6">
               <TaskTypeCreate projectName={'Mirama'} />
-              {isTeamAdminOrOwner(session) && (
+              {isOrgAdminOrOwner(session) && (
                 <HoverLink href={`/app/projects/edit/${project.id}`}>
                   <Button variant={'secondary'} size={'sm'}>
                     <PenIcon className="w-4 h-4" />

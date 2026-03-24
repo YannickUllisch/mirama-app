@@ -1,7 +1,7 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import type { Role, TaskType } from '@prisma/client'
+import type { UserResponseType } from '@server/domain/memberSchema'
 import type { TaskResponseType } from '@server/domain/taskSchema'
-import type { UserResponseType } from '@server/domain/userSchema'
 import type { LucideIcon } from 'lucide-react'
 
 // Sidebar Interfaces

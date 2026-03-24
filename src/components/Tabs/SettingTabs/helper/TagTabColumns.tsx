@@ -7,7 +7,7 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -66,7 +66,7 @@ export const useTagColumns = ({
         cell: ({ row }) => {
           const [menuOpen, setMenuOpen] = useState(false)
 
-          if (!isTeamAdminOrOwner(session)) return null
+          if (!isOrgAdminOrOwner(session)) return null
 
           return (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>

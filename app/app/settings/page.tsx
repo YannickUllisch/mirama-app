@@ -1,5 +1,4 @@
 'use client'
-import { Role } from '@prisma/client'
 import PageHeader from '@src/components/PageHeader'
 import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
 import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'

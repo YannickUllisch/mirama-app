@@ -1,7 +1,7 @@
 import type {
   UpdateUserType,
   UserResponseType,
-} from '@server/domain/userSchema'
+} from '@server/domain/memberSchema'
 import { api } from '@src/lib/api'
 
 export const fetchTeamMembersFn = async (): Promise<UserResponseType[]> => {

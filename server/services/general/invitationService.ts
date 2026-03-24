@@ -1,17 +1,17 @@
-import type { Role } from '@prisma/client'
+import type { OrganizationRole } from '@prisma/client'
 import type {
   CreateInvitationInput,
   UpdateInvitationInput,
 } from '@server/domain/invitationSchema'
-import { InvitationMapper } from '@server/mapping/general/invitationMapping'
+import { InvitationMapper } from '@server/mapping/organization/invitationMapping'
 import db from '@server/utils/db'
 import { isRoleHigher } from '@src/lib/utils'
 import { DateTime } from 'luxon'
 
 export const InvitationService = {
-  getInvitationsByTeam: async (teamId: string) => {
-    const res = await db.companyInvitation.findMany({
-      where: { teamId },
+  getInvitationsByTeam: async (organizationId: string) => {
+    const res = await db.organizationInvitation.findMany({
+      where: { organizationId },
       orderBy: {
         email: 'asc',
       },
@@ -21,8 +21,8 @@ export const InvitationService = {
 
   createNewInvitation: async (
     invitation: CreateInvitationInput,
-    userRole: Role,
-    teamId: string,
+    userRole: OrganizationRole,
+    organizationId: string,
   ) => {
     // Permission rule
     if (isRoleHigher(invitation.role, userRole)) {
@@ -30,14 +30,16 @@ export const InvitationService = {
     }
 
     // Ensure not already a user
-    const existingUser = await db.companyInvitation.findFirst({
-      where: { email: invitation.email, teamId },
+    const existingUser = await db.organizationInvitation.findFirst({
+      where: { email: invitation.email, organizationId },
     })
 
     if (existingUser)
       throw new Error('The invited Email has already been registered.')
 
-    const invitationTeam = await db.team.findFirst({ where: { id: teamId } })
+    const invitationTeam = await db.team.findFirst({
+      where: { id: organizationId },
+    })
     if (!invitationTeam)
       throw new Error('Team the user is invited to is invalid')
 
@@ -46,22 +48,22 @@ export const InvitationService = {
 
     // TODO: Send Invitation Email through SNS Topic here
 
-    const newInvitation = await db.companyInvitation.create({
-      data: { ...invitation, teamId, expiresAt },
+    const newInvitation = await db.organizationInvitation.create({
+      data: { ...invitation, organizationId, expiresAt, inviterId: '' },
     })
 
     return InvitationMapper.mapDefaultToApi(newInvitation)
   },
 
   updateInvitation: async (
-    teamId: string,
+    organizationId: string,
     email: string,
     invitation: UpdateInvitationInput,
   ) => {
-    const res = await db.companyInvitation.update({
+    const res = await db.organizationInvitation.update({
       where: {
         email,
-        teamId: teamId,
+        organizationId: organizationId,
       },
       data: {
         role: invitation.role,
@@ -76,9 +78,9 @@ export const InvitationService = {
     return InvitationMapper.mapDefaultToApi(res)
   },
 
-  deleteInvitation: async (email: string, teamId: string) => {
-    await db.companyInvitation.deleteMany({
-      where: { email, teamId },
+  deleteInvitation: async (email: string, organizationId: string) => {
+    await db.organizationInvitation.deleteMany({
+      where: { email, organizationId },
     })
   },
 }

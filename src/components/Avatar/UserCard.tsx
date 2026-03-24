@@ -1,6 +1,6 @@
 'use client'
-import type { UserResponseType } from '@server/domain/userSchema'
-import { capitalize, isRoleHigher, isTeamAdminOrOwner } from '@src/lib/utils'
+import type { UserResponseType } from '@server/domain/memberSchema'
+import { capitalize, isOrgAdminOrOwner, isRoleHigher } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { Pencil, PencilLine, Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
@@ -52,7 +52,7 @@ const UserCard: FC<UserCardProps> = ({
         <span className="text-sm">{capitalize(user.role ?? 'No role')}</span>
       </div>
 
-      {isTeamAdminOrOwner(session) &&
+      {isOrgAdminOrOwner(session) &&
         !isRoleHigher(user.role, session?.user.role ?? 'USER') && (
           <div>
             <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen}>

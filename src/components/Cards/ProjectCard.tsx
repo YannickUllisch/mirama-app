@@ -1,5 +1,5 @@
 import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import { getColorByName, isTeamAdminOrOwner } from '@src/lib/utils'
+import { getColorByName, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
 import Centering from '@ui/centering'
@@ -76,7 +76,7 @@ const ProjectCard = ({
                       </Centering>
                     </DropdownMenuItem>
                   </Link>
-                  {isTeamAdminOrOwner(session) && (
+                  {isOrgAdminOrOwner(session) && (
                     <HoverLink href={`/app/projects/edit/${project.id}`}>
                       <DropdownMenuItem>
                         <Centering>

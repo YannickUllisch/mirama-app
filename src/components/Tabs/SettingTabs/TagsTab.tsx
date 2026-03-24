@@ -26,10 +26,13 @@ const TagsTab = () => {
     UpdateTagType
   >({
     mutate: useUpdateTag,
-    getKey: (data) => data.id,
     updateSchema: UpdateTagSchema,
     mapToUpdateInput: (data) => ({
       ...data,
+    }),
+    prepareMutation: (id, data) => ({
+      id,
+      data,
     }),
     onValidationError: (err) => {
       const firstMessage = err.issues?.[0]?.message || 'Input Error'

@@ -1,7 +1,7 @@
 import { auth } from '@server/auth/auth'
 import db from '@server/utils/db'
 import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -25,7 +25,7 @@ const Layout = async ({
   const project = await db.project.findFirst({
     where: {
       name: awaitedParams.name,
-      teamId: session?.user.teamId ?? 'undef',
+      organizationId: session?.user.teamId ?? 'undef',
     },
     select: {
       id: true,
@@ -40,7 +40,7 @@ const Layout = async ({
 
   if (
     !project ||
-    (!isTeamAdminOrOwner(session) &&
+    (!isOrgAdminOrOwner(session) &&
       project.users.some((u) => u.userId === session?.user.id))
   ) {
     redirect('/app')

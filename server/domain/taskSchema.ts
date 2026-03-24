@@ -6,8 +6,8 @@ import {
   TaskStatusTypeSchema,
   TaskTypeSchema,
 } from './enumSchemas'
+import { MemberResponseSchema } from './memberSchema'
 import { CreateTagSchema, TagResponseSchema } from './tagSchema'
-import { UserResponseSchema } from './userSchema'
 
 export const SimpleTaskResponseSchema = z.object({
   id: z.string(),
@@ -47,7 +47,7 @@ export const TaskResponseSchema = z
 
     dateCreated: z.coerce.date(),
     updatedAt: z.coerce.date(),
-    assignedTo: UserResponseSchema.nullable(),
+    assignedTo: MemberResponseSchema.nullable(),
     assignedToId: z.string().nullable(),
 
     projectId: z.string(),

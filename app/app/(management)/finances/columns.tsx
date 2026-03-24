@@ -2,7 +2,7 @@ import type { Expense } from '@prisma/client'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { deleteResources } from '@src/lib/api/deleteResource'
-import { isTeamAdminOrOwner } from '@src/lib/utils'
+import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
@@ -46,7 +46,7 @@ export const getExpenseColumns = ({ session }: { session: Session | null }) => {
         <DataTableColumnHeader column={column} title="Actions" />
       ),
       cell: ({ row }) => {
-        if (isTeamAdminOrOwner(session)) {
+        if (isOrgAdminOrOwner(session)) {
           return (
             <div className="flex items-center gap-1.5">
               <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">

@@ -1,70 +1,64 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { Role, type User } from '@prisma/client'
-import db from '@server/utils/db'
-import { getValidCompanyInvitation } from '../helpers/queries'
+import db from '@db'
+import { InvitationStatus, TenantRole } from '@prisma/client'
 
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
-  adapter.getUser = async (id) => {
-    const dbUser = await db.user.findUnique({ where: { id } })
-    if (!dbUser) {
-      console.warn(`No user found in DB for id: ${id}`)
-    }
-    return dbUser
-  }
-  adapter.createUser = async (user) => {
-    const inputUser = user as any as User
 
-    const invitation = await getValidCompanyInvitation({
-      email: inputUser.email,
+  adapter.createUser = async (user: any) => {
+    // 1. Check for existing invitations to an Organization
+    const invitation = await db.organizationInvitation.findFirst({
+      where: { email: user.email, status: InvitationStatus.PENDING },
     })
 
-    if (invitation) {
-      // If the invitation is received use the name from it to add to the typedUser
-      inputUser.teamId = invitation.teamId
-      inputUser.role = invitation.role
-      inputUser.email = invitation.email
-      inputUser.name = invitation.name
-    } else {
-      // Otherwise create a new Team
-      const newTeam = await db.team.create({
+    return await db.$transaction(async (tx) => {
+      // 2. Create the User first with a placeholder or temporary link
+      // or create Tenant first. Let's create Tenant then User.
+      const newTenant = await tx.tenant.create({
         data: {
-          name: inputUser.name ?? 'My Team',
+          name: `${user.name || 'My'}'s Workspace`,
+          isActive: true,
+          adminUserId: user.id, // We'll update this or use the ID from Cognito
+          logoUrl: null,
+          brandingColor: null,
+          userId: user.id,
         },
       })
-      inputUser.teamId = newTeam.id
-      inputUser.role = Role.ADMIN
-    }
 
-    if (!inputUser.name) {
-      throw new Error('"name" not defined when creating user')
-    }
-    if (!inputUser.teamId) {
-      throw new Error('"teamId" not defined when creating user')
-    }
-    if (!inputUser.role) {
-      throw new Error('"role" not defined when creating user')
-    }
+      const dbUser = await tx.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          tenant: {
+            connect: {
+              id: newTenant.id,
+            },
+          },
+          role: TenantRole.USER,
+          emailVerified: new Date(),
+        },
+      })
 
-    const createdUser = await db.user.create({
-      data: {
-        id: inputUser.id,
-        email: inputUser.email,
-        name: inputUser.name,
-        teamId: inputUser.teamId,
-        role: inputUser.role,
-        emailVerified: new Date(),
-      },
+      // If there was an invitation, create the Member record immediately
+      if (invitation) {
+        await tx.member.create({
+          data: {
+            email: user.email,
+            name: user.name,
+            organizationId: invitation.organizationId,
+            role: invitation.role,
+          },
+        })
+
+        // Clean up invitation
+        await tx.organizationInvitation.delete({
+          where: { email: invitation.email, name: invitation.name },
+        })
+      }
+
+      return dbUser
     })
-
-    // Deleting invitation in DB for cleanup
-    await db.companyInvitation.deleteMany({
-      where: {
-        email: createdUser.email,
-      },
-    })
-
-    return createdUser
   }
 
   return adapter

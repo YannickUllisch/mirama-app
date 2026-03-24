@@ -1,7 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
-
 }
 
 datasource db {
@@ -10,6 +9,7 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+// Modelling Account Domain
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -29,149 +29,214 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-enum Role {
+enum TenantRole {
+  OWNER
+  ADMIN
+  USER
+}
+
+enum OrganizationRole {
   OWNER
   ADMIN
   USER
   FREELANCE
-  OBSERVER
+  CLIENT
 }
 
-// Overarching model, Projects and Tasks are specifically created in a Team.
-model Team {
-  id          String    @id @default(cuid())
+model Tenant {
+  id String @id @default(cuid())
+
+  name                 String
+  adminUserId          String
+  isActive             Boolean
+  brandingColor        String?
+  logoUrl              String?
+  receiveNotifications Boolean @default(true)
+
+  organizations Organization[]
+
+  userId String @unique
+  user   User   @relation(name: "UserToTenant", fields: [userId], references: [id])
+}
+
+model Organization {
+  id String @id @default(cuid())
+
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   name        String
-  teamRoles   Role[]
-  dateCreated DateTime  @default(now())
+  slug        String
+  street      String
+  city        String
+  state       String
+  zipCode     String
+  dateCreated DateTime @default(now())
+
   projects    Project[]
+  invitations OrganizationInvitation[]
   tasks       Task[]
-  users       User[]
+  members     Member[]
+  teams       Team[]
   tags        Tag[]
 }
 
-model User {
-  id                String    @id @default(uuid())
-  name              String    
-  email             String   @unique
-  emailVerified     DateTime?
-  role              Role      @default(USER)
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  members     Member[]
+  dateCreated DateTime @default(now())
 
-  accounts          Account[]
-  tasks             Task[]
-  
-  teamId            String? 
-  team              Team?     @relation(fields: [teamId], references: [id])
-  preferredDateType String    @default("dd-MM-yyyy")
-
-  projects          ProjectUser[]
-  comments          Comment[]
-  notifications     Notification[]
-  favourites        Favourite[]
-
-  @@index([teamId, id], map: "user_team_project_idx")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 }
 
+model Member {
+  id            String           @id @default(uuid())
+  name          String
+  email         String           @unique
+  emailVerified DateTime?
+  role          OrganizationRole @default(USER)
+
+  tasks    Task[]
+  teams    Team[]
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  projects      ProjectMember[]
+  comments      Comment[]
+  notifications Notification[]
+  favourites    Favourite[]
+
+  @@index([organizationId, id], map: "member_organization_project_idx")
+}
+
+model User {
+  id            String     @id @default(uuid())
+  name          String
+  email         String     @unique
+  emailVerified DateTime?
+  image         String?
+  role          TenantRole @default(USER)
+
+  tenant       Tenant?       @relation("UserToTenant")
+  accounts     Account[]
+}
 
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
 }
 
-model CompanyInvitation {
-  id        String      @default(cuid())
-  email     String      @id
-  name      String  
-  role      Role
-  teamId    String
-  expiresAt DateTime @default(now())
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
-model Project {
-  id            String       @id @default(cuid())
-  name          String
-  description   String?
-  startDate     DateTime
-  endDate       DateTime
-  priority      PriorityType @default(LOW)
-  status        StatusType
-  budget        Int         @default(0)
-  archived      Boolean      @default(false)
-  teamId        String
+model OrganizationInvitation {
+  id String @default(cuid())
 
-  team          Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  email     String           @id
+  name      String
+  role      OrganizationRole
+  inviterId String
+  status    InvitationStatus @default(PENDING)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  expiresAt      DateTime     @default(now())
+}
+
+// Modelling Project & Task domain
+model Project {
+  id             String       @id @default(cuid())
+  name           String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime
+  priority       PriorityType @default(LOW)
+  status         StatusType
+  budget         Int          @default(0)
+  archived       Boolean      @default(false)
+  
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   // Relation to ProjectUser for managing the many-to-many relationship
-  users         ProjectUser[]
-  tasks         Task[]
-  tags          Tag[]
-  expenses      Expense[]
-  milestones    Milestone[]
+  members    ProjectMember[]
+  tasks      Task[]
+  tags       Tag[]
+  expenses   Expense[]
+  milestones Milestone[]
 
-  @@index([name, teamId], map: "name_team_idx")
-  @@index([teamId, archived], map: "team_archived_idx")
+  @@index([name, organizationId], map: "name_organization_idx")
+  @@index([organizationId, archived], map: "team_archived_idx")
 }
 
 // Join table to represent many-to-many relationship between Project and User
-model ProjectUser {
-    id          String     @default(cuid()) @id
-    projectId   String
-    userId      String
-    isManager   Boolean    @default(false)
+model ProjectMember {
+  id        String  @id @default(cuid())
+  isManager Boolean @default(false)
 
-    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  member   Member @relation(fields: [memberId], references: [id])
+  memberId String
 
-    @@unique([projectId, userId])  // Ensure a user can be assigned to a project only once
-    @@index([projectId], map: "project_user_project_idx")
-    @@index([userId], map: "project_user_user_idx")
+  @@unique([projectId, memberId])
+  @@index([projectId], map: "project_user_project_idx")
+  @@index([memberId], map: "project_member_idx")
 }
 
 model Milestone {
-  id      String    @id @default(cuid())
-  date    DateTime 
-  title   String
-  colors  String
+  id     String   @id @default(cuid())
+  date   DateTime
+  title  String
+  colors String
 
-  projectId  String
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Task {
-  id           String         @id @default(cuid())
-  taskCode     String
+  id       String @id @default(cuid())
+  taskCode String
 
-  type         TaskType @default(TASK)
-  title        String
-  description  String?
-  priority     PriorityType   @default(LOW)
-  status       TaskStatusType
-  startDate    DateTime   @default(now())
-  dueDate      DateTime   @default(now())
+  type        TaskType       @default(TASK)
+  title       String
+  description String?
+  priority    PriorityType   @default(LOW)
+  status      TaskStatusType
+  startDate   DateTime       @default(now())
+  dueDate     DateTime       @default(now())
 
   // Allow for recursive subtasks
-  parentId      String? // This field is null for top-level comments
-  parent        Task?       @relation("SubTasks", fields: [parentId], references: [id])
-  subtasks      Task[]      @relation("SubTasks")
- 
-  dateCreated  DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
+  parentId String? // This field is null for top-level comments
+  parent   Task?   @relation("SubTasks", fields: [parentId], references: [id])
+  subtasks Task[]  @relation("SubTasks")
 
-  assignedToId String?
-  assignedTo   User?          @relation(fields: [assignedToId], references: [id])
-  projectId    String
-  project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  teamId       String
-  team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  tags         Tag[]
-  comments     Comment[]
-  
+  dateCreated DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  assignedToId   String?
+  assignedTo     Member?      @relation(fields: [assignedToId], references: [id])
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tags           Tag[]
+  comments       Comment[]
+
   @@index([projectId], map: "task_project_id_idx")
-  @@index([assignedToId, teamId], map: "task_assignedTo_team_idx")  
+  @@index([assignedToId, organizationId], map: "task_assignedTo_organization_idx")
 }
-
 
 enum TaskType {
   ISSUE
@@ -196,79 +261,80 @@ enum StatusType {
 }
 
 enum TaskStatusType {
-  NEW 
-  ACTIVE 
+  NEW
+  ACTIVE
   DONE
 }
 
 model Tag {
-  id           String   @id @default(cuid())
-  title        String 
+  id    String @id @default(cuid())
+  title String
 
-  teamId       String
-  team         Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  project     Project[]
-  tasks       Task[]
+  project Project[]
+  tasks   Task[]
 }
 
 // Expense modelling
 model Expense {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   amount      Float
   title       String
   description String?
-  date        DateTime  @default(now())
-  
-  expenseType ExpenseType
-  
-  // Relationships
-  projectId   String?     // Nullable - expense may or may not be linked to a project
-  project     Project? @relation(fields: [projectId], references: [id])
+  date        DateTime @default(now())
 
-  updatedAt   DateTime @updatedAt
+  expenseType ExpenseType
+
+  // Relationships
+  projectId String? // Nullable - expense may or may not be linked to a project
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  updatedAt DateTime @updatedAt
 }
 
 enum ExpenseType {
-  LABOR       
-  MATERIALS   
-  SOFTWARE   
-  TRAVEL       
-  SERVICES  
-  LICENSING 
+  LABOR
+  MATERIALS
+  SOFTWARE
+  TRAVEL
+  SERVICES
+  LICENSING
   ADMINISTRATIVE
   MISC
 }
 
 model Comment {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
 
   // Relations
-  taskId    String?
-  task      Task?     @relation(fields: [taskId], references: [id])
+  taskId String?
+  task   Task?   @relation(fields: [taskId], references: [id])
 
-  parentId  String? // This field is null for top-level comments
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
+  parentId String? // This field is null for top-level comments
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
 
   // Author of the comment
-  userId  String
-  user    User      @relation(fields: [userId], references: [id])
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
 }
 
 model Notification {
-  id    String    @id @default(cuid())
-  userId          String?
-  user            User?     @relation(fields: [userId], references: [id])
+  id String @id @default(cuid())
 
-  sender          String
-  title           String
-  isRead          Boolean
-  resourceId      String
+  memberId String?
+  member   Member? @relation(fields: [memberId], references: [id])
 
-  createdAt       DateTime  @default(now())
+  sender     String
+  title      String
+  isRead     Boolean
+  resourceId String
+
+  createdAt DateTime @default(now())
 }
 
 enum FavouriteType {
@@ -278,11 +344,11 @@ enum FavouriteType {
 }
 
 model Favourite {
-    id    String    @id @default(cuid())
+  id String @id @default(cuid())
 
-    userId          String?
-    user            User?     @relation(fields: [userId], references: [id])
+  memberId String?
+  member   Member? @relation(fields: [memberId], references: [id])
 
-    type            FavouriteType
-    data            String
+  type FavouriteType
+  data String
 }
