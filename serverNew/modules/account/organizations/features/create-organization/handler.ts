@@ -8,7 +8,6 @@ export const CreateOrganizationCommand =
     logger.info('Creating org...')
     const slug = OrganizationEntity.createSlug(input.name)
 
-    // It filters 'findFirst', so we only check uniqueness WITHIN this tenant
     const existing = await db.organization.findFirst({ where: { slug } })
     if (existing)
       throw new Error(
