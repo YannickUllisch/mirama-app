@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   const { mutateAsync: mutateTask } = apiRequest.task.update.useMutation()
 
-  const handleTaskUpdate = async (taskId: string, status: any) => {
+  const handleTaskUpdate = async (taskId: string, _status: any) => {
     const foundTask = tasks?.find((x) => x.id === taskId)
     console.info(tasks, taskId)
     if (!foundTask) {
@@ -42,7 +42,6 @@ const Dashboard = () => {
         subtasks: foundTask.subtasks.map((s) => s.id),
         tags: foundTask.tags.map((t) => t.id),
         newTags: [],
-        status,
       },
     })
   }

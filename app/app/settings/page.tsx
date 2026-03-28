@@ -1,4 +1,5 @@
 'use client'
+import { OrganizationRole } from '@prisma/client'
 import PageHeader from '@src/components/PageHeader'
 import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
 import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
@@ -19,14 +20,19 @@ const ProjectPage = () => {
   const { data: session } = useSession()
 
   const settingsTabs: {
-    roles: Role[]
+    roles: OrganizationRole[]
     id: string
     component: JSX.Element
     headerComponent: JSX.Element
   }[] = [
     {
       id: 'account',
-      roles: [Role.ADMIN, Role.OWNER, Role.FREELANCE, Role.USER],
+      roles: [
+        OrganizationRole.ADMIN,
+        OrganizationRole.OWNER,
+        OrganizationRole.FREELANCE,
+        OrganizationRole.USER,
+      ],
       component: <AccountTab session={session} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -36,7 +42,7 @@ const ProjectPage = () => {
     },
     {
       id: 'tabs',
-      roles: [Role.ADMIN, Role.OWNER],
+      roles: [OrganizationRole.ADMIN, OrganizationRole.OWNER],
       component: <TagsTab />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -46,7 +52,7 @@ const ProjectPage = () => {
     },
     {
       id: 'invitations',
-      roles: [Role.ADMIN, Role.OWNER],
+      roles: [OrganizationRole.ADMIN, OrganizationRole.OWNER],
       component: <InvitationsTab session={session} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -83,7 +89,7 @@ const ProjectPage = () => {
           {settingsTabs.map(
             (tabHeader) =>
               session &&
-              tabHeader.roles.includes(session.user.role) && (
+              tabHeader.roles.includes(session.user.orgRole as any) && (
                 <TabsTrigger
                   style={{ fontSize: 12 }}
                   value={tabHeader.id}
@@ -99,7 +105,7 @@ const ProjectPage = () => {
       {settingsTabs.map(
         (tab) =>
           session &&
-          tab.roles.includes(session.user.role) && (
+          tab.roles.includes(session.user.orgRole as any) && (
             <TabsContent className="px-10" value={tab.id} key={`${tab.id}-tab`}>
               {tab.component}
             </TabsContent>

@@ -19,7 +19,7 @@ const ArchivePage = () => {
     apiRequest.project.fetchArchived.useQuery()
   const { mutate: useArchiveMutation } =
     apiRequest.project.archive.useMutation()
-  const { mutate: useDeleteMutation } = apiRequest.project.delete.useMutation()
+  const { mutate: deleteMutation } = apiRequest.project.delete.useMutation()
   const { data: users } = apiRequest.team.fetchMembers.useQuery()
 
   return (
@@ -54,7 +54,7 @@ const ArchivePage = () => {
         onCancel={() => setSelectedId(null)}
         onSubmit={() => {
           if (selectedId) {
-            useDeleteMutation(selectedId)
+            deleteMutation(selectedId)
             setSelectedId(null)
           } else {
             toast.error('Error on Delete..')

@@ -1,14 +1,19 @@
-import type { Task } from '@prisma/client'
+import type {
+  PriorityType,
+  Task,
+  TaskStatusType,
+  TaskType,
+} from '@prisma/client'
 import type { TaskWithRelations } from '../infrastructure/task.repo'
 
 export type TaskResponse = {
   id: string
   taskCode: string
-  type: string
+  type: TaskType
   title: string
   description: string | null
-  priority: string
-  status: string
+  priority: PriorityType
+  status: TaskStatusType
   startDate: Date
   dueDate: Date
   dateCreated: Date

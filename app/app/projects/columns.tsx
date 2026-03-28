@@ -1,8 +1,8 @@
 'use client'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import {
@@ -24,7 +24,7 @@ import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<ProjectResponseInput>()
+const columnHelper = createColumnHelper<ProjectResponse>()
 
 export const useProjectColumns = ({
   session,
@@ -33,8 +33,8 @@ export const useProjectColumns = ({
   archiveMutation,
 }: {
   session: Session | null
-  users: UserResponseType[]
-  handleFieldUpdate: HandleFieldUpdate<ProjectResponseInput>
+  users: MemberResponse[]
+  handleFieldUpdate: HandleFieldUpdate<ProjectResponse>
 
   archiveMutation: UseMutateFunction<
     {
@@ -87,13 +87,15 @@ export const useProjectColumns = ({
         },
       }),
 
-      columnHelper.accessor('users.id', {
+      columnHelper.accessor('members.id', {
         id: 'users',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Managed By" />
         ),
         cell: ({ row }) => {
-          const managedBy = row.original.users.filter((user) => user.isManager)
+          const managedBy = row.original.members.filter(
+            (user) => user.isManager,
+          )
           const managerNames =
             users
               ?.filter((u) => managedBy.some((m) => m.id === u.id))

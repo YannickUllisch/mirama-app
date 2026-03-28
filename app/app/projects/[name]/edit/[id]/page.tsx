@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
 import {
+  type UpdateTaskRequest,
   UpdateTaskSchema,
-  type UpdateTaskType,
-} from '@server/domain/taskSchema'
+} from '@server/modules/task/features/update-task/schema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -84,15 +84,13 @@ const EditTaskPage = ({
     apiRequest.task.update.useMutation()
 
   // Form Logic and Functions
-  const form = useForm<UpdateTaskType>({
+  const form = useForm<UpdateTaskRequest>({
     resolver: zodResolver(UpdateTaskSchema),
   })
 
   useEffect(() => {
     if (task) {
       form.reset({
-        id: task.id,
-
         description: task?.description,
         title: task?.title ?? '',
         assignedToId: task?.assignedToId,
@@ -102,7 +100,6 @@ const EditTaskPage = ({
         priority: task?.priority ?? PriorityType.LOW,
         status: task?.status ?? TaskStatusType.NEW,
         type: task?.type ?? TaskType.TASK,
-        projectId: task?.projectId,
 
         tags: task?.tags.map((t) => t.id),
         newTags: [],
@@ -112,14 +109,12 @@ const EditTaskPage = ({
       })
     } else {
       form.reset({
-        id: '',
         assignedToId: null,
         description: '',
         title: '',
         dueDate: new Date(),
         startDate: new Date(),
         priority: PriorityType.LOW,
-        projectId: '',
         status: TaskStatusType.NEW,
         tags: [],
         newTags: [],
@@ -130,7 +125,7 @@ const EditTaskPage = ({
     }
   }, [task, form.reset])
 
-  const onSubmit = (vals: UpdateTaskType) => {
+  const onSubmit = (vals: UpdateTaskRequest) => {
     if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
       vals.assignedToId = null
     }

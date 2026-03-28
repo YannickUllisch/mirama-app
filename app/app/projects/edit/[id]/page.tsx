@@ -4,11 +4,11 @@ import { AttachNewMilestoneToProjectSchema } from '@/serverOld/domain/milestoneS
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, StatusType } from '@prisma/client'
+import { CreateTagSchema } from '@server/modules/account/tags/features/create-tag/schema'
 import {
-  type UpdateProjectInput,
+  type UpdateProjectRequest,
   UpdateProjectSchema,
-} from '@server/domain/projectSchema'
-import { CreateTagSchema } from '@server/domain/tagSchema'
+} from '@server/modules/project/features/update-project/schema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
@@ -101,7 +101,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     apiRequest.project.delete.useMutation()
 
   // Form Logic and Functions
-  const form = useForm<UpdateProjectInput>({
+  const form = useForm<UpdateProjectRequest>({
     resolver: zodResolver(UpdateProjectSchema),
     defaultValues: {
       name: '',
@@ -113,7 +113,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
       budget: 0,
       tags: [],
       newTags: [],
-      users: [],
+      members: [],
       milestones: [],
     },
   })
@@ -126,9 +126,9 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
         milestones: project.milestones.map((m) => ({ ...m })),
         tags: project.tags.map((t) => t.id),
         newTags: [],
-        users: project.users.map((u) => ({
+        members: project.members.map((u) => ({
           isManager: u.isManager,
-          userId: u.id,
+          memberId: u.id,
         })),
       })
     }
@@ -140,7 +140,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     remove: removeUser,
   } = useFieldArray({
     control: form.control,
-    name: 'users',
+    name: 'members',
   })
 
   const {
@@ -179,20 +179,20 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   }
 
   const toggleUserManager = (index: number) => {
-    const currentValue = form.getValues(`users.${index}.isManager`)
-    form.setValue(`users.${index}.isManager`, !currentValue, {
+    const currentValue = form.getValues(`members.${index}.isManager`)
+    form.setValue(`members.${index}.isManager`, !currentValue, {
       shouldValidate: true,
     })
   }
 
-  const handleAddUser = (userId: string) => {
-    const exists = userFields.some((field) => field.userId === userId)
+  const handleAddUser = (memberId: string) => {
+    const exists = userFields.some((field) => field.memberId === memberId)
     if (!exists) {
-      appendUser({ userId, isManager: false })
+      appendUser({ memberId, isManager: false })
     }
   }
 
-  const onSubmit = (vals: UpdateProjectInput) => {
+  const onSubmit = (vals: UpdateProjectRequest) => {
     updateProjectMutation({ id, data: vals })
   }
 
@@ -734,7 +734,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                         ?.filter(
                           (user) =>
                             !userFields.some(
-                              (field) => field.userId === user.id,
+                              (field) => field.memberId === user.id,
                             ),
                         )
                         .map((user) => (
@@ -760,7 +760,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                       {userFields.length > 0 ? (
                         userFields.map((userField, index) => {
                           const user = users?.find(
-                            (u) => u.id === userField.userId,
+                            (u) => u.id === userField.memberId,
                           )
 
                           if (!user) return null
@@ -787,7 +787,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                                   <Checkbox
                                     id={`manager-${userField.id}`}
                                     checked={form.watch(
-                                      `users.${index}.isManager`,
+                                      `members.${index}.isManager`,
                                     )}
                                     onCheckedChange={() =>
                                       toggleUserManager(index)

@@ -1,6 +1,7 @@
 'use client'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import AvatarGroup from '@src/components/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
@@ -19,7 +20,7 @@ import { DateTime } from 'luxon'
 import type { Session } from 'next-auth'
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<ProjectResponseInput>()
+const columnHelper = createColumnHelper<ProjectResponse>()
 
 export const useArchivedProjectsColumns = ({
   session,
@@ -28,7 +29,7 @@ export const useArchivedProjectsColumns = ({
   setSelectedId,
 }: {
   session: Session | null
-  users: UserResponseType[]
+  users: MemberResponse[]
   setSelectedId: Dispatch<SetStateAction<string | null>>
   archiveMutation: UseMutateFunction<
     {
@@ -61,13 +62,15 @@ export const useArchivedProjectsColumns = ({
         },
       }),
 
-      columnHelper.accessor('users.id', {
+      columnHelper.accessor('members.id', {
         id: 'users',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Managed By" />
         ),
         cell: ({ row }) => {
-          const managedBy = row.original.users.filter((user) => user.isManager)
+          const managedBy = row.original.members.filter(
+            (user) => user.isManager,
+          )
           const managerNames =
             users
               ?.filter((u) => managedBy.some((m) => m.id === u.id))

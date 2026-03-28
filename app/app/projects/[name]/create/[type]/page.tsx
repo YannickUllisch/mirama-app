@@ -3,9 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
 import {
+  type CreateTaskRequest,
   CreateTaskSchema,
-  type CreateTaskType,
-} from '@server/domain/taskSchema'
+} from '@server/modules/task/features/create-task/schema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import ClearButton from '@src/components/Buttons/ClearButton'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
@@ -77,7 +77,7 @@ const CreateTaskPage = () => {
     apiRequest.task.create.useMutation()
 
   // Form Logic and Functions
-  const form = useForm<CreateTaskType>({
+  const form = useForm<CreateTaskRequest>({
     resolver: zodResolver(CreateTaskSchema),
     defaultValues: {
       assignedToId: null,
@@ -100,7 +100,7 @@ const CreateTaskPage = () => {
     },
   })
 
-  const onSubmit = (vals: CreateTaskType) => {
+  const onSubmit = (vals: CreateTaskRequest) => {
     if (vals.assignedToId === 'undefined' || vals.assignedToId === '') {
       vals.assignedToId = null
     }

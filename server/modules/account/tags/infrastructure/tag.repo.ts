@@ -11,7 +11,12 @@ export const TagRepository = (db: ScopedDb) => ({
 
   // organizationId is auto-injected by ScopedDb
   async create(data: { title: string }) {
-    return await db.tag.create({ data })
+    return await db.tag.create({
+      data: {
+        ...data,
+        organizationId: '',
+      },
+    })
   },
 
   async update(id: string, data: { title?: string }) {

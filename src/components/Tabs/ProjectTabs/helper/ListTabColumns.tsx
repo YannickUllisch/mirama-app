@@ -1,8 +1,8 @@
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, TaskStatusType } from '@prisma/client'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { TagResponseType } from '@server/domain/tagSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { TagResponse } from '@server/modules/account/tags/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import HoverLink from '@src/components/HoverLink'
 import {
@@ -39,15 +39,15 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
-const columnHelper = createColumnHelper<TaskResponseType>()
+const columnHelper = createColumnHelper<TaskResponse>()
 
 export const useTaskColumns = ({
   users,
   handleFieldUpdate,
   deleteMutation,
 }: {
-  users: UserResponseType[]
-  handleFieldUpdate: HandleFieldUpdate<TaskResponseType>
+  users: MemberResponse[]
+  handleFieldUpdate: HandleFieldUpdate<TaskResponse>
   deleteMutation: UseMutateFunction<
     any,
     Error,
@@ -197,7 +197,7 @@ export const useTaskColumns = ({
           <DataTableColumnHeader column={column} title="Assigned To" />
         ),
         cell: ({ row, getValue }) => {
-          const user = getValue() as UserResponseType | null
+          const user = getValue() as MemberResponse | null
 
           return (
             <EditableCell
@@ -262,7 +262,7 @@ export const useTaskColumns = ({
           />
         ),
         cell: ({ row, getValue }) => {
-          const tags = getValue() as TagResponseType[]
+          const tags = getValue() as TagResponse[]
           const tagCount = tags.length
 
           // If there are more than 2 tasks, we will show the "X tasks left" badge

@@ -25,14 +25,14 @@ const Layout = async ({
   const project = await db.project.findFirst({
     where: {
       name: awaitedParams.name,
-      organizationId: session?.user.teamId ?? 'undef',
+      organizationId: session?.user.organizationId ?? 'undef',
     },
     select: {
       id: true,
       name: true,
-      users: {
+      members: {
         select: {
-          userId: true,
+          memberId: true,
         },
       },
     },
@@ -41,7 +41,7 @@ const Layout = async ({
   if (
     !project ||
     (!isOrgAdminOrOwner(session) &&
-      project.users.some((u) => u.userId === session?.user.id))
+      project.members.some((u) => u.memberId === session?.user.id))
   ) {
     redirect('/app')
   }

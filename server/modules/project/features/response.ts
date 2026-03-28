@@ -1,8 +1,10 @@
 import type {
   Member,
   Milestone,
+  PriorityType,
   Project,
   ProjectMember,
+  StatusType,
   Tag,
   Task,
 } from '@prisma/client'
@@ -13,8 +15,8 @@ export type ProjectResponse = {
   description: string | null
   startDate: Date
   endDate: Date
-  priority: string
-  status: string
+  priority: PriorityType
+  status: StatusType
   archived: boolean
   budget: number
   milestones: { id: string; date: Date; title: string; colors: string }[]

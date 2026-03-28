@@ -9,7 +9,7 @@ const CONTAINER_TYPES = new Set([
 // biome-ignore lint/complexity/noStaticOnlyClass: <tmp>
 export class TaskEntity {
   static isContainerType(type: TaskType): boolean {
-    return CONTAINER_TYPES.has(type)
+    return CONTAINER_TYPES.has(type as any)
   }
 
   static assertNotContainerWithParent(

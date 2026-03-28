@@ -1,11 +1,11 @@
 'use client'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import {
-  type ProjectResponseInput,
-  type UpdateProjectInput,
+  type UpdateProjectRequest,
   UpdateProjectSchema,
-} from '@server/domain/projectSchema'
+} from '@server/modules/project/features/update-project/schema'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Folders } from 'lucide-react'
@@ -26,8 +26,8 @@ const ProjectsPage = () => {
 
   // Column Update handler
   const { handleFieldUpdate } = useEditableColumns<
-    ProjectResponseInput,
-    UpdateProjectInput
+    ProjectResponse,
+    UpdateProjectRequest
   >({
     mutate: projectMutation,
     updateSchema: UpdateProjectSchema,
@@ -35,9 +35,9 @@ const ProjectsPage = () => {
       ...data,
       tags: data.tags.map((t) => t.id),
       newTags: [],
-      users: data.users.map((u) => ({
+      members: data.members.map((u) => ({
         isManager: u.isManager,
-        userId: u.id,
+        memberId: u.id,
       })),
     }),
     prepareMutation: (id, data) => ({
