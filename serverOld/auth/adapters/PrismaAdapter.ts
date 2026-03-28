@@ -12,31 +12,25 @@ export const CreatePrismaAdapter = () => {
     })
 
     return await db.$transaction(async (tx) => {
-      // 2. Create the User first with a placeholder or temporary link
-      // or create Tenant first. Let's create Tenant then User.
-      const newTenant = await tx.tenant.create({
-        data: {
-          name: `${user.name || 'My'}'s Workspace`,
-          isActive: true,
-          adminUserId: user.id, // We'll update this or use the ID from Cognito
-          logoUrl: null,
-          brandingColor: null,
-          userId: user.id,
-        },
-      })
-
+      // 2. Create User first, then Tenant (Tenant has FK to User)
       const dbUser = await tx.user.create({
         data: {
           id: user.id,
           email: user.email,
           name: user.name,
-          tenant: {
-            connect: {
-              id: newTenant.id,
-            },
-          },
           role: TenantRole.USER,
           emailVerified: new Date(),
+        },
+      })
+
+      await tx.tenant.create({
+        data: {
+          name: `${user.name || 'My'}'s Workspace`,
+          isActive: true,
+          adminUserId: user.id,
+          logoUrl: null,
+          brandingColor: null,
+          userId: user.id,
         },
       })
 
