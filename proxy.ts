@@ -1,8 +1,8 @@
-import authConfig from '@server/auth/auth.config'
+import authConfig from '@/serverOld/auth/auth.config'
 import {
-  DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   authRoutes,
+  DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
 } from '@src/routes'
 import NextAuth from 'next-auth'

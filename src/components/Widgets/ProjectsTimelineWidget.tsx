@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { cn } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import {
@@ -24,7 +24,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import HoverLink from '../HoverLink'
 
 interface ProjectTimelineProps {
-  projects: ProjectResponseInput[]
+  projects: ProjectResponse[]
   className?: string
   isLoading: boolean
 }
@@ -158,7 +158,7 @@ const ProjectTimeline = ({
           />
           <StatBox
             label="Team"
-            value={selectedProject.users.length.toString()}
+            value={selectedProject.members.length.toString()}
             icon={Users}
             color="text-neutral-500"
           />

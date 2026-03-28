@@ -1,6 +1,6 @@
 'use client'
 import type { TaskStatusType } from '@prisma/client'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import {
   CollapseButton,
   File,
@@ -16,7 +16,7 @@ import type { FC } from 'react'
 
 interface TaskTreeProps {
   projectName: string
-  tasks: TaskResponseType[]
+  tasks: TaskResponse[]
 }
 
 const statusColors = {

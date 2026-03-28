@@ -53,7 +53,6 @@ const AppHeader = () => {
       createFavMutation.mutate({
         type: FavouriteType.ROUTE,
         data: pathname,
-        userId: session?.user.id ?? '',
       })
     } else {
       deleteFavMutation.mutate(currFav.id)

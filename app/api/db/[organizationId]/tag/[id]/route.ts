@@ -1,14 +1,42 @@
+import { createRoute } from '@/server/middleware/createRoute'
+import { DeleteTagCommand } from '@/server/modules/account/tags/features/delete-tag/handler'
+import { UpdateTagCommand } from '@/server/modules/account/tags/features/update-tag/handler'
+import {
+  TagIdParams,
+  UpdateTagSchema,
+} from '@/server/modules/account/tags/features/update-tag/schema'
 import { OrganizationRole } from '@prisma/client'
-import { TagController } from '@server/controllers/tagController'
-import { exceptionHandler } from '@server/utils/exceptionHandler'
-import { withAuth } from '@withAuth'
 
-export const PUT = withAuth(
-  [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-  exceptionHandler(TagController.updateTag),
+export const PUT = createRoute(
+  {
+    auth: {
+      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
+    },
+    params: TagIdParams,
+    body: UpdateTagSchema,
+    pathPattern: '/api/db/:organizationId/tag/:id',
+  },
+  async (_req, { ctx }, { params, body }) => {
+    const data = await UpdateTagCommand(ctx)(params.id, body)
+
+    return Response.json({ success: true, data })
+  },
 )
 
-export const DELETE = withAuth(
-  [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-  exceptionHandler(TagController.deleteTag),
+export const DELETE = createRoute(
+  {
+    auth: {
+      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
+    },
+    params: TagIdParams,
+    pathPattern: '/api/db/:organizationId/tag/:id',
+  },
+  async (_req, { ctx }, { params }) => {
+    await DeleteTagCommand(ctx)(params.id)
+
+    return Response.json(
+      { success: true, message: 'Tag deleted successfully' },
+      { status: 200 },
+    )
+  },
 )

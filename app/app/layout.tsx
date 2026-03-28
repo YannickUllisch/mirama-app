@@ -1,4 +1,4 @@
-import { auth } from '@server/auth/auth'
+import { auth } from '@/serverOld/auth/auth'
 import AppHeader from '@src/components/Header/AppHeader'
 import AppSidebar from '@src/components/Sidebar/AppSidebar'
 import { SidebarProvider } from '@src/components/ui/sidebar'

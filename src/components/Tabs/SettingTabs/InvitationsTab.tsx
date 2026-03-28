@@ -1,11 +1,12 @@
 'use client'
+import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
+import {
+  type UpdateInvitationRequest,
+  UpdateInvitationSchema,
+} from '@/server/modules/account/invitations/features/update-invitation/schema'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
-import {
-  type InvitationResponseType,
-  type UpdateInvitationInput,
-  UpdateInvitationSchema,
-} from '@server/domain/invitationSchema'
+import type { OrganizationRole } from '@prisma/client'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
@@ -19,23 +20,23 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
   // Hooks
   const { data: invitations, isLoading } =
     apiRequest.invitation.fetchAll.useQuery()
-  const { mutate: useUpdateInvitation } =
+  const { mutate: updateInvitationMutation } =
     apiRequest.invitation.update.useMutation()
   const { mutate: useDeleteInvitation } =
     apiRequest.invitation.delete.useMutation()
 
   // Update State
   const { handleFieldUpdate } = useEditableColumns<
-    InvitationResponseType,
-    UpdateInvitationInput
+    InvitationResponse,
+    UpdateInvitationRequest
   >({
-    mutate: useUpdateInvitation,
+    mutate: updateInvitationMutation,
     getKey: (data) => data.email,
     updateSchema: UpdateInvitationSchema,
     mapToUpdateInput: (data) => ({
       extendInvitation: true,
       name: data.name,
-      role: data.role,
+      organizationRole: data.organizationRole as OrganizationRole,
     }),
     prepareMutation: (id, data) => ({
       id,

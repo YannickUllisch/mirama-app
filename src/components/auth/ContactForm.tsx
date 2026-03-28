@@ -1,9 +1,9 @@
 'use client'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ContactRequestSchema,
   type ContactRequestType,
-} from '@server/domain/contactSchema'
+} from '@/serverOld/domain/contactSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@src/components/ui/button'
 import {
   Form,

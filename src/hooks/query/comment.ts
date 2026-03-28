@@ -4,18 +4,18 @@ import {
   fetchCommentsByTaskIdFn,
   updateTaskCommentFn,
 } from '@hooks/api/comment'
+import type { CommentResponse } from '@server/modules/task/features/comments/response'
 import type {
-  CommentResponseType,
-  CreateCommentType,
-  UpdateCommentType,
-} from '@server/domain/commentSchema'
+  CreateCommentRequest,
+  UpdateCommentRequest,
+} from '@server/modules/task/features/comments/schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const comment = {
   fetchByTaskId: {
     useQuery: (projectId: string, taskId: string) =>
-      useQuery<CommentResponseType[]>({
+      useQuery<CommentResponse[]>({
         enabled: !!taskId,
         queryKey: ['taskComments', taskId],
         queryFn: () => fetchCommentsByTaskIdFn(projectId, taskId),
@@ -31,24 +31,25 @@ const comment = {
     ) => {
       const queryClient = useQueryClient()
       return useMutation<
-        CommentResponseType,
+        CommentResponse,
         Error,
-        CreateCommentType,
-        { previous?: CommentResponseType[] }
+        CreateCommentRequest,
+        { previous?: CommentResponse[] }
       >({
-        mutationFn: (payload) => createTaskCommentFn(projectId, payload),
+        mutationFn: (payload) =>
+          createTaskCommentFn(projectId, taskId, payload),
         onMutate: async (newComment) => {
           await queryClient.cancelQueries({
             queryKey: ['taskComments', taskId],
           })
 
-          const previous = queryClient.getQueryData<CommentResponseType[]>([
+          const previous = queryClient.getQueryData<CommentResponse[]>([
             'taskComments',
             taskId,
           ])
 
           // Optimistically add the new invitation (with a temp id/email if needed)
-          queryClient.setQueryData<CommentResponseType[]>(
+          queryClient.setQueryData<CommentResponse[]>(
             ['taskComments', taskId],
             (old = []) => [
               ...old,
@@ -56,17 +57,17 @@ const comment = {
                 ...newComment,
                 id: `temp-${Math.random()}`,
                 createdAt: new Date(),
-                userId: sessionUserId,
-                userName: sessionUserName,
+                memberId: sessionUserId,
+                memberName: sessionUserName,
               },
             ],
           )
 
           return { previous }
         },
-        onSuccess: (data, vars) => {
-          queryClient.setQueryData<CommentResponseType[]>(
-            ['taskComments', vars.taskId],
+        onSuccess: (data) => {
+          queryClient.setQueryData<CommentResponse[]>(
+            ['taskComments', taskId],
             (old = []) => old.map((p) => (p.id === data.id ? data : p)),
           )
         },
@@ -87,23 +88,23 @@ const comment = {
     useMutation: (projectId: string, taskId: string) => {
       const queryClient = useQueryClient()
       return useMutation<
-        CommentResponseType,
+        CommentResponse,
         Error,
-        { id: string; projectId: string; data: UpdateCommentType },
-        { previous?: CommentResponseType[] }
+        { id: string; projectId: string; data: UpdateCommentRequest },
+        { previous?: CommentResponse[] }
       >({
         mutationFn: ({ id, data }) =>
           updateTaskCommentFn(projectId, taskId, id, data),
         onMutate: async ({ id, data }) => {
           await queryClient.cancelQueries({ queryKey: ['taskComments', id] })
 
-          const previous = queryClient.getQueryData<CommentResponseType[]>([
+          const previous = queryClient.getQueryData<CommentResponse[]>([
             'taskComments',
             id,
           ])
 
           // Optimistically update the invitation in the cache
-          queryClient.setQueryData<CommentResponseType[]>(
+          queryClient.setQueryData<CommentResponse[]>(
             ['taskComments'],
             (old = []) => old.map((c) => (c.id === id ? { ...c, ...data } : c)),
           )
@@ -111,7 +112,7 @@ const comment = {
           return { previous }
         },
         onSuccess: (data, vars) => {
-          queryClient.setQueryData<CommentResponseType[]>(
+          queryClient.setQueryData<CommentResponse[]>(
             ['taskComments', vars.id],
             (old = []) => old.map((p) => (p.id === data.id ? data : p)),
           )
@@ -136,7 +137,7 @@ const comment = {
         { success: boolean },
         Error,
         string,
-        { previous?: CommentResponseType[] }
+        { previous?: CommentResponse[] }
       >({
         mutationFn: (commentId) =>
           deleteTaskCommentFn(projectId, taskId, commentId),
@@ -145,13 +146,13 @@ const comment = {
             queryKey: ['taskComments', taskId],
           })
 
-          const previous = queryClient.getQueryData<CommentResponseType[]>([
+          const previous = queryClient.getQueryData<CommentResponse[]>([
             'taskComments',
             taskId,
           ])
 
           // Optimistically remove the invitation from the cache
-          queryClient.setQueryData<CommentResponseType[]>(
+          queryClient.setQueryData<CommentResponse[]>(
             ['taskComments', taskId],
             (old = []) => old.filter((p) => p.id !== id),
           )

@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { cn } from '@src/lib/utils'
 import { TooltipProvider } from '@ui/tooltip'
 import { differenceInDays, isAfter } from 'date-fns'
@@ -16,7 +16,7 @@ import { useMemo } from 'react'
 import HoverLink from '../HoverLink'
 
 interface RiskWidgetProps {
-  project: ProjectResponseInput
+  project: ProjectResponse
   isLoading?: boolean
 }
 

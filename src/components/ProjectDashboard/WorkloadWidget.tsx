@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { Progress } from '@ui/progress'
 import { TooltipProvider } from '@ui/tooltip'
 import { Activity, ArrowUpRight } from 'lucide-react'
@@ -8,13 +8,13 @@ import { useMemo } from 'react'
 import HoverLink from '../HoverLink'
 
 interface WorkloadWidgetProps {
-  project: ProjectResponseInput
+  project: ProjectResponse
   isLoading?: boolean
 }
 
 const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
   const userStats = useMemo(() => {
-    return project.users.map((user) => {
+    return project.members.map((user) => {
       const userTasks = project.tasks.filter((t) => t.assignedToId === user.id)
       const completed = userTasks.filter((t) => t.status === 'DONE').length
       const total = userTasks.length

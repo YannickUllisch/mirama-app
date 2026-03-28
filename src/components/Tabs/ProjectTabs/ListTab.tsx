@@ -2,8 +2,8 @@
 
 import type { DragEndEvent } from '@dnd-kit/core'
 import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
@@ -53,8 +53,8 @@ const ListTab = ({
   project,
   tasks,
 }: {
-  project: ProjectResponseInput | null
-  tasks: TaskResponseType[]
+  project: ProjectResponse | null
+  tasks: TaskResponse[]
 }) => {
   // States
   const { data: session } = useSession()
@@ -196,14 +196,16 @@ const ListTab = ({
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
                         {tasks
-                          ?.filter((task) => isTaskTypeContainer(task.type))
+                          ?.filter((task) =>
+                            isTaskTypeContainer(task.type as TaskType),
+                          )
                           .map((task) => (
                             <DropdownMenuSub key={`dropdown-sub-${task.id}`}>
                               <DropdownMenuSubTrigger
                                 key={`task-container-${task.id}`}
                                 className="flex gap-2 items-center"
                               >
-                                {getTaskTypeIcon(task.type)}
+                                {getTaskTypeIcon(task.type as TaskType)}
                                 {task.title}
                               </DropdownMenuSubTrigger>
                               <DropdownMenuPortal>
@@ -262,7 +264,7 @@ const ListTab = ({
                       ?.filter(
                         (feature) =>
                           feature.status === status &&
-                          !isTaskTypeContainer(feature.type),
+                          !isTaskTypeContainer(feature.type as TaskType),
                       )
                       .map((feature, index) => (
                         <ContextMenu key={`item-list-${feature.id}`}>
@@ -275,14 +277,17 @@ const ListTab = ({
                               index={index}
                               onClick={() => onListItemClick(feature.id)}
                             >
-                              {getTaskTypeIcon(feature.type)}
+                              {getTaskTypeIcon(feature.type as TaskType)}
                               <p className="m-0 flex-1 font-medium text-xs">
                                 {feature.title}
                               </p>
                               {feature.parent && (
                                 <div className="items-center flex gap-2 text-text-secondary text-sm">
                                   <CornerDownRight size={12} />
-                                  {getTaskTypeIcon(feature.parent.type, 12)}
+                                  {getTaskTypeIcon(
+                                    feature.parent.type as TaskType,
+                                    12,
+                                  )}
                                   {feature.parent.title}
                                 </div>
                               )}

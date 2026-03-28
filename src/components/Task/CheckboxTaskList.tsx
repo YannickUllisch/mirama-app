@@ -197,6 +197,7 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
                           </span>
                         }
                       </div>
+                      {/** biome-ignore lint/a11y/noStaticElementInteractions: <tmp> */}
                       <div
                         className="hidden group-hover:block transition-opacity duration-200 ml-2"
                         onKeyDown={() => {}}

@@ -1,12 +1,11 @@
 'use client'
 import Loading from '@/app/loading'
+import type { MilestoneProjectResponseInput } from '@/serverOld/domain/milestoneSchema'
 import type { Milestone } from '@prisma/client'
-import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
-import { ViewControls } from '@src/components/Gantt/ViewOptions'
 import {
   GanttCreateMarkerTrigger,
   GanttFeatureItem,
@@ -21,6 +20,7 @@ import {
   GanttTimeline,
   GanttToday,
 } from '@src/components/Gantt/gantt'
+import { ViewControls } from '@src/components/Gantt/ViewOptions'
 import GeneralSelect from '@src/components/Select/GeneralSelect'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -71,8 +71,8 @@ const GanttTab = ({
   project,
   tasks,
 }: {
-  project: ProjectResponseInput | null
-  tasks: TaskResponseType[]
+  project: ProjectResponse | null
+  tasks: TaskResponse[]
 }) => {
   // Project context
   const projectContext = useContext(ProjectDataContext)
@@ -227,7 +227,7 @@ const GanttTab = ({
                                 }}
                                 id={task.id}
                               >
-                                {getTaskTypeIcon(task.type, 12)}
+                                {getTaskTypeIcon(task.type as any, 12)}
                                 <p className="flex-1 truncate text-xs">
                                   {task.title}
                                 </p>

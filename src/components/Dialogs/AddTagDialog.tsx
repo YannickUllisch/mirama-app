@@ -1,7 +1,10 @@
 'use client'
+import {
+  type CreateTagRequest,
+  CreateTagSchema,
+} from '@/server/modules/account/tags/features/create-tag/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
-import { CreateTagSchema, type CreateTagType } from '@server/domain/tagSchema'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,
@@ -32,7 +35,7 @@ const AddTagDialog = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   // Form States
-  const form = useForm<CreateTagType>({
+  const form = useForm<CreateTagRequest>({
     resolver: zodResolver(CreateTagSchema),
     defaultValues: {
       title: '',
@@ -40,13 +43,13 @@ const AddTagDialog = () => {
   })
 
   // Hooks
-  const { mutate: useCreateTag, isPending: isCreatePending } =
+  const { mutate: createTagMutation, isPending: isCreatePending } =
     apiRequest.tag.create.useMutation()
 
   // Helper functions
-  const onSubmit = (vals: CreateTagType) => {
+  const onSubmit = (vals: CreateTagRequest) => {
     startTransition(() => {
-      useCreateTag(vals, {
+      createTagMutation(vals, {
         onSuccess: () => {
           handleClose()
         },

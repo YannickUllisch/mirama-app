@@ -1,13 +1,13 @@
 'use client'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import {
-  type TaskResponseType,
+  type UpdateTaskRequest,
   UpdateTaskSchema,
-  type UpdateTaskType,
-} from '@server/domain/taskSchema'
+} from '@server/modules/task/features/update-task/schema'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
@@ -31,9 +31,9 @@ const TableTab = ({
   tasks,
   users,
 }: {
-  project: ProjectResponseInput | null
-  tasks: TaskResponseType[]
-  users: UserResponseType[]
+  project: ProjectResponse | null
+  tasks: TaskResponse[]
+  users: MemberResponse[]
 }) => {
   // Personalizations
   const [viewFlattened, setViewFlattened] = useState(false)
@@ -53,9 +53,9 @@ const TableTab = ({
 
   // Update
   const { handleFieldUpdate } = useEditableColumns<
-    TaskResponseType,
-    UpdateTaskType,
-    { id: string; projectId: string; data: UpdateTaskType }
+    TaskResponse,
+    UpdateTaskRequest,
+    { id: string; projectId: string; data: UpdateTaskRequest }
   >({
     mutate: mutateTask,
     updateSchema: UpdateTaskSchema,
@@ -64,6 +64,9 @@ const TableTab = ({
       tags: data.tags.map((t) => t.id),
       newTags: [],
       subtasks: data.subtasks.map((s) => s.id),
+      type: data.type as any,
+      status: data.status as any,
+      priority: data.priority as any,
     }),
     prepareMutation: (id, data) => ({
       id,

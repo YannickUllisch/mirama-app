@@ -1,3 +1,8 @@
+import type { MemberResponse } from '@/server/modules/account/members/features/response'
+import type { TagResponse } from '@/server/modules/account/tags/features/response'
+import type { CreateProjectRequest } from '@/server/modules/project/features/create-project/schema'
+import type { ProjectResponse } from '@/server/modules/project/features/response'
+import type { UpdateProjectRequest } from '@/server/modules/project/features/update-project/schema'
 import {
   archiveProjectFn,
   createProjectFn,
@@ -8,20 +13,13 @@ import {
   fetchProjectsFn,
   updateProjectFn,
 } from '@hooks/api/project'
-import type { UserProjectResponseType } from '@server/domain/memberSchema'
-import type {
-  CreateProjectInput,
-  ProjectResponseInput,
-  UpdateProjectInput,
-} from '@server/domain/projectSchema'
-import type { TagResponseType } from '@server/domain/tagSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const project = {
   fetchAll: {
     useQuery: () =>
-      useQuery<ProjectResponseInput[]>({
+      useQuery<ProjectResponse[]>({
         queryKey: ['projects'],
         queryFn: fetchProjectsFn,
       }),
@@ -29,7 +27,7 @@ const project = {
 
   fetchById: {
     useQuery: (id: string) =>
-      useQuery<ProjectResponseInput | null>({
+      useQuery<ProjectResponse | null>({
         enabled: !!id,
         queryKey: ['project', id],
         queryFn: () => fetchProjectByIdFn(id),
@@ -38,7 +36,7 @@ const project = {
 
   fetchAssignees: {
     useQuery: (id: string) =>
-      useQuery<UserProjectResponseType[]>({
+      useQuery<MemberResponse[]>({
         enabled: !!id,
         queryKey: ['projectAssignees', id],
         queryFn: () => fetchProjectAssigneesFn(id),
@@ -47,7 +45,7 @@ const project = {
 
   fetchArchived: {
     useQuery: () =>
-      useQuery<ProjectResponseInput[]>({
+      useQuery<ProjectResponse[]>({
         queryKey: ['archivedProjects'],
         queryFn: () => fetchArchivedProjectsFn(),
       }),
@@ -57,29 +55,26 @@ const project = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        ProjectResponseInput, // result
+        ProjectResponse, // result
         Error, // error
-        CreateProjectInput, // variables
-        { previous?: ProjectResponseInput[] } // context
+        CreateProjectRequest, // variables
+        { previous?: ProjectResponse[] } // context
       >({
         mutationFn: createProjectFn,
         onMutate: async (newProject) => {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
 
           if (newProject.newTags.length > 0) {
-            queryClient.setQueryData<TagResponseType[]>(
-              ['tags'],
-              (old = []) => [
-                ...old,
-                ...newProject.newTags.map((tag) => ({
-                  title: tag.title ?? '',
-                  id: `temp-${Math.random()}`,
-                })),
-              ],
-            )
+            queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) => [
+              ...old,
+              ...newProject.newTags.map((tag) => ({
+                title: tag.title ?? '',
+                id: `temp-${Math.random()}`,
+              })),
+            ])
           }
 
-          const previous = queryClient.getQueryData<ProjectResponseInput[]>([
+          const previous = queryClient.getQueryData<ProjectResponse[]>([
             'projects',
           ])
 
@@ -87,7 +82,7 @@ const project = {
         },
         onSuccess: (serverProject, _vars) => {
           // Replace optimistic with authoritative data (now includes proper tag titles)
-          queryClient.setQueryData<ProjectResponseInput[]>(
+          queryClient.setQueryData<ProjectResponse[]>(
             ['projects'],
             (old = []) => [...old, serverProject],
           )
@@ -111,12 +106,12 @@ const project = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        ProjectResponseInput,
+        ProjectResponse,
         Error,
-        { id: string; data: UpdateProjectInput },
+        { id: string; data: UpdateProjectRequest },
         {
-          previousProjects?: ProjectResponseInput[]
-          previousProject?: ProjectResponseInput
+          previousProjects?: ProjectResponse[]
+          previousProject?: ProjectResponse
         }
       >({
         mutationFn: ({ id, data }) => updateProjectFn(id, data),
@@ -124,62 +119,65 @@ const project = {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
           await queryClient.cancelQueries({ queryKey: ['project', id] })
 
-          const previousProjects = queryClient.getQueryData<
-            ProjectResponseInput[]
-          >(['projects'])
-          const previousProject =
-            queryClient.getQueryData<ProjectResponseInput>(['project', id])
+          const previousProjects = queryClient.getQueryData<ProjectResponse[]>([
+            'projects',
+          ])
+          const previousProject = queryClient.getQueryData<ProjectResponse>([
+            'project',
+            id,
+          ])
 
           if (data.newTags.length > 0) {
-            queryClient.setQueryData<TagResponseType[]>(
-              ['tags'],
-              (old = []) => [
-                ...old,
-                ...data.newTags.map((tag) => ({
-                  title: tag.title ?? '',
-                  id: `temp-${Math.random()}`,
-                })),
-              ],
-            )
+            queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) => [
+              ...old,
+              ...data.newTags.map((tag) => ({
+                title: tag.title ?? '',
+                id: `temp-${Math.random()}`,
+              })),
+            ])
           }
 
           // TODO: Figure out how to optimistically update types to which we dont have all information in a update request
-          queryClient.setQueryData<ProjectResponseInput[]>(
+          queryClient.setQueryData<ProjectResponse[]>(
             ['projects'],
             (old = []) =>
               old.map((p) =>
                 p.id === id
                   ? {
-                      ...data,
-                      archived: p.archived,
-                      tasks: p.tasks,
-                      id: p.id,
+                      ...p,
+                      name: data.name,
+                      description: data.description,
+                      startDate: data.startDate,
+                      endDate: data.endDate,
+                      priority: data.priority,
+                      status: data.status,
+                      budget: data.budget,
                       tags: p.tags.filter((tag) => data.tags.includes(tag.id)),
-                      users: p.users,
                     }
                   : p,
               ),
           )
 
-          queryClient.setQueryData<ProjectResponseInput>(
-            ['project', id],
-            (old) =>
-              old
-                ? {
-                    ...data,
-                    archived: old.archived,
-                    tasks: old.tasks,
-                    id: old.id,
-                    tags: old.tags.filter((tag) => data.tags.includes(tag.id)),
-                    users: old.users,
-                  }
-                : old,
+          queryClient.setQueryData<ProjectResponse>(['project', id], (old) =>
+            old
+              ? {
+                  ...old,
+                  name: data.name,
+                  description: data.description,
+                  startDate: data.startDate,
+                  endDate: data.endDate,
+                  priority: data.priority,
+                  status: data.status,
+                  budget: data.budget,
+                  tags: old.tags.filter((tag) => data.tags.includes(tag.id)),
+                }
+              : old,
           )
 
           return { previousProjects, previousProject }
         },
         onSuccess: (serverProject, _vars) => {
-          queryClient.setQueryData<ProjectResponseInput[]>(
+          queryClient.setQueryData<ProjectResponse[]>(
             ['projects'],
             (old = []) =>
               old.map((p) => (p.id === serverProject.id ? serverProject : p)),
@@ -217,8 +215,8 @@ const project = {
         Error,
         string,
         {
-          previousProjects: ProjectResponseInput[]
-          previousArchived: ProjectResponseInput[]
+          previousProjects: ProjectResponse[]
+          previousArchived: ProjectResponse[]
         }
       >({
         mutationFn: deleteProjectFn,
@@ -226,19 +224,18 @@ const project = {
           await queryClient.cancelQueries({ queryKey: ['projects'] })
 
           const previousProjects =
-            queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
+            queryClient.getQueryData<ProjectResponse[]>(['projects']) ?? []
 
           const previousArchived =
-            queryClient.getQueryData<ProjectResponseInput[]>([
-              'archivedProjects',
-            ]) ?? []
+            queryClient.getQueryData<ProjectResponse[]>(['archivedProjects']) ??
+            []
 
-          queryClient.setQueryData<ProjectResponseInput[]>(
+          queryClient.setQueryData<ProjectResponse[]>(
             ['projects'],
             (old = []) => old.filter((p) => p.id !== id),
           )
 
-          queryClient.setQueryData<ProjectResponseInput[]>(
+          queryClient.setQueryData<ProjectResponse[]>(
             ['archivedProjects'],
             (old = []) => old.filter((p) => p.id !== id),
           )
@@ -271,9 +268,9 @@ const project = {
         Error,
         { id: string; archive: boolean },
         {
-          previousProject: ProjectResponseInput | null
-          previousProjects: ProjectResponseInput[]
-          previousArchived: ProjectResponseInput[]
+          previousProject: ProjectResponse | null
+          previousProjects: ProjectResponse[]
+          previousArchived: ProjectResponse[]
         }
       >({
         mutationFn: ({ id, archive }) => archiveProjectFn(id, archive),
@@ -282,14 +279,15 @@ const project = {
           await queryClient.cancelQueries({ queryKey: ['archivedProjects'] })
           await queryClient.cancelQueries({ queryKey: ['project', id] })
 
-          const previousProject =
-            queryClient.getQueryData<ProjectResponseInput>(['project', id])
+          const previousProject = queryClient.getQueryData<ProjectResponse>([
+            'project',
+            id,
+          ])
           const previousProjects =
-            queryClient.getQueryData<ProjectResponseInput[]>(['projects']) ?? []
+            queryClient.getQueryData<ProjectResponse[]>(['projects']) ?? []
           const previousArchived =
-            queryClient.getQueryData<ProjectResponseInput[]>([
-              'archivedProjects',
-            ]) ?? []
+            queryClient.getQueryData<ProjectResponse[]>(['archivedProjects']) ??
+            []
 
           // Optimistically move project between caches
           if (archive) {

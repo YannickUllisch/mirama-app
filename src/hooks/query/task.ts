@@ -1,3 +1,7 @@
+import type { CreateTaskRequest } from '@/server/modules/task/features/create-task/schema'
+import type { DeleteTasksBulkRequest } from '@/server/modules/task/features/delete-task/schema'
+import type { TaskResponse } from '@/server/modules/task/features/response'
+import type { UpdateTaskRequest } from '@/server/modules/task/features/update-task/schema'
 import {
   createTaskFn,
   deleteTaskFn,
@@ -7,26 +11,20 @@ import {
   fetchTasksByProjectFn,
   updateTaskFn,
 } from '@hooks/api/task'
-import type {
-  CreateTaskType,
-  DeleteTasksType,
-  TaskResponseType,
-  UpdateTaskType,
-} from '@server/domain/taskSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 type ListContext = {
-  previousTasks?: TaskResponseType[]
-  previousPersonalTasks?: TaskResponseType[]
-  previousTask?: TaskResponseType | null
+  previousTasks?: TaskResponse[]
+  previousPersonalTasks?: TaskResponse[]
+  previousTask?: TaskResponse | null
   affectedIds?: string[]
 }
 
 const task = {
   fetchById: {
     useQuery: (projectId: string, id: string) =>
-      useQuery<TaskResponseType | null>({
+      useQuery<TaskResponse | null>({
         enabled: !!id,
         queryKey: ['task', id],
         queryFn: () => fetchTaskById(projectId, id),
@@ -35,7 +33,7 @@ const task = {
 
   fetchByProject: {
     useQuery: (projectId: string) =>
-      useQuery<TaskResponseType[]>({
+      useQuery<TaskResponse[]>({
         queryKey: ['tasks', projectId],
         queryFn: () => fetchTasksByProjectFn(projectId),
       }),
@@ -43,7 +41,7 @@ const task = {
 
   fetchPersonal: {
     useQuery: (projectId?: string) =>
-      useQuery<TaskResponseType[]>({
+      useQuery<TaskResponse[]>({
         queryKey: ['personalTasks', projectId ?? 'all'],
         queryFn: () => fetchPersonalTasksFn(projectId),
       }),
@@ -53,9 +51,9 @@ const task = {
     useMutation: () => {
       const qc = useQueryClient()
       return useMutation<
-        TaskResponseType,
+        TaskResponse,
         Error,
-        { id: string; payload: CreateTaskType },
+        { id: string; payload: CreateTaskRequest },
         ListContext
       >({
         mutationFn: ({ id, payload }) => createTaskFn(id, payload),
@@ -65,29 +63,26 @@ const task = {
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
           ])
 
-          const previousTasks = qc.getQueryData<TaskResponseType[]>([
-            'tasks',
-            id,
-          ])
-          const previousPersonal = qc.getQueryData<TaskResponseType[]>([
+          const previousTasks = qc.getQueryData<TaskResponse[]>(['tasks', id])
+          const previousPersonal = qc.getQueryData<TaskResponse[]>([
             'personalTasks',
             'all',
           ])
 
           // Optimistic add (temp id)
-          const optimistic: TaskResponseType = {
+          const optimistic: TaskResponse = {
             ...(payload as any),
             id: `optimistic-${Date.now()}`,
             projectId: id,
           }
           if (previousTasks) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['tasks', id],
               [optimistic, ...previousTasks],
             )
           }
           if (previousPersonal) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['personalTasks', 'all'],
               [optimistic, ...previousPersonal],
             )
@@ -109,17 +104,14 @@ const task = {
           toast.error(err.message || 'Create task failed')
         },
         onSuccess: (created, vars) => {
-          qc.setQueryData<TaskResponseType[]>(
-            ['tasks', vars.id],
-            (old = []) => {
-              // replace optimistic
-              const withoutOptimistic = old.filter(
-                (t) => !t.id.startsWith('optimistic-'),
-              )
-              return [created, ...withoutOptimistic]
-            },
-          )
-          qc.setQueryData<TaskResponseType[]>(
+          qc.setQueryData<TaskResponse[]>(['tasks', vars.id], (old = []) => {
+            // replace optimistic
+            const withoutOptimistic = old.filter(
+              (t) => !t.id.startsWith('optimistic-'),
+            )
+            return [created, ...withoutOptimistic]
+          })
+          qc.setQueryData<TaskResponse[]>(
             ['personalTasks', 'all'],
             (old = []) => {
               const withoutOptimistic = old.filter(
@@ -143,9 +135,9 @@ const task = {
     useMutation: () => {
       const qc = useQueryClient()
       return useMutation<
-        TaskResponseType,
+        TaskResponse,
         Error,
-        { projectId: string; id: string; data: UpdateTaskType },
+        { projectId: string; id: string; data: UpdateTaskRequest },
         ListContext
       >({
         mutationFn: ({ projectId, id, data }) =>
@@ -157,33 +149,33 @@ const task = {
             qc.cancelQueries({ queryKey: ['task', id] }),
           ])
 
-          const previousTasks = qc.getQueryData<TaskResponseType[]>([
+          const previousTasks = qc.getQueryData<TaskResponse[]>([
             'tasks',
             projectId,
           ])
-          const previousPersonal = qc.getQueryData<TaskResponseType[]>([
+          const previousPersonal = qc.getQueryData<TaskResponse[]>([
             'personalTasks',
             'all',
           ])
-          const previousTask = qc.getQueryData<TaskResponseType | null>([
+          const previousTask = qc.getQueryData<TaskResponse | null>([
             'task',
             id,
           ])
 
           // TODO: Figure out how to optimistically update types to which we dont have all information in a update request
-          const patch = (t: TaskResponseType) =>
+          const patch = (t: TaskResponse) =>
             t.id === id
               ? { ...t, ...data, subtasks: t.subtasks, tags: t.tags }
               : t
 
           if (previousTasks) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['tasks', projectId],
               previousTasks.map(patch),
             )
           }
           if (previousPersonal) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['personalTasks', 'all'],
               previousPersonal.map(patch),
             )
@@ -208,11 +200,11 @@ const task = {
           toast.error(err.message || 'Update task failed')
         },
         onSuccess: (updated) => {
-          qc.setQueryData<TaskResponseType[]>(
+          qc.setQueryData<TaskResponse[]>(
             ['tasks', updated.projectId],
             (old = []) => old.map((t) => (t.id === updated.id ? updated : t)),
           )
-          qc.setQueryData<TaskResponseType[]>(
+          qc.setQueryData<TaskResponse[]>(
             ['personalTasks', 'all'],
             (old = []) => old.map((t) => (t.id === updated.id ? updated : t)),
           )
@@ -244,27 +236,24 @@ const task = {
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
             qc.cancelQueries({ queryKey: ['task', id] }),
           ])
-          const previousTasks = qc.getQueryData<TaskResponseType[]>([
-            'tasks',
-            pid,
-          ])
-          const previousPersonal = qc.getQueryData<TaskResponseType[]>([
+          const previousTasks = qc.getQueryData<TaskResponse[]>(['tasks', pid])
+          const previousPersonal = qc.getQueryData<TaskResponse[]>([
             'personalTasks',
             'all',
           ])
-          const previousTask = qc.getQueryData<TaskResponseType | null>([
+          const previousTask = qc.getQueryData<TaskResponse | null>([
             'task',
             id,
           ])
 
           if (previousTasks) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['tasks', pid],
               previousTasks.filter((t) => t.id !== id),
             )
           }
           if (previousPersonal) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['personalTasks', 'all'],
               previousPersonal.filter((t) => t.id !== id),
             )
@@ -301,7 +290,7 @@ const task = {
       return useMutation<
         { success: boolean } | any,
         Error,
-        { projectId: string; payload: DeleteTasksType },
+        { projectId: string; payload: DeleteTasksBulkRequest },
         ListContext
       >({
         mutationFn: ({ projectId, payload }) =>
@@ -311,23 +300,23 @@ const task = {
             qc.cancelQueries({ queryKey: ['tasks', projectId] }),
             qc.cancelQueries({ queryKey: ['personalTasks', 'all'] }),
           ])
-          const previousTasks = qc.getQueryData<TaskResponseType[]>([
+          const previousTasks = qc.getQueryData<TaskResponse[]>([
             'tasks',
             projectId,
           ])
-          const previousPersonal = qc.getQueryData<TaskResponseType[]>([
+          const previousPersonal = qc.getQueryData<TaskResponse[]>([
             'personalTasks',
             'all',
           ])
 
           if (previousTasks) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['tasks', projectId],
               previousTasks.filter((t) => !payload.ids.includes(t.id)),
             )
           }
           if (previousPersonal) {
-            qc.setQueryData<TaskResponseType[]>(
+            qc.setQueryData<TaskResponse[]>(
               ['personalTasks', 'all'],
               previousPersonal.filter((t) => !payload.ids.includes(t.id)),
             )

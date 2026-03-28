@@ -1,7 +1,7 @@
 'use client'
 
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
-import type { TagResponseType } from '@server/domain/tagSchema'
+import type { TagResponse } from '@server/modules/account/tags/features/response'
 import {
   EditableCell,
   EditableCellType,
@@ -20,7 +20,7 @@ import { Ellipsis, Trash } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<TagResponseType>()
+const columnHelper = createColumnHelper<TagResponse>()
 
 export const useTagColumns = ({
   session,
@@ -28,7 +28,7 @@ export const useTagColumns = ({
   deleteMutation,
 }: {
   session: Session | null
-  handleFieldUpdate: HandleFieldUpdate<TagResponseType>
+  handleFieldUpdate: HandleFieldUpdate<TagResponse>
   deleteMutation: UseMutateFunction<
     {
       success: boolean
@@ -36,7 +36,7 @@ export const useTagColumns = ({
     Error,
     string,
     {
-      previous?: TagResponseType[]
+      previous?: TagResponse[]
     }
   >
 }) => {

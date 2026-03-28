@@ -1,9 +1,25 @@
+import { createRoute } from '@/server/middleware/createRoute'
+import { GetAssigneesQuery } from '@/server/modules/project/features/get-assignees/handler'
+import { ProjectIdParams } from '@/server/modules/project/features/get-project/schema'
 import { OrganizationRole } from '@prisma/client'
-import { ProjectController } from '@server/controllers/projectController'
-import { exceptionHandler } from '@server/utils/exceptionHandler'
-import { withAuth } from '@withAuth'
 
-export const GET = withAuth(
-  Object.values(OrganizationRole),
-  exceptionHandler(ProjectController.getProjectAssignees),
+export const GET = createRoute(
+  {
+    auth: { allowedOrgRoles: 'ANY' },
+    params: ProjectIdParams,
+    pathPattern: '/api/db/:organizationId/project/:projectId/users',
+  },
+  async (_req, { session, ctx }, { params }) => {
+    const isAdmin = (
+      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
+    ).includes(session.user.orgRole as OrganizationRole)
+
+    const data = await GetAssigneesQuery(ctx)(
+      params.projectId,
+      session.user.id ?? '',
+      isAdmin,
+    )
+
+    return Response.json({ success: true, data })
+  },
 )

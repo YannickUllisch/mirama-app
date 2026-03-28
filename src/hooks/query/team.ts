@@ -1,19 +1,17 @@
+import type { MemberResponse } from '@/server/modules/account/members/features/response'
+import type { UpdateMemberRequest } from '@/server/modules/account/members/features/update-member/schema'
 import {
   deleteTeamMemberFn,
   fetchTeamMembersFn,
   updateTeamMemberFn,
 } from '@hooks/api/team'
-import type {
-  UpdateUserType,
-  UserResponseType,
-} from '@server/domain/memberSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const team = {
   fetchMembers: {
     useQuery: () =>
-      useQuery<UserResponseType[]>({
+      useQuery<MemberResponse[]>({
         queryKey: ['teamMembers'],
         queryFn: fetchTeamMembersFn,
       }),
@@ -23,20 +21,20 @@ const team = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        UserResponseType,
+        MemberResponse,
         Error,
-        { id: string; payload: UpdateUserType },
-        { previous?: UserResponseType[] }
+        { id: string; payload: UpdateMemberRequest },
+        { previous?: MemberResponse[] }
       >({
         mutationFn: ({ id, payload }) => updateTeamMemberFn(id, payload),
         onMutate: async ({ id, payload }) => {
           await queryClient.cancelQueries({ queryKey: ['teamMembers'] })
-          const previous = queryClient.getQueryData<UserResponseType[]>([
+          const previous = queryClient.getQueryData<MemberResponse[]>([
             'teamMembers',
           ])
 
           // Optimistically update the user in the cache
-          queryClient.setQueryData<UserResponseType[]>(
+          queryClient.setQueryData<MemberResponse[]>(
             ['teamMembers'],
             (old = []) =>
               old.map((user) =>
@@ -47,7 +45,7 @@ const team = {
           return { previous }
         },
         onSuccess: (data, _vars) => {
-          queryClient.setQueryData<UserResponseType[]>(
+          queryClient.setQueryData<MemberResponse[]>(
             ['teamMembers'],
             (old = []) => old.map((p) => (p.id === data.id ? data : p)),
           )
@@ -72,17 +70,17 @@ const team = {
         { success: boolean },
         Error,
         string,
-        { previous?: UserResponseType[] }
+        { previous?: MemberResponse[] }
       >({
         mutationFn: deleteTeamMemberFn,
         onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['teamMembers'] })
-          const previous = queryClient.getQueryData<UserResponseType[]>([
+          const previous = queryClient.getQueryData<MemberResponse[]>([
             'teamMembers',
           ])
 
           // Optimistically remove the user from the cache
-          queryClient.setQueryData<UserResponseType[]>(
+          queryClient.setQueryData<MemberResponse[]>(
             ['teamMembers'],
             (old = []) => old.filter((user) => user.id !== id),
           )

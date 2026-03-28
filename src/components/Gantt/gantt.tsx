@@ -11,9 +11,6 @@ import {
   ContextMenuTrigger,
 } from '@ui/context-menu'
 import { useMouse, useThrottle, useWindowScroll } from '@uidotdev/usehooks'
-import { formatDate, getDate } from 'date-fns'
-import { formatDistance, isSameDay } from 'date-fns'
-import { format } from 'date-fns'
 import {
   addDays,
   addMonths,
@@ -22,13 +19,26 @@ import {
   differenceInMonths,
   endOfDay,
   endOfMonth,
+  format,
+  formatDate,
+  formatDistance,
+  getDate,
   getDaysInMonth,
+  isSameDay,
   startOfDay,
   startOfMonth,
 } from 'date-fns'
 import { atom, useAtom } from 'jotai'
 import throttle from 'lodash.throttle'
 import { PlusIcon, TrashIcon } from 'lucide-react'
+import type {
+  CSSProperties,
+  FC,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  ReactNode,
+  RefObject,
+} from 'react'
 import {
   createContext,
   useCallback,
@@ -37,14 +47,6 @@ import {
   useId,
   useRef,
   useState,
-} from 'react'
-import type {
-  CSSProperties,
-  FC,
-  KeyboardEventHandler,
-  MouseEventHandler,
-  ReactNode,
-  RefObject,
 } from 'react'
 
 const draggingAtom = atom(false)
@@ -478,6 +480,7 @@ export const GanttSidebarItem: FC<GanttSidebarItemProps> = ({
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: <tmp>
     <div
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -633,6 +636,7 @@ export const GanttColumn: FC<GanttColumnProps> = ({
   )
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: <tmp>
     <div
       className={cn(
         'group relative h-full overflow-hidden',
@@ -1002,6 +1006,7 @@ export const GanttMarker: FC<
     >
       <ContextMenu>
         <ContextMenuTrigger asChild>
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: <tmp> */}
           <div
             className={cn(
               'group pointer-events-auto sticky top-0 flex select-auto flex-col flex-nowrap items-center justify-center whitespace-nowrap rounded-b-md px-2 py-1 text-xs',

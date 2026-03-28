@@ -1,10 +1,11 @@
+import type { MemberResponse } from '@/server/modules/account/members/features/response'
+import {
+  type UpdateMemberRequest,
+  UpdateMemberSchema,
+} from '@/server/modules/account/members/features/update-member/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
-import {
-  UpdateUserSchema,
-  type UpdateUserType,
-  type UserResponseType,
-} from '@server/domain/memberSchema'
+import { OrganizationRole } from '@prisma/client'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,
@@ -34,7 +35,7 @@ import {
 } from '../ui/select'
 
 interface EditUserDialogProps {
-  user: UserResponseType
+  user: MemberResponse
   updateSession: UpdateSession
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -50,16 +51,18 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
   const [isPending, startTransition] = useTransition()
 
   // Form Logic and Functions
-  const form = useForm<UpdateUserType>({
-    resolver: zodResolver(UpdateUserSchema),
+  const form = useForm<UpdateMemberRequest>({
+    resolver: zodResolver(UpdateMemberSchema),
     defaultValues: {
-      ...user,
+      email: user.email,
+      name: user.name,
+      organizationRole: user.organizationRole as OrganizationRole,
     },
   })
 
   const { mutate: mutateUser } = apiRequest.team.update.useMutation()
 
-  const onSubmit = (vals: UpdateUserType) => {
+  const onSubmit = (vals: UpdateMemberRequest) => {
     startTransition(() => {
       mutateUser(
         { id: user.id, payload: { ...vals } },
@@ -109,7 +112,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
-                  name="role"
+                  name="organizationRole"
                   render={({ field }) => (
                     <FormItem className="col-span-3">
                       <FormLabel>Role</FormLabel>
@@ -120,7 +123,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Object.keys(Role).map((role) => (
+                          {Object.keys(OrganizationRole).map((role) => (
                             <SelectItem key={`role-item-${role}`} value={role}>
                               {role}
                             </SelectItem>

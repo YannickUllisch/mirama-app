@@ -1,5 +1,5 @@
 'use client'
-import type { UserResponseType } from '@server/domain/memberSchema'
+import type { MemberResponse } from '@server/modules/account/members/features/response'
 import { capitalize, isOrgAdminOrOwner, isRoleHigher } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { Pencil, PencilLine, Trash2 } from 'lucide-react'
@@ -18,7 +18,7 @@ import {
 import UserAvatar from './UserAvatar'
 
 interface UserCardProps {
-  user: UserResponseType
+  user: MemberResponse
   session: Session | null
   updateSession: UpdateSession
   deleteMember: UseMutateFunction<
@@ -28,7 +28,7 @@ interface UserCardProps {
     Error,
     string,
     {
-      previous?: UserResponseType[]
+      previous?: MemberResponse[]
     }
   >
 }
@@ -49,11 +49,16 @@ const UserCard: FC<UserCardProps> = ({
       <div className="flex flex-col">
         <span className="text-lg font-bold">{user.name}</span>
         <span className="text-xs text-text-secondary">{user.email}</span>
-        <span className="text-sm">{capitalize(user.role ?? 'No role')}</span>
+        <span className="text-sm">
+          {capitalize(user.organizationRole ?? 'No role')}
+        </span>
       </div>
 
       {isOrgAdminOrOwner(session) &&
-        !isRoleHigher(user.role, session?.user.role ?? 'USER') && (
+        !isRoleHigher(
+          user.organizationRole as any,
+          session?.user.orgRole ?? 'USER',
+        ) && (
           <div>
             <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen}>
               <DropdownMenuTrigger asChild>

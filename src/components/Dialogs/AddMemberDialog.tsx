@@ -1,10 +1,11 @@
 'use client'
+import {
+  type CreateInvitationRequest,
+  CreateInvitationSchema,
+} from '@/server/modules/account/invitations/features/create-invitation/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
-import {
-  type CreateInvitationInput,
-  CreateInvitationSchema,
-} from '@server/domain/invitationSchema'
+import { OrganizationRole } from '@prisma/client'
 import { Button } from '@ui/button'
 import {
   Dialog,
@@ -40,22 +41,22 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   // Form State
-  const form = useForm<CreateInvitationInput>({
+  const form = useForm<CreateInvitationRequest>({
     resolver: zodResolver(CreateInvitationSchema),
     defaultValues: {
       email: '',
       name: '',
-      role: Role.USER,
+      role: OrganizationRole.USER,
     },
   })
 
   // Hooks
-  const { mutate: useCreateInvitation, isPending } =
+  const { mutate: createInvitationMutate, isPending } =
     apiRequest.invitation.create.useMutation()
 
   // Helper
-  const onSubmit = (vals: CreateInvitationInput) => {
-    useCreateInvitation(vals, {
+  const onSubmit = (vals: CreateInvitationRequest) => {
+    createInvitationMutate(vals, {
       onSuccess: () => {
         setIsOpen(false)
       },
@@ -119,7 +120,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                     <FormLabel>Role</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={Role.USER}
+                      defaultValue={OrganizationRole.USER}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -127,7 +128,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.keys(Role).map((role) => (
+                        {Object.keys(OrganizationRole).map((role) => (
                           <SelectItem key={`role-item-${role}`} value={role}>
                             {role}
                           </SelectItem>

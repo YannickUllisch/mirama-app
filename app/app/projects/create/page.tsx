@@ -1,8 +1,8 @@
 'use client'
+import { AttachNewMilestoneToProjectSchema } from '@/serverOld/domain/milestoneSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, StatusType } from '@prisma/client'
-import { AttachNewMilestoneToProjectSchema } from '@server/domain/milestoneSchema'
 import {
   type CreateProjectInput,
   CreateProjectSchema,

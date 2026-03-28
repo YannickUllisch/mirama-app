@@ -1,4 +1,4 @@
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { getColorByName, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
@@ -30,7 +30,7 @@ const ProjectCard = ({
   project,
   setRecentProjectIds,
 }: {
-  project: ProjectResponseInput
+  project: ProjectResponse
   setRecentProjectIds: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
   const { data: session } = useSession()

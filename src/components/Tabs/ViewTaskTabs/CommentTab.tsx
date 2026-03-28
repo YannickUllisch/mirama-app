@@ -47,11 +47,11 @@ const CommentTab = ({ taskId, projectId }: CommentTabProps) => {
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback>{comment.userName}</AvatarFallback>
+                  <AvatarFallback>{comment.memberName}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{comment.userName}</p>
+                    <p className="text-sm font-medium">{comment.memberName}</p>
                     <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(comment.createdAt), {
                         addSuffix: true,

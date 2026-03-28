@@ -6,15 +6,15 @@ import {
   type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
-  type UniqueIdentifier,
   rectIntersection,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { TaskStatusType } from '@prisma/client'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import { deleteResources } from '@src/lib/api/deleteResource'
 import { postResource } from '@src/lib/api/postResource'
 import { updateResourceById } from '@src/lib/api/updateResource'
@@ -32,8 +32,8 @@ import KanbanItem from './KanbanItem'
 
 interface KanbanBoardProps {
   projectId: string
-  users: UserResponseType[]
-  tasks: TaskResponseType[]
+  users: MemberResponse[]
+  tasks: TaskResponse[]
 }
 
 const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
@@ -91,7 +91,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
         type: 'TASK',
         projectId: projectId,
         dateCreated: new Date(),
-        teamId: session?.user.teamId ?? 'undefined',
+        organizationId: session?.user.organizationId ?? 'undefined',
         taskCode: '',
         dueDate: new Date(),
         startDate: new Date(),
@@ -301,7 +301,6 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
   const columnItemTotals = useMemo(() => {
     return boards.reduce(
       (acc, board) => {
-        // biome-ignore lint/complexity/noForEach: <simplest form for totals summation>
         board.columns.forEach((col) => {
           acc[col.title] = (acc[col.title] || 0) + col.items.length
         })

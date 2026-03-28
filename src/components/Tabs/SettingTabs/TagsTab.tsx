@@ -1,11 +1,11 @@
 'use client'
 import apiRequest from '@hooks/query'
 import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import type { TagResponse } from '@server/modules/account/tags/features/response'
 import {
-  type TagResponseType,
+  type UpdateTagRequest,
   UpdateTagSchema,
-  type UpdateTagType,
-} from '@server/domain/tagSchema'
+} from '@server/modules/account/tags/features/update-tag/schema'
 import AddTagDialog from '@src/components/Dialogs/AddTagDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
@@ -22,8 +22,8 @@ const TagsTab = () => {
 
   // Update State
   const { handleFieldUpdate } = useEditableColumns<
-    TagResponseType,
-    UpdateTagType
+    TagResponse,
+    UpdateTagRequest
   >({
     mutate: useUpdateTag,
     updateSchema: UpdateTagSchema,

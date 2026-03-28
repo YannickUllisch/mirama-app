@@ -1,45 +1,41 @@
-import type { UserProjectResponseType } from '@server/domain/memberSchema'
-import type {
-  CreateProjectInput,
-  ProjectResponseInput,
-  UpdateProjectInput,
-} from '@server/domain/projectSchema'
+import type { MemberResponse } from '@/server/modules/account/members/features/response'
+import type { CreateProjectRequest } from '@/server/modules/project/features/create-project/schema'
+import type { ProjectResponse } from '@/server/modules/project/features/response'
+import type { UpdateProjectRequest } from '@/server/modules/project/features/update-project/schema'
 import { api } from '@src/lib/api'
 
-export const fetchProjectsFn = async (): Promise<ProjectResponseInput[]> => {
+export const fetchProjectsFn = async (): Promise<ProjectResponse[]> => {
   const { data } = await api.get('project')
   return data
 }
 
-export const fetchArchivedProjectsFn = async (): Promise<
-  ProjectResponseInput[]
-> => {
+export const fetchArchivedProjectsFn = async (): Promise<ProjectResponse[]> => {
   const { data } = await api.get('project?archived=true')
   return data
 }
 
 export const fetchProjectByIdFn = async (
   id: string,
-): Promise<ProjectResponseInput | null> => {
+): Promise<ProjectResponse | null> => {
   const { data } = await api.get(`project/${id}`)
   return data ?? null
 }
 
 export const fetchProjectAssigneesFn = async (
   id: string,
-): Promise<UserProjectResponseType[]> => {
+): Promise<MemberResponse[]> => {
   const { data } = await api.get(`project/${id}/users`)
   return data ?? null
 }
 
-export const createProjectFn = async (payload: CreateProjectInput) => {
+export const createProjectFn = async (payload: CreateProjectRequest) => {
   const { data } = await api.post('project', payload)
   return data
 }
 
 export const updateProjectFn = async (
   id: string,
-  payload: UpdateProjectInput,
+  payload: UpdateProjectRequest,
 ) => {
   const { data } = await api.put(`project/${id}`, payload)
   return data

@@ -1,21 +1,19 @@
+import type { CreateFavouriteRequest } from '@/server/modules/account/favourites/features/create-favourite/schema'
+import type { FavouriteResponse } from '@/server/modules/account/favourites/features/response'
 import {
   createFavouritesFn,
   deleteFavouriteFn,
   fetchFavouritesByTypeFn,
   fetchFavouritesFn,
 } from '@hooks/api/favourite'
-import type { Favourite, FavouriteType } from '@prisma/client'
-import type {
-  CreateFavouriteType,
-  FavouriteResponseType,
-} from '@server/domain/favouriteSchema'
+import type { FavouriteType } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const favourite = {
   fetchAll: {
     useQuery: () =>
-      useQuery<FavouriteResponseType[]>({
+      useQuery<FavouriteResponse[]>({
         queryKey: ['favourites'],
         queryFn: fetchFavouritesFn,
       }),
@@ -23,7 +21,7 @@ const favourite = {
 
   fetchByType: {
     useQuery: (type: FavouriteType) =>
-      useQuery<FavouriteResponseType[]>({
+      useQuery<FavouriteResponse[]>({
         enabled: !!type,
         queryKey: ['favourites'],
         queryFn: () => fetchFavouritesByTypeFn(type),
@@ -34,28 +32,28 @@ const favourite = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        FavouriteResponseType,
+        FavouriteResponse,
         Error,
-        CreateFavouriteType,
-        { previous?: Favourite[] }
+        CreateFavouriteRequest,
+        { previous?: FavouriteResponse[] }
       >({
         mutationFn: createFavouritesFn,
         onMutate: async (newFavourite) => {
           await queryClient.cancelQueries({ queryKey: ['favourites'] })
 
-          const previous = queryClient.getQueryData<FavouriteResponseType[]>([
+          const previous = queryClient.getQueryData<FavouriteResponse[]>([
             'favourites',
           ])
 
           // Optimistically add the new favourite to the cache
-          queryClient.setQueryData<FavouriteResponseType[]>(
+          queryClient.setQueryData<FavouriteResponse[]>(
             ['favourites'],
             (old = []) => [
               ...old,
               {
                 id: `temp-id-${Math.random()}`,
-                userId: newFavourite.userId,
-                type: newFavourite.type as FavouriteType,
+                memberId: '',
+                type: newFavourite.type,
                 data: newFavourite.data,
               },
             ],
@@ -64,7 +62,7 @@ const favourite = {
           return { previous }
         },
         onSuccess: (serverFav, _vars) => {
-          queryClient.setQueryData<FavouriteResponseType[]>(
+          queryClient.setQueryData<FavouriteResponse[]>(
             ['favourites'],
             (old = []) => [...old, serverFav],
           )
@@ -89,18 +87,18 @@ const favourite = {
         { success: boolean },
         Error,
         string,
-        { previous?: FavouriteResponseType[] }
+        { previous?: FavouriteResponse[] }
       >({
         mutationFn: deleteFavouriteFn,
         onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['favourites'] })
 
-          const previous = queryClient.getQueryData<FavouriteResponseType[]>([
+          const previous = queryClient.getQueryData<FavouriteResponse[]>([
             'favourites',
           ])
 
           // Optimistically remove the favourite from the cache
-          queryClient.setQueryData<FavouriteResponseType[]>(
+          queryClient.setQueryData<FavouriteResponse[]>(
             ['favourites'],
             (old = []) => old.filter((p) => p.id !== id),
           )

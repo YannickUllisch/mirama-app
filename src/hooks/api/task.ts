@@ -1,14 +1,12 @@
-import type {
-  CreateTaskType,
-  DeleteTasksType,
-  TaskResponseType,
-  UpdateTaskType,
-} from '@server/domain/taskSchema'
+import type { CreateTaskRequest } from '@/server/modules/task/features/create-task/schema'
+import type { DeleteTasksBulkRequest } from '@/server/modules/task/features/delete-task/schema'
+import type { TaskResponse } from '@/server/modules/task/features/response'
+import type { UpdateTaskRequest } from '@/server/modules/task/features/update-task/schema'
 import { api } from '@src/lib/api'
 
 export const fetchTasksByProjectFn = async (
   id: string,
-): Promise<TaskResponseType[]> => {
+): Promise<TaskResponse[]> => {
   const { data } = await api.get(`project/${id}/tasks`)
   return data
 }
@@ -16,14 +14,14 @@ export const fetchTasksByProjectFn = async (
 export const fetchTaskById = async (
   projectId: string,
   taskId: string,
-): Promise<TaskResponseType | null> => {
+): Promise<TaskResponse | null> => {
   const { data } = await api.get(`project/${projectId}/tasks/${taskId}`)
   return data
 }
 
 export const fetchPersonalTasksFn = async (
   projectId?: string,
-): Promise<TaskResponseType[]> => {
+): Promise<TaskResponse[]> => {
   let url = 'team/member/tasks'
   if (projectId) url = `team/member/tasks?projectId=${projectId}`
 
@@ -33,8 +31,8 @@ export const fetchPersonalTasksFn = async (
 
 export const createTaskFn = async (
   projectId: string,
-  payload: CreateTaskType,
-): Promise<TaskResponseType> => {
+  payload: CreateTaskRequest,
+): Promise<TaskResponse> => {
   const { data } = await api.post(`project/${projectId}/tasks`, payload)
   return data
 }
@@ -42,8 +40,8 @@ export const createTaskFn = async (
 export const updateTaskFn = async (
   projectId: string,
   taskId: string,
-  payload: UpdateTaskType,
-): Promise<TaskResponseType> => {
+  payload: UpdateTaskRequest,
+): Promise<TaskResponse> => {
   const { data } = await api.put(
     `project/${projectId}/tasks/${taskId}`,
     payload,
@@ -58,7 +56,7 @@ export const deleteTaskFn = async (projectId: string, taskId: string) => {
 
 export const deleteTasksFn = async (
   projectId: string,
-  payload: DeleteTasksType,
+  payload: DeleteTasksBulkRequest,
 ) => {
   const { data } = await api.delete(
     `project/${projectId}/tasks?ids=${payload.ids}`,

@@ -1,5 +1,5 @@
 'use client'
-import type { Role } from '@prisma/client'
+import type { OrganizationRole } from '@prisma/client'
 import type { AppMenuItem } from '@src/types/types'
 import {
   Collapsible,
@@ -28,9 +28,9 @@ interface MainNavProps {
 
 const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
   const hasRole = useCallback(
-    (roles: Role[]) => {
+    (roles: OrganizationRole[]) => {
       if (!session?.user) return false
-      return roles.includes(session.user.role as Role)
+      return roles.includes(session.user.orgRole as OrganizationRole)
     },
     [session?.user],
   )

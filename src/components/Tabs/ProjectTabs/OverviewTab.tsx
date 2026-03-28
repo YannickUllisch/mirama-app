@@ -1,7 +1,7 @@
 'use client'
 import { TaskStatusType } from '@prisma/client'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import TaskTree from '@src/components/Task/TaskTree'
 import { Badge } from '@ui/badge'
 import { Card } from '@ui/card'
@@ -32,8 +32,8 @@ const OverviewTab = ({
   project,
   tasks,
 }: {
-  project: ProjectResponseInput | null
-  tasks: TaskResponseType[]
+  project: ProjectResponse | null
+  tasks: TaskResponse[]
 }) => {
   const taskStats = useMemo(() => {
     if (!tasks) return { total: 0, completed: 0, inProgress: 0, todo: 0 }
@@ -53,11 +53,11 @@ const OverviewTab = ({
   }, [taskStats])
 
   const managers = useMemo(
-    () => project?.users.filter((u) => u.isManager) ?? [],
+    () => project?.members.filter((u) => u.isManager) ?? [],
     [project],
   )
   const teamMembers = useMemo(
-    () => project?.users.filter((u) => !u.isManager) ?? [],
+    () => project?.members.filter((u) => !u.isManager) ?? [],
     [project],
   )
 
@@ -197,7 +197,7 @@ const OverviewTab = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Team Size</p>
-              <p className="text-2xl font-bold">{project.users.length}</p>
+              <p className="text-2xl font-bold">{project.members.length}</p>
             </div>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">

@@ -1,21 +1,19 @@
+import type { CreateTagRequest } from '@/server/modules/account/tags/features/create-tag/schema'
+import type { TagResponse } from '@/server/modules/account/tags/features/response'
+import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
 import {
   createTagFn,
   deleteTagFn,
   fetchTagsFn,
   updateTagFn,
 } from '@hooks/api/tag'
-import type {
-  CreateTagType,
-  TagResponseType,
-  UpdateTagType,
-} from '@server/domain/tagSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const tag = {
   fetchAll: {
     useQuery: () =>
-      useQuery<TagResponseType[]>({
+      useQuery<TagResponse[]>({
         queryKey: ['tags'],
         queryFn: fetchTagsFn,
       }),
@@ -25,18 +23,18 @@ const tag = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        TagResponseType,
+        TagResponse,
         Error,
-        CreateTagType,
-        { previous?: TagResponseType[] }
+        CreateTagRequest,
+        { previous?: TagResponse[] }
       >({
         mutationFn: createTagFn,
         onMutate: async (newTag) => {
           await queryClient.cancelQueries({ queryKey: ['tags'] })
-          const previous = queryClient.getQueryData<TagResponseType[]>(['tags'])
+          const previous = queryClient.getQueryData<TagResponse[]>(['tags'])
 
           // Optimistically add the new tag (with a temp id if needed)
-          queryClient.setQueryData<TagResponseType[]>(['tags'], (old = []) => [
+          queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) => [
             ...old,
             { title: newTag.title ?? '', id: `temp-${Math.random()}` },
           ])
@@ -44,7 +42,7 @@ const tag = {
           return { previous }
         },
         onSuccess: (data, _vars) => {
-          queryClient.setQueryData<TagResponseType[]>(
+          queryClient.setQueryData<TagResponse[]>(
             ['invitation'],
             (old = []) => [...old, data],
           )
@@ -66,25 +64,25 @@ const tag = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        TagResponseType,
+        TagResponse,
         Error,
-        { id: string; data: UpdateTagType },
-        { previous?: TagResponseType[] }
+        { id: string; data: UpdateTagRequest },
+        { previous?: TagResponse[] }
       >({
         mutationFn: ({ id, data }) => updateTagFn(id, data),
         onMutate: async ({ id, data }) => {
           await queryClient.cancelQueries({ queryKey: ['tags'] })
-          const previous = queryClient.getQueryData<TagResponseType[]>(['tags'])
+          const previous = queryClient.getQueryData<TagResponse[]>(['tags'])
 
           // Optimistically update the tag in the cache
-          queryClient.setQueryData<TagResponseType[]>(['tags'], (old = []) =>
+          queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) =>
             old.map((tag) => (tag.id === id ? { ...tag, ...data } : tag)),
           )
 
           return { previous }
         },
         onSuccess: (data, _vars) => {
-          queryClient.setQueryData<TagResponseType[]>(['tags'], (old = []) =>
+          queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) =>
             old.map((p) => (p.id === data.id ? data : p)),
           )
         },
@@ -108,15 +106,15 @@ const tag = {
         { success: boolean },
         Error,
         string,
-        { previous?: TagResponseType[] }
+        { previous?: TagResponse[] }
       >({
         mutationFn: deleteTagFn,
         onMutate: async (id) => {
           await queryClient.cancelQueries({ queryKey: ['tags'] })
-          const previous = queryClient.getQueryData<TagResponseType[]>(['tags'])
+          const previous = queryClient.getQueryData<TagResponse[]>(['tags'])
 
           // Optimistically remove the tag from the cache
-          queryClient.setQueryData<TagResponseType[]>(['tags'], (old = []) =>
+          queryClient.setQueryData<TagResponse[]>(['tags'], (old = []) =>
             old.filter((tag) => tag.id !== id),
           )
 

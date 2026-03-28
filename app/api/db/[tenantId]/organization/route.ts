@@ -1,14 +1,11 @@
-import { NextResponse } from 'next/server'
-import { createRoute } from '@/serverNew/middleware/createRoute'
-import { CreateOrganizationCommand } from '@/serverNew/modules/account/organizations/features/create-organization/handler'
-import { CreateOrganizationSchema } from '@/serverNew/modules/account/organizations/features/create-organization/schema'
-import { GetOrganizationsQuery } from '@/serverNew/modules/account/organizations/features/get-organizations/handler'
+import { createRoute } from '@/server/middleware/createRoute'
+import { CreateOrganizationCommand } from '@/server/modules/account/organizations/features/create-organization/handler'
+import { CreateOrganizationSchema } from '@/server/modules/account/organizations/features/create-organization/schema'
+import { GetOrganizationsQuery } from '@/server/modules/account/organizations/features/get-organizations/handler'
 
 export const GET = createRoute(
   {
-    auth: {
-      allowedTenantRoles: 'ANY',
-    },
+    auth: { allowedTenantRoles: 'ANY' },
   },
   async (_req, { ctx }) => {
     const data = await GetOrganizationsQuery(ctx)()
@@ -22,12 +19,10 @@ export const POST = createRoute(
     auth: { allowedTenantRoles: 'ANY' },
     body: CreateOrganizationSchema,
   },
-  async (_req, { session, ctx }, { body }) => {
-    const data = await CreateOrganizationCommand(ctx)(
-      session.user.tenantId,
-      body,
-    )
+  async (_req, { ctx }, { body }) => {
+    // tenantId is auto-injected by ScopedDb
+    const data = await CreateOrganizationCommand(ctx)(body)
 
-    return NextResponse.json(data, { status: 201 })
+    return Response.json({ success: true, data }, { status: 201 })
   },
 )

@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { cn } from '@src/lib/utils'
 import {
   DropdownMenu,
@@ -28,7 +28,7 @@ import {
 import HoverLink from '../HoverLink'
 
 interface ProjectGridProps {
-  projects: ProjectResponseInput[]
+  projects: ProjectResponse[]
   loading: boolean
 }
 
@@ -177,14 +177,14 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                   >
                     <Users className="w-3 h-3" />
                     <span className="text-[10px] font-black tracking-tighter">
-                      {project.users.length}
+                      {project.members.length}
                     </span>
                   </div>
                 </div>
 
                 {/* Refined Avatar Stack */}
                 <div className="flex -space-x-1.5">
-                  {project.users.slice(0, 3).map((user) => (
+                  {project.members.slice(0, 3).map((user) => (
                     <div
                       key={user.id}
                       className="w-5 h-5 rounded-full border-[1.5px] border-white dark:border-[#0a0a0a] bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[7px] font-black text-neutral-500"
@@ -192,9 +192,9 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                       {user.name[0]}
                     </div>
                   ))}
-                  {project.users.length > 3 && (
+                  {project.members.length > 3 && (
                     <div className="w-5 h-5 rounded-full border-[1.5px] border-white dark:border-[#0a0a0a] bg-secondary flex items-center justify-center text-[7px] font-black text-white">
-                      +{project.users.length - 3}
+                      +{project.members.length - 3}
                     </div>
                   )}
                 </div>

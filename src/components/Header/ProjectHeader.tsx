@@ -1,5 +1,5 @@
-import type { MilestoneProjectResponseInput } from '@server/domain/milestoneSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { MilestoneProjectResponseInput } from '@/serverOld/domain/milestoneSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
@@ -19,7 +19,7 @@ import HoverLink from '../HoverLink'
 import TaskTypeCreate from '../Task/TaskTypeCreate'
 
 interface HeaderInterface {
-  project?: ProjectResponseInput
+  project?: ProjectResponse
   upcomingMilestone?: MilestoneProjectResponseInput
 }
 
@@ -59,7 +59,7 @@ const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
             </div>
             <div className="hidden sm:flex items-center gap-3">
               <AvatarGroup
-                usernames={project?.users?.map((u) => u.name) ?? []}
+                usernames={project?.members?.map((u) => u.name) ?? []}
                 avatarSize={8}
                 previewAmount={4}
                 fontSize={14}

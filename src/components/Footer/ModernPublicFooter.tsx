@@ -91,7 +91,10 @@ export const ModernPublicFooter = () => {
                   placeholder="Email address"
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#3b82f6] transition-colors"
                 />
-                <button className="absolute right-2 top-1.5 p-1 text-slate-400 group-focus-within:text-[#3b82f6] transition-colors">
+                <button
+                  type="button"
+                  className="absolute right-2 top-1.5 p-1 text-slate-400 group-focus-within:text-[#3b82f6] transition-colors"
+                >
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

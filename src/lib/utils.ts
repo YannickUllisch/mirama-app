@@ -1,4 +1,4 @@
-import { PriorityType, Role, TaskStatusType } from '@prisma/client'
+import { OrganizationRole, PriorityType, TaskStatusType } from '@prisma/client'
 import { type ClassValue, clsx } from 'clsx'
 import type { Session } from 'next-auth'
 import { twMerge } from 'tailwind-merge'
@@ -49,8 +49,11 @@ export const isOrgAdminOrOwner = (session: Session | null) => {
   if (!session) {
     return false
   }
-  if (session.user.id && session.user.teamId && session.user.role) {
-    if (session.user.role === Role.ADMIN || session.user.role === Role.OWNER) {
+  if (session.user.id && session.user.organizationId && session.user.orgRole) {
+    if (
+      session.user.organizationId === OrganizationRole.ADMIN ||
+      session.user.orgRole === OrganizationRole.OWNER
+    ) {
       return true
     }
   }
@@ -60,11 +63,11 @@ export const isOrgAdminOrOwner = (session: Session | null) => {
 
 // Change this hierarchy when adding new Roles.
 const roleHierarchy = [
-  Role.OBSERVER,
-  Role.USER,
-  Role.FREELANCE,
-  Role.ADMIN,
-  Role.OWNER,
+  OrganizationRole.CLIENT,
+  OrganizationRole.USER,
+  OrganizationRole.FREELANCE,
+  OrganizationRole.ADMIN,
+  OrganizationRole.OWNER,
 ]
 
 /**
@@ -73,7 +76,10 @@ const roleHierarchy = [
  * @param role2 Role to compare against
  * @returns Boolean if role1 is higher than role2.
  */
-export const isRoleHigher = (role1: Role, role2: Role): boolean => {
+export const isRoleHigher = (
+  role1: OrganizationRole,
+  role2: OrganizationRole,
+): boolean => {
   return roleHierarchy.indexOf(role1) > roleHierarchy.indexOf(role2)
 }
 

@@ -1,9 +1,13 @@
-import { OrganizationRole } from '@prisma/client'
-import { TeamController } from '@server/controllers/organization/memberController'
-import { exceptionHandler } from '@server/utils/exceptionHandler'
-import { withAuth } from '@withAuth'
+import { createRoute } from '@/server/middleware/createRoute'
+import { GetMembersQuery } from '@/server/modules/account/members/features/get-members/handler'
 
-export const GET = withAuth(
-  Object.values(OrganizationRole),
-  exceptionHandler(TeamController.getTeamMembers),
+export const GET = createRoute(
+  {
+    auth: { allowedOrgRoles: 'ANY' },
+  },
+  async (_req, { ctx }) => {
+    const data = await GetMembersQuery(ctx)()
+
+    return Response.json({ success: true, data })
+  },
 )

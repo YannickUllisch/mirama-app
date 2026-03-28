@@ -1,14 +1,14 @@
+import type { CommentResponse } from '@/server/modules/task/features/comments/response'
 import type {
-  CommentResponseType,
-  CreateCommentType,
-  UpdateCommentType,
-} from '@server/domain/commentSchema'
+  CreateCommentRequest,
+  UpdateCommentRequest,
+} from '@/server/modules/task/features/comments/schema'
 import { api } from '@src/lib/api'
 
 export const fetchCommentsByTaskIdFn = async (
   projectId: string,
   taskId: string,
-): Promise<CommentResponseType[]> => {
+): Promise<CommentResponse[]> => {
   const { data } = await api.get(
     `project/${projectId}/tasks/${taskId}/comments`,
   )
@@ -17,10 +17,11 @@ export const fetchCommentsByTaskIdFn = async (
 
 export const createTaskCommentFn = async (
   projectId: string,
-  payload: CreateCommentType,
+  taskId: string,
+  payload: CreateCommentRequest,
 ) => {
   const { data } = await api.post(
-    `project/${projectId}/tasks/${payload.taskId}/comments`,
+    `project/${projectId}/tasks/${taskId}/comments`,
     payload,
   )
   return data
@@ -30,7 +31,7 @@ export const updateTaskCommentFn = async (
   projectId: string,
   taskId: string,
   commentId: string,
-  payload: UpdateCommentType,
+  payload: UpdateCommentRequest,
 ) => {
   const { data } = await api.put(
     `project/${projectId}/tasks/${taskId}/comments/${commentId}`,

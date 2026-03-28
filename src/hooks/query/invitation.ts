@@ -1,14 +1,12 @@
+import type { CreateInvitationRequest } from '@/server/modules/account/invitations/features/create-invitation/schema'
+import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
+import type { UpdateInvitationRequest } from '@/server/modules/account/invitations/features/update-invitation/schema'
 import {
   createInviteFn,
   deleteInvitationFn,
   fetchInvitationsFn,
   updateInvitationFn,
 } from '@hooks/api/invitation'
-import type {
-  CreateInvitationInput,
-  InvitationResponseType,
-  UpdateInvitationInput,
-} from '@server/domain/invitationSchema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
 import { toast } from 'sonner'
@@ -16,7 +14,7 @@ import { toast } from 'sonner'
 const invitation = {
   fetchAll: {
     useQuery: () =>
-      useQuery<InvitationResponseType[]>({
+      useQuery<InvitationResponse[]>({
         queryKey: ['invitation'],
         queryFn: fetchInvitationsFn,
       }),
@@ -26,30 +24,31 @@ const invitation = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        InvitationResponseType,
+        InvitationResponse,
         Error,
-        CreateInvitationInput,
-        { previous?: InvitationResponseType[] }
+        CreateInvitationRequest,
+        { previous?: InvitationResponse[] }
       >({
         mutationFn: createInviteFn,
         onMutate: async (newInvite) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
-          const previous = queryClient.getQueryData<InvitationResponseType[]>([
+          const previous = queryClient.getQueryData<InvitationResponse[]>([
             'invitation',
           ])
 
           // Optimistically add the new invitation (with a temp id/email if needed)
-          queryClient.setQueryData<InvitationResponseType[]>(
+          queryClient.setQueryData<InvitationResponse[]>(
             ['invitation'],
             (old = []) => [
               ...old,
               {
-                ...newInvite,
                 id: `temp-${Math.random()}`,
+                name: newInvite.name,
                 email: newInvite.email,
+                organizationRole: newInvite.role,
+                organizationId: '',
                 expiresAt: DateTime.utc().plus({ days: 1 }).toJSDate(),
-                teamId: '',
               },
             ],
           )
@@ -57,7 +56,7 @@ const invitation = {
           return { previous }
         },
         onSuccess: (data, _vars) => {
-          queryClient.setQueryData<InvitationResponseType[]>(
+          queryClient.setQueryData<InvitationResponse[]>(
             ['invitation'],
             (old = []) => [...old, data],
           )
@@ -79,21 +78,21 @@ const invitation = {
     useMutation: () => {
       const queryClient = useQueryClient()
       return useMutation<
-        InvitationResponseType,
+        InvitationResponse,
         Error,
-        { id: string; data: UpdateInvitationInput },
-        { previous?: InvitationResponseType[] }
+        { id: string; data: UpdateInvitationRequest },
+        { previous?: InvitationResponse[] }
       >({
         mutationFn: ({ id, data }) => updateInvitationFn(id, data),
         onMutate: async ({ id, data }) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
-          const previous = queryClient.getQueryData<InvitationResponseType[]>([
+          const previous = queryClient.getQueryData<InvitationResponse[]>([
             'invitation',
           ])
 
           // Optimistically update the invitation in the cache
-          queryClient.setQueryData<InvitationResponseType[]>(
+          queryClient.setQueryData<InvitationResponse[]>(
             ['invitation'],
             (old = []) =>
               old.map((inv) => (inv.email === id ? { ...inv, ...data } : inv)),
@@ -102,7 +101,7 @@ const invitation = {
           return { previous }
         },
         onSuccess: (data, _vars) => {
-          queryClient.setQueryData<InvitationResponseType[]>(
+          queryClient.setQueryData<InvitationResponse[]>(
             ['invitation'],
             (old = []) => old.map((p) => (p.id === data.id ? data : p)),
           )
@@ -127,18 +126,18 @@ const invitation = {
         { success: boolean },
         Error,
         string,
-        { previous?: InvitationResponseType[] }
+        { previous?: InvitationResponse[] }
       >({
         mutationFn: deleteInvitationFn,
         onMutate: async (email) => {
           await queryClient.cancelQueries({ queryKey: ['invitation'] })
 
-          const previous = queryClient.getQueryData<InvitationResponseType[]>([
+          const previous = queryClient.getQueryData<InvitationResponse[]>([
             'invitation',
           ])
 
           // Optimistically remove the invitation from the cache
-          queryClient.setQueryData<InvitationResponseType[]>(
+          queryClient.setQueryData<InvitationResponse[]>(
             ['invitation'],
             (old = []) => old.filter((p) => p.email !== email),
           )

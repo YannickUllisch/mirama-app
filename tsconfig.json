@@ -20,13 +20,11 @@
       }
     ],
     "paths": {
-      "@auth": ["./server/auth/auth.ts"],
-      "@db": ["./server/utils/db.ts"],
-      "@scopedDb": ["./serverNew/shared/infrastructure/scoped-db.ts"],
-      "@authMiddleware": ["./serverNew/middleware/withAuth.ts"],
+      "@auth": ["./serverOld/auth/auth.ts"],
+      "@db": ["./serverOld/utils/db.ts"],
+      "@scopedDb": ["./server/shared/infrastructure/scoped-db.ts"],
       "@api": ["./src/lib/api.ts"],
-      "@logger": ["./server/utils/logger.ts"],
-      "@withAuth": ["./server/auth/withAuth.ts"],
+      "@logger": ["./serverOld/utils/logger.ts"],
       "@server/*": ["./server/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@services/*": ["./src/services/*"],

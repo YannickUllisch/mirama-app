@@ -1,18 +1,17 @@
 'use client'
 
 import { type Task, TaskStatusType } from '@prisma/client'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, ClockArrowUp, ExternalLink } from 'lucide-react'
-import * as React from 'react'
-
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize, getColorByPriority } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown, ClockArrowUp, ExternalLink } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
+import * as React from 'react'
 import { useMemo } from 'react'
 import MyTaskWidgetSkeleton from '../Skeletons/MyTaskWidgetSkeleton'
 
@@ -128,18 +127,19 @@ const MyTasksWidget = ({
                   className="group py-3 border-b border-border last:border-0"
                 >
                   <div className="flex items-center space-x-3">
+                    {/** biome-ignore lint/a11y/noStaticElementInteractions: <del> */}
                     <div
                       className="w-5 h-5 flex-shrink-0 relative"
                       onClick={() => toggleTaskCompletion(task.id)}
                       onKeyUp={() => toggleTaskCompletion(task.id)}
                     >
-                      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-full h-full cursor-pointer"
                       >
+                        <title>task widget</title>
                         <circle
                           cx="12"
                           cy="12"

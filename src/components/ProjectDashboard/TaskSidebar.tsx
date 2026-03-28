@@ -1,7 +1,7 @@
 'use client'
 
-import { TaskStatusType } from '@prisma/client'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import { TaskStatusType, type TaskType } from '@prisma/client'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { cn } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
@@ -22,7 +22,7 @@ import { useMemo, useState } from 'react'
 import HoverLink from '../HoverLink'
 
 interface MinimalistTasksWidgetProps {
-  tasks: TaskResponseType[]
+  tasks: TaskResponse[]
   isLoading?: boolean
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
 }
@@ -194,7 +194,7 @@ const TaskList = ({
 
   return (
     <div className="divide-y divide-neutral-50 dark:divide-neutral-900">
-      {tasks.map((task: TaskResponseType) => (
+      {tasks.map((task: TaskResponse) => (
         <div
           key={task.id}
           className="group relative px-5 py-4 flex items-center justify-between hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30 transition-colors"
@@ -257,7 +257,7 @@ const TaskList = ({
               <ExternalLink className="w-3.5 h-3.5" />
             </HoverLink>
             <div className="p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-md">
-              {getTaskTypeIcon(task.type)}
+              {getTaskTypeIcon(task.type as TaskType)}
             </div>
           </div>
         </div>

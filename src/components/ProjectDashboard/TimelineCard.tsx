@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +26,7 @@ import { useMemo, useState } from 'react'
 import HoverLink from '../HoverLink'
 
 interface TimelineCardProps {
-  projects: ProjectResponseInput[]
+  projects: ProjectResponse[]
   loading: boolean
 }
 

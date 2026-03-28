@@ -1,4 +1,4 @@
-import { auth } from '@auth'
+import { auth } from '@/serverOld/auth/auth'
 import HoverLink from '@src/components/HoverLink'
 import { Button } from '@ui/button'
 import {

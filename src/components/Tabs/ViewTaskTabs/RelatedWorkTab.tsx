@@ -1,4 +1,5 @@
-import type { SimpleTaskResponseType } from '@server/domain/taskSchema'
+import type { TaskType } from '@prisma/client'
+import type { SimpleTaskResponse } from '@server/modules/task/features/response'
 import HoverLink from '@src/components/HoverLink'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { getColorByTaskStatusType } from '@src/lib/utils'
@@ -7,8 +8,8 @@ import { Card, CardContent } from '@ui/card'
 import { FolderTree } from 'lucide-react'
 
 interface RelatedWorkTabProps {
-  parent?: SimpleTaskResponseType | null
-  subtasks?: SimpleTaskResponseType[]
+  parent?: SimpleTaskResponse | null
+  subtasks?: SimpleTaskResponse[]
   projectName: string
 }
 
@@ -32,7 +33,7 @@ const RelatedWorkTab = ({
                 className="flex items-center justify-between hover:bg-muted rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  {getTaskTypeIcon(parent.type)}
+                  {getTaskTypeIcon(parent.type as TaskType)}
                   <span className="text-sm">{parent.title}</span>
                 </div>
                 <Badge
@@ -63,7 +64,7 @@ const RelatedWorkTab = ({
                     className="flex items-center justify-between hover:bg-muted rounded-lg p-2 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      {getTaskTypeIcon(subtask.type)}
+                      {getTaskTypeIcon(subtask.type as TaskType)}
                       <span className="text-sm">{subtask.title}</span>
                     </div>
                     <Badge

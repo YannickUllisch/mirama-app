@@ -1,8 +1,8 @@
 'use client'
+import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
+import type { OrganizationRoleType } from '@/serverOld/domain/enumSchemas'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { OrganizationRole } from '@prisma/client'
-import type { RoleType } from '@server/domain/enumSchemas'
-import type { InvitationResponseType } from '@server/domain/invitationSchema'
 import {
   EditableCell,
   EditableCellType,
@@ -25,9 +25,7 @@ import type { Session } from 'next-auth'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<
-  InvitationResponseType & { id: string }
->()
+const columnHelper = createColumnHelper<InvitationResponse & { id: string }>()
 
 export const useInvitationColumns = ({
   session,
@@ -35,7 +33,7 @@ export const useInvitationColumns = ({
   deleteMutation,
 }: {
   session: Session | null
-  handleFieldUpdate: HandleFieldUpdate<InvitationResponseType>
+  handleFieldUpdate: HandleFieldUpdate<InvitationResponse>
   deleteMutation: UseMutateFunction<
     {
       success: boolean
@@ -43,7 +41,7 @@ export const useInvitationColumns = ({
     Error,
     string,
     {
-      previous?: InvitationResponseType[]
+      previous?: InvitationResponse[]
     }
   >
 }) => {
@@ -80,7 +78,7 @@ export const useInvitationColumns = ({
         ),
       }),
 
-      columnHelper.accessor('role', {
+      columnHelper.accessor('organizationRole', {
         id: 'role',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Role" />
@@ -95,7 +93,11 @@ export const useInvitationColumns = ({
               })) ?? []
             }
             onSave={(value) =>
-              handleFieldUpdate(row.original, 'role', value as RoleType)
+              handleFieldUpdate(
+                row.original,
+                'organizationRole',
+                value as OrganizationRoleType,
+              )
             }
             type={EditableCellType.SELECT}
           />

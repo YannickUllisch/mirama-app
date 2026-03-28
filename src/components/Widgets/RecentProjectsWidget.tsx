@@ -1,5 +1,5 @@
 import useLocalStorage from '@hooks/utils/useLocalStorage'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
+import type { ProjectResponse } from '@server/modules/project/features/response'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
 import { Plus } from 'lucide-react'
@@ -11,7 +11,7 @@ const RecentProjectsWidget = ({
   projects,
   isProjectsLoading,
 }: {
-  projects: ProjectResponseInput[]
+  projects: ProjectResponse[]
   isProjectsLoading: boolean
 }) => {
   const [recentProjectIds, setRecentProjectIds] = useLocalStorage<string[]>(

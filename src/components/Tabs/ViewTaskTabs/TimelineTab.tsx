@@ -1,4 +1,4 @@
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import { getColorByTaskStatusType } from '@src/lib/utils'
 import { Card, CardContent } from '@ui/card'
 import { formatDistanceToNow } from 'date-fns'
@@ -11,7 +11,7 @@ interface TimelineEvent {
 }
 
 interface TimelineTabProps {
-  task?: TaskResponseType
+  task?: TaskResponse
 }
 
 const TimelineTab = ({ task }: TimelineTabProps) => {

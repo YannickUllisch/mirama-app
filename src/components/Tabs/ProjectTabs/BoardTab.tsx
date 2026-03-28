@@ -1,7 +1,8 @@
 'use client'
-import type { UserResponseType } from '@server/domain/memberSchema'
-import type { ProjectResponseInput } from '@server/domain/projectSchema'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+
+import type { MemberResponse } from '@server/modules/account/members/features/response'
+import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import KanbanBoard from '@src/components/Kanban/KanbanBoard'
 
 const BoardTab = ({
@@ -9,9 +10,9 @@ const BoardTab = ({
   tasks,
   users,
 }: {
-  project: ProjectResponseInput | null
-  tasks: TaskResponseType[]
-  users: UserResponseType[]
+  project: ProjectResponse | null
+  tasks: TaskResponse[]
+  users: MemberResponse[]
 }) => {
   return (
     <KanbanBoard

@@ -1,9 +1,21 @@
+import { createRoute } from '@/server/middleware/createRoute'
+import { ArchiveProjectCommand } from '@/server/modules/project/features/archive-project/handler'
+import { ArchiveProjectSchema } from '@/server/modules/project/features/archive-project/schema'
+import { ProjectIdParams } from '@/server/modules/project/features/get-project/schema'
 import { OrganizationRole } from '@prisma/client'
-import { ProjectController } from '@server/controllers/projectController'
-import { exceptionHandler } from '@server/utils/exceptionHandler'
-import { withAuth } from '@withAuth'
 
-export const POST = withAuth(
-  [OrganizationRole.ADMIN, OrganizationRole.OWNER],
-  exceptionHandler(ProjectController.archiveProject),
+export const POST = createRoute(
+  {
+    auth: {
+      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
+    },
+    params: ProjectIdParams,
+    body: ArchiveProjectSchema,
+    pathPattern: '/api/db/:organizationId/project/:projectId/archive',
+  },
+  async (_req, { ctx }, { params, body }) => {
+    const data = await ArchiveProjectCommand(ctx)(params.projectId, body)
+
+    return Response.json({ success: true, data })
+  },
 )

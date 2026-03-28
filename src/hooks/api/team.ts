@@ -1,17 +1,15 @@
-import type {
-  UpdateUserType,
-  UserResponseType,
-} from '@server/domain/memberSchema'
+import type { MemberResponse } from '@/server/modules/account/members/features/response'
+import type { UpdateMemberRequest } from '@/server/modules/account/members/features/update-member/schema'
 import { api } from '@src/lib/api'
 
-export const fetchTeamMembersFn = async (): Promise<UserResponseType[]> => {
+export const fetchTeamMembersFn = async (): Promise<MemberResponse[]> => {
   const { data } = await api.get('team/member')
   return data
 }
 
 export const updateTeamMemberFn = async (
   id: string,
-  payload: UpdateUserType,
+  payload: UpdateMemberRequest,
 ) => {
   const { data } = await api.put(`team/member/${id}`, payload)
   return data

@@ -1,6 +1,6 @@
 'use client'
-import { TaskStatusType } from '@prisma/client'
-import type { TaskResponseType } from '@server/domain/taskSchema'
+import { TaskStatusType, type TaskType } from '@prisma/client'
+import type { TaskResponse } from '@server/modules/task/features/response'
 import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
@@ -15,7 +15,7 @@ import { useMemo, useState } from 'react'
 import HoverLink from '../HoverLink'
 
 interface MinimalistTasksWidgetProps {
-  tasks: TaskResponseType[]
+  tasks: TaskResponse[]
   isLoading?: boolean
   onTaskUpdate?: (taskId: string, status: TaskStatusType) => Promise<void>
 }
@@ -142,7 +142,7 @@ const MinimalistTasksWidget = ({
                       className="px-4 py-3 group flex items-center justify-between hover:bg-white dark:hover:bg-background"
                     >
                       <Centering>
-                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+                        {/* biome-ignore lint/a11y/useButtonType: <tmp> */}
                         <button
                           onClick={() => toggleTaskCompletion(task.id)}
                           disabled={updatingTaskId === task.id}
@@ -187,7 +187,7 @@ const MinimalistTasksWidget = ({
                           {task.projectName}
                         </span>
 
-                        {getTaskTypeIcon(task.type)}
+                        {getTaskTypeIcon(task.type as TaskType)}
                       </Centering>
                     </div>
                   ))}
@@ -213,8 +213,8 @@ const MinimalistTasksWidget = ({
                       className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background"
                     >
                       <Centering>
-                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
+                          type="button"
                           onClick={() => toggleTaskCompletion(task.id)}
                           disabled={updatingTaskId === task.id}
                           className={`w-5 h-5 rounded-full border flex items-center justify-center ${
@@ -259,7 +259,7 @@ const MinimalistTasksWidget = ({
                           {task.projectName}
                         </span>
 
-                        {getTaskTypeIcon(task.type)}
+                        {getTaskTypeIcon(task.type as TaskType)}
                       </Centering>
                     </div>
                   ))}
@@ -282,8 +282,8 @@ const MinimalistTasksWidget = ({
                       className="px-4 py-3 flex items-center justify-between hover:bg-white dark:hover:bg-background"
                     >
                       <Centering>
-                        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                         <button
+                          type="button"
                           onClick={() => toggleTaskCompletion(task.id)}
                           disabled={updatingTaskId === task.id}
                           className={`w-5 h-5 rounded-full border flex items-center justify-center ${
@@ -324,7 +324,7 @@ const MinimalistTasksWidget = ({
                           {task.projectName}
                         </span>
 
-                        {getTaskTypeIcon(task.type)}
+                        {getTaskTypeIcon(task.type as TaskType)}
                       </Centering>
                     </div>
                   ))}

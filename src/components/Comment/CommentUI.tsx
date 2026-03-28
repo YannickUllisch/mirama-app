@@ -1,9 +1,9 @@
-import React, { type FC } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Textarea } from '../ui/textarea'
-import { Button } from '../ui/button'
 import type { Comment } from '@prisma/client'
 import type { User } from 'next-auth'
+import React, { type FC } from 'react'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { Textarea } from '../ui/textarea'
 
 interface CommentProps {
   comment: Comment & { user: User }
@@ -17,7 +17,7 @@ const CommentUI: FC<CommentProps> = ({ comment, replies }) => {
     <div className="my-4">
       <Card>
         <CardHeader>
-          <CardTitle>{comment.userId}</CardTitle>
+          <CardTitle>{comment.memberId}</CardTitle>
         </CardHeader>
         <CardContent>
           <p>{comment.content}</p>
