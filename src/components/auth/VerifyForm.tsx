@@ -1,8 +1,9 @@
 'use client'
-import { resendConfirmationCode } from '@/serverOld/auth/cognito/resendConfirmation'
-import { VerifySchema } from '@/serverOld/auth/schemas'
-import { verify } from '@/serverOld/auth/verify'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import { resendConfirmationCode } from '@server/auth/cognito/resendConfirmation'
+import { VerifySchema } from '@server/auth/schemas'
+import { verify } from '@server/auth/verify'
 import { FormError } from '@src/components/auth/popups/FormError'
 import { FormSuccess } from '@src/components/auth/popups/FormSuccess'
 import { Badge } from '@src/components/ui/badge'

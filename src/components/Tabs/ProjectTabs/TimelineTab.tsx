@@ -1,9 +1,9 @@
 'use client'
 import Loading from '@/app/loading'
-import type { MilestoneProjectResponseInput } from '@/serverOld/domain/milestoneSchema'
 import type { Milestone } from '@prisma/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
+import type { MilestoneProjectResponseInput } from '@server/old/milestoneSchema'
 import UserAvatar from '@src/components/Avatar/UserAvatar'
 import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
 import {

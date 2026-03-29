@@ -20,11 +20,11 @@
       }
     ],
     "paths": {
-      "@auth": ["./serverOld/auth/auth.ts"],
-      "@db": ["./serverOld/utils/db.ts"],
+      "@auth": ["./server/auth/auth.ts"],
+      "@db": ["./server/shared/utils/db.ts"],
       "@scopedDb": ["./server/shared/infrastructure/scoped-db.ts"],
       "@api": ["./src/lib/api.ts"],
-      "@logger": ["./serverOld/utils/logger.ts"],
+      "@logger": ["./server/shared/utils/logger.ts"],
       "@server/*": ["./server/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@services/*": ["./src/services/*"],

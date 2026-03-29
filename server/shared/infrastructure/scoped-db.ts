@@ -1,4 +1,4 @@
-import db from '@/serverOld/utils/db'
+import db from '@db'
 
 export type ScopedDb = ReturnType<typeof getScopedDb>
 

@@ -38,4 +38,4 @@ export const apiAuthPrefix = '/api/auth'
  * DEFAULT redirect path after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = '/app'
+export const DEFAULT_LOGIN_REDIRECT = '/tenant'

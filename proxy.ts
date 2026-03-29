@@ -1,4 +1,4 @@
-import authConfig from '@/serverOld/auth/auth.config'
+import authConfig from '@server/auth/auth.config'
 import {
   apiAuthPrefix,
   authRoutes,

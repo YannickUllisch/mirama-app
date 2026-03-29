@@ -1,7 +1,7 @@
 'use client'
-import { MilestoneSchema } from '@/serverOld/domain/milestoneSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Milestone } from '@prisma/client'
+import { MilestoneSchema } from '@server/old/milestoneSchema'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,

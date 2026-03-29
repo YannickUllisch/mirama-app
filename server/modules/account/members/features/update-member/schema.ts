@@ -1,4 +1,4 @@
-import { OrganizationRoleSchema } from '@/serverOld/domain/enumSchemas'
+import { OrganizationRoleSchema } from '@server/old/enumSchemas'
 import { z } from 'zod'
 
 export const UpdateMemberSchema = z.object({

@@ -1,4 +1,5 @@
-import logger from '@/serverOld/utils/logger'
+import logger from '@logger'
+import { Prisma } from '@prisma/client'
 import type { NextRequest } from 'next/server'
 import { v4 } from 'uuid'
 import { z } from 'zod'
@@ -50,6 +51,26 @@ export const withCore = (handler: Handler<BaseContext>) => {
             errors: err.flatten().fieldErrors,
           },
           { status: 400 },
+        )
+      }
+
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        return Response.json(
+          {
+            success: false,
+            message: 'A database error occurred. Please check your input.',
+          },
+          { status: 500 },
+        )
+      }
+
+      if (err instanceof Prisma.PrismaClientValidationError) {
+        return Response.json(
+          {
+            success: false,
+            message: 'Invalid data provided. Please review your input.',
+          },
+          { status: 404 },
         )
       }
 
