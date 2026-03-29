@@ -1,5 +1,5 @@
 import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import { auth } from '@/serverOld/auth/auth'
+import { auth } from '@auth'
 import type { OrganizationRole, TenantRole } from '@prisma/client'
 import type { NextRequest } from 'next/server'
 import type {

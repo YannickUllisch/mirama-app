@@ -1,8 +1,8 @@
 'use server'
-import { RegisterSchema } from '@/serverOld/auth/schemas'
 import { SignUpCommand } from '@aws-sdk/client-cognito-identity-provider'
 import type * as z from 'zod'
 import { getCognitoIdentityProviderClient } from './cognito/cognitoIdentityProvider'
+import { RegisterSchema } from './schemas'
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)

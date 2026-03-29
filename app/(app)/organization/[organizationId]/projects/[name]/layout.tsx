@@ -1,4 +1,4 @@
-import { auth } from '@/serverOld/auth/auth'
+import { auth } from '@auth'
 import db from '@db'
 import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
 import { isOrgAdminOrOwner } from '@src/lib/utils'

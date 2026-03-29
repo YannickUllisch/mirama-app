@@ -1,5 +1,5 @@
 'use server'
-import { CognitoChangePasswordSchema } from '@/serverOld/auth/schemas'
+
 import {
   AuthFlowType,
   ChallengeNameType,
@@ -7,6 +7,7 @@ import {
   RespondToAuthChallengeCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
 import type z from 'zod'
+import { CognitoChangePasswordSchema } from '../schemas'
 import { getCognitoIdentityProviderClient } from './cognitoIdentityProvider'
 
 export const handleAuthChallenge = async (

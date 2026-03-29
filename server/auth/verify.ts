@@ -1,7 +1,8 @@
 'use server'
-import { VerifySchema } from '@/serverOld/auth/schemas'
+
 import type * as z from 'zod'
 import { confirmUser } from './cognito/confirmUser'
+import { VerifySchema } from './schemas'
 
 export const verify = async (values: z.infer<typeof VerifySchema>) => {
   const validatedFields = VerifySchema.safeParse(values)

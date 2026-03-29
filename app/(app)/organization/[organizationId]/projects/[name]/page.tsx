@@ -1,5 +1,4 @@
 'use client'
-import { addProjectIdToLocalStorage } from '@/app/app/_helpers'
 import Loading from '@/app/loading'
 import apiRequest from '@hooks/query'
 import useLocalStorage from '@hooks/utils/useLocalStorage'
