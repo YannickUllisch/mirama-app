@@ -1,12 +1,22 @@
+import { api } from '@src/lib/api'
 import type { CreateOrganizationRequest } from '@/server/modules/account/organizations/features/create-organization/schema'
 import type { OrganizationListResponse } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
-import { api } from '@src/lib/api'
 
 export const fetchOrganizationsFn = async (
   tenantId: string,
 ): Promise<OrganizationListResponse[]> => {
   const { data } = await api.get(`tenant/${tenantId}/organization`)
+  return data.data
+}
+
+export const fetchOrganizationByIdFn = async (
+  tenantId: string,
+  organizationId: string,
+): Promise<OrganizationListResponse> => {
+  const { data } = await api.get(
+    `tenant/${tenantId}/organization/${organizationId}`,
+  )
   return data.data
 }
 

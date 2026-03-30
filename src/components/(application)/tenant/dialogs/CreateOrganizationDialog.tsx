@@ -23,11 +23,10 @@ import {
 } from '@ui/form'
 import { Input } from '@ui/input'
 import { Loader2, Plus } from 'lucide-react'
-import type { Session } from 'next-auth'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
-const CreateOrganizationDialog = ({ session }: { session: Session | null }) => {
+const CreateOrganizationDialog = () => {
   // States
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -46,15 +45,12 @@ const CreateOrganizationDialog = ({ session }: { session: Session | null }) => {
   })
 
   const onSubmit = (data: CreateOrganizationRequest) => {
-    createOrganization(
-      { tenantId: session?.user.tenantId ?? '', data },
-      {
-        onSuccess: () => {
-          form.reset()
-          setDialogOpen(false)
-        },
+    createOrganization(data, {
+      onSuccess: () => {
+        form.reset()
+        setDialogOpen(false)
       },
-    )
+    })
   }
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

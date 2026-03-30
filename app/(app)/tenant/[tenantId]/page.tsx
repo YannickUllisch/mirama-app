@@ -21,7 +21,7 @@ const TenantPage = () => {
   const { data: session, update: updateSession } = useSession()
 
   const { data: organizations, isLoading } =
-    apiRequest.organization.fetchAll.useQuery(session?.user.tenantId ?? '')
+    apiRequest.organization.fetchAll.useQuery()
 
   return (
     <div className="container mx-auto max-w-5xl py-12 px-4">
@@ -39,7 +39,7 @@ const TenantPage = () => {
             Manage the organizations within your tenant.
           </p>
         </div>
-        <CreateOrganizationDialog session={session} />
+        <CreateOrganizationDialog />
       </div>
 
       {/* Tenant Info */}

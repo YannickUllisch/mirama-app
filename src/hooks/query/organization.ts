@@ -1,97 +1,104 @@
+import {
+  createOrganizationFn,
+  fetchOrganizationByIdFn,
+  fetchOrganizationsFn,
+  updateOrganizationFn,
+} from '@hooks/api/organization'
+import { optimisticList } from '@hooks/query/helpers'
+import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
+import { useTenantResource } from '@src/core/tenant/tenantResourceContext'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreateOrganizationRequest } from '@/server/modules/account/organizations/features/create-organization/schema'
 import type {
   OrganizationListResponse,
   OrganizationResponse,
 } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
-import {
-  createOrganizationFn,
-  fetchOrganizationsFn,
-  updateOrganizationFn,
-} from '@hooks/api/organization'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+
+export const organizationKeys = {
+  // ['organizations']
+  root: ['organizations'] as const,
+  // ['organizations', tenantId]
+  tenant: (tenantId: string) => [...organizationKeys.root, tenantId] as const,
+  // ['organizations', tenantId, 'list']
+  list: (tenantId: string) =>
+    [...organizationKeys.tenant(tenantId), 'list'] as const,
+  // ['organizations', tenantId, 'detail', orgId]
+  detail: (tenantId: string, orgId: string) =>
+    [...organizationKeys.tenant(tenantId), 'detail', orgId] as const,
+}
 
 const organization = {
   fetchAll: {
-    useQuery: (tenantId: string) =>
-      useQuery<OrganizationListResponse[]>({
-        queryKey: ['organizations'],
-        queryFn: () => fetchOrganizationsFn(tenantId),
-      }),
+    useQuery: () => {
+      const { activeTenantId } = useTenantResource()
+      return useQuery<OrganizationListResponse[]>({
+        queryKey: organizationKeys.list(activeTenantId),
+        queryFn: () => fetchOrganizationsFn(activeTenantId),
+      })
+    },
+  },
+
+  fetchByCurrentScope: {
+    useQuery: () => {
+      const { activeOrganizationId, activeTenantId } = useOrganizationResource()
+      return useQuery<OrganizationListResponse>({
+        queryKey: organizationKeys.detail(activeTenantId, activeOrganizationId),
+        queryFn: () =>
+          fetchOrganizationByIdFn(activeTenantId, activeOrganizationId),
+      })
+    },
   },
 
   create: {
     useMutation: () => {
+      const { activeTenantId } = useTenantResource()
       const queryClient = useQueryClient()
+
       return useMutation<
         OrganizationResponse,
         Error,
-        { tenantId: string; data: CreateOrganizationRequest },
+        CreateOrganizationRequest,
         { previous?: OrganizationListResponse[] }
       >({
-        mutationFn: ({ data, tenantId }) =>
-          createOrganizationFn(tenantId, data),
-        onMutate: async () => {
-          await queryClient.cancelQueries({ queryKey: ['organizations'] })
-          const previous = queryClient.getQueryData<OrganizationListResponse[]>(
-            ['organizations'],
-          )
-          return { previous }
-        },
-        onSuccess: () => {
-          toast.success('Organization created')
-        },
-        onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['organizations'], ctx.previous)
-          }
-          toast.error(err?.message || 'An error occurred')
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['organizations'] })
-        },
+        mutationFn: (data) => createOrganizationFn(activeTenantId, data),
+        ...optimisticList<OrganizationListResponse, CreateOrganizationRequest>(
+          queryClient,
+          organizationKeys.list(activeTenantId),
+          {
+            invalidateKey: organizationKeys.tenant(activeTenantId),
+            successMessage: 'Organization created',
+          },
+        ),
       })
     },
   },
 
   update: {
     useMutation: () => {
+      const { activeTenantId } = useTenantResource()
       const queryClient = useQueryClient()
+
+      type Vars = { id: string; data: UpdateOrganizationRequest }
+
       return useMutation<
         OrganizationResponse,
         Error,
-        { id: string; tenantId: string; data: UpdateOrganizationRequest },
+        Vars,
         { previous?: OrganizationListResponse[] }
       >({
-        mutationFn: ({ id, data, tenantId }) =>
-          updateOrganizationFn(id, tenantId, data),
-        onMutate: async ({ id, data }) => {
-          await queryClient.cancelQueries({ queryKey: ['organizations'] })
-          const previous = queryClient.getQueryData<OrganizationListResponse[]>(
-            ['organizations'],
-          )
-
-          queryClient.setQueryData<OrganizationListResponse[]>(
-            ['organizations'],
-            (old = []) =>
+        mutationFn: ({ id, data }) =>
+          updateOrganizationFn(id, activeTenantId, data),
+        ...optimisticList<OrganizationListResponse, Vars>(
+          queryClient,
+          organizationKeys.list(activeTenantId),
+          {
+            invalidateKey: organizationKeys.tenant(activeTenantId),
+            successMessage: 'Organization updated',
+            apply: (old, { id, data }) =>
               old.map((org) => (org.id === id ? { ...org, ...data } : org)),
-          )
-
-          return { previous }
-        },
-        onSuccess: () => {
-          toast.success('Organization updated')
-        },
-        onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['organizations'], ctx.previous)
-          }
-          toast.error(err?.message || 'An error occurred')
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['organizations'] })
-        },
+          },
+        ),
       })
     },
   },
