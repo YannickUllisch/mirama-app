@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react'
 
 type OrganizationResourceContextType = {
   activeOrganizationId: string
+  activeTenantId: string
 }
 
 const OrganizationResourceContext =

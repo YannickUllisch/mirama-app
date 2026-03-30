@@ -4,7 +4,7 @@ import AppSidebar from '@src/components/Sidebar/AppSidebar'
 import { SidebarProvider } from '@src/components/ui/sidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
-import { OrganizationResourceProvider } from '@src/core/organization/organizationResouceContext'
+import { OrganizationResourceProvider } from '@src/core/organization/organizationResourceContext'
 import { OrganizationSidebarMenu } from '@src/core/organization/organizationSidebarMenu'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
@@ -37,7 +37,10 @@ const AppLayout = async ({
     <SessionWrapper>
       <QueryClientWrapper>
         <OrganizationResourceProvider
-          value={{ activeOrganizationId: organizationId }}
+          value={{
+            activeOrganizationId: organizationId,
+            activeTenantId: session.user.tenantId,
+          }}
         >
           <SidebarProvider>
             <div className="w-full flex flex-col">
