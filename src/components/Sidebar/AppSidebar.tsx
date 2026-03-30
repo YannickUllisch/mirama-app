@@ -1,6 +1,6 @@
 'use client'
 import { useIsMobile } from '@hooks/utils/use-mobile'
-import { AppMenu } from '@src/lib/sidebarMenu'
+import { AppMenu } from '@src/core/organization/organizationSidebarMenu'
 import { cn, isOrgAdminOrOwner } from '@src/lib/utils'
 import type { AppMenuItem } from '@src/types/types'
 import { Button } from '@ui/button'
