@@ -5,6 +5,7 @@ import authConfig from './auth.config'
 import { getUserById, tryGetOrganization } from './helpers/queries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user, profile, account }) {
@@ -107,6 +108,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'jwt',
   },
-  ...authConfig,
   providers: [...authConfig.providers],
 })

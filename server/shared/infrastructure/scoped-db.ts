@@ -54,14 +54,34 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
           if (!isTenantScoped && !isOrgScoped) return query(args)
 
           // Guard: prevent operations without required context
+          // For org-scoped CREATEs, allow if organizationId is in the data
           if (isOrgScoped && !organizationId) {
+            if (CREATE_OPERATIONS.has(operation)) {
+              const createArgs = args as {
+                data: Record<string, unknown> | Record<string, unknown>[]
+              }
+              const dataItem = Array.isArray(createArgs.data)
+                ? createArgs.data[0]
+                : createArgs.data
+              if (!dataItem?.organizationId) {
+                throw new Error(
+                  `GUARD: Attempted ${operation} on org-scoped ${model} without organizationId.`,
+                )
+              }
+              // organizationId already in data, pass through without injection
+              return query(args)
+            }
             throw new Error(
               `GUARD: Attempted ${operation} on org-scoped ${model} without organizationId.`,
             )
           }
 
           // Build the context filter that will be auto-injected
-          const contextFilter: Record<string, string> = { tenantId }
+          // Tenant-scoped models get tenantId and org-scoped models get organizationId only
+          const contextFilter: Record<string, string> = {}
+          if (isTenantScoped) {
+            contextFilter.tenantId = tenantId
+          }
           if (isOrgScoped && organizationId) {
             contextFilter.organizationId = organizationId
           }
@@ -75,15 +95,25 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
             queryArgs.where = { ...queryArgs.where, ...contextFilter }
           }
 
-          // CREATE operations: inject into data
           if (CREATE_OPERATIONS.has(operation)) {
             const createArgs = args as {
               data: Record<string, unknown> | Record<string, unknown>[]
             }
-            const inject = (item: Record<string, unknown>) => ({
-              ...item,
-              ...contextFilter,
-            })
+
+            const inject = (item: Record<string, unknown>) => {
+              const newItem = { ...item }
+
+              // Inject if the key is missing or null
+              if (isTenantScoped && !newItem.tenantId) {
+                newItem.tenantId = tenantId
+              }
+              // Only inject if organizationId is missing AND we actually have a scope ID
+              if (isOrgScoped && organizationId && !newItem.organizationId) {
+                newItem.organizationId = organizationId
+              }
+
+              return newItem
+            }
 
             createArgs.data = Array.isArray(createArgs.data)
               ? createArgs.data.map(inject)

@@ -23,6 +23,7 @@ model Tenant {
   subscription Subscription?
   settings     TenantSettings?
   usageMetrics UsageMetric[]
+  auditLogs    AuditLog[]
 }
 
 model User {

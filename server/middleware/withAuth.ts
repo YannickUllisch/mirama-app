@@ -1,7 +1,7 @@
+import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import { auth } from '@auth'
 import type { OrganizationRole, TenantRole } from '@prisma/client'
 import type { NextRequest } from 'next/server'
-import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import type {
   AuthConfig,
   BaseContext,
@@ -9,7 +9,6 @@ import type {
   PrivateAuthContext,
 } from './types'
 
-// middleware/with-auth.ts
 export const withAuth = (
   config: AuthConfig,
   handler: Handler<PrivateAuthContext>,

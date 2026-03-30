@@ -16,7 +16,7 @@ const QueryClientWrapper: FC<PropsWithChildren> = ({ children }) => {
             staleTime: 5 * 1000,
           },
           mutations: {
-            retry: 1,
+            retry: false,
           },
         },
       }),

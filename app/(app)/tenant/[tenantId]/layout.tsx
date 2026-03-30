@@ -1,13 +1,11 @@
 import { auth } from '@auth'
 import AppHeader from '@src/components/Header/AppHeader'
-import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import TenantSidebar from '@src/components/Sidebar/TenantSidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { TenantResourceProvider } from '@src/core/tenant/tenantResourceContext'
-import { TenantSidebarMenu } from '@src/core/tenant/tenantSidebarMenu'
 import { SidebarProvider } from '@ui/sidebar'
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Tenant Overview',
@@ -24,10 +22,6 @@ const TenantLayout = async ({
   const session = await auth()
   const { tenantId } = await params
 
-  if (!session) {
-    return redirect(`/auth/login?callbackUrl=/tenant/${tenantId}`)
-  }
-
   return (
     <SessionWrapper>
       <QueryClientWrapper>
@@ -37,9 +31,8 @@ const TenantLayout = async ({
               <AppHeader />
 
               <div className="flex flex-1 pt-14">
-                <AppSidebar
-                  menuItems={TenantSidebarMenu}
-                  roleType="tenant"
+                <TenantSidebar
+                  tenantId={tenantId}
                   session={session}
                   className="flex-shrink-0"
                 />

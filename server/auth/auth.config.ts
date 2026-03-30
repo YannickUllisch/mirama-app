@@ -4,9 +4,10 @@ import {
   GetUserCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
+import type { OrganizationRole, TenantRole } from '@prisma/client'
 import type { NextAuthConfig } from 'next-auth'
-import CognitoProvider from 'next-auth/providers/cognito'
 import type { CognitoProfile } from 'next-auth/providers/cognito'
+import CognitoProvider from 'next-auth/providers/cognito'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { getCognitoIdentityProviderClient } from './cognito/cognitoIdentityProvider'
 
@@ -97,4 +98,17 @@ export default {
       },
     }),
   ],
+  callbacks: {
+    session({ token, session }) {
+      if (session.user) {
+        session.user.id = token.sub as string
+        session.user.name = token.name as string
+        session.user.tenantId = token.tenantId as string
+        session.user.organizationId = token.organizationId as string
+        session.user.orgRole = token.orgRole as OrganizationRole
+        session.user.tenantRole = token.tenantRole as TenantRole
+      }
+      return session
+    },
+  },
 } satisfies NextAuthConfig

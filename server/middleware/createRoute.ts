@@ -1,8 +1,9 @@
+import { withAuth } from '@/server/middleware/withAuth'
 import type { NextRequest } from 'next/server'
 import type z from 'zod'
-import { withAuth } from '@/server/middleware/withAuth'
 import type { AuthConfig, HandlerData, PrivateAuthContext } from './types'
 import { withCore } from './withCore'
+import { withTransaction } from './withTransaction'
 import { withValidation } from './withValidation'
 
 export const createRoute = <
@@ -24,13 +25,15 @@ export const createRoute = <
   return withCore(
     withAuth(
       config.auth,
-      withValidation(
-        {
-          params: config.params,
-          body: config.body,
-          pathPattern: config.pathPattern,
-        },
-        handler as any,
+      withTransaction(
+        withValidation(
+          {
+            params: config.params,
+            body: config.body,
+            pathPattern: config.pathPattern,
+          },
+          handler as any,
+        ),
       ),
       config.pathPattern,
     ),

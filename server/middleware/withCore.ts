@@ -41,6 +41,17 @@ export const withCore = (handler: Handler<BaseContext>) => {
     } catch (err) {
       const duration = Date.now() - startTime
 
+      childLogger.error(
+        {
+          err:
+            err instanceof Error
+              ? { message: err.message, stack: err.stack }
+              : err,
+          duration,
+        },
+        'Unhandled API Exception',
+      )
+
       // 1. Handle Zod Validation Errors (400)
       if (err instanceof z.ZodError) {
         childLogger.warn({ issues: err.format(), duration }, 'Validation Error')
@@ -70,20 +81,9 @@ export const withCore = (handler: Handler<BaseContext>) => {
             success: false,
             message: 'Invalid data provided. Please review your input.',
           },
-          { status: 404 },
+          { status: 400 },
         )
       }
-
-      childLogger.error(
-        {
-          err:
-            err instanceof Error
-              ? { message: err.message, stack: err.stack }
-              : err,
-          duration,
-        },
-        'Unhandled API Exception',
-      )
 
       return Response.json(
         {

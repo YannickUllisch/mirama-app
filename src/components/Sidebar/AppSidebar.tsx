@@ -38,6 +38,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
 
   const currentRole =
     roleType === 'org' ? session?.user?.orgRole : session?.user?.tenantRole
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader
@@ -48,7 +49,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
             <MiramaIcon />
           </HoverLink>
         )}
-        {isOrgAdminOrOwner(session) && (
+        {isOrgAdminOrOwner(session) && roleType === 'org' && (
           <HoverLink href={'/app/projects/create'}>
             <Button className="w-full justify-start gap-2 p-3">
               <span className="text-sidebar-primary">+</span>

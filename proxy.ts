@@ -48,8 +48,6 @@ export default auth((req) => {
 
   const { tenantId, organizationId } = session.user
   const pathname = nextUrl.pathname
-
-  // 5. Tenant route guard: ensure tenantId in URL matches session
   if (pathname.startsWith('/tenant/')) {
     const urlTenantId = pathname.split('/')[2]
     if (urlTenantId && urlTenantId !== tenantId) {

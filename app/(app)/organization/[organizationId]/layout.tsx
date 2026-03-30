@@ -1,11 +1,10 @@
 import { auth } from '@auth'
 import AppHeader from '@src/components/Header/AppHeader'
-import AppSidebar from '@src/components/Sidebar/AppSidebar'
+import OrganizationSidebar from '@src/components/Sidebar/OrganizationSidebar'
 import { SidebarProvider } from '@src/components/ui/sidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { OrganizationResourceProvider } from '@src/core/organization/organizationResourceContext'
-import { OrganizationSidebarMenu } from '@src/core/organization/organizationSidebarMenu'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -24,13 +23,8 @@ const AppLayout = async ({
   const session = await auth()
   const { organizationId } = await params
 
-  if (!session) {
-    return redirect(`/auth/login?callbackUrl=/organization/${organizationId}`)
-  }
-
-  // Guard against incorrect JWT context for accesssing specific org
-  if (!session.user.organizationId || !session.user.orgRole) {
-    return redirect(`/tenant/${session.user.tenantId}`)
+  if (!session?.user.tenantId) {
+    redirect('/auth/login')
   }
 
   return (
@@ -39,7 +33,7 @@ const AppLayout = async ({
         <OrganizationResourceProvider
           value={{
             activeOrganizationId: organizationId,
-            activeTenantId: session.user.tenantId,
+            activeTenantId: session?.user.tenantId ?? '',
           }}
         >
           <SidebarProvider>
@@ -47,9 +41,8 @@ const AppLayout = async ({
               <AppHeader />
 
               <div className="flex flex-1 pt-14">
-                <AppSidebar
-                  menuItems={OrganizationSidebarMenu}
-                  roleType="org"
+                <OrganizationSidebar
+                  organizationId={organizationId}
                   session={session}
                   className="flex-shrink-0"
                 />

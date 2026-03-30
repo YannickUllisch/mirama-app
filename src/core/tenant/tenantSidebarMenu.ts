@@ -4,16 +4,16 @@ import { CreditCardIcon, Home } from 'lucide-react'
 
 export const TenantSidebarMenu: AppMenuItem[] = [
   {
-    title: 'Tenant Dashboard',
+    title: 'Home',
     icon: Home,
-    href: '/tenant',
+    href: '/tenant/[tenantId]',
     isCollapsible: false,
     roles: Object.values(TenantRole) as TenantRole[],
   },
   {
     title: 'Tenant Billing',
     icon: CreditCardIcon,
-    href: '/tenant',
+    href: '/tenant/[tenantId]/billing',
     isCollapsible: false,
     roles: Object.values(TenantRole) as TenantRole[],
   },

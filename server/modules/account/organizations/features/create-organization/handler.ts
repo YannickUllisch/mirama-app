@@ -1,5 +1,4 @@
 import type { AppContext } from '@/server/shared/infrastructure/types'
-import database from '@db'
 import { OrganizationRole } from '@prisma/client'
 import { OrganizationEntity } from '../../domain/organization.entity'
 import { OrganizationRepository } from '../../infrastructure/organization.repo'
@@ -24,17 +23,19 @@ export const CreateOrganizationCommand =
       )
     }
 
-    // tenantId is auto-injected by ScopedDb
     const org = await repo.create({ ...input, slug })
-
-    await database.member.create({
-      data: {
-        name: creator.name,
-        email: creator.email,
-        role: OrganizationRole.OWNER,
-        organizationId: org.id,
-      },
-    })
+    try {
+      await db.member.create({
+        data: {
+          name: creator.name,
+          email: creator.email,
+          role: OrganizationRole.OWNER,
+          organizationId: org.id,
+        },
+      })
+    } catch (err) {
+      console.error(err)
+    }
 
     return toOrganizationResponse(org)
   }

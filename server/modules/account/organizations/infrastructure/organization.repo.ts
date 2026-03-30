@@ -20,7 +20,6 @@ export const OrganizationRepository = (db: ScopedDb) => ({
     })
   },
 
-  // tenantId is auto-injected by ScopedDb
   async create(data: {
     name: string
     slug: string
