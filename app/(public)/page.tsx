@@ -1,7 +1,7 @@
-import { CallToAction } from '@src/components/Landing/CallToAction'
-import FeaturesShowcase from '@src/components/Landing/FeaturesShowcase'
-import HeroSection from '@src/components/Landing/Hero/HeroSection'
-import { StrategicOverview } from '@src/components/Landing/StrategicSection'
+import { CallToAction } from '@src/components/(public)/Landing/CallToAction'
+import FeaturesShowcase from '@src/components/(public)/Landing/FeaturesShowcase'
+import HeroSection from '@src/components/(public)/Landing/Hero/HeroSection'
+import { StrategicOverview } from '@src/components/(public)/Landing/StrategicSection'
 import { LayoutGrid, ShieldCheck, Sparkles } from 'lucide-react'
 import type { FC } from 'react'
 

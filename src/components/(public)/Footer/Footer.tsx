@@ -1,7 +1,7 @@
 import { BehanceIcon } from '@src/lib/CompanyIcons'
 import { ArrowUpRight, Box, Github, Linkedin } from 'lucide-react'
 import Link from 'next/link'
-import GridDecoration from '../(public)/Background/GridDecoration'
+import GridDecoration from '../Background/GridDecoration'
 
 const footerRoutes = {
   information: [

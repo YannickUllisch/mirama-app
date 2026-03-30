@@ -1,6 +1,6 @@
 import { Badge } from '@ui/badge'
 import { CheckCircle2, Kanban, MousePointer2, Scan, Zap } from 'lucide-react'
-import { SectionDivider } from '../(public)/Background/SectionDivider'
+import { SectionDivider } from '../Background/SectionDivider'
 
 export const StrategicOverview = () => {
   const specs = [

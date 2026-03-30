@@ -1,4 +1,4 @@
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 
 WORKDIR /usr/src/app
 
@@ -17,7 +17,7 @@ COPY . .
 RUN yarn prisma generate
 RUN yarn build
 
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /usr/src/app
 

@@ -1,8 +1,8 @@
+import HoverLink from '@src/components/HoverLink'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Activity, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
-import HoverLink from '../HoverLink'
 
 const features = [
   {
@@ -91,14 +91,14 @@ const FeaturesShowcase = () => {
                   {feature.description}
                 </p>
 
-                <HoverLink  href={'https://docs.yannickullisch.com/'}> 
-                <Button
-                  variant="ghost"
-                  className="group/btn p-0 h-auto text-[11px] font-black uppercase tracking-[0.2em] text-red-500 hover:text-blue-600 hover:bg-transparent transition-colors"
-                >
-                  Technical Documentation
-                  <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                </Button>
+                <HoverLink href={'https://docs.yannickullisch.com/'}>
+                  <Button
+                    variant="ghost"
+                    className="group/btn p-0 h-auto text-[11px] font-black uppercase tracking-[0.2em] text-red-500 hover:text-blue-600 hover:bg-transparent transition-colors"
+                  >
+                    Technical Documentation
+                    <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                  </Button>
                 </HoverLink>
               </div>
 

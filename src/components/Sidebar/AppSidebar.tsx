@@ -1,6 +1,5 @@
 'use client'
 import { useIsMobile } from '@hooks/utils/use-mobile'
-import { AppMenu } from '@src/core/organization/organizationSidebarMenu'
 import { cn, isOrgAdminOrOwner } from '@src/lib/utils'
 import type { AppMenuItem } from '@src/types/types'
 import { Button } from '@ui/button'
@@ -14,8 +13,8 @@ import {
   SidebarRail,
 } from '@ui/sidebar'
 import { CircleHelp } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import type { Session } from 'next-auth'
+import { usePathname } from 'next/navigation'
 import HoverLink from '../HoverLink'
 import MiramaIcon from '../MiramaIcon'
 import SidebarMainNav from './MainNav'
@@ -63,7 +62,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
       <SidebarContent className="flex flex-col h-full">
         <SidebarMainNav
           pathname={pathname}
-          items={AppMenu}
+          items={menuItems}
           userRole={currentRole}
         />
         {roleType === 'org' && <RecentsNav pathname={pathname} />}

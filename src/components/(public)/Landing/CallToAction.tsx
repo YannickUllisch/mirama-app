@@ -1,7 +1,7 @@
+import HoverLink from '@src/components/HoverLink'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Activity, Box, ChevronRight, Zap } from 'lucide-react'
-import HoverLink from '../HoverLink'
 
 export const CallToAction = () => {
   const benefits = [
