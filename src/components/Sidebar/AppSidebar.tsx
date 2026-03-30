@@ -2,6 +2,7 @@
 import { useIsMobile } from '@hooks/utils/use-mobile'
 import { AppMenu } from '@src/lib/sidebarMenu'
 import { cn, isOrgAdminOrOwner } from '@src/lib/utils'
+import type { AppMenuItem } from '@src/types/types'
 import { Button } from '@ui/button'
 import {
   Sidebar,
@@ -13,9 +14,8 @@ import {
   SidebarRail,
 } from '@ui/sidebar'
 import { CircleHelp } from 'lucide-react'
-import type { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
-import { useMemo } from 'react'
+import type { Session } from 'next-auth'
 import HoverLink from '../HoverLink'
 import MiramaIcon from '../MiramaIcon'
 import SidebarMainNav from './MainNav'
@@ -24,16 +24,21 @@ import RecentsNav from './RecentsNav'
 interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'props'> {
   session: Session | null
+  menuItems: AppMenuItem[]
+  roleType: 'org' | 'tenant'
 }
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({
+  session,
+  menuItems,
+  roleType,
+  ...props
+}) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
 
-  const isAdminOrOwner = useMemo(() => {
-    return isOrgAdminOrOwner(session)
-  }, [session])
-
+  const currentRole =
+    roleType === 'org' ? session?.user?.orgRole : session?.user?.tenantRole
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader
@@ -44,7 +49,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
             <MiramaIcon />
           </HoverLink>
         )}
-        {isAdminOrOwner && (
+        {isOrgAdminOrOwner(session) && (
           <HoverLink href={'/app/projects/create'}>
             <Button className="w-full justify-start gap-2 p-3">
               <span className="text-sidebar-primary">+</span>
@@ -56,8 +61,12 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ session, ...props }) => {
         )}
       </SidebarHeader>
       <SidebarContent className="flex flex-col h-full">
-        <SidebarMainNav pathname={pathname} items={AppMenu} session={session} />
-        <RecentsNav pathname={pathname} />
+        <SidebarMainNav
+          pathname={pathname}
+          items={AppMenu}
+          userRole={currentRole}
+        />
+        {roleType === 'org' && <RecentsNav pathname={pathname} />}
       </SidebarContent>
       <SidebarFooter className="p-2">
         <SidebarMenu>

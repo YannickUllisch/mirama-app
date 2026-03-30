@@ -6,6 +6,7 @@ import { GetOrganizationsQuery } from '@/server/modules/account/organizations/fe
 export const GET = createRoute(
   {
     auth: { allowedTenantRoles: 'ANY' },
+    pathPattern: '/api/db/tenant/:tenantId/organization',
   },
   async (_req, { ctx }) => {
     const data = await GetOrganizationsQuery(ctx)()
@@ -15,7 +16,11 @@ export const GET = createRoute(
 )
 
 export const POST = createRoute(
-  { auth: { allowedTenantRoles: 'ANY' }, body: CreateOrganizationSchema },
+  {
+    auth: { allowedTenantRoles: 'ANY' },
+    body: CreateOrganizationSchema,
+    pathPattern: '/api/db/tenant/:tenantId/organization',
+  },
   async (_req, { ctx, session }, { body }) => {
     const data = await CreateOrganizationCommand(ctx)(body, {
       name: session.user.name ?? '',

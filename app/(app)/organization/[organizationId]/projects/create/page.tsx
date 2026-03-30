@@ -8,7 +8,7 @@ import {
   CreateProjectSchema,
 } from '@server/modules/project/features/create-project/schema'
 import { AttachNewMilestoneToProjectSchema } from '@server/old/milestoneSchema'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
@@ -61,8 +61,8 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 

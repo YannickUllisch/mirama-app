@@ -6,9 +6,9 @@ import {
   type CreateTaskRequest,
   CreateTaskSchema,
 } from '@server/modules/task/features/create-task/schema'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import ClearButton from '@src/components/Buttons/ClearButton'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
+import ClearButton from '@src/components/(application)/core/Buttons/ClearButton'
+import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralAccordion from '@src/components/GeneralAccordion'
 import PageHeader from '@src/components/PageHeader'

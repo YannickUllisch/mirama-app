@@ -1,7 +1,7 @@
-import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import { auth } from '@auth'
 import type { OrganizationRole, TenantRole } from '@prisma/client'
 import type { NextRequest } from 'next/server'
+import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import type {
   AuthConfig,
   BaseContext,
@@ -13,6 +13,7 @@ import type {
 export const withAuth = (
   config: AuthConfig,
   handler: Handler<PrivateAuthContext>,
+  pathPattern?: string,
 ) => {
   return async (req: NextRequest, baseCtx: BaseContext) => {
     const session = await auth()
@@ -24,7 +25,30 @@ export const withAuth = (
 
     const { tenantId, organizationId, tenantRole, orgRole } = session.user
 
-    // Tenant Check (Only if defined in config)
+    // IDOR Protection, we validate URL path IDs match session
+    if (pathPattern) {
+      const pathParts = req.nextUrl.pathname.split('/')
+      const patternParts = pathPattern.split('/')
+      const pathParams: Record<string, string> = {}
+      for (let i = 0; i < patternParts.length; i++) {
+        if (patternParts[i].startsWith(':')) {
+          pathParams[patternParts[i].slice(1)] = pathParts[i]
+        }
+      }
+
+      if (pathParams.tenantId && pathParams.tenantId !== tenantId) {
+        return Response.json({ message: 'Forbidden' }, { status: 403 })
+      }
+
+      if (
+        pathParams.organizationId &&
+        pathParams.organizationId !== organizationId
+      ) {
+        return Response.json({ message: 'Forbidden' }, { status: 403 })
+      }
+    }
+
+    // Tenant Check
     if (config.allowedTenantRoles && config.allowedTenantRoles !== 'ANY') {
       if (
         !tenantId ||
@@ -37,9 +61,8 @@ export const withAuth = (
       }
     }
 
-    // Org Check (Only if defined in config)
+    // Org Check
     if (config.allowedOrgRoles && config.allowedOrgRoles !== 'ANY') {
-      // Safety check: if the user hasn't selected an org yet, orgRole might be null
       if (
         !orgRole ||
         !organizationId ||
@@ -51,6 +74,7 @@ export const withAuth = (
         )
       }
     }
+
     const authCtx: PrivateAuthContext = {
       ...baseCtx,
       session,

@@ -20,10 +20,10 @@ import {
   Trash2,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import type React from 'react'
-import { getDaysRemaining } from '../../../app/app/_helpers'
+import { getDaysRemaining } from '@/app/(app)/organization/[organizationId]/_helpers'
 import HoverLink from '../HoverLink'
 
 const ProjectCard = ({

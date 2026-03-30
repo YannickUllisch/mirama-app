@@ -3,7 +3,7 @@ import { PriorityType, TaskStatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TagResponse } from '@server/modules/account/tags/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import HoverLink from '@src/components/HoverLink'
 import {
   EditableCell,

@@ -1,6 +1,6 @@
 'use client'
 import apiRequest from '@hooks/query'
-import UserCard from '@src/components/Avatar/UserCard'
+import UserCard from '@src/components/(application)/core/Avatar/UserCard'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { isOrgAdminOrOwner } from '@src/lib/utils'

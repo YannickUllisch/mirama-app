@@ -1,6 +1,6 @@
-import { withAuth } from '@/server/middleware/withAuth'
 import type { NextRequest } from 'next/server'
 import type z from 'zod'
+import { withAuth } from '@/server/middleware/withAuth'
 import type { AuthConfig, HandlerData, PrivateAuthContext } from './types'
 import { withCore } from './withCore'
 import { withValidation } from './withValidation'
@@ -32,6 +32,7 @@ export const createRoute = <
         },
         handler as any,
       ),
+      config.pathPattern,
     ),
   )
 }

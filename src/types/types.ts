@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { OrganizationRole, TaskType } from '@prisma/client'
+import type { TaskType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import type { LucideIcon } from 'lucide-react'
@@ -14,9 +14,9 @@ export interface AppMenuItem {
   items?: {
     title: string
     href: string
-    roles?: OrganizationRole[]
+    roles?: string[]
   }[]
-  roles?: OrganizationRole[]
+  roles?: string[]
 }
 
 // Kanban Board

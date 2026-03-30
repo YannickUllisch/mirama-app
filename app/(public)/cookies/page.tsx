@@ -1,4 +1,4 @@
-import GridDecoration from '@src/components/Background/GridDecoration'
+import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import HoverLink from '@src/components/HoverLink'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'

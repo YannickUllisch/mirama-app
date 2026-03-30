@@ -14,7 +14,7 @@ import {
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import type { FC } from 'react'
-import AvatarGroup from '../Avatar/AvatarGroup'
+import AvatarGroup from '../(application)/core/Avatar/AvatarGroup'
 import HoverLink from '../HoverLink'
 import TaskTypeCreate from '../Task/TaskTypeCreate'
 

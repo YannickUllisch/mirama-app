@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type FC, useState } from 'react'
-import UserAvatar from '../Avatar/UserAvatar'
+import UserAvatar from '../(application)/core/Avatar/UserAvatar'
 import GeneralTableSelect from '../Select/GeneralTableSelect'
 
 // Dynamically import ViewTaskSheet

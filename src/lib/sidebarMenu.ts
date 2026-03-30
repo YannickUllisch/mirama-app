@@ -10,7 +10,7 @@ import {
   Users,
 } from 'lucide-react'
 
-export const AppMenu: AppMenuItem[] = [
+export const OrganizationSidebarMenu: AppMenuItem[] = [
   {
     title: 'Dashboard',
     icon: Home,

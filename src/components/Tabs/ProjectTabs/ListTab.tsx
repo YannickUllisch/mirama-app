@@ -4,8 +4,8 @@ import type { DragEndEvent } from '@dnd-kit/core'
 import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
+import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import TaskContextContent from '@src/components/Task/TaskContextContent'
 import {
   ListGroup,
@@ -37,8 +37,8 @@ import {
 import { Input } from '@ui/input'
 import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
+import { useSession } from 'next-auth/react'
 import { useContext, useEffect, useRef, useState } from 'react'
 
 // Dynamically import ViewTaskSheet

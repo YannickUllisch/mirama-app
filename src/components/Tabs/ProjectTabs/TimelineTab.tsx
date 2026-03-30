@@ -1,11 +1,10 @@
 'use client'
-import Loading from '@/app/loading'
 import type { Milestone } from '@prisma/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import type { MilestoneProjectResponseInput } from '@server/old/milestoneSchema'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
+import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import {
   GanttCreateMarkerTrigger,
   GanttFeatureItem,
@@ -38,6 +37,7 @@ import groupBy from 'lodash.groupby'
 import dynamic from 'next/dynamic'
 import { useContext, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import Loading from '@/app/loading'
 
 // Dynamically import ViewTaskSheet
 const ViewTaskSheet = dynamic(

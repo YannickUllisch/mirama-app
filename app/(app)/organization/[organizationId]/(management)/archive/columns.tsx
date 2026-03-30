@@ -2,7 +2,7 @@
 
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import AvatarGroup from '@src/components/(application)/core/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'

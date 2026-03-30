@@ -1,5 +1,5 @@
 'use client'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
 import { Button } from '@src/components/ui/button'

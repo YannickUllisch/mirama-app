@@ -99,7 +99,6 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
             }
             upsertArgs.where = { ...upsertArgs.where, ...contextFilter }
             upsertArgs.create = { ...upsertArgs.create, ...contextFilter }
-            // update doesn't need context injected — the where already scoped it
           }
 
           return query(args)

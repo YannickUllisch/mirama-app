@@ -1,5 +1,4 @@
 'use client'
-import type { OrganizationRole } from '@prisma/client'
 import type { AppMenuItem } from '@src/types/types'
 import {
   Collapsible,
@@ -16,40 +15,42 @@ import {
   SidebarMenuSubItem,
 } from '@ui/sidebar'
 import { ChevronDown } from 'lucide-react'
-import type { Session } from 'next-auth'
 import Link from 'next/link'
 import { useCallback } from 'react'
 
 interface MainNavProps {
   items: AppMenuItem[]
-  session: Session | null
+  userRole?: string
   pathname: string
 }
 
-const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
-  const hasRole = useCallback(
-    (roles: OrganizationRole[]) => {
-      if (!session?.user) return false
-      return roles.includes(session.user.orgRole as OrganizationRole)
+const SidebarMainNav = ({ items, userRole, pathname }: MainNavProps) => {
+  const hasPermission = useCallback(
+    (allowedRoles?: string[]) => {
+      if (!allowedRoles) return true
+      if (!userRole) return false
+      return allowedRoles.includes(userRole)
     },
-    [session?.user],
+    [userRole],
   )
+
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          if (item.roles && !hasRole(item.roles)) return null
+          if (!hasPermission(item.roles)) return null
 
           if (item.isCollapsible && item.items) {
             return (
-              <Collapsible key={item.title} defaultOpen={item.isActive}>
+              <Collapsible
+                key={item.title}
+                defaultOpen={item.isActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      tooltip={item.title}
-                      className="relative data-[active=true]:bg-transparent data-[active=true]:text-sidebar-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-0 data-[active=true]:before:bottom-0 data-[active=true]:before:w-1 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-r"
-                    >
-                      <item.icon className="size-4" strokeWidth={1.5} />
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon && <item.icon className="size-4" />}
                       <span>{item.title}</span>
                       <ChevronDown className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
@@ -57,13 +58,12 @@ const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {item.items.map((subItem) => {
-                        if (subItem.roles && !hasRole(subItem.roles))
-                          return null
+                        if (!hasPermission(subItem.roles)) return null
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              className={`${subItem.href === pathname ? 'bg-transparent text-text font-semibold underline underline-offset-4' : ''}`}
+                              isActive={subItem.href === pathname}
                             >
                               <Link href={subItem.href}>
                                 <span>{subItem.title}</span>
@@ -85,10 +85,9 @@ const SidebarMainNav = ({ items, session, pathname }: MainNavProps) => {
                 asChild
                 isActive={pathname === item.href}
                 tooltip={item.title}
-                className="relative data-[active=true]:bg-transparent data-[active=true]:hover:bg-primary data-[active=true]:hover:text-sidebar-accent-foreground data-[active=true]:text-sidebar-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-0 data-[active=true]:before:bottom-0 data-[active=true]:before:w-1 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-r"
               >
-                <Link href={item.href ?? '/app'}>
-                  <item.icon className="size-4" strokeWidth={1.5} />
+                <Link href={item.href ?? '#'}>
+                  {item.icon && <item.icon className="size-4" />}
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>

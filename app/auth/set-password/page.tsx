@@ -1,5 +1,5 @@
+import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import SetPasswordForm from '@src/components/auth/SetPasswordForm'
-import GridDecoration from '@src/components/Background/GridDecoration'
 import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
 import { ArrowLeft } from 'lucide-react'

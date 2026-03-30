@@ -1,13 +1,13 @@
-import Loading from '@/app/loading'
 import image from '@public/test2.png'
+import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import LoginForm from '@src/components/auth/LoginForm'
 import { AuthSocial } from '@src/components/auth/Socials'
-import GridDecoration from '@src/components/Background/GridDecoration'
 import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { Suspense } from 'react'
+import Loading from '@/app/loading'
 
 const LoginPage = () => {
   return (

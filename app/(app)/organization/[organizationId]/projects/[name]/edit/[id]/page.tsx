@@ -1,5 +1,4 @@
 'use client'
-import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
@@ -7,9 +6,9 @@ import {
   type UpdateTaskRequest,
   UpdateTaskSchema,
 } from '@server/modules/task/features/update-task/schema'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
-import ClearButton from '@src/components/Buttons/ClearButton'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
+import ClearButton from '@src/components/(application)/core/Buttons/ClearButton'
+import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import GeneralAccordion from '@src/components/GeneralAccordion'
 import PageHeader from '@src/components/PageHeader'
@@ -55,6 +54,7 @@ import {
 import { notFound, useRouter } from 'next/navigation'
 import { use, useContext, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import Loading from '@/app/loading'
 
 const EditTaskPage = ({
   params,

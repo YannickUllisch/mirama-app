@@ -1,9 +1,8 @@
 'use client'
-import Loading from '@/app/loading'
 import apiRequest from '@hooks/query'
 import useLocalStorage from '@hooks/utils/useLocalStorage'
 import { OrganizationRole } from '@prisma/client'
-import { ProjectDataContext } from '@src/components/Contexts/ProjectDataContext'
+import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
 import ListTab from '@src/components/Tabs/ProjectTabs/ListTab'
@@ -30,6 +29,7 @@ import {
   useSearchParams,
 } from 'next/navigation'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import Loading from '@/app/loading'
 
 const ClientProjectPage = () => {
   // Context for ProjectId and Name

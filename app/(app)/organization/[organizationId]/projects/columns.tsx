@@ -3,7 +3,7 @@ import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
-import AvatarGroup from '@src/components/Avatar/AvatarGroup'
+import AvatarGroup from '@src/components/(application)/core/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import {
   EditableCell,

@@ -1,6 +1,6 @@
 import contactImage from '@public/test2.png'
+import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import ContactForm from '@src/components/auth/ContactForm'
-import GridDecoration from '@src/components/Background/GridDecoration'
 import { Badge } from '@src/components/ui/badge'
 import Image from 'next/image'
 

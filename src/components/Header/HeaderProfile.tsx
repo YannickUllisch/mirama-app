@@ -1,24 +1,22 @@
 'use client'
 import {
   DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@src/components/ui/dropdown-menu'
 import { Check, LogOut, Settings, Sparkles, SunMoon } from 'lucide-react'
+import Link from 'next/link'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
-import Link from 'next/link'
-import UserAvatar from '../Avatar/UserAvatar'
+import UserAvatar from '../(application)/core/Avatar/UserAvatar'
 
 const HeaderProfile = ({ session }: { session: Session | null }) => {
   const { theme, setTheme } = useTheme()

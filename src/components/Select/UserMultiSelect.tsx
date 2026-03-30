@@ -1,5 +1,5 @@
 import apiRequest from '@hooks/query'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import {
   MultiSelector,
   MultiSelectorContent,

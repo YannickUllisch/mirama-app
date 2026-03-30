@@ -1,6 +1,6 @@
 import { auth } from '@auth'
 import db from '@db'
-import { ProjectViewContext } from '@src/components/Contexts/ProjectDataContext'
+import { ProjectViewContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'

@@ -1,5 +1,4 @@
 'use client'
-import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, StatusType } from '@prisma/client'
@@ -9,7 +8,7 @@ import {
   UpdateProjectSchema,
 } from '@server/modules/project/features/update-project/schema'
 import { AttachNewMilestoneToProjectSchema } from '@server/old/milestoneSchema'
-import UserAvatar from '@src/components/Avatar/UserAvatar'
+import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
@@ -70,6 +69,7 @@ import { use, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { v4 } from 'uuid'
+import Loading from '@/app/loading'
 
 const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   // Dynamic Page Params
