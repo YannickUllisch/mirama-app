@@ -7,155 +7,114 @@ import {
   fetchInvitationsFn,
   updateInvitationFn,
 } from '@hooks/api/invitation'
+import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
-import { toast } from 'sonner'
+import { optimisticList } from './helpers'
 
-const invitation = {
+export const invitationKeys = {
+  root: ['invitations'] as const,
+  organization: (orgId: string) => [...invitationKeys.root, orgId] as const,
+  list: (orgId: string) =>
+    [...invitationKeys.organization(orgId), 'list'] as const,
+}
+
+export const invitation = {
   fetchAll: {
-    useQuery: () =>
-      useQuery<InvitationResponse[]>({
-        queryKey: ['invitation'],
-        queryFn: fetchInvitationsFn,
-      }),
+    useQuery: () => {
+      const { activeOrganizationId } = useOrganizationResource()
+      return useQuery<InvitationResponse[]>({
+        queryKey: invitationKeys.list(activeOrganizationId),
+        queryFn: () => fetchInvitationsFn(activeOrganizationId),
+      })
+    },
   },
 
   create: {
     useMutation: () => {
+      const { activeOrganizationId } = useOrganizationResource()
       const queryClient = useQueryClient()
+
       return useMutation<
         InvitationResponse,
         Error,
         CreateInvitationRequest,
         { previous?: InvitationResponse[] }
       >({
-        mutationFn: createInviteFn,
-        onMutate: async (newInvite) => {
-          await queryClient.cancelQueries({ queryKey: ['invitation'] })
-
-          const previous = queryClient.getQueryData<InvitationResponse[]>([
-            'invitation',
-          ])
-
-          // Optimistically add the new invitation (with a temp id/email if needed)
-          queryClient.setQueryData<InvitationResponse[]>(
-            ['invitation'],
-            (old = []) => [
+        mutationFn: (data) => createInviteFn(activeOrganizationId, data),
+        ...optimisticList<InvitationResponse, CreateInvitationRequest>(
+          queryClient,
+          invitationKeys.list(activeOrganizationId),
+          {
+            successMessage: 'Invitation sent',
+            apply: (old, vars) => [
               ...old,
               {
                 id: `temp-${Math.random()}`,
-                name: newInvite.name,
-                email: newInvite.email,
-                organizationRole: newInvite.role,
-                organizationId: '',
+                name: vars.name,
+                email: vars.email,
+                organizationRole: vars.role,
+                organizationId: activeOrganizationId,
                 expiresAt: DateTime.utc().plus({ days: 1 }).toJSDate(),
-              },
+              } as InvitationResponse,
             ],
-          )
-
-          return { previous }
-        },
-        onSuccess: (data, _vars) => {
-          queryClient.setQueryData<InvitationResponse[]>(
-            ['invitation'],
-            (old = []) => [...old, data],
-          )
-        },
-        onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['invitation'], ctx.previous)
-          }
-          toast.error(err?.message || 'An error occurred')
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['invitation'] })
-        },
+          },
+        ),
       })
     },
   },
 
   update: {
     useMutation: () => {
+      const { activeOrganizationId } = useOrganizationResource()
       const queryClient = useQueryClient()
+
+      type Vars = { email: string; data: UpdateInvitationRequest }
+
       return useMutation<
         InvitationResponse,
         Error,
-        { id: string; data: UpdateInvitationRequest },
+        Vars,
         { previous?: InvitationResponse[] }
       >({
-        mutationFn: ({ id, data }) => updateInvitationFn(id, data),
-        onMutate: async ({ id, data }) => {
-          await queryClient.cancelQueries({ queryKey: ['invitation'] })
-
-          const previous = queryClient.getQueryData<InvitationResponse[]>([
-            'invitation',
-          ])
-
-          // Optimistically update the invitation in the cache
-          queryClient.setQueryData<InvitationResponse[]>(
-            ['invitation'],
-            (old = []) =>
-              old.map((inv) => (inv.email === id ? { ...inv, ...data } : inv)),
-          )
-
-          return { previous }
-        },
-        onSuccess: (data, _vars) => {
-          queryClient.setQueryData<InvitationResponse[]>(
-            ['invitation'],
-            (old = []) => old.map((p) => (p.id === data.id ? data : p)),
-          )
-        },
-        onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['invitation'], ctx.previous)
-          }
-          toast.error(err?.message || 'An error occurred')
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['invitation'] })
-        },
+        mutationFn: ({ email, data }) =>
+          updateInvitationFn(activeOrganizationId, email, data),
+        ...optimisticList<InvitationResponse, Vars>(
+          queryClient,
+          invitationKeys.list(activeOrganizationId),
+          {
+            successMessage: 'Invitation updated',
+            apply: (old, { email, data }) =>
+              old.map((inv) =>
+                inv.email === email ? { ...inv, ...data } : inv,
+              ),
+          },
+        ),
       })
     },
   },
 
   delete: {
     useMutation: () => {
+      const { activeOrganizationId } = useOrganizationResource()
       const queryClient = useQueryClient()
+
       return useMutation<
         { success: boolean },
         Error,
         string,
         { previous?: InvitationResponse[] }
       >({
-        mutationFn: deleteInvitationFn,
-        onMutate: async (email) => {
-          await queryClient.cancelQueries({ queryKey: ['invitation'] })
-
-          const previous = queryClient.getQueryData<InvitationResponse[]>([
-            'invitation',
-          ])
-
-          // Optimistically remove the invitation from the cache
-          queryClient.setQueryData<InvitationResponse[]>(
-            ['invitation'],
-            (old = []) => old.filter((p) => p.email !== email),
-          )
-
-          return { previous }
-        },
-        onError: (err, _vars, ctx) => {
-          if (ctx?.previous) {
-            queryClient.setQueryData(['invitation'], ctx.previous)
-          }
-          toast.error(err?.message || 'An error occurred')
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries({ queryKey: ['invitation'] })
-        },
+        mutationFn: (email) => deleteInvitationFn(activeOrganizationId, email),
+        ...optimisticList<InvitationResponse, string>(
+          queryClient,
+          invitationKeys.list(activeOrganizationId),
+          {
+            successMessage: 'Invitation deleted',
+            apply: (old, email) => old.filter((inv) => inv.email !== email),
+          },
+        ),
       })
     },
   },
 }
-
-export default invitation

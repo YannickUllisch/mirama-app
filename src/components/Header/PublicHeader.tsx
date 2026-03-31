@@ -42,7 +42,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
 
           <div className="flex items-center gap-4">
             {session ? (
-              <Link href="/app">
+              <Link href={`/tenant/${session.user.tenantId}}`}>
                 <Button variant={'neo'}>
                   <span className="relative z-10 flex items-center gap-2 uppercase">
                     Dashboard <HomeIcon className="w-4 h-4" />
