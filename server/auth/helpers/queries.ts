@@ -1,8 +1,11 @@
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
 
-// Initialize a new Client to avoid REDIS caching.
-const client = new PrismaClient()
+const adapter = new PrismaPg({
+  connectionString: process.env.POSTGRES_PRISMA_URL,
+})
+export const client = new PrismaClient({ adapter })
 
 export const getUserById = async (id: string) => {
   try {

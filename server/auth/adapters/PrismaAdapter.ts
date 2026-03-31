@@ -1,7 +1,4 @@
-import {
-  ensureSystemRolesExist,
-  getSystemRole,
-} from '@/server/shared/domain/iam-defaults'
+import { getSystemRole } from '@/server/shared/domain/iam-defaults'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import db from '@db'
 import { InvitationStatus, TenantRole } from '@prisma/client'
@@ -15,9 +12,6 @@ export const CreatePrismaAdapter = () => {
     })
 
     return await db.$transaction(async (tx) => {
-      // Ensure system-level IAM roles exist (idempotent)
-      await ensureSystemRolesExist(tx)
-
       const dbUser = await tx.user.create({
         data: {
           id: user.id,

@@ -1,4 +1,4 @@
-import { ArrowRight, Github, Instagram, Linkedin } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export const ModernPublicFooter = () => {
@@ -21,15 +21,17 @@ export const ModernPublicFooter = () => {
               designed for the next generation of teams.
             </p>
             <div className="flex gap-5 pt-2">
-              {[Github, Linkedin, Linkedin, Instagram].map((Icon, i) => (
-                <Link
-                  key={i}
-                  href="#"
-                  className="text-slate-400 hover:text-[#3b82f6] transition-colors"
-                >
-                  <Icon className="w-5 h-5" />
-                </Link>
-              ))}
+              {[ArrowRight, ArrowRight, ArrowRight, ArrowRight].map(
+                (Icon, i) => (
+                  <Link
+                    key={i}
+                    href="#"
+                    className="text-slate-400 hover:text-[#3b82f6] transition-colors"
+                  >
+                    <Icon className="w-5 h-5" />
+                  </Link>
+                ),
+              )}
             </div>
           </div>
 

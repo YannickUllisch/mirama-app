@@ -43,7 +43,7 @@ const Layout = async ({
     (!isOrgAdminOrOwner(session) &&
       project.members.some((u) => u.memberId === session?.user.id))
   ) {
-    redirect('/app')
+    redirect(`/organization/${session?.user.organizationId}`)
   }
 
   return (

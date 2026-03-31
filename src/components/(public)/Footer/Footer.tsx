@@ -1,5 +1,5 @@
-import { BehanceIcon } from '@src/lib/CompanyIcons'
-import { ArrowUpRight, Box, Github, Linkedin } from 'lucide-react'
+import { BehanceIcon, GithubIcon, LinkedinIcon } from '@src/lib/CompanyIcons'
+import { ArrowUpRight, Box } from 'lucide-react'
 import Link from 'next/link'
 import GridDecoration from '../Background/GridDecoration'
 
@@ -17,11 +17,11 @@ const footerRoutes = {
 
 const socials = [
   {
-    icon: <Github className="w-4 h-4" />,
+    icon: <GithubIcon width="25" height="25" />,
     href: 'https://github.com/yannickullisch',
   },
   {
-    icon: <Linkedin className="w-4 h-4" />,
+    icon: <LinkedinIcon width="25" height="25" />,
     href: 'https://linkedin.com/in/yannickullisch',
   },
   {

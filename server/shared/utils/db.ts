@@ -1,3 +1,4 @@
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import SuperJSON from 'superjson'
@@ -11,7 +12,10 @@ redisClient.on('error', (error) => {
 })
 
 const prismaClientSingleton = () => {
-  const prismaClient = new PrismaClient()
+  const adapter = new PrismaPg({
+    connectionString: process.env.POSTGRES_PRISMA_URL,
+  })
+  const prismaClient = new PrismaClient({ adapter })
 
   const redisAdapter = new RedisAdapter({
     client: redisClient,

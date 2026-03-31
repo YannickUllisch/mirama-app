@@ -61,7 +61,9 @@ const Dashboard = () => {
         icon={User}
         description={DateTime.now().toFormat('EEEE, d MMMM')}
       >
-        <HoverLink href={'/app/projects/create'}>
+        <HoverLink
+          href={`/organization/${session?.user.organizationId}/projects/create`}
+        >
           <Button variant={'tertiary'}>
             <Plus className="w-4 h-4" />
             <span>New Project</span>
@@ -100,7 +102,9 @@ const Dashboard = () => {
                 <h2 className="text-lg font-semibold tracking-tight">
                   Recent Projects
                 </h2>
-                <HoverLink href={'/app/projects'}>
+                <HoverLink
+                  href={`/organization/${session?.user.organizationId}/projects`}
+                >
                   <Button variant={'ghost'}>
                     View all <ChevronRight className="w-4 h-4" />
                   </Button>

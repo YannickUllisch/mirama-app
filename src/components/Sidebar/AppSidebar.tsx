@@ -50,7 +50,9 @@ const AppSidebar: React.FC<AppSidebarProps> = ({
           </HoverLink>
         )}
         {isOrgAdminOrOwner(session) && roleType === 'org' && (
-          <HoverLink href={'/app/projects/create'}>
+          <HoverLink
+            href={`/organization/${session?.user.organizationId}/projects/create`}
+          >
             <Button className="w-full justify-start gap-2 p-3">
               <span className="text-sidebar-primary">+</span>
               <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
