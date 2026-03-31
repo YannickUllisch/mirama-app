@@ -1,4 +1,3 @@
-import type { UseMutateFunction } from '@tanstack/react-query'
 import type { ZodError, ZodType } from 'zod'
 
 export type HandleFieldUpdate<ResponseType> = <K extends keyof ResponseType>(
@@ -8,9 +7,9 @@ export type HandleFieldUpdate<ResponseType> = <K extends keyof ResponseType>(
 ) => void
 
 export const useEditableColumns = <
-  ResponseType extends { id: string },
+  ResponseType,
   UpdateType,
-  MutationInputType = { id: string; data: UpdateType },
+  MutationInputType = any,
 >({
   mutate,
   updateSchema,
@@ -19,7 +18,7 @@ export const useEditableColumns = <
   prepareMutation,
   onValidationError,
 }: {
-  mutate: UseMutateFunction<any, Error, MutationInputType, unknown>
+  mutate: (variables: MutationInputType, options?: any) => void
   updateSchema: ZodType<UpdateType, any, any>
   getKey?: (data: ResponseType) => string
   mapToUpdateInput: (data: ResponseType) => UpdateType

@@ -18,7 +18,12 @@ export const MemberRepository = (db: ScopedDb) => ({
     return await db.member.deleteMany({ where: { id } })
   },
 
-  async create(data: { name: string; email: string; role: OrganizationRole }) {
+  async create(data: {
+    name: string
+    email: string
+    role: OrganizationRole
+    iamRoleId: string
+  }) {
     return await db.member.create({
       data: {
         ...data,

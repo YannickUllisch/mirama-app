@@ -1,3 +1,4 @@
+import { getSystemRole } from '@/server/shared/domain/iam-defaults'
 import type { AppContext } from '@/server/shared/infrastructure/types'
 import { OrganizationRole } from '@prisma/client'
 import { OrganizationEntity } from '../../domain/organization.entity'
@@ -23,19 +24,20 @@ export const CreateOrganizationCommand =
       )
     }
 
+    // Resolve the "Owner" system role for the founding member
+    const ownerRole = await getSystemRole(db, 'Owner')
+
     const org = await repo.create({ ...input, slug })
-    try {
-      await db.member.create({
-        data: {
-          name: creator.name,
-          email: creator.email,
-          role: OrganizationRole.OWNER,
-          organizationId: org.id,
-        },
-      })
-    } catch (err) {
-      console.error(err)
-    }
+
+    await db.member.create({
+      data: {
+        name: creator.name,
+        email: creator.email,
+        role: OrganizationRole.OWNER,
+        organizationId: org.id,
+        iamRoleId: ownerRole.id,
+      },
+    })
 
     return toOrganizationResponse(org)
   }

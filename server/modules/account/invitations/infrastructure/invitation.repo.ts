@@ -18,6 +18,7 @@ export const InvitationRepository = (db: ScopedDb) => ({
     role: OrganizationRole
     inviterId: string
     expiresAt: Date
+    iamRoleId?: string
   }) {
     // organizationId is auto-injected by ScopedDb
     return await db.organizationInvitation.create({

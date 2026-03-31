@@ -3,7 +3,7 @@ import {
   fetchOrganizationByIdFn,
   fetchOrganizationsFn,
   updateOrganizationFn,
-} from '@hooks/api/organization'
+} from '@hooks/api/organization/api'
 import { optimisticList } from '@hooks/query/helpers'
 import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
 import { useTenantResource } from '@src/core/tenant/tenantResourceContext'

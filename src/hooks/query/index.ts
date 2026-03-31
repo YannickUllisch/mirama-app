@@ -1,7 +1,8 @@
+import { invitation } from '../api/invitation/hooks'
+import organization from '../api/organization/hooks'
+import billing from '../api/tenant/billing/hooks'
 import comment from './comment'
 import favourite from './favourite'
-import { invitation } from './invitation'
-import organization from './organization'
 import project from './project'
 import tag from './tag'
 import task from './task'
@@ -16,6 +17,7 @@ const apiRequest = {
   task,
   comment,
   organization,
+  billing,
 }
 
 export default apiRequest

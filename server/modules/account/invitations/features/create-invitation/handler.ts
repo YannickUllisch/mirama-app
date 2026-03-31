@@ -33,6 +33,7 @@ export const CreateInvitationCommand =
       role: input.role,
       inviterId,
       expiresAt,
+      iamRoleId: input.iamRoleId,
     })
 
     return toInvitationResponse(invitation)

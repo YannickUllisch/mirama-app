@@ -3,6 +3,7 @@ import AppHeader from '@src/components/Header/AppHeader'
 import TenantSidebar from '@src/components/Sidebar/TenantSidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
+import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
 import { TenantResourceProvider } from '@src/core/tenant/tenantResourceContext'
 import { SidebarProvider } from '@ui/sidebar'
 import type { Metadata } from 'next'
@@ -26,23 +27,25 @@ const TenantLayout = async ({
     <SessionWrapper>
       <QueryClientWrapper>
         <TenantResourceProvider value={{ activeTenantId: tenantId }}>
-          <SidebarProvider>
-            <div className="w-full flex flex-col">
-              <AppHeader />
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <SidebarProvider>
+              <div className="w-full flex flex-col">
+                <AppHeader />
 
-              <div className="flex flex-1 pt-14">
-                <TenantSidebar
-                  tenantId={tenantId}
-                  session={session}
-                  className="flex-shrink-0"
-                />
+                <div className="flex flex-1 pt-14">
+                  <TenantSidebar
+                    tenantId={tenantId}
+                    session={session}
+                    className="flex-shrink-0"
+                  />
 
-                <main className="flex-1 overflow-auto bg-card rounded-lg">
-                  <div className="p-5 min-h-[100vh]">{children}</div>
-                </main>
+                  <main className="flex-1 overflow-auto bg-card rounded-lg">
+                    <div className="p-5 min-h-[100vh]">{children}</div>
+                  </main>
+                </div>
               </div>
-            </div>
-          </SidebarProvider>
+            </SidebarProvider>
+          </ThemeProvider>
         </TenantResourceProvider>
       </QueryClientWrapper>
     </SessionWrapper>

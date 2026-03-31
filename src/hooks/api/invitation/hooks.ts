@@ -6,11 +6,11 @@ import {
   deleteInvitationFn,
   fetchInvitationsFn,
   updateInvitationFn,
-} from '@hooks/api/invitation'
+} from '@hooks/api/invitation/api'
 import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
-import { optimisticList } from './helpers'
+import { optimisticList } from '../../query/helpers'
 
 export const invitationKeys = {
   root: ['invitations'] as const,

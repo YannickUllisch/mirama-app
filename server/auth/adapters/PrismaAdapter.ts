@@ -1,3 +1,7 @@
+import {
+  ensureSystemRolesExist,
+  getSystemRole,
+} from '@/server/shared/domain/iam-defaults'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import db from '@db'
 import { InvitationStatus, TenantRole } from '@prisma/client'
@@ -6,13 +10,14 @@ export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
 
   adapter.createUser = async (user: any) => {
-    // 1. Check for existing invitations to an Organization
     const invitation = await db.organizationInvitation.findFirst({
       where: { email: user.email, status: InvitationStatus.PENDING },
     })
 
     return await db.$transaction(async (tx) => {
-      // 2. Create User first, then Tenant (Tenant has FK to User)
+      // Ensure system-level IAM roles exist (idempotent)
+      await ensureSystemRolesExist(tx)
+
       const dbUser = await tx.user.create({
         data: {
           id: user.id,
@@ -25,29 +30,44 @@ export const CreatePrismaAdapter = () => {
 
       await tx.tenant.create({
         data: {
-          name: `${user.name || 'My'}'s Workspace`,
-          isActive: true,
           adminUserId: user.id,
-          logoUrl: null,
-          brandingColor: null,
           userId: user.id,
+          settings: {
+            create: {
+              name: `${user.name || 'My'}'s Workspace`,
+              isActive: true,
+              brandingColor: '#000000',
+              receiveNotifications: true,
+            },
+          },
         },
       })
 
       // If there was an invitation, create the Member record immediately
       if (invitation) {
+        // Resolve the IAM role, use invitation's iamRoleId if present,
+        // otherwise fall back to the system "Member" role
+        const iamRole = invitation.iamRoleId
+          ? await tx.role.findFirst({ where: { id: invitation.iamRoleId } })
+          : await getSystemRole(tx, 'Member')
+
+        if (!iamRole) {
+          throw new Error('Could not resolve IAM role for invited member')
+        }
+
         await tx.member.create({
           data: {
             email: user.email,
             name: user.name,
+            userId: user.id,
             organizationId: invitation.organizationId,
             role: invitation.role,
+            iamRoleId: iamRole.id,
           },
         })
 
-        // Clean up invitation
         await tx.organizationInvitation.delete({
-          where: { email: invitation.email, name: invitation.name },
+          where: { email: invitation.email },
         })
       }
 

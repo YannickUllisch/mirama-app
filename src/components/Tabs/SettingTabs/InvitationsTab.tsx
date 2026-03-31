@@ -38,8 +38,8 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
       name: data.name,
       organizationRole: data.organizationRole as OrganizationRole,
     }),
-    prepareMutation: (id, data) => ({
-      id,
+    prepareMutation: (email, data) => ({
+      email,
       data,
     }),
     onValidationError: (err) => {

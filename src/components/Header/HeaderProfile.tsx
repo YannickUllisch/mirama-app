@@ -11,12 +11,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { Check, LogOut, Settings, Sparkles, SunMoon } from 'lucide-react'
-import Link from 'next/link'
+import { Check, LogOut, Settings, SunMoon, UserKeyIcon } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import UserAvatar from '../(application)/core/Avatar/UserAvatar'
+import HoverLink from '../HoverLink'
 
 const HeaderProfile = ({ session }: { session: Session | null }) => {
   const { theme, setTheme } = useTheme()
@@ -81,7 +81,6 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownItem icon={<Sparkles width={17} />} label="Upgrade to Pro" />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <div className="flex items-center gap-3">
@@ -102,10 +101,21 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
-          <Link href={'/app/settings'}>
-            <DropdownItem icon={<Settings width={17} />} label="Settings" />
-          </Link>
+          <HoverLink href={`/tenant/${session?.user.tenantId}`}>
+            <DropdownItem
+              icon={<UserKeyIcon width={17} />}
+              label="Go to tenant"
+            />
+          </HoverLink>
         </DropdownMenuGroup>
+        {session?.user.organizationId && (
+          <HoverLink
+            href={`/organization/${session?.user.organizationId}/settings`}
+          >
+            <DropdownItem icon={<Settings width={17} />} label="Settings" />
+          </HoverLink>
+        )}
+
         <DropdownMenuSeparator />
         <DropdownItem
           icon={<LogOut width={17} />}
