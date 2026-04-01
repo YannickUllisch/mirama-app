@@ -13,9 +13,9 @@ export const formSchema = z
     eventname: z.string().min(1, 'Event name is required'),
     name: z.string().min(1, 'Name is required'),
     description: z.string().min(1, 'Description is required'),
-    startdate: z.date({ required_error: 'Start date is required' }),
+    startdate: z.date({ error: 'Start date is required' }),
     starttime: z.string().min(1, 'Start time is required'),
-    enddate: z.date({ required_error: 'End date is required' }),
+    enddate: z.date({ error: 'End date is required' }),
     endtime: z.string().min(1, 'End time is required'),
     phonenumber: z
       .number()
