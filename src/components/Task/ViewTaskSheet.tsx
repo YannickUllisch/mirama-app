@@ -111,7 +111,7 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
       <SheetTitle />
       <SheetContent hideSheetClose className="p-0 w-[800px] overflow-y-scroll ">
         {!task ? (
-          <div className="w-full flex justify-center items-center min-h-[100vh]">
+          <div className="w-full flex justify-center items-center min-h-screen">
             <Loader2 className="h-6 w-6 animate-spin ml-2 dark:text-white m-1" />
           </div>
         ) : (

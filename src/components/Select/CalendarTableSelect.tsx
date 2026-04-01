@@ -63,7 +63,7 @@ export const CalendarTableSelect: FC<CalendarTableSelectProps> = ({
             defaultMonth={date}
             onSelect={setDate}
             onDayFocus={handleSelect}
-            className="rounded-md border shadow dark:bg-neutral-900 dark:border-neutral-800"
+            className="rounded-md border shadow-sm dark:bg-neutral-900 dark:border-neutral-800"
           />
         </PopoverContent>
       </Popover>

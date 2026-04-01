@@ -10,7 +10,7 @@ export function Tabs(props: any) {
         <button
           type="button"
           onClick={() => props.setActiveTab('week')}
-          className={`relative inline-flex gap-3 h-full items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
+          className={`relative inline-flex gap-3 h-full items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
             props.activeTab === ('week' as TabTypes)
               ? 'bg-secondary text-secondary-foreground'
               : 'hover:bg-secondary/50 hover:text-secondary-foreground'
@@ -32,7 +32,7 @@ export function Tabs(props: any) {
         <button
           type="button"
           onClick={() => props.setActiveTab('month')}
-          className={`relative inline-flex gap-3 h-full items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
+          className={`relative inline-flex gap-3 h-full items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
             props.activeTab === ('month' as TabTypes)
               ? 'bg-secondary text-secondary-foreground'
               : 'hover:bg-secondary/50 hover:text-secondary-foreground'
@@ -54,7 +54,7 @@ export function Tabs(props: any) {
         <button
           type="button"
           onClick={() => props.setActiveTab('year')}
-          className={`relative inline-flex h-full gap-3 items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
+          className={`relative inline-flex h-full gap-3 items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md px-2  w-full transition-all duration-500 ease-in-out ${
             props.activeTab === 'year'
               ? 'bg-secondary text-secondary-foreground'
               : 'hover:bg-secondary/50 hover:text-secondary-foreground'

@@ -26,16 +26,16 @@ export const SectionDivider = ({
 
   // Rotation for the decorative accent line
   const accentRotation =
-    direction === 'right' ? '-rotate-[6deg]' : 'rotate-[6deg]'
+    direction === 'right' ? '-rotate-6' : 'rotate-6'
   const accentOrigin = direction === 'right' ? 'origin-right' : 'origin-left'
 
   return (
     <div
       className={cn(
-        'absolute left-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none',
+        'absolute left-0 w-full overflow-hidden leading-0 z-20 pointer-events-none',
         position === 'bottom'
-          ? 'bottom-0 translate-y-[1px]'
-          : 'top-0 -scale-y-100 -translate-y-[1px]',
+          ? 'bottom-0 translate-y-px'
+          : 'top-0 -scale-y-100 -translate-y-px',
         className,
       )}
     >
@@ -55,7 +55,7 @@ export const SectionDivider = ({
       {/* Decorative Accent Line */}
       <div
         className={cn(
-          'absolute bottom-0 w-full h-[1px] bg-white/30 translate-y-[-10px] lg:translate-y-[-20px]',
+          'absolute bottom-0 w-full h-px bg-white/30 translate-y-[-10px] lg:translate-y-[-20px]',
           accentRotation,
           accentOrigin,
           direction === 'right' ? 'right-0' : 'left-0',

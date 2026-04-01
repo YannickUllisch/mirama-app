@@ -37,12 +37,12 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
 
   return (
     <TooltipProvider>
-      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm flex flex-col h-full">
+      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xs flex flex-col h-full">
         {/* Header */}
         <div className="p-5 border-b border-neutral-100 dark:border-neutral-900 bg-neutral-50/30 dark:bg-neutral-900/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[var(--tertiary)]/10 rounded-lg">
-              <Activity className="w-4 h-4 text-[var(--tertiary)]" />
+            <div className="p-2 bg-(--tertiary)/10 rounded-lg">
+              <Activity className="w-4 h-4 text-(--tertiary)" />
             </div>
             <div>
               <span className="block text-sm font-bold tracking-tight">
@@ -56,7 +56,7 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
           <HoverLink href={`/app/projects/${project.name}/team`}>
             <button
               type="button"
-              className="text-[10px] font-black uppercase text-[var(--tertiary)] hover:opacity-80 transition-opacity flex items-center gap-1"
+              className="text-[10px] font-black uppercase text-(--tertiary) hover:opacity-80 transition-opacity flex items-center gap-1"
             >
               Manage Team <ArrowUpRight className="w-3 h-3" />
             </button>
@@ -72,7 +72,7 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[var(--secondary)] flex items-center justify-center text-[10px] font-bold text-white border-2 border-white dark:border-neutral-800">
+                  <div className="w-8 h-8 rounded-full bg-(--secondary) flex items-center justify-center text-[10px] font-bold text-white border-2 border-white dark:border-neutral-800">
                     {user.name[0]}
                   </div>
                   <div>
@@ -126,7 +126,7 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
               <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-tight">
                 Total Yield
               </span>
-              <span className="text-xs font-black text-[var(--tertiary)]">
+              <span className="text-xs font-black text-(--tertiary)">
                 {Math.round(
                   (project.tasks.filter((t) => t.status === 'DONE').length /
                     project.tasks.length) *
@@ -141,7 +141,7 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="w-1.5 h-3 rounded-full bg-[var(--tertiary)] opacity-40 animate-pulse"
+                className="w-1.5 h-3 rounded-full bg-(--tertiary) opacity-40 animate-pulse"
                 style={{ animationDelay: `${i * 0.2}s` }}
               />
             ))}

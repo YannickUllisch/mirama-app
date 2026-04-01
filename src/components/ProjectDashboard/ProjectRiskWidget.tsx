@@ -52,7 +52,7 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
 
   return (
     <TooltipProvider>
-      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm flex flex-col h-full">
+      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xs flex flex-col h-full">
         {/* Header: System Health */}
         <div className="p-5 border-b border-neutral-100 dark:border-neutral-900 bg-neutral-50/30 dark:bg-neutral-900/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -61,13 +61,13 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
                 'p-2 rounded-lg',
                 riskMetrics.riskLabel === 'CRITICAL'
                   ? 'bg-red-500/10'
-                  : 'bg-[var(--tertiary)]/10',
+                  : 'bg-(--tertiary)/10',
               )}
             >
               {riskMetrics.riskLabel === 'CRITICAL' ? (
                 <ShieldAlert className="w-4 h-4 text-red-500" />
               ) : (
-                <Zap className="w-4 h-4 text-[var(--tertiary)]" />
+                <Zap className="w-4 h-4 text-(--tertiary)" />
               )}
             </div>
             <div>
@@ -85,7 +85,7 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
               'px-2 py-0.5 rounded text-[10px] font-black tracking-widest border',
               riskMetrics.riskLabel === 'CRITICAL'
                 ? 'text-red-500 border-red-500/20'
-                : 'text-[var(--tertiary)] border-[var(--tertiary)]/20',
+                : 'text-(--tertiary) border-(--tertiary)/20',
             )}
           >
             {riskMetrics.riskLabel}
@@ -149,7 +149,7 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
                   'h-full transition-all duration-1000',
                   riskMetrics.riskLabel === 'CRITICAL'
                     ? 'bg-red-500'
-                    : 'bg-[var(--tertiary)]',
+                    : 'bg-(--tertiary)',
                 )}
                 style={{ width: `${100 - riskMetrics.riskScore}%` }}
               />
@@ -157,8 +157,8 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
           </div>
 
           {/* Critical Path Insight */}
-          <div className="bg-[#1a2333]/5 dark:bg-[#1a2333]/20 border border-[var(--tertiary)]/10 p-3 rounded-xl flex gap-3 items-start">
-            <Info className="w-4 h-4 text-[var(--tertiary)] mt-0.5" />
+          <div className="bg-[#1a2333]/5 dark:bg-[#1a2333]/20 border border-(--tertiary)/10 p-3 rounded-xl flex gap-3 items-start">
+            <Info className="w-4 h-4 text-(--tertiary) mt-0.5" />
             <p className="text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-400">
               {riskMetrics.overdueTasks > 0
                 ? `Address ${riskMetrics.overdueTasks} late tasks immediately to restore temporal buffer.`
@@ -175,7 +175,7 @@ const ProjectRiskWidget = ({ project, isLoading }: RiskWidgetProps) => {
           >
             <button
               type="button"
-              className="w-full py-3 px-5 text-[10px] font-black uppercase text-neutral-500 hover:text-[var(--tertiary)] transition-colors flex items-center justify-between"
+              className="w-full py-3 px-5 text-[10px] font-black uppercase text-neutral-500 hover:text-(--tertiary) transition-colors flex items-center justify-between"
             >
               Review Full Analytics
               <ChevronRight className="w-3.5 h-3.5" />

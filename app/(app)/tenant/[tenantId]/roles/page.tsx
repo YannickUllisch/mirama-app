@@ -171,7 +171,7 @@ const EffectBadge = ({ effect }: { effect: PolicyEffect }) =>
 
 const PolicyRow = ({ policy }: { policy: Policy }) => (
   <div className="flex items-start gap-4 py-3 px-4 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800/50 group transition-colors">
-    <div className="flex-shrink-0 mt-0.5">
+    <div className="shrink-0 mt-0.5">
       <EffectBadge effect={policy.effect} />
     </div>
     <div className="flex-1 min-w-0">
@@ -206,7 +206,7 @@ const PolicyRow = ({ policy }: { policy: Policy }) => (
     <Button
       variant="ghost"
       size="icon"
-      className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+      className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
     >
       <MoreHorizontal className="h-4 w-4" />
     </Button>
@@ -225,11 +225,11 @@ const RoleCard = ({ role }: { role: Role }) => {
         onClick={() => setExpanded((v) => !v)}
       >
         <ChevronRight
-          className={`w-4 h-4 flex-shrink-0 text-neutral-400 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
+          className={`w-4 h-4 shrink-0 text-neutral-400 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
         />
 
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
-          <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
             <ShieldCheck className="w-4 h-4 text-primary" />
           </div>
           <div className="min-w-0">
@@ -252,7 +252,7 @@ const RoleCard = ({ role }: { role: Role }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-5 flex-shrink-0">
+        <div className="flex items-center gap-5 shrink-0">
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-400">
             <FileText className="w-3.5 h-3.5" />
             <span>{role.policies.length} policies</span>
@@ -417,7 +417,7 @@ const RolesPage = () => {
       <div className="flex-1 px-6 md:px-10 py-6">
         {/* IAM info banner */}
         <div className="flex items-start gap-3 mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20">
-          <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+          <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">
               IAM scaffolding

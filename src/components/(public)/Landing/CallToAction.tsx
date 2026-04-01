@@ -23,7 +23,7 @@ export const CallToAction = () => {
           }}
         />
         <div className="absolute top-1/2 -left-20 w-[140%] h-[2px] bg-white/20 rotate-12" />
-        <div className="absolute top-1/4 -left-20 w-[140%] h-[1px] bg-accent/40 -rotate-6" />
+        <div className="absolute top-1/4 -left-20 w-[140%] h-px bg-accent/40 -rotate-6" />
 
         <div className="absolute top-24 left-10 text-[8px] font-mono text-white/20 uppercase tracking-[1.5em] select-none">
           DESIGNED_FOR_GROWTH */ BUILT_TO_SCALE /*
@@ -51,7 +51,7 @@ export const CallToAction = () => {
                 <span className="text-accent">Forever</span>
               </h2>
 
-              <p className="max-w-xl text-xl text-white/80 font-light italic leading-relaxed border-l-4 border-accent pl-8 py-4 bg-white/5 backdrop-blur-sm mx-auto lg:mx-0 text-left">
+              <p className="max-w-xl text-xl text-white/80 font-light italic leading-relaxed border-l-4 border-accent pl-8 py-4 bg-white/5 backdrop-blur-xs mx-auto lg:mx-0 text-left">
                 "Stop fighting your tools and start shipping your best work. We
                 provide the clarity your team needs to move faster, stay
                 aligned, and hit every deadline with confidence."
@@ -70,7 +70,7 @@ export const CallToAction = () => {
             <div className="lg:col-span-5 relative group">
               <div className="absolute -top-6 -right-6 w-full h-full border-2 border-dashed border-white/30 rounded-[2.5rem] rotate-3 -z-10 group-hover:rotate-0 transition-transform duration-500" />
 
-              <div className="relative bg-accent p-12 rounded-[2rem] shadow-[20px_20px_60px_rgba(0,0,0,0.3)] space-y-8 overflow-hidden">
+              <div className="relative bg-accent p-12 rounded-4xl shadow-[20px_20px_60px_rgba(0,0,0,0.3)] space-y-8 overflow-hidden">
                 <Box className="absolute -bottom-6 -left-6 w-32 h-32 text-black/5 rotate-12 pointer-events-none" />
 
                 <div className="space-y-6">
@@ -105,7 +105,7 @@ export const CallToAction = () => {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px]">
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-0 translate-y-px">
         <svg
           className="relative block w-[calc(100%+1.3px)] h-[80px] lg:h-[150px]"
           data-name="Layer 1"
@@ -117,7 +117,7 @@ export const CallToAction = () => {
           <path d="M1200 120L0 120 0 0 1200 120z" className="fill-background" />
         </svg>
 
-        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-white/20 -rotate-[6deg] origin-right translate-y-[-10px] lg:translate-y-[-20px]" />
+        <div className="absolute bottom-0 right-0 w-full h-px bg-white/20 -rotate-6 origin-right translate-y-[-10px] lg:translate-y-[-20px]" />
       </div>
     </section>
   )

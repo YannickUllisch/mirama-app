@@ -70,7 +70,7 @@ const MinimalistTasksWidget = ({
   if (isLoading) return <TaskSkeleton />
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
+    <div className="flex flex-col h-full bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xs">
       <Tabs defaultValue="active" className="flex flex-col h-full">
         {/* --- Unified Header --- */}
         <div className="px-5 pt-5 pb-3 border-b border-neutral-100 dark:border-neutral-900 bg-neutral-50/30 dark:bg-neutral-900/10">
@@ -115,7 +115,7 @@ const MinimalistTasksWidget = ({
         <div className="flex-1 overflow-y-auto">
           <TabsContent
             value="active"
-            className="m-0 focus-visible:outline-none"
+            className="m-0 focus-visible:outline-hidden"
           >
             <TaskList
               tasks={activeTasks}
@@ -125,7 +125,7 @@ const MinimalistTasksWidget = ({
           </TabsContent>
           <TabsContent
             value="upcoming"
-            className="m-0 focus-visible:outline-none"
+            className="m-0 focus-visible:outline-hidden"
           >
             <TaskList
               tasks={activeTasks.filter(
@@ -139,7 +139,7 @@ const MinimalistTasksWidget = ({
           </TabsContent>
           <TabsContent
             value="completed"
-            className="m-0 focus-visible:outline-none"
+            className="m-0 focus-visible:outline-hidden"
           >
             <TaskList
               tasks={completedTasks}
@@ -205,7 +205,7 @@ const TaskList = ({
               onClick={() => onToggle(task.id, task.status)}
               disabled={updatingId === task.id}
               className={cn(
-                'mt-0.5 w-5 h-5 rounded-lg border-2 flex flex-shrink-0 items-center justify-center transition-all',
+                'mt-0.5 w-5 h-5 rounded-lg border-2 flex shrink-0 items-center justify-center transition-all',
                 isCompleted
                   ? 'bg-blue-500 border-blue-500'
                   : 'border-neutral-200 dark:border-neutral-800 hover:border-blue-500',

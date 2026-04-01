@@ -35,7 +35,7 @@ export const LandingBentoBox = () => (
               <Globe className="absolute -top-10 -right-10 w-64 h-64 text-[#3b82f6]" />
             </div>
 
-            <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center border border-slate-100 mb-4">
+            <div className="w-12 h-12 bg-white rounded-xl shadow-xs flex items-center justify-center border border-slate-100 mb-4">
               <Users className="w-6 h-6 text-[#3b82f6]" />
             </div>
 
@@ -68,7 +68,7 @@ export const LandingBentoBox = () => (
           {/* Card 3: Small Feature (Metrics) */}
           <div className="group relative md:col-span-3 lg:col-span-4 overflow-hidden rounded-3xl border border-slate-100 bg-slate-900 p-8 flex flex-col justify-between transition-all">
             {/* Dark Card Visual */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#3b82f6]/20 to-transparent opacity-50" />
+            <div className="absolute inset-0 bg-linear-to-br from-[#3b82f6]/20 to-transparent opacity-50" />
             <BarChart3 className="w-10 h-10 text-[#3b82f6] mb-4 relative z-10" />
             <div className="space-y-2 relative z-10">
               <h3 className="text-xl font-bold text-white">
@@ -103,7 +103,7 @@ export const LandingBentoBox = () => (
                 <div className="h-16 bg-[#3b82f6]/10 rounded-lg animate-pulse" />
                 <div className="h-16 bg-slate-200/50 rounded-lg" />
               </div>
-              <div className="absolute -bottom-4 right-4 w-24 h-24 bg-[#3b82f6] rounded-full blur-[40px] opacity-20" />
+              <div className="absolute -bottom-4 right-4 w-24 h-24 bg-[#3b82f6] rounded-full blur-2xl opacity-20" />
             </div>
           </div>
         </div>

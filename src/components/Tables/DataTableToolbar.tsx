@@ -43,7 +43,7 @@ const DataTableToolbar = <TData extends TableData<TData>>({
 
   return (
     <>
-      <div className="flex items-center m-1 outline-none justify-between ">
+      <div className="flex items-center m-1 outline-hidden justify-between ">
         <div className="flex gap-2">
           {toolbarOptions?.addToolbarleft}
           {toolbarOptions?.showFilterOption && (
@@ -51,8 +51,8 @@ const DataTableToolbar = <TData extends TableData<TData>>({
               type="button"
               onClick={() => setShowFilters((prev) => !prev)}
               className={cn(
-                'group relative flex items-center gap-2 px-3 h-9 rounded-xl transition-all duration-200 outline-none select-none',
-                'bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm shadow-sm',
+                'group relative flex items-center gap-2 px-3 h-9 rounded-xl transition-all duration-200 outline-hidden select-none',
+                'bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xs shadow-xs',
 
                 showFilters
                   ? 'border-primary/40 bg-primary/5 text-primary'

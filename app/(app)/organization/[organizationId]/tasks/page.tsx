@@ -129,7 +129,7 @@ const TasksPage = () => {
                 <div className="flex items-center space-x-3">
                   {/** biome-ignore lint/a11y/noStaticElementInteractions: <l> */}
                   <div
-                    className="w-5 h-5 flex-shrink-0 relative"
+                    className="w-5 h-5 shrink-0 relative"
                     onClick={() => handleTaskUpdate(task.id)}
                     onKeyUp={() => handleTaskUpdate(task.id)}
                   >
@@ -190,7 +190,7 @@ const TasksPage = () => {
                       </svg>
                     )}
                   </div>
-                  <div className="flex-grow flex items-center justify-between">
+                  <div className="grow flex items-center justify-between">
                     <div className="flex flex-col">
                       <span
                         className={`text-sm font-medium ${

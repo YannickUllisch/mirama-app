@@ -28,7 +28,7 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
 
   return (
     <MultiSelector
-      className="col-span-3 flex-grow"
+      className="col-span-3 grow"
       values={selectedUserIds ?? []}
       onValuesChange={(updated) => {
         const updatedUserIds =

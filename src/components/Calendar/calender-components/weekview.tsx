@@ -95,7 +95,7 @@ export function WeekView({ currentDate }: WeekViewProps) {
 
   // }));
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
+    <div className="rounded-lg border bg-card text-card-foreground shadow-xs p-4">
       <div className="mb-4 relative z-20">
         <div className="grid grid-cols-8 gap-0">
           {Array.from({ length: 8 }).map((x) => (

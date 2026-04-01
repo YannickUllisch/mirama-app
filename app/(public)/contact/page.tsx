@@ -43,10 +43,10 @@ const ContactPage = () => {
           </div>
 
           <div className="relative order-1 lg:order-2 group max-w-xl mx-auto lg:ml-auto w-full">
-            <div className="absolute -top-3 -right-3 w-full h-full bg-blue-500/5 rounded-[2rem] rotate-2 border border-dashed border-blue-500/20 -z-10 group-hover:rotate-1 transition-transform duration-500" />
-            <div className="absolute -bottom-2 -left-2 w-full h-full bg-red-500/5 rounded-[2rem] -rotate-1 border border-dashed border-red-500/20 -z-10 group-hover:rotate-0 transition-transform duration-500" />
+            <div className="absolute -top-3 -right-3 w-full h-full bg-blue-500/5 rounded-4xl rotate-2 border border-dashed border-blue-500/20 -z-10 group-hover:rotate-1 transition-transform duration-500" />
+            <div className="absolute -bottom-2 -left-2 w-full h-full bg-red-500/5 rounded-4xl -rotate-1 border border-dashed border-red-500/20 -z-10 group-hover:rotate-0 transition-transform duration-500" />
 
-            <div className="relative aspect-square lg:aspect-[4/4.5] overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-xl">
+            <div className="relative aspect-square lg:aspect-4/4.5 overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
               <Image
                 src={contactImage}
                 priority
@@ -56,7 +56,7 @@ const ContactPage = () => {
               />
               <div className="absolute inset-0 bg-tertiary/5 mix-blend-multiply" />
 
-              <div className="absolute bottom-4 right-4 bg-background/95 backdrop-blur-sm px-3 py-1 rounded-lg border border-border shadow-sm flex items-center gap-2">
+              <div className="absolute bottom-4 right-4 bg-background/95 backdrop-blur-xs px-3 py-1 rounded-lg border border-border shadow-xs flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <span className="text-[9px] font-black uppercase tracking-widest text-foreground">
                   Get_In_Touch

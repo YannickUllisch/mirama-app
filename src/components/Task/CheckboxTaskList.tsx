@@ -11,8 +11,8 @@ const SkeletonLoader = () => {
       {[...Array(5)].map((i, index) => (
         <li key={i} className="py-3">
           <div className="flex items-center space-x-3">
-            <div className="w-5 h-5 bg-gray-600 rounded-full flex-shrink-0 animate-pulse" />
-            <div className="flex-grow flex items-center justify-between">
+            <div className="w-5 h-5 bg-gray-600 rounded-full shrink-0 animate-pulse" />
+            <div className="grow flex items-center justify-between">
               <div
                 className={`h-4 bg-gray-600 rounded-md animate-pulse w-${
                   ['3/4', '2/3', '5/6', '1/2', '4/5'][index]
@@ -83,7 +83,7 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
 
   return (
     <div className="text-white p-4 flex flex-col relative">
-      <div className="flex-grow flex items-center justify-center">
+      <div className="grow flex items-center justify-center">
         <div className="w-full max-w-md">
           {!tasks ? (
             <SkeletonLoader />
@@ -117,7 +117,7 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
                   >
                     <div className="flex items-center space-x-3">
                       <motion.div
-                        className="w-5 h-5 flex-shrink-0 relative"
+                        className="w-5 h-5 shrink-0 relative"
                         animate={
                           updatingTaskId === task.id
                             ? { rotate: 360 }
@@ -187,12 +187,12 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
                             )}
                         </svg>
                       </motion.div>
-                      <div className="flex-grow flex items-center justify-between overflow-hidden">
+                      <div className="grow flex items-center justify-between overflow-hidden">
                         <span className="text-sm truncate text-gray-400 group-hover:text-white transition-colors duration-300 ease-in-out">
                           {task.title}
                         </span>
                         {
-                          <span className="text-xs ml-2 flex-shrink-0 text-gray-500 group-hover:text-white transition-colors duration-300 ease-in-out">
+                          <span className="text-xs ml-2 shrink-0 text-gray-500 group-hover:text-white transition-colors duration-300 ease-in-out">
                             {'Team Name'}
                           </span>
                         }

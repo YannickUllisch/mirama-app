@@ -108,7 +108,7 @@ const FeaturesShowcase = () => {
                 <div className="absolute -top-6 -right-6 w-full h-full bg-blue-500/5 rounded-[3rem] rotate-3 border-2 border-dashed border-blue-500/20 -z-10 group-hover:rotate-1 transition-transform duration-500" />
                 <div className="absolute -bottom-4 -left-4 w-full h-full bg-red-500/5 rounded-[3rem] -rotate-2 border-2 border-dashed border-red-500/20 -z-10 group-hover:rotate-0 transition-transform duration-500" />
 
-                <div className="relative aspect-[16/10] overflow-hidden rounded-[2.5rem] border-2 border-border bg-card shadow-2xl">
+                <div className="relative aspect-16/10 overflow-hidden rounded-[2.5rem] border-2 border-border bg-card shadow-2xl">
                   <Image
                     src={feature.image}
                     alt={feature.title}
@@ -116,7 +116,7 @@ const FeaturesShowcase = () => {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
-                  <div className="absolute top-6 right-6 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-sm flex items-center gap-3">
+                  <div className="absolute top-6 right-6 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xs flex items-center gap-3">
                     <Activity className="w-3 h-3 text-red-500 animate-pulse" />
                     <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic">
                       Live Matrix

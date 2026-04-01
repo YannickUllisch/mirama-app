@@ -43,7 +43,7 @@ function AddEvent({
         ) : variant === 'secondary' ? (
           <Button
             variant="ghost"
-            className="inline-flex items-center gap-2 justify-center whitespace-nowrap font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent rounded-md w-full h-1/2 text-[8px] sm:text-xs text-muted-foreground hover:text-foreground transition-opacity truncate px-0.5 sm:px-2 sm:opacity-0 lg:py-5 sm:group-hover:opacity-100"
+            className="inline-flex items-center gap-2 justify-center whitespace-nowrap font-medium ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent rounded-md w-full h-1/2 text-[8px] sm:text-xs text-muted-foreground hover:text-foreground transition-opacity truncate px-0.5 sm:px-2 sm:opacity-0 lg:py-5 sm:group-hover:opacity-100"
           >
             {icon}
             <span className="lg:block hidden">{buttonText}</span>
@@ -51,7 +51,7 @@ function AddEvent({
         ) : (
           <Button
             variant="ghost"
-            className="inline-flex items-center gap-2 justify-center whitespace-nowrap bg-slate-100 font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent rounded-md w-full h-1/2 text-[8px] sm:text-xs text-muted-foreground hover:text-foreground transition-all truncate px-0.5 sm:px-2 lg:py-5"
+            className="inline-flex items-center gap-2 justify-center whitespace-nowrap bg-slate-100 font-medium ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent rounded-md w-full h-1/2 text-[8px] sm:text-xs text-muted-foreground hover:text-foreground transition-all truncate px-0.5 sm:px-2 lg:py-5"
           >
             {icon}
             <span className="lg:block hidden">{buttonText}</span>

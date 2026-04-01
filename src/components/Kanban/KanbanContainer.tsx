@@ -40,7 +40,7 @@ const KanbanContainer: FC<PropsWithChildren<KanbanContainerProps>> = ({
       }}
       className={clsx(
         'flex-1 h-full min-w-[300px] bg-background/50 rounded-none',
-        'border border-border/50 shadow-sm',
+        'border border-border/50 shadow-xs',
         className,
       )}
     >

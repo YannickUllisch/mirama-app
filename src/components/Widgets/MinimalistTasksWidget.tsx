@@ -82,7 +82,7 @@ const MinimalistTasksWidget = ({
   // Loading state
   if (isLoading) {
     return (
-      <Card className="border-none h-full shadow-sm bg-neutral-100 dark:bg-background">
+      <Card className="border-none h-full shadow-xs bg-neutral-100 dark:bg-background">
         <CardHeader className="p-4 pb-2">
           <div className="h-6 w-24 bg-white dark:bg-neutral-700 rounded animate-pulse" />
         </CardHeader>
@@ -110,7 +110,7 @@ const MinimalistTasksWidget = ({
     <Card className="flex flex-col h-full bg-background">
       <CardContent className="flex flex-col flex-1 overflow-hidden">
         <Tabs defaultValue="active" className="flex flex-col h-full">
-          <div className="pt-4 flex-shrink-0">
+          <div className="pt-4 shrink-0">
             <TabsList className="grid w-full grid-cols-3 overflow-clip">
               <TabsTrigger value="active" className="overflow-hidden">
                 Active
@@ -339,7 +339,7 @@ const MinimalistTasksWidget = ({
         </Tabs>
       </CardContent>
       <CardFooter className="p-0 ">
-        <HoverLink href={'/app/tasks'} className="w-[100%]">
+        <HoverLink href={'/app/tasks'} className="w-full">
           <Button
             variant="ghost"
             className="w-full justify-between rounded-none h-10 px-4 text-xs border-t"

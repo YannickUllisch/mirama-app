@@ -86,7 +86,7 @@ const TenantPage = () => {
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                         <Building2 className="w-4 h-4 text-primary" />
                       </div>
                       <div className="min-w-0">
@@ -108,7 +108,7 @@ const TenantPage = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <MoreHorizontal className="h-4 w-4" />
@@ -139,7 +139,7 @@ const TenantPage = () => {
                   </div>
 
                   <CardDescription className="flex items-center gap-1.5 text-xs mt-1">
-                    <MapPin className="w-3 h-3 flex-shrink-0" />
+                    <MapPin className="w-3 h-3 shrink-0" />
                     <span className="truncate">
                       {org.city}, {org.state} {org.zipCode}
                     </span>

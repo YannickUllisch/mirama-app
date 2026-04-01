@@ -322,7 +322,7 @@ export const useTaskColumns = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant={'ghost'} size={'icon'}>
-                <Ellipsis className={'flex-shrink-0 w-4 h-4'} />
+                <Ellipsis className={'shrink-0 w-4 h-4'} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

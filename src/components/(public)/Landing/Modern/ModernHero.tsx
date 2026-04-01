@@ -31,7 +31,7 @@ const ModernHero = () => {
           }}
         />
         {/* Soft Radial Depth */}
-        <div className="absolute top-0 right-0 w-[60%] h-[70%] bg-gradient-to-bl from-blue-50/50 via-transparent to-transparent blur-3xl" />
+        <div className="absolute top-0 right-0 w-[60%] h-[70%] bg-linear-to-bl from-blue-50/50 via-transparent to-transparent blur-3xl" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10 py-12">
@@ -107,7 +107,7 @@ const ModernHero = () => {
                     ].map((item, i) => (
                       <div
                         key={i}
-                        className={`flex items-center gap-3 p-2.5 rounded-lg text-[12px] font-semibold transition-all cursor-pointer ${item.active ? 'bg-white shadow-sm text-[#3b82f6] border border-slate-100' : 'text-slate-400 hover:text-slate-900'}`}
+                        className={`flex items-center gap-3 p-2.5 rounded-lg text-[12px] font-semibold transition-all cursor-pointer ${item.active ? 'bg-white shadow-xs text-[#3b82f6] border border-slate-100' : 'text-slate-400 hover:text-slate-900'}`}
                       >
                         {item.icon}
                         {item.label}
@@ -159,7 +159,7 @@ const ModernHero = () => {
                         </div>
 
                         {/* Project Card */}
-                        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm border-l-4 border-l-[#3b82f6] hover:shadow-md transition-shadow">
+                        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs border-l-4 border-l-[#3b82f6] hover:shadow-md transition-shadow">
                           <div className="flex justify-between mb-4">
                             <span className="text-sm font-bold text-slate-900">
                               Mirama Launch
@@ -245,7 +245,7 @@ const ModernHero = () => {
               </div>
 
               {/* FLOATING DECORATION: ACTIVE FEED */}
-              <div className="absolute -bottom-6 right-20 z-30 bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 flex items-center gap-4 animate-bounce duration-[5000ms]">
+              <div className="absolute -bottom-6 right-20 z-30 bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 flex items-center gap-4 animate-bounce duration-5000">
                 <div className="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center">
                   <Activity className="w-5 h-5 text-emerald-500" />
                 </div>

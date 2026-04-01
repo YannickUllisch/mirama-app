@@ -35,14 +35,14 @@ const ColorPicker = forwardRef<
         <button
           type="button"
           className={cn(
-            'group relative h-10 w-10 shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 p-1 transition-all hover:border-primary/40 focus:outline-none focus:ring-4 focus:ring-primary/10 disabled:opacity-50 disabled:cursor-not-allowed',
+            'group relative h-10 w-10 shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 p-1 transition-all hover:border-primary/40 focus:outline-hidden focus:ring-4 focus:ring-primary/10 disabled:opacity-50 disabled:cursor-not-allowed',
             className,
           )}
           onClick={() => setOpen(true)}
           onBlur={onBlur}
         >
           <div
-            className="h-full w-full rounded-lg shadow-sm"
+            className="h-full w-full rounded-lg shadow-xs"
             style={{ backgroundColor: parsedValue }}
           />
         </button>

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="min-h-[100vh]">{children}</div>
+  return <div className="min-h-screen">{children}</div>
 }
 
 export default Layout

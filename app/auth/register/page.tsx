@@ -21,7 +21,7 @@ const RegisterPage = () => {
             SECURE_AUTH_NODE_01
           </div>
 
-          <div className="relative w-full max-w-xl aspect-[4/5] group">
+          <div className="relative w-full max-w-xl aspect-4/5 group">
             <div className="absolute -top-6 -right-6 w-full h-full border-2 border-dashed border-primary/20 rounded-[3rem] rotate-3 transition-transform duration-500 group-hover:rotate-1" />
             <div className="absolute -bottom-4 -left-4 w-full h-full bg-red-500/5 rounded-[3rem] -rotate-2 border-2 border-dashed border-red-500/20 group-hover:rotate-0 transition-transform duration-500" />
 

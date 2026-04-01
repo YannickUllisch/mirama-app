@@ -32,7 +32,7 @@ const HeroScreenWidget = () => {
             </div>
 
             <nav className="flex-1 px-3 space-y-1">
-              <div className="flex items-center gap-3 px-3 py-2 bg-primary text-white rounded-lg text-[13px] font-black tracking-widest cursor-pointer shadow-sm">
+              <div className="flex items-center gap-3 px-3 py-2 bg-primary text-white rounded-lg text-[13px] font-black tracking-widest cursor-pointer shadow-xs">
                 <LayoutDashboard className="w-4 h-4" /> Dashboard
               </div>
               {[
@@ -77,7 +77,7 @@ const HeroScreenWidget = () => {
                 <input
                   disabled
                   placeholder="Search projects..."
-                  className="w-full h-10 bg-muted/20 border border-border/50 rounded-full pl-10 pr-4 text-[13px] font-medium outline-none"
+                  className="w-full h-10 bg-muted/20 border border-border/50 rounded-full pl-10 pr-4 text-[13px] font-medium outline-hidden"
                 />
               </div>
               <div className="flex items-center gap-5 ml-4">
@@ -112,7 +112,7 @@ const HeroScreenWidget = () => {
 
               <div className="flex gap-8">
                 {/* Recent Projects Section */}
-                <div className="flex-[2] space-y-6">
+                <div className="flex-2 space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
                       Active Projects{' '}

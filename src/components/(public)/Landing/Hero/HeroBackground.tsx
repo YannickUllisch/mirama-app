@@ -10,8 +10,8 @@ const HeroBackground = () => {
             'radial-gradient(circle at center, black 30%, transparent 80%)',
         }}
       />
-      <div className="absolute top-[20%] -left-20 w-[120%] h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent -rotate-12" />
-      <div className="absolute top-[60%] -left-20 w-[120%] h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent -rotate-6" />
+      <div className="absolute top-[20%] -left-20 w-[120%] h-px bg-linear-to-r from-transparent via-primary/40 to-transparent -rotate-12" />
+      <div className="absolute top-[60%] -left-20 w-[120%] h-px bg-linear-to-r from-transparent via-accent/40 to-transparent -rotate-6" />
     </div>
   )
 }

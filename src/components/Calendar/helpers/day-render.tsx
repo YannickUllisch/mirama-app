@@ -63,7 +63,7 @@ export const renderDaysInMonth = ({
             </div>
 
             {/* Events list */}
-            <div className="flex-grow overflow-hidden">
+            <div className="grow overflow-hidden">
               {eventsForDay.length === 0 && (
                 <AddEvent variant="secondary" currentDate={day} />
               )}

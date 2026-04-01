@@ -82,7 +82,7 @@ const ProjectTimeline = ({
   return (
     <div
       className={cn(
-        'bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm',
+        'bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xs',
         className,
       )}
     >
@@ -107,7 +107,7 @@ const ProjectTimeline = ({
             value={selectedProjectId ?? ''}
             onValueChange={setSelectedProjectId}
           >
-            <SelectTrigger className="w-[200px] h-9 text-xs font-medium border-none bg-white dark:bg-neutral-900 shadow-sm">
+            <SelectTrigger className="w-[200px] h-9 text-xs font-medium border-none bg-white dark:bg-neutral-900 shadow-xs">
               <SelectValue placeholder="Switch Project" />
             </SelectTrigger>
             <SelectContent>

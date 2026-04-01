@@ -54,7 +54,7 @@
 //         transition,
 //         transform: CSS.Translate.toString(transform),
 //       }}
-//       className={`relative min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-sm w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
+//       className={`relative min-h-[100px] group overflow-hidden px-2 py-4 rounded-sm shadow-xs w-full outline outline-neutral-300 dark:outline-hover hover:outline-neutral-500 dark:hover:outline-neutral-700 cursor-pointer ${
 //         isDragging && 'opacity-50'
 //       } ${loading ? 'pointer-events-none' : ''}`}
 //     >

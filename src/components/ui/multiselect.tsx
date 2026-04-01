@@ -230,7 +230,7 @@ const MultiSelectorInput = forwardRef<
         setActiveIndex(-1)
       }}
       className={cn(
-        'ml-2 bg-transparent outline-none placeholder:text-muted-foreground text-wrap ewew-full',
+        'ml-2 bg-transparent outline-hidden placeholder:text-muted-foreground text-wrap ewew-full',
         className,
         activeIndex !== -1 && 'caret-transparent',
       )}

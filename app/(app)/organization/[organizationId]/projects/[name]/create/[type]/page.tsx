@@ -259,7 +259,7 @@ const CreateTaskPage = () => {
                         renderValue={(item) =>
                           tags?.find((tag) => tag.id === item)?.title
                         }
-                        className="w-full border-neutral-200 shadow-sm dark:border-neutral-800"
+                        className="w-full border-neutral-200 shadow-xs dark:border-neutral-800"
                       >
                         <MultiSelectorInput placeholder="Add Tag" />
                       </MultiSelectorTrigger>

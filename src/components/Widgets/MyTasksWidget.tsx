@@ -114,7 +114,7 @@ const MyTasksWidget = ({
       </CardHeader>
       <CardContent className="p-0 overflow-auto px-6 py-2 h-[250px] overflow-y-auto w-full">
         {/* Fixed height container */}
-        <div className="flex flex-grow w-full">
+        <div className="flex grow w-full">
           <ScrollArea className=" px-6 py-2 w-full">
             <AnimatePresence initial={false}>
               {visibleTasks.map((task) => (
@@ -129,7 +129,7 @@ const MyTasksWidget = ({
                   <div className="flex items-center space-x-3">
                     {/** biome-ignore lint/a11y/noStaticElementInteractions: <del> */}
                     <div
-                      className="w-5 h-5 flex-shrink-0 relative"
+                      className="w-5 h-5 shrink-0 relative"
                       onClick={() => toggleTaskCompletion(task.id)}
                       onKeyUp={() => toggleTaskCompletion(task.id)}
                     >
@@ -191,7 +191,7 @@ const MyTasksWidget = ({
                         </svg>
                       )}
                     </div>
-                    <div className="flex-grow flex items-center justify-between">
+                    <div className="grow flex items-center justify-between">
                       <div className="flex flex-col">
                         <span
                           className={`text-sm font-medium flex gap-1 items-center ${

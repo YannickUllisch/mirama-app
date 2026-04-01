@@ -50,7 +50,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
 
   return (
     <TooltipProvider>
-      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xs">
         {/* --- Header --- */}
         <div className="flex items-center justify-between p-4 border-b border-neutral-100 dark:border-neutral-900">
           <div className="flex items-center gap-3">
@@ -215,7 +215,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
                                   {m.title}
                                 </div>
                                 <div
-                                  className="w-2.5 h-2.5 rounded-full border-2 border-white dark:border-neutral-950 shadow-sm"
+                                  className="w-2.5 h-2.5 rounded-full border-2 border-white dark:border-neutral-950 shadow-xs"
                                   style={{
                                     backgroundColor: m.colors || '#3b82f6',
                                   }}

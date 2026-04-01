@@ -114,7 +114,7 @@ const TableTab = ({
   }
 
   return (
-    <div className="rounded-sm outline-none">
+    <div className="rounded-sm outline-hidden">
       <DataTable
         tableIdentifier="task_tab_table"
         columns={useTaskColumns({

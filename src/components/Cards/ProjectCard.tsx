@@ -35,7 +35,7 @@ const ProjectCard = ({
 }) => {
   const { data: session } = useSession()
   return (
-    <div className="relative shadow-sm">
+    <div className="relative shadow-xs">
       <div
         className={`h-[103%] -top-0.5 w-[15px] absolute -left-1.5 rounded-full opacity-80 z-0 ${getColorByName(
           project.name,

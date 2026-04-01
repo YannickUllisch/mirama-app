@@ -24,7 +24,7 @@ const SubTasksGroup = ({
         >
           <div className="flex justify-between mr-5">
             <div className="flex gap-2">
-              <CornerDownRight className="w-4 h-4 flex-shrink-0" />
+              <CornerDownRight className="w-4 h-4 shrink-0" />
               <Link
                 href={`/app/projects/${projectName}/edit/${task.id}`}
                 legacyBehavior
@@ -36,7 +36,7 @@ const SubTasksGroup = ({
               {task.title}
             </div>
             <X
-              className="flex-shrink-0 cursor-pointer h-4 w-4 absolute top-1 right-1 invisible group-hover:visible"
+              className="shrink-0 cursor-pointer h-4 w-4 absolute top-1 right-1 invisible group-hover:visible"
               onClick={() =>
                 updateResourceById(
                   'task',

@@ -236,7 +236,7 @@ export const EditableCell = ({
           variant="ghost"
           onClick={() => setIsEditing(true)}
           disabled={isLoading || disabled}
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 disabled:group-hover:opacity-0"
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 group-hover:disabled:opacity-0"
         >
           <Edit2 className="h-3 w-3" />
         </Button>

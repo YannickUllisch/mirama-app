@@ -46,7 +46,7 @@ const AppLayout = async ({
                   <OrganizationSidebar
                     organizationId={organizationId}
                     session={session}
-                    className="flex-shrink-0"
+                    className="shrink-0"
                   />
 
                   <main className="flex-1 overflow-auto bg-card rounded-lg">

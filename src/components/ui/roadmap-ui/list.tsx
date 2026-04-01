@@ -136,7 +136,7 @@ export const ListItem = ({
   return (
     <div
       className={cn(
-        'flex cursor-grab items-center gap-2 rounded-md border bg-inherit p-2 shadow-sm',
+        'flex cursor-grab items-center gap-2 rounded-md border bg-inherit p-2 shadow-xs',
         isDragging && 'cursor-grabbing',
         className,
       )}

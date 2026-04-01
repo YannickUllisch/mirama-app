@@ -48,12 +48,12 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
         return (
           <div
             key={project.id}
-            className="group relative flex flex-col justify-between p-5 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-tertiary/40 transition-all duration-300 shadow-sm"
+            className="group relative flex flex-col justify-between p-5 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-tertiary/40 transition-all duration-300 shadow-xs"
           >
             {/* Top Row: Context & Action */}
             <div className="flex justify-between items-start mb-5">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 flex items-center justify-center text-tertiary text-base font-black shadow-sm group-hover:scale-105 transition-transform">
+                <div className="h-10 w-10 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 flex items-center justify-center text-tertiary text-base font-black shadow-xs group-hover:scale-105 transition-transform">
                   {project.name[0].toUpperCase()}
                 </div>
                 <div>
@@ -82,7 +82,7 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="p-1 text-neutral-300 hover:text-neutral-600 dark:hover:text-neutral-100 transition-colors outline-none"
+                    className="p-1 text-neutral-300 hover:text-neutral-600 dark:hover:text-neutral-100 transition-colors outline-hidden"
                   >
                     <MoreHorizontal className="w-4 h-4" />
                   </button>

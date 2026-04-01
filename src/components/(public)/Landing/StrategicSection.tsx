@@ -38,7 +38,7 @@ export const StrategicOverview = () => {
           WORKFLOW_ENGINE_V1 / 0x2289
         </div>
 
-        <div className="absolute -top-24 -left-20 w-[140%] h-[1px] bg-white/10 -rotate-3" />
+        <div className="absolute -top-24 -left-20 w-[140%] h-px bg-white/10 -rotate-3" />
         <div className="absolute bottom-40 -left-20 w-[140%] h-[2px] bg-white/5 rotate-6" />
       </div>
 
@@ -76,7 +76,7 @@ export const StrategicOverview = () => {
                 {specs.map((spec) => (
                   <div
                     key={spec.label}
-                    className="p-4 border border-white/10 bg-white/5 backdrop-blur-sm group hover:bg-white/10 transition-colors"
+                    className="p-4 border border-white/10 bg-white/5 backdrop-blur-xs group hover:bg-white/10 transition-colors"
                   >
                     <div className="text-white/40 mb-3 group-hover:text-white transition-colors">
                       {spec.icon}

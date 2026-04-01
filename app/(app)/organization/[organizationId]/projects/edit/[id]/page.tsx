@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, StatusType } from '@prisma/client'
@@ -69,7 +70,6 @@ import { use, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { v4 } from 'uuid'
-import Loading from '@/app/loading'
 
 const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
   // Dynamic Page Params

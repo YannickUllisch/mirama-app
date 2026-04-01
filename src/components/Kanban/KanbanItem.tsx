@@ -83,7 +83,7 @@ const KanbanItem: FC<KanbanItemType> = ({
         )}
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-xs">
             <Loader2 className="animate-spin" />
           </div>
         )}
@@ -94,7 +94,7 @@ const KanbanItem: FC<KanbanItemType> = ({
               <Button
                 onClick={() => setIsOpen((open) => !open)}
                 variant={'link'}
-                className="block w-full text-text h-full text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none break-words whitespace-normal"
+                className="block w-full text-text h-full text-left text-sm font-medium hover:underline p-0 bg-transparent shadow-none wrap-break-word whitespace-normal"
               >
                 <div className="flex items-center  overflow-hidden text-ellipsis gap-1">
                   {task?.title}

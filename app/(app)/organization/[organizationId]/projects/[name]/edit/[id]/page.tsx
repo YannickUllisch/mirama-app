@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/app/loading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
@@ -54,7 +55,6 @@ import {
 import { notFound, useRouter } from 'next/navigation'
 import { use, useContext, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import Loading from '@/app/loading'
 
 const EditTaskPage = ({
   params,
@@ -283,7 +283,7 @@ const EditTaskPage = ({
                         renderValue={(item) =>
                           tags?.find((tag) => tag.id === item)?.title
                         }
-                        className="w-full border-neutral-200 shadow-sm dark:border-neutral-800"
+                        className="w-full border-neutral-200 shadow-xs dark:border-neutral-800"
                       >
                         <MultiSelectorInput placeholder="Add Tag" />
                       </MultiSelectorTrigger>

@@ -36,11 +36,11 @@ const TenantLayout = async ({
                   <TenantSidebar
                     tenantId={tenantId}
                     session={session}
-                    className="flex-shrink-0"
+                    className="shrink-0"
                   />
 
                   <main className="flex-1 overflow-auto bg-card rounded-lg">
-                    <div className="p-5 min-h-[100vh]">{children}</div>
+                    <div className="p-5 min-h-screen">{children}</div>
                   </main>
                 </div>
               </div>

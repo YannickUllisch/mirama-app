@@ -130,9 +130,9 @@ const FeatureItem = ({
 }) => (
   <div className="flex items-center gap-2 text-sm">
     {enabled ? (
-      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
     ) : (
-      <XCircle className="w-4 h-4 text-neutral-300 dark:text-neutral-600 flex-shrink-0" />
+      <XCircle className="w-4 h-4 text-neutral-300 dark:text-neutral-600 shrink-0" />
     )}
     <span
       className={
@@ -247,7 +247,7 @@ const BillingSkeleton = () => (
 
 const NoPlanBanner = () => (
   <div className="flex items-start gap-3 p-5 rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/20">
-    <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
     <div>
       <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
         No active subscription

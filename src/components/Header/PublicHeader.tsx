@@ -7,7 +7,7 @@ import MiramaIcon from '../MiramaIcon'
 const PublicHeader = async ({ session }: { session: Session | null }) => {
   return (
     <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-border/40">
-      <div className="w-full h-1 bg-gradient-to-r from-primary via-accent to-transparent opacity-20" />
+      <div className="w-full h-1 bg-linear-to-r from-primary via-accent to-transparent opacity-20" />
 
       <div className="w-full px-8 lg:px-16 h-20 flex items-center justify-between">
         <div className="flex items-center gap-10">

@@ -176,12 +176,12 @@ const ListTab = ({
         setOpen={setIsTaskSheetOpen}
         taskId={selectedTaskId ?? ''}
       />
-      <div className="flex flex-col flex-grow min-h-0 rounded-xl border">
+      <div className="flex flex-col grow min-h-0 rounded-xl border">
         <ListProvider onDragEnd={handleDragEnd}>
           {Object.keys(TaskStatusType).map((status) => (
             <div
               key={`status-type-${status}`}
-              className="flex flex-col flex-grow overflow-y-auto"
+              className="flex flex-col grow overflow-y-auto"
             >
               <ListGroup key={status} id={status}>
                 <ListHeader
@@ -310,7 +310,7 @@ const ListTab = ({
                     {newItem?.status === status && (
                       <div
                         className={
-                          'flex cursor-grab justify-between items-center gap-2 rounded-md border bg-inherit p-2 shadow-sm'
+                          'flex cursor-grab justify-between items-center gap-2 rounded-md border bg-inherit p-2 shadow-xs'
                         }
                       >
                         <div className="gap-2 items-center flex">

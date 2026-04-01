@@ -54,7 +54,7 @@ const AboutUsPage = () => {
       {/* --- PHASE 1: THE FOUNDATION (RED THEME) --- */}
       <section className="py-24 relative px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="relative overflow-hidden bg-red-600 rounded-[2rem] p-8 md:p-16 shadow-[20px_20px_0px_0px_rgba(220,38,38,0.1)] border-4 border-red-700">
+          <div className="relative overflow-hidden bg-red-600 rounded-4xl p-8 md:p-16 shadow-[20px_20px_0px_0px_rgba(220,38,38,0.1)] border-4 border-red-700">
             <div
               className="absolute inset-0 opacity-10 pointer-events-none"
               style={{
@@ -112,7 +112,7 @@ const AboutUsPage = () => {
       {/* --- PHASE 2: IN DEVELOPMENT (BLUE THEME) --- */}
       <section className="py-24 relative px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="relative group overflow-hidden bg-blue-600 rounded-[2rem] p-8 md:p-16 shadow-[20px_20px_0px_0px_rgba(59,130,246,0.1)] border-4 border-blue-700">
+          <div className="relative group overflow-hidden bg-blue-600 rounded-4xl p-8 md:p-16 shadow-[20px_20px_0px_0px_rgba(59,130,246,0.1)] border-4 border-blue-700">
             <div
               className="absolute inset-0 opacity-10 pointer-events-none"
               style={{
