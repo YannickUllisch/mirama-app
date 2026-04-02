@@ -17,7 +17,7 @@ export const CreatePrismaAdapter = () => {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: TenantRole.USER,
+          role: TenantRole.ADMIN,
           emailVerified: new Date(),
         },
       })

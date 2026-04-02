@@ -1,4 +1,4 @@
-import { OrganizationRoleSchema } from '@server/old/enumSchemas'
+import { OrganizationRoleSchema } from '@server/shared/enumSchemas'
 import { z } from 'zod'
 
 export const CreateInvitationSchema = z.object({

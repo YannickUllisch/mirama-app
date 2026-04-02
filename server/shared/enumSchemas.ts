@@ -9,14 +9,14 @@ import {
 } from '@prisma/client'
 import z from 'zod'
 
-export const OrganizationRoleSchema = z.nativeEnum(OrganizationRole)
-export const TenantRoleSchema = z.nativeEnum(TenantRole)
+export const OrganizationRoleSchema = z.enum(OrganizationRole)
+export const TenantRoleSchema = z.enum(TenantRole)
 
-export const PriorityTypeSchema = z.nativeEnum(PrismaPriorityType)
-export const StatusTypeSchema = z.nativeEnum(PrismaStatusType)
-export const TaskStatusTypeSchema = z.nativeEnum(PrismaTaskStatusType)
-export const TaskTypeSchema = z.nativeEnum(PrismaTaskType)
-export const FavouriteTypeSchema = z.nativeEnum(PrismaFavouriteType)
+export const PriorityTypeSchema = z.enum(PrismaPriorityType)
+export const StatusTypeSchema = z.enum(PrismaStatusType)
+export const TaskStatusTypeSchema = z.enum(PrismaTaskStatusType)
+export const TaskTypeSchema = z.enum(PrismaTaskType)
+export const FavouriteTypeSchema = z.enum(PrismaFavouriteType)
 
 export type OrganizationRoleType = z.infer<typeof OrganizationRoleSchema>
 export type TenantRoleType = z.infer<typeof TenantRoleSchema>

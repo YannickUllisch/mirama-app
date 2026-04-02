@@ -1,5 +1,5 @@
 import type { ProjectResponse } from '@server/modules/project/features/response'
-import type { MilestoneProjectResponseInput } from '@server/old/milestoneSchema'
+import type { MilestoneProjectResponseInput } from '@server/modules/project/milestone/milestoneSchema'
 import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'

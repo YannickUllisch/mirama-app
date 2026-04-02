@@ -17,6 +17,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const project = {
+  fetchAllTenant: {
+    useQuery: () =>
+      useQuery<ProjectResponse[]>({
+        queryKey: ['tenantProjects'],
+        queryFn: fetchProjectsFn,
+      }),
+  },
+
   fetchAll: {
     useQuery: () =>
       useQuery<ProjectResponse[]>({

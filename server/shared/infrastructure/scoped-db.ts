@@ -3,6 +3,10 @@ import db from '@db'
 export type ScopedDb = ReturnType<typeof getScopedDb>
 
 const TENANT_SCOPED_MODELS = new Set(['Organization'])
+
+// Models where tenantId=null means system-level (shared across all tenants).
+const TENANT_INCLUSIVE_MODELS = new Set(['Role', 'Policy'])
+
 const ORG_SCOPED_MODELS = new Set([
   'Project',
   'Task',
@@ -49,9 +53,11 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
       $allModels: {
         async $allOperations({ model, operation, args, query }) {
           const isTenantScoped = TENANT_SCOPED_MODELS.has(model)
+          const isTenantInclusive = TENANT_INCLUSIVE_MODELS.has(model)
           const isOrgScoped = ORG_SCOPED_MODELS.has(model)
 
-          if (!isTenantScoped && !isOrgScoped) return query(args)
+          if (!isTenantScoped && !isTenantInclusive && !isOrgScoped)
+            return query(args)
 
           // Guard: prevent operations without required context
           // For org-scoped CREATEs, allow if organizationId is in the data
@@ -78,7 +84,7 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
 
           // Build the context filter that will be auto-injected
           // Tenant-scoped models get tenantId and org-scoped models get organizationId only
-          const contextFilter: Record<string, string> = {}
+          const contextFilter: Record<string, unknown> = {}
           if (isTenantScoped) {
             contextFilter.tenantId = tenantId
           }
@@ -92,7 +98,15 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
             WRITE_WHERE_OPERATIONS.has(operation)
           ) {
             const queryArgs = args as { where?: Record<string, unknown> }
-            queryArgs.where = { ...queryArgs.where, ...contextFilter }
+            if (isTenantInclusive) {
+              // Include both tenant-owned and system-level (tenantId = null) records
+              queryArgs.where = {
+                ...queryArgs.where,
+                OR: [{ tenantId }, { tenantId: null }],
+              }
+            } else {
+              queryArgs.where = { ...queryArgs.where, ...contextFilter }
+            }
           }
 
           if (CREATE_OPERATIONS.has(operation)) {
@@ -104,7 +118,7 @@ export const getScopedDb = (tenantId: string, organizationId?: string) => {
               const newItem = { ...item }
 
               // Inject if the key is missing or null
-              if (isTenantScoped && !newItem.tenantId) {
+              if ((isTenantScoped || isTenantInclusive) && !newItem.tenantId) {
                 newItem.tenantId = tenantId
               }
               // Only inject if organizationId is missing AND we actually have a scope ID

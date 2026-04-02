@@ -1,19 +1,21 @@
-import {
-  createOrganizationFn,
-  fetchOrganizationByIdFn,
-  fetchOrganizationsFn,
-  updateOrganizationFn,
-} from '@hooks/api/organization/api'
-import { optimisticList } from '@hooks/query/helpers'
-import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
-import { useTenantResource } from '@src/core/tenant/tenantResourceContext'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreateOrganizationRequest } from '@/server/modules/account/organizations/features/create-organization/schema'
 import type {
   OrganizationListResponse,
   OrganizationResponse,
 } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
+import {
+  createOrganizationFn,
+  fetchOrganizationByIdFn,
+  fetchOrganizationsFn,
+  fetchOrgProjectsFn,
+  updateOrganizationFn,
+  type OrgProjectSummary,
+} from '@hooks/api/organization/api'
+import { optimisticList } from '@hooks/query/helpers'
+import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
+import { useTenantResource } from '@src/core/tenant/tenantResourceContext'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const organizationKeys = {
   // ['organizations']
@@ -101,6 +103,14 @@ const organization = {
         ),
       })
     },
+  },
+  fetchProjectsByOrg: {
+    useQuery: (organizationId: string) =>
+      useQuery<OrgProjectSummary[]>({
+        queryKey: ['orgProjects', organizationId],
+        queryFn: () => fetchOrgProjectsFn(organizationId),
+        enabled: !!organizationId,
+      }),
   },
 }
 

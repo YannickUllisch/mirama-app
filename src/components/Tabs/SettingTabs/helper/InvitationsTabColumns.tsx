@@ -2,7 +2,7 @@
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { OrganizationRole } from '@prisma/client'
-import type { OrganizationRoleType } from '@server/old/enumSchemas'
+import type { OrganizationRoleType } from '@server/shared/enumSchemas'
 import {
   EditableCell,
   EditableCellType,

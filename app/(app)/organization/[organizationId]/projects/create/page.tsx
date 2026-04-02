@@ -7,7 +7,7 @@ import {
   type CreateProjectRequest,
   CreateProjectSchema,
 } from '@server/modules/project/features/create-project/schema'
-import { AttachNewMilestoneToProjectSchema } from '@server/old/milestoneSchema'
+import { AttachNewMilestoneToProjectSchema } from '@server/modules/project/milestone/milestoneSchema'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'
 import PageHeader from '@src/components/PageHeader'

@@ -28,5 +28,6 @@ export const UpdateMemberCommand =
       ...(input.name && { name: input.name }),
       ...(input.email && { email: input.email }),
       ...(input.organizationRole && { role: input.organizationRole }),
+      ...(input.iamRoleId && { iamRoleId: input.iamRoleId }),
     })
   }

@@ -69,10 +69,7 @@ const TenantPage = () => {
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton
-                key={`skeleton-${i}`}
-                className="h-[148px] rounded-xl"
-              />
+              <Skeleton key={`skeleton-${i}`} className="h-37 rounded-xl" />
             ))}
           </div>
         ) : organizations && organizations.length > 0 ? (
@@ -102,7 +99,6 @@ const TenantPage = () => {
                       </div>
                     </div>
 
-                    {/* Actions menu — stop propagation so card click doesn't fire */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button

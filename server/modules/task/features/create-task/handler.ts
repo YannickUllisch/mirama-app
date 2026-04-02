@@ -1,5 +1,4 @@
 import type { AppContext } from '@/server/shared/infrastructure/types'
-import { generateTaskId } from '@/src/lib/helpers/TaskCodeGenerator'
 import { randomUUID } from 'node:crypto'
 import { TaskEntity } from '../../domain/task.entity'
 import { TaskRepository } from '../../infrastructure/task.repo'
@@ -38,7 +37,7 @@ export const CreateTaskCommand =
     const task = await repo.create({
       ...rest,
       id: newTaskId,
-      taskCode: generateTaskId(project.name, newTaskId),
+      taskCode: TaskEntity.generateTaskId(project.name, newTaskId),
       parentId,
       tags: {
         connect: tags.map((id) => ({ id })),

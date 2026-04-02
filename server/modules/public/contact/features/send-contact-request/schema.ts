@@ -1,4 +1,4 @@
-import z from 'zod'
+import z from "zod"
 
 export const ContactRequestSchema = z.object({
   firstName: z.string().min(2, { message: 'Please define your First Name' }),
@@ -18,5 +18,4 @@ export const ContactRequestSchema = z.object({
     }),
 })
 
-// TypeScript types inferred from schemas
 export type ContactRequestType = z.infer<typeof ContactRequestSchema>

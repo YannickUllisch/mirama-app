@@ -28,8 +28,6 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
 const statusConfig: Record<
   string,
   { label: string; variant: string; icon: React.ReactNode }

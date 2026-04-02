@@ -5,6 +5,7 @@ export type MemberResponse = {
   name: string
   email: string
   organizationRole: string
+  iamRoleId: string
 }
 
 export const toMemberResponse = (member: Member): MemberResponse => ({
@@ -12,4 +13,5 @@ export const toMemberResponse = (member: Member): MemberResponse => ({
   name: member.name,
   email: member.email,
   organizationRole: member.role,
+  iamRoleId: member.iamRoleId,
 })

@@ -1,7 +1,9 @@
-import { api } from '@src/lib/api'
 import type { CreateOrganizationRequest } from '@/server/modules/account/organizations/features/create-organization/schema'
 import type { OrganizationListResponse } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
+import { api } from '@src/lib/api'
+
+export type OrgProjectSummary = { id: string; name: string }
 
 export const fetchOrganizationsFn = async (
   tenantId: string,
@@ -20,12 +22,14 @@ export const fetchOrganizationByIdFn = async (
   return data.data
 }
 
-export const createOrganizationFn = async (
-  tenantId: string,
-  payload: CreateOrganizationRequest,
-) => {
-  const { data } = await api.post(`tenant/${tenantId}/organization`, payload)
-  return data.data
+export const fetchOrgProjectsFn = async (
+  organizationId: string,
+): Promise<OrgProjectSummary[]> => {
+  const { data } = await api.get(`organization/${organizationId}/project`)
+  return (data.data as { id: string; name: string }[]).map(({ id, name }) => ({
+    id,
+    name,
+  }))
 }
 
 export const updateOrganizationFn = async (
@@ -37,5 +41,13 @@ export const updateOrganizationFn = async (
     `tenant/${tenantId}/organization/${id}`,
     payload,
   )
+  return data.data
+}
+
+export const createOrganizationFn = async (
+  tenantId: string,
+  payload: CreateOrganizationRequest,
+) => {
+  const { data } = await api.post(`tenant/${tenantId}/organization`, payload)
   return data.data
 }
