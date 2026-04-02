@@ -25,8 +25,7 @@ export const SectionDivider = ({
       : 'M0 120L1200 120 1200 0 0 120z'
 
   // Rotation for the decorative accent line
-  const accentRotation =
-    direction === 'right' ? '-rotate-6' : 'rotate-6'
+  const accentRotation = direction === 'right' ? '-rotate-6' : 'rotate-6'
   const accentOrigin = direction === 'right' ? 'origin-right' : 'origin-left'
 
   return (

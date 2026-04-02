@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ContactRequestSchema,
   type ContactRequestType,
-} from '@server/old/contactSchema'
+} from '@server/modules/public/contact/features/send-contact-request/schema'
 import { Button } from '@src/components/ui/button'
 import {
   Form,

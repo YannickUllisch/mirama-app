@@ -20,7 +20,8 @@ const HeroTextElements = () => {
         </div>
 
         <p className="max-w-md mx-auto lg:mx-0 text-base md:text-lg text-muted-foreground font-light leading-relaxed italic border-l-4 border-accent pl-6 lg:pl-8 bg-linear-to-r from-accent/5 to-transparent py-4 text-left">
-          A streamlined project engine built for growing modern teams. Map out your entire strategy and ship every feature with complete confidence.
+          A streamlined project engine built for growing modern teams. Map out
+          your entire strategy and ship every feature with complete confidence.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">

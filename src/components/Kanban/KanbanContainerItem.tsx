@@ -49,9 +49,7 @@ export const ContainerHeader: FC<ContainerHeaderProps> = ({
             <div className="min-w-0 flex-1">
               {taskType ? (
                 <div className="flex items-center gap-1.5">
-                  <div className="shrink-0">
-                    {getTaskTypeIcon(taskType)}
-                  </div>
+                  <div className="shrink-0">{getTaskTypeIcon(taskType)}</div>
                   <span className="font-medium truncate text-sm">{title}</span>
                 </div>
               ) : (
@@ -71,9 +69,7 @@ export const ContainerHeader: FC<ContainerHeaderProps> = ({
             <div className="text-xs text-muted-foreground truncate">
               Total Tasks
             </div>
-            <div className="text-sm font-medium ml-2 shrink-0">
-              {itemCount}
-            </div>
+            <div className="text-sm font-medium ml-2 shrink-0">{itemCount}</div>
           </div>
         </CardContent>
       </Card>
