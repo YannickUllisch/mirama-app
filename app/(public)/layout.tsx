@@ -1,6 +1,6 @@
 'use server'
 import { auth } from '@auth'
-import { Footer } from '@src/components/(public)/Footer/Footer'
+import { Footer } from '@src/modules/shared/components/Footer/Footer'
 
 import PublicHeader from '@src/components/Header/PublicHeader'
 

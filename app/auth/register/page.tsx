@@ -1,14 +1,14 @@
+import Loading from '@/app/loading'
 import image from '@public/test.png'
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import RegisterForm from '@src/components/auth/RegisterForm'
 import { AuthSocial } from '@src/components/auth/Socials'
 import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import Loading from '@/app/loading'
 
 const RegisterPage = () => {
   return (

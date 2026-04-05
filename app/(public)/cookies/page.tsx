@@ -1,5 +1,5 @@
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import HoverLink from '@src/components/HoverLink'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { BarChart3, Globe, Info, Settings2, ShieldCheck } from 'lucide-react'

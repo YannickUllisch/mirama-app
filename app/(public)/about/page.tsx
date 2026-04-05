@@ -1,8 +1,8 @@
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import HoverLink from '@src/components/HoverLink'
 import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
 import { Separator } from '@src/components/ui/separator'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import {
   Activity,
   ArrowRight,

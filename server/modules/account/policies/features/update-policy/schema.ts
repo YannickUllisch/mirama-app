@@ -9,6 +9,7 @@ const StatementSchema = z.object({
 export const UpdatePolicySchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(200).optional(),
+  scope: z.enum(['ORGANIZATION', 'PROJECT']).optional(),
   statements: z.array(StatementSchema).min(1).optional(),
 })
 

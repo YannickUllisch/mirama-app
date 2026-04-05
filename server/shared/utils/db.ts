@@ -1,5 +1,5 @@
+import { PrismaClient } from '@/prisma/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import SuperJSON from 'superjson'
 import { RedisAdapter } from './redis/Adapters/redis-adapter'

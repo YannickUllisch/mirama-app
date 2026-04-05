@@ -7,7 +7,7 @@ import {
   fetchInvitationsFn,
   updateInvitationFn,
 } from '@hooks/api/invitation/api'
-import { useOrganizationResource } from '@src/core/organization/organizationResourceContext'
+import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
 import { optimisticList } from '../../query/helpers'

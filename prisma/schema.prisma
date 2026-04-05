@@ -124,15 +124,23 @@ model UsageMetric {
   @@index([tenantId, type])
 }
 
+enum AccessScope {
+  ORGANIZATION
+  PROJECT
+}
+
 // IAM Role and Policy System for Tenant
 model Role {
   id          String  @id @default(cuid())
   name        String
   description String?
-  tenantId    String? // NULL = System-level default role (e.g. Viewer, Owner)
 
+  tenantId    String? // NULL = System-level default role (e.g. Viewer, Owner)
   tenant   Tenant?  @relation(fields: [tenantId], references: [id])
+
   policies Policy[] @relation("RolePolicies")
+
+  scope     AccessScope @default(ORGANIZATION)
 
   organizationMembers Member[]
   projectMembers      ProjectMember[]
@@ -145,6 +153,8 @@ model Policy {
   description String?
   isManaged   Boolean @default(false) // TRUE for system-protected policies
   tenantId    String?
+
+  scope     AccessScope @default(ORGANIZATION)
 
   tenant     Tenant?           @relation(fields: [tenantId], references: [id])
   roles      Role[]            @relation("RolePolicies")
@@ -185,6 +195,7 @@ model Organization {
   tags        Tag[]
 }
 
+// TODO: delete after permission setup
 enum OrganizationRole {
   OWNER
   ADMIN

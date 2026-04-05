@@ -1,7 +1,7 @@
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import SetPasswordForm from '@src/components/auth/SetPasswordForm'
 import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import { ArrowLeft } from 'lucide-react'
 
 const SetPasswordPage = () => {

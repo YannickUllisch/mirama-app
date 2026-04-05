@@ -5,7 +5,7 @@ import { SidebarProvider } from '@src/components/ui/sidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
-import { OrganizationResourceProvider } from '@src/core/organization/organizationResourceContext'
+import { OrganizationResourceProvider } from '@src/modules/organization/organizationResourceContext'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 

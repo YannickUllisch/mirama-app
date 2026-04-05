@@ -50,7 +50,7 @@ const ColorPicker = forwardRef<
 
       <PopoverContent
         sideOffset={8}
-        className="w-[240px] p-3 rounded-2xl border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md shadow-2xl flex flex-col gap-3"
+        className="w-60 p-3 rounded-2xl border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md shadow-2xl flex flex-col gap-3"
       >
         <style
           // biome-ignore lint/security/noDangerouslySetInnerHtml: <Used for styling>

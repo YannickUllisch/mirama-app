@@ -1,4 +1,4 @@
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import { Badge } from '@ui/badge'
 import { Activity, Database, Eye, Share2, ShieldCheck } from 'lucide-react'
 

@@ -1,7 +1,7 @@
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import VerifyForm from '@src/components/auth/VerifyForm'
 import HoverLink from '@src/components/HoverLink'
 import MiramaIcon from '@src/components/MiramaIcon'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import { ArrowLeft } from 'lucide-react'
 
 const VerifyPage = () => {

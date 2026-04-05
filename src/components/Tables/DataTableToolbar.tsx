@@ -52,7 +52,7 @@ const DataTableToolbar = <TData extends TableData<TData>>({
               onClick={() => setShowFilters((prev) => !prev)}
               className={cn(
                 'group relative flex items-center gap-2 px-3 h-9 rounded-xl transition-all duration-200 outline-hidden select-none',
-                'bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xs shadow-xs',
+                'bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xs',
 
                 showFilters
                   ? 'border-primary/40 bg-primary/5 text-primary'

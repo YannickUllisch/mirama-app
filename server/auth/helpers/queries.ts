@@ -1,5 +1,5 @@
+import { PrismaClient } from '@/prisma/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
 
 const adapter = new PrismaPg({

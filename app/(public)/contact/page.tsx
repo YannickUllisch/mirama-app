@@ -1,7 +1,7 @@
 import contactImage from '@public/test2.png'
-import GridDecoration from '@src/components/(public)/Background/GridDecoration'
 import ContactForm from '@src/components/auth/ContactForm'
 import { Badge } from '@src/components/ui/badge'
+import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import Image from 'next/image'
 
 const ContactPage = () => {

@@ -1,5 +1,5 @@
 'use client'
-import { TenantSidebarMenu } from '@src/core/tenant/tenantSidebarMenu'
+import { TenantSidebarMenu } from '@src/modules/tenant/tenantSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import type { Session } from 'next-auth'
 import AppSidebar from './AppSidebar'

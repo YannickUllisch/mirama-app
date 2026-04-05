@@ -1,5 +1,5 @@
 'use client'
-import { OrganizationSidebarMenu } from '@src/core/organization/organizationSidebarMenu'
+import { OrganizationSidebarMenu } from '@src/modules/organization/organizationSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import type { Session } from 'next-auth'
 import AppSidebar from './AppSidebar'
