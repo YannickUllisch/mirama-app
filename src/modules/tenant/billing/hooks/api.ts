@@ -1,4 +1,4 @@
-import type { BillingResponse } from '@/server/modules/billing/features/response'
+import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
 import { api } from '@src/lib/api'
 
 export const fetchBillingFn = async (

@@ -1,13 +1,13 @@
-// app/(app)/tenant/[tenantId]/(dashboard)/OrganizationGrid.tsx
+// app/(app)/tenant/[tenantId]/(dashboard)/_components/OrganizationGrid.tsx
 'use client'
 import apiRequest from '@hooks/query'
 import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
-import CreateOrganizationDialog from '@src/modules/tenant/components/dialogs/CreateOrganizationDialog'
-import EditOrganizationDialog from '@src/modules/tenant/components/dialogs/EditOrganizationDialog'
-import { Building2 } from 'lucide-react'
+import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
+import { Button } from '@ui/button'
+import { Building2, Plus } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { toast } from 'sonner'
 import OrganizationCard from './OrganizationCard'
 import OrganizationGridSkeleton from './OrganizationGridSkeleton'
@@ -15,9 +15,7 @@ import OrganizationGridSkeleton from './OrganizationGridSkeleton'
 const OrganizationGrid = () => {
   const router = useRouter()
   const { update: updateSession } = useSession()
-  const [editingOrg, setEditingOrg] = useState<OrganizationListResponse | null>(
-    null,
-  )
+  const { activeTenantId } = useTenantResource()
 
   const { data: organizations, isLoading } =
     apiRequest.organization.fetchAll.useQuery()
@@ -29,6 +27,10 @@ const OrganizationGrid = () => {
     } else {
       toast.error('You are not a member of this organization')
     }
+  }
+
+  const handleEditOrg = (org: OrganizationListResponse) => {
+    router.push(`/tenant/${activeTenantId}/organization/${org.id}/edit`)
   }
 
   if (isLoading) {
@@ -47,32 +49,27 @@ const OrganizationGrid = () => {
         <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 mb-5">
           Create your first organization to get started.
         </p>
-        <CreateOrganizationDialog />
+        <Button variant="tertiary" size="sm" asChild>
+          <Link href={`/tenant/${activeTenantId}/organization/create`}>
+            <Plus className="w-4 h-4" />
+            New Organization
+          </Link>
+        </Button>
       </div>
     )
   }
 
   return (
-    <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {organizations.map((org) => (
-          <OrganizationCard
-            key={org.id}
-            org={org}
-            onEnter={handleEnterOrg}
-            onEdit={setEditingOrg}
-          />
-        ))}
-      </div>
-
-      {editingOrg && (
-        <EditOrganizationDialog
-          org={editingOrg}
-          open={!!editingOrg}
-          onOpenChange={(open) => !open && setEditingOrg(null)}
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {organizations.map((org) => (
+        <OrganizationCard
+          key={org.id}
+          org={org}
+          onEnter={handleEnterOrg}
+          onEdit={handleEditOrg}
         />
-      )}
-    </>
+      ))}
+    </div>
   )
 }
 

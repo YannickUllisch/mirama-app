@@ -6,6 +6,7 @@ import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
 import { OrganizationResourceProvider } from '@src/modules/organization/organizationResourceContext'
+import PermissionGate from '@src/modules/shared/permissions/PermissionGate'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -37,24 +38,26 @@ const AppLayout = async ({
             activeTenantId: session?.user.tenantId ?? '',
           }}
         >
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <SidebarProvider>
-              <div className="w-full flex flex-col">
-                <AppHeader />
+          <PermissionGate organizationId={organizationId}>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+              <SidebarProvider>
+                <div className="w-full flex flex-col">
+                  <AppHeader />
 
-                <div className="flex flex-1 pt-14">
-                  <OrganizationSidebar
-                    organizationId={organizationId}
-                    className="shrink-0"
-                  />
+                  <div className="flex flex-1 pt-14">
+                    <OrganizationSidebar
+                      organizationId={organizationId}
+                      className="shrink-0"
+                    />
 
-                  <main className="flex-1 overflow-auto bg-card rounded-lg">
-                    <div className="p-5">{children}</div>
-                  </main>
+                    <main className="flex-1 overflow-auto bg-card rounded-lg">
+                      <div className="p-5">{children}</div>
+                    </main>
+                  </div>
                 </div>
-              </div>
-            </SidebarProvider>
-          </ThemeProvider>
+              </SidebarProvider>
+            </ThemeProvider>
+          </PermissionGate>
         </OrganizationResourceProvider>
       </QueryClientWrapper>
     </SessionWrapper>

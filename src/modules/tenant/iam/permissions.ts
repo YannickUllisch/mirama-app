@@ -65,6 +65,20 @@ export const RESOURCE_PERMISSIONS: ResourcePermission[] = [
     allowedScopes: ['ORGANIZATION'],
   },
   {
+    resource: 'comment',
+    label: 'Comments',
+    description: 'Create and manage comments on tasks.',
+    actions: ['read', 'create', 'update', 'delete'] as const,
+    allowedScopes: ['ORGANIZATION', 'PROJECT'],
+  },
+  {
+    resource: 'expense',
+    label: 'Expenses',
+    description: 'Track and manage project expenses.',
+    actions: ['read', 'create', 'update', 'delete'] as const,
+    allowedScopes: ['ORGANIZATION', 'PROJECT'],
+  },
+  {
     resource: 'organization',
     label: 'Organization',
     description: 'Organization-level settings, billing, and configuration.',

@@ -1,12 +1,15 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
-import "dotenv/config";
+import { config } from "dotenv";
+import 'dotenv/config';
 import { Pool } from "pg";
+import { env } from "prisma/config";
+import { PrismaClient } from "./generated/client";
 import { DEFAULT_PLANS } from "./seed-data/seed-plans";
 import { DEFAULT_SYSTEM_POLICIES } from "./seed-data/seed-policies";
 import { DEFAULT_SYSTEM_ROLES } from "./seed-data/seed-roles";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+config()
+const pool = new Pool({ connectionString: env('POSTGRES_PRISMA_URL'), });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
@@ -22,6 +25,7 @@ const main = async () => {
           name: policy.name,
           description: policy.description,
           isManaged: policy.isManaged,
+          scope: policy.scope,
           tenantId: null,
           statements: {
             create: policy.statements.map((s) => ({
@@ -49,6 +53,7 @@ const main = async () => {
       data: {
         name: role.name,
         description: role.description,
+        scope: role.scope,
         tenantId: null,
         policies: {
           connect: role.policyNames

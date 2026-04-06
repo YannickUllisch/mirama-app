@@ -92,7 +92,7 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => (
       <CardDescription className="flex items-center gap-1.5 text-xs mt-1">
         <MapPin className="w-3 h-3 shrink-0" />
         <span className="truncate">
-          {org.city}, {org.state} {org.zipCode}
+          {org.street} {org.zipCode} {org.city}, {org.country}
         </span>
       </CardDescription>
     </CardHeader>

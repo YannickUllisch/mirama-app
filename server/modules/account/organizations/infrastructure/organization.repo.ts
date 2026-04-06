@@ -25,7 +25,7 @@ export const OrganizationRepository = (db: ScopedDb) => ({
     slug: string
     street: string
     city: string
-    state: string
+    country: string
     zipCode: string
   }) {
     return await db.organization.create({
@@ -43,7 +43,7 @@ export const OrganizationRepository = (db: ScopedDb) => ({
       slug?: string
       street?: string
       city?: string
-      state?: string
+      country?: string
       zipCode?: string
     },
   ) {

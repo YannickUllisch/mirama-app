@@ -2,6 +2,7 @@ import { auth } from '@auth'
 import db from '@db'
 import { ProjectViewContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import { isOrgAdminOrOwner } from '@src/lib/utils'
+import PermissionGate from '@src/modules/shared/permissions/PermissionGate'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -47,9 +48,14 @@ const Layout = async ({
   }
 
   return (
-    <ProjectViewContext projectId={project.id} projectName={project.name}>
-      {children}
-    </ProjectViewContext>
+    <PermissionGate
+      organizationId={session?.user.organizationId ?? ''}
+      projectId={project.id}
+    >
+      <ProjectViewContext projectId={project.id} projectName={project.name}>
+        {children}
+      </ProjectViewContext>
+    </PermissionGate>
   )
 }
 

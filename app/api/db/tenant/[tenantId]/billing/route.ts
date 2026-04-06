@@ -1,5 +1,5 @@
 import { createRoute } from '@/server/middleware/createRoute'
-import { GetBillingQuery } from '@/server/modules/billing/features/get-billing/handler'
+import { GetBillingQuery } from '@server/modules/account/tenant/billing/features/get-billing/handler'
 
 export const GET = createRoute(
   {

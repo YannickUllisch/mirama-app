@@ -5,10 +5,8 @@ import { toOrganizationResponse } from '../response'
 import type { UpdateOrganizationRequest } from './schema'
 
 export const UpdateOrganizationCommand =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (organizationId: string, input: UpdateOrganizationRequest) => {
-    logger.info({ organizationId }, 'Updating organization')
-
     const repo = OrganizationRepository(db)
     const org = await repo.findById(organizationId)
 

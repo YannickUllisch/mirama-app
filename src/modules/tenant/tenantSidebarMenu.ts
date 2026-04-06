@@ -29,6 +29,11 @@ export const TenantSidebarMenu: AppMenuItem[] = [
         href: '/tenant/[tenantId]/billing',
         roles: Object.values(TenantRole) as TenantRole[],
       },
+      {
+        title: 'Plans',
+        href: '/tenant/[tenantId]/billing/plans',
+        roles: Object.values(TenantRole) as TenantRole[],
+      },
     ],
   },
   {

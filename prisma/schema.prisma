@@ -183,7 +183,7 @@ model Organization {
   slug        String
   street      String
   city        String
-  state       String
+  country     String
   zipCode     String
   dateCreated DateTime @default(now())
 

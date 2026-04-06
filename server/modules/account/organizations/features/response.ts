@@ -1,4 +1,4 @@
-import type { Organization } from '@prisma/client'
+import type { Organization } from '@/prisma/generated/client'
 
 export type OrganizationResponse = {
   id: string
@@ -6,7 +6,7 @@ export type OrganizationResponse = {
   slug: string
   street: string
   city: string
-  state: string
+  country: string
   zipCode: string
   dateCreated: Date
 }
@@ -23,7 +23,7 @@ export const toOrganizationResponse = (
   slug: org.slug,
   street: org.street,
   city: org.city,
-  state: org.state,
+  country: org.country,
   zipCode: org.zipCode,
   dateCreated: org.dateCreated,
 })

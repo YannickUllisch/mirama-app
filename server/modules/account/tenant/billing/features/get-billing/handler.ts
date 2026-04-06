@@ -1,16 +1,12 @@
 import type { AppContext } from '@/server/shared/infrastructure/types'
-import {
-  BillingRepository,
-  toPlanResponse,
-} from '../../infrastructure/billing.repo'
-import type { BillingResponse } from '../response'
+
+import { BillingRepository } from '../../infrastructure/billing.repo'
+import { toPlanResponse, type BillingResponse } from '../response'
 
 export const GetBillingQuery =
-  ({ logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (tenantId: string): Promise<BillingResponse> => {
-    logger.info('Fetching billing overview')
-
-    const repo = BillingRepository()
+    const repo = BillingRepository(db)
 
     const [subscriptionRaw, plans, usage] = await Promise.all([
       repo.getSubscriptionWithPlan(tenantId),

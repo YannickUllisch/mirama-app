@@ -1,4 +1,4 @@
-import type { BillingResponse } from '@/server/modules/billing/features/response'
+import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useQuery } from '@tanstack/react-query'
 import { fetchBillingFn } from './api'

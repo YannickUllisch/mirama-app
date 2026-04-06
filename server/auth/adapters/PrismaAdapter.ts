@@ -2,6 +2,7 @@ import { getSystemRole } from '@/server/shared/domain/iam-defaults'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import db from '@db'
 import { InvitationStatus, TenantRole } from '@prisma/client'
+import { DateTime } from 'luxon'
 
 export const CreatePrismaAdapter = () => {
   const adapter = PrismaAdapter(db)
@@ -26,9 +27,22 @@ export const CreatePrismaAdapter = () => {
         data: {
           adminUserId: user.id,
           userId: user.id,
+          subscription: {
+            create: {
+              periodStart: new Date(),
+              periodEnd: DateTime.utc().plus({ months: 12 }).toJSDate(),
+              status: 'TRIALING',
+              cancelAtPeriodEnd: false,
+              plan: {
+                connect: {
+                  id: 'cmnne22yl0012f0n3k3j046kd',
+                },
+              },
+            },
+          },
           settings: {
             create: {
-              name: `${user.name || 'My'}'s Workspace`,
+              name: 'My Tenant',
               isActive: true,
               brandingColor: '#000000',
               receiveNotifications: true,
