@@ -1,12 +1,13 @@
+// app/(app)/tenant/[tenantId]/roles/components/RolesTab.tsx
+import { AccessScope } from '@/prisma/generated/client'
 import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
-
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import type { RoleResponse } from '@server/modules/account/roles/features/response'
 import { Input } from '@ui/input'
 import { Building2, FolderKanban, Loader2, Search } from 'lucide-react'
 import { useState } from 'react'
-import { CreateRoleDialog } from '../../roles/components/CreateRoleDialog'
-import IamScopeSection from '../IamScopeSection'
+import { CreateRoleDialog } from './CreateRoleDialog'
+import IamScopeSection from './IamScopeSection'
 
 export const RolesTab = ({
   roles,
@@ -35,11 +36,13 @@ export const RolesTab = ({
       (r.description ?? '').toLowerCase().includes(search.toLowerCase()),
   )
 
-  const orgRoles = filtered.filter((r) => r.scope !== 'PROJECT')
-  const projectRoles = filtered.filter((r) => r.scope === 'PROJECT')
+  const orgRoles = filtered.filter((r) => r.scope !== AccessScope.PROJECT)
+  const projectRoles = filtered.filter((r) => r.scope === AccessScope.PROJECT)
 
-  const orgPolicies = policies.filter((p) => p.scope !== 'PROJECT')
-  const projectPolicies = policies.filter((p) => p.scope === 'PROJECT')
+  const orgPolicies = policies.filter((p) => p.scope !== AccessScope.PROJECT)
+  const projectPolicies = policies.filter(
+    (p) => p.scope === AccessScope.PROJECT,
+  )
 
   return (
     <div className="space-y-4">

@@ -1,38 +1,61 @@
+// src/components/Sidebar/OrganizationSidebar.tsx
 'use client'
+import SidebarProjectsSkeleton from '@src/components/Skeletons/SidebarProjectsSkeleton'
 import { OrganizationSidebarMenu } from '@src/modules/organization/organizationSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
-import type { Session } from 'next-auth'
+import { useSession } from 'next-auth/react'
+import { Suspense } from 'react'
 import AppSidebar from './AppSidebar'
+import SidebarMainNav from './MainNav'
+import RecentsNav from './RecentsNav'
+import SidebarMobileHeader from './SidebarMobileHeader'
+import SidebarNewButton from './SidebarNewButton'
 
 interface OrganizationSidebarProps {
-  session: Session | null
   organizationId: string
   className?: string
 }
 
+const injectOrgId = (
+  items: AppMenuItem[],
+  organizationId: string,
+): AppMenuItem[] => {
+  return items.map((item) => ({
+    ...item,
+    href: item.href?.replace('[organizationId]', organizationId),
+    items: item.items?.map((sub) => ({
+      ...sub,
+      href: sub.href.replace('[organizationId]', organizationId),
+    })),
+  }))
+}
+
 const OrganizationSidebar = ({
-  session,
   className,
   organizationId,
 }: OrganizationSidebarProps) => {
-  const injectOrgId = (items: any[]): any[] => {
-    return items.map((item) => ({
-      ...item,
-      href: item.href
-        ? item.href.replace('[organizationId]', organizationId)
-        : item.href,
-      items: item.items ? injectOrgId(item.items) : item.items,
-    }))
-  }
-  const localizedMenu = injectOrgId(OrganizationSidebarMenu) as AppMenuItem[]
+  const { data: session } = useSession()
+  const localizedMenu = injectOrgId(OrganizationSidebarMenu, organizationId)
+  const currentRole = session?.user?.orgRole
 
   return (
     <AppSidebar
-      menuItems={localizedMenu}
-      roleType="org"
-      session={session}
       className={className}
-    />
+      headerSlot={
+        <>
+          <SidebarMobileHeader />
+          <SidebarNewButton
+            session={session ?? null}
+            organizationId={session?.user.organizationId}
+          />
+        </>
+      }
+    >
+      <SidebarMainNav items={localizedMenu} userRole={currentRole} />
+      <Suspense fallback={<SidebarProjectsSkeleton />}>
+        <RecentsNav />
+      </Suspense>
+    </AppSidebar>
   )
 }
 

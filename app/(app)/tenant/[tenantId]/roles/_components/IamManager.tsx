@@ -1,3 +1,4 @@
+// app/(app)/tenant/[tenantId]/roles/components/IamManager.tsx
 'use client'
 
 import type { AccessScope } from '@/prisma/generated/client'
@@ -6,21 +7,12 @@ import type { PolicyResponse } from '@server/modules/account/policies/features/r
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { Badge } from '@ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import { FileText, Network, ShieldCheck } from 'lucide-react'
+import { FileText, ShieldCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import type { IamScope } from '../types'
-import { MemberAccessTab } from './tabs/MemberAccessTab'
-import { PoliciesTab } from './tabs/PoliciesTab'
-import { RolesTab } from './tabs/RolesTab'
+import { PoliciesTab } from './PoliciesTab'
+import { RolesTab } from './RolesTab'
 
-export const IamManager = ({
-  scope = { type: 'tenant' },
-  defaultTab,
-}: {
-  scope: IamScope
-  defaultTab?: string
-}) => {
+export const IamManager = ({ defaultTab }: { defaultTab?: string }) => {
   const router = useRouter()
   const { activeTenantId } = useTenantResource()
 
@@ -28,21 +20,12 @@ export const IamManager = ({
     apiRequest.role.fetchAll.useQuery()
   const { data: policies = [], isLoading: policiesLoading } =
     apiRequest.policy.fetchAll.useQuery()
-  const { data: organizations = [] } =
-    apiRequest.organization.fetchAll.useQuery()
 
   const { mutate: createRole } = apiRequest.role.create.useMutation()
   const { mutate: deleteRole } = apiRequest.role.delete.useMutation()
   const { mutate: attachPolicy } = apiRequest.role.attachPolicy.useMutation()
   const { mutate: detachPolicy } = apiRequest.role.detachPolicy.useMutation()
   const { mutate: deletePolicy } = apiRequest.policy.delete.useMutation()
-
-  const [selectedOrgId, setSelectedOrgId] = useState(
-    scope.type === 'project' ? scope.organizationId : '',
-  )
-  const [selectedProjectId, setSelectedProjectId] = useState(
-    scope.type === 'project' ? scope.projectId : '',
-  )
 
   const handleEditPolicy = (policy: PolicyResponse) => {
     router.push(`/tenant/${activeTenantId}/roles/policy/${policy.id}/edit`)
@@ -51,34 +34,6 @@ export const IamManager = ({
   const handleNewPolicy = (policyScope: AccessScope) => {
     router.push(
       `/tenant/${activeTenantId}/roles/policy/create?defaultScope=${policyScope}`,
-    )
-  }
-
-  // Project mode: render a focused single-section view
-  if (scope.type === 'project') {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Network className="w-4 h-4 text-neutral-400" />
-          <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-            {scope.organizationName ?? 'Organization'}
-          </span>
-          <span className="text-neutral-300 dark:text-neutral-600">/</span>
-          <span className="text-sm font-semibold">
-            {scope.projectName ?? 'Project'}
-          </span>
-        </div>
-
-        <MemberAccessTab
-          scope={scope}
-          roles={roles}
-          organizations={organizations}
-          selectedOrgId={selectedOrgId}
-          selectedProjectId={selectedProjectId}
-          onOrgChange={setSelectedOrgId}
-          onProjectChange={setSelectedProjectId}
-        />
-      </div>
     )
   }
 
@@ -107,13 +62,8 @@ export const IamManager = ({
               {policies.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="access" className="text-xs gap-1.5">
-            <Network className="w-3.5 h-3.5" />
-            Member Access
-          </TabsTrigger>
         </TabsList>
 
-        {/* ── Roles ── */}
         <TabsContent value="roles" className="mt-0">
           <RolesTab
             roles={roles}
@@ -121,17 +71,16 @@ export const IamManager = ({
             isLoading={rolesLoading}
             onCreateRole={createRole}
             onDeleteRole={deleteRole}
-            onAttachPolicy={(roleId, policyId) =>
+            onAttachPolicy={(roleId: string, policyId: string) =>
               attachPolicy({ roleId, policyId })
             }
-            onDetachPolicy={(roleId, policyId) =>
+            onDetachPolicy={(roleId: string, policyId: string) =>
               detachPolicy({ roleId, policyId })
             }
             onEditPolicy={handleEditPolicy}
           />
         </TabsContent>
 
-        {/* ── Policies ── */}
         <TabsContent value="policies" className="mt-0">
           <PoliciesTab
             policies={policies}
@@ -139,19 +88,6 @@ export const IamManager = ({
             onNewPolicy={handleNewPolicy}
             onEditPolicy={handleEditPolicy}
             onDeletePolicy={deletePolicy}
-          />
-        </TabsContent>
-
-        {/* ── Member Access ── */}
-        <TabsContent value="access" className="mt-0">
-          <MemberAccessTab
-            scope={scope}
-            roles={roles}
-            organizations={organizations}
-            selectedOrgId={selectedOrgId}
-            selectedProjectId={selectedProjectId}
-            onOrgChange={setSelectedOrgId}
-            onProjectChange={setSelectedProjectId}
           />
         </TabsContent>
       </Tabs>

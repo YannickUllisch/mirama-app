@@ -1,4 +1,7 @@
-import { EditPolicyView } from '@/app/(app)/tenant/[tenantId]/roles/policy/[policyId]/edit/components/EditPolicyView'
+// app/(app)/tenant/[tenantId]/roles/policy/[policyId]/edit/page.tsx
+import { Suspense } from 'react'
+import { EditPolicyView } from './components/EditPolicyView'
+import EditPolicyViewSkeleton from './components/EditPolicyViewSkeleton'
 
 const EditPolicyPage = async ({
   params,
@@ -6,7 +9,11 @@ const EditPolicyPage = async ({
   params: Promise<{ policyId: string }>
 }) => {
   const { policyId } = await params
-  return <EditPolicyView policyId={policyId} />
+  return (
+    <Suspense fallback={<EditPolicyViewSkeleton />}>
+      <EditPolicyView policyId={policyId} />
+    </Suspense>
+  )
 }
 
 export default EditPolicyPage

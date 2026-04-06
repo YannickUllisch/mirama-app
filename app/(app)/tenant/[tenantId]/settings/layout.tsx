@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Billing',
-  description: 'Your Tenant Billing Overview',
+  title: 'Tenant Settings',
+  description: 'Your Tenant Settings Overview',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

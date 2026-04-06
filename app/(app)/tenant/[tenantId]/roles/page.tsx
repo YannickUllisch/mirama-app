@@ -1,6 +1,9 @@
+// app/(app)/tenant/[tenantId]/roles/page.tsx
 import PageHeader from '@src/components/PageHeader'
-import { IamManager } from '@src/modules/tenant/iam/components/IamManager'
 import { Shield } from 'lucide-react'
+import { Suspense } from 'react'
+import { IamManager } from './_components/IamManager'
+import IamManagerSkeleton from './_components/IamManagerSkeleton'
 
 const RolesPage = async ({
   searchParams,
@@ -16,7 +19,9 @@ const RolesPage = async ({
         description="Identity & Access Management"
       />
       <div className="flex-1 px-6 md:px-10 py-6">
-        <IamManager scope={{ type: 'tenant' }} defaultTab={tab} />
+        <Suspense fallback={<IamManagerSkeleton />}>
+          <IamManager defaultTab={tab} />
+        </Suspense>
       </div>
     </div>
   )

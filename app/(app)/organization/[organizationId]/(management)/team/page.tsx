@@ -1,6 +1,4 @@
 'use client'
-import apiRequest from '@hooks/query'
-import UserCard from '@src/components/(application)/core/Avatar/UserCard'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { isOrgAdminOrOwner } from '@src/lib/utils'
@@ -10,11 +8,11 @@ import { useSession } from 'next-auth/react'
 
 const ClientTeamPage = () => {
   // Session
-  const { data: session, update } = useSession()
+  const { data: session } = useSession()
 
   // Hooks
-  const { data: members } = apiRequest.team.fetchMembers.useQuery()
-  const { mutate: deleteMember } = apiRequest.team.delete.useMutation()
+  // const { data: members } = apiRequest.team.fetchMembers.useQuery()
+  // const { mutate: deleteMember } = apiRequest.team.delete.useMutation()
 
   return (
     <>
@@ -29,17 +27,15 @@ const ClientTeamPage = () => {
         )}
       </PageHeader>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-y-6">
-        {members?.map((member) => (
-          <UserCard
-            session={session}
-            user={member}
-            key={`member-card-${member.id}`}
-            updateSession={update}
-            deleteMember={deleteMember}
-          />
-        ))}
-      </div>
+      {/* 
+        <MemberAccessTab
+          roles={roles}
+          organizations={organizations}
+          selectedOrgId={selectedOrgId}
+          selectedProjectId={selectedProjectId}
+          onOrgChange={setSelectedOrgId}
+          onProjectChange={setSelectedProjectId}
+        /> */}
     </>
   )
 }

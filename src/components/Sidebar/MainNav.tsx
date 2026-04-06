@@ -1,3 +1,4 @@
+// src/components/Sidebar/MainNav.tsx
 'use client'
 import type { AppMenuItem } from '@src/types/types'
 import {
@@ -16,15 +17,16 @@ import {
 } from '@ui/sidebar'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useCallback } from 'react'
 
 interface MainNavProps {
   items: AppMenuItem[]
   userRole?: string
-  pathname: string
 }
 
-const SidebarMainNav = ({ items, userRole, pathname }: MainNavProps) => {
+const SidebarMainNav = ({ items, userRole }: MainNavProps) => {
+  const pathname = usePathname()
   const hasPermission = useCallback(
     (allowedRoles?: string[]) => {
       if (!allowedRoles) return true

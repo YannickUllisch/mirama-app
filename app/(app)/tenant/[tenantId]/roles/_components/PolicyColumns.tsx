@@ -1,10 +1,11 @@
+// app/(app)/tenant/[tenantId]/roles/components/PolicyColumns.tsx
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
+import { EffectBadge } from '@src/modules/tenant/iam/components/EffectBadge'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
-import { EffectBadge } from '../EffectBadge'
 
 export type PolicyTableData = PolicyResponse & { subtasks?: PolicyTableData[] }
 

@@ -1,3 +1,5 @@
+// src/modules/tenant/components/dialogs/CreateOrganizationDialog.tsx
+'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks/query'
 import {

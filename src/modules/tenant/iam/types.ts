@@ -3,13 +3,3 @@ export type StatementDraft = {
   action: string
   resource: string
 }
-
-export type IamScope =
-  | { type: 'tenant' }
-  | {
-      type: 'project'
-      organizationId: string
-      organizationName?: string
-      projectId: string
-      projectName?: string
-    }

@@ -1,3 +1,4 @@
+// src/components/Header/HeaderProfile.tsx
 'use client'
 import {
   DropdownMenu,
@@ -12,42 +13,14 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { Check, LogOut, Settings, SunMoon, UserKeyIcon } from 'lucide-react'
-import type { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import UserAvatar from '../(application)/core/Avatar/UserAvatar'
 import HoverLink from '../HoverLink'
 
-const HeaderProfile = ({ session }: { session: Session | null }) => {
+const HeaderProfile = () => {
+  const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
-
-  const DropdownItem = ({
-    label,
-    icon,
-    onClick,
-  }: {
-    label: string
-    icon: React.ReactNode
-    onClick?: React.MouseEventHandler<HTMLDivElement> | undefined
-  }) => {
-    return (
-      <DropdownMenuItem className="cursor-pointer" onClick={onClick}>
-        <div className="flex items-center gap-3">
-          {icon}
-          {label}
-        </div>
-      </DropdownMenuItem>
-    )
-  }
-
-  const SubItemChecked = ({ subItem }: { subItem: string }) => {
-    return (
-      <div className="flex items-center gap-2 justify-between w-full">
-        {subItem}
-        {theme === subItem.toLowerCase() && <Check width={13} />}
-      </div>
-    )
-  }
 
   return (
     <DropdownMenu>
@@ -60,7 +33,7 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-        side={'bottom'}
+        side="bottom"
         align="end"
         sideOffset={4}
       >
@@ -89,39 +62,49 @@ const HeaderProfile = ({ session }: { session: Session | null }) => {
               </div>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme('light')}>
-                <SubItemChecked subItem="Light" />
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>
-                <SubItemChecked subItem="Dark" />
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>
-                <SubItemChecked subItem="System" />
-              </DropdownMenuItem>
+              {(['light', 'dark', 'system'] as const).map((value) => (
+                <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
+                  <div className="flex items-center gap-2 justify-between w-full">
+                    {value.charAt(0).toUpperCase() + value.slice(1)}
+                    {theme === value && <Check width={13} />}
+                  </div>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
           <HoverLink href={`/tenant/${session?.user.tenantId}`}>
-            <DropdownItem
-              icon={<UserKeyIcon width={17} />}
-              label="Go to tenant"
-            />
+            <DropdownMenuItem className="cursor-pointer">
+              <div className="flex items-center gap-3">
+                <UserKeyIcon width={17} />
+                Go to tenant
+              </div>
+            </DropdownMenuItem>
           </HoverLink>
         </DropdownMenuGroup>
         {session?.user.organizationId && (
           <HoverLink
             href={`/organization/${session?.user.organizationId}/settings`}
           >
-            <DropdownItem icon={<Settings width={17} />} label="Settings" />
+            <DropdownMenuItem className="cursor-pointer">
+              <div className="flex items-center gap-3">
+                <Settings width={17} />
+                Settings
+              </div>
+            </DropdownMenuItem>
           </HoverLink>
         )}
 
         <DropdownMenuSeparator />
-        <DropdownItem
-          icon={<LogOut width={17} />}
-          label="Sign out"
+        <DropdownMenuItem
+          className="cursor-pointer"
           onClick={() => signOut({ callbackUrl: '/', redirect: true })}
-        />
+        >
+          <div className="flex items-center gap-3">
+            <LogOut width={17} />
+            Sign out
+          </div>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

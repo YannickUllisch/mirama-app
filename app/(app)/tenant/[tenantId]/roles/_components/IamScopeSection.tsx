@@ -1,8 +1,9 @@
+// app/(app)/tenant/[tenantId]/roles/components/IamScopeSection.tsx
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import type { RoleResponse } from '@server/modules/account/roles/features/response'
+import { SectionHeader } from '@src/modules/tenant/iam/components/SectionHeader'
 import { type LucideIcon, Shield } from 'lucide-react'
-import { RoleCard } from '../roles/components/RoleCard'
-import { SectionHeader } from './SectionHeader'
+import { RoleCard } from './RoleCard'
 
 const IamScopeSection = ({
   icon,
@@ -41,8 +42,8 @@ const IamScopeSection = ({
             key={r.id}
             role={r}
             allPolicies={policies}
-            onAttach={(policyId) => onAttachPolicy(r.id, policyId)}
-            onDetach={(policyId) => onDetachPolicy(r.id, policyId)}
+            onAttach={(policyId: string) => onAttachPolicy(r.id, policyId)}
+            onDetach={(policyId: string) => onDetachPolicy(r.id, policyId)}
             onDelete={() => onDeleteRole(r.id)}
             onEditPolicy={onEditPolicy}
           />

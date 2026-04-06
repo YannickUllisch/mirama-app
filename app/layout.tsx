@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { DM_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -9,6 +9,11 @@ const dmMono = DM_Sans({
   variable: '--font-dm-sans',
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'Mirama',
   description:
@@ -17,7 +22,6 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning lang="en" className={dmMono.variable}>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body className="bg-background">
         <Toaster />
         {children}

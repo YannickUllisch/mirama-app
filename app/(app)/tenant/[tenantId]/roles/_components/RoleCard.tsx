@@ -1,5 +1,7 @@
+// app/(app)/tenant/[tenantId]/roles/components/RoleCard.tsx
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import type { RoleResponse } from '@server/modules/account/roles/features/response'
+import { PolicyRow } from '@src/modules/tenant/iam/policy/components/PolicyRow'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import {
@@ -19,7 +21,6 @@ import {
   Users,
 } from 'lucide-react'
 import { useState } from 'react'
-import { PolicyRow } from '../../policy/components/PolicyRow'
 
 export const RoleCard = ({
   role,

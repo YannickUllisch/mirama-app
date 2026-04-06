@@ -1,5 +1,8 @@
-import { CreatePolicyView } from '@/app/(app)/tenant/[tenantId]/roles/policy/create/components/CreatePolicyView'
+// app/(app)/tenant/[tenantId]/roles/policy/create/page.tsx
 import type { AccessScope } from '@/prisma/generated/client'
+import { Suspense } from 'react'
+import { CreatePolicyView } from './components/CreatePolicyView'
+import CreatePolicyViewSkeleton from './components/CreatePolicyViewSkeleton'
 
 const CreatePolicyPage = async ({
   searchParams,
@@ -8,7 +11,11 @@ const CreatePolicyPage = async ({
 }) => {
   const { defaultScope } = await searchParams
   return (
-    <CreatePolicyView defaultScope={defaultScope as AccessScope | undefined} />
+    <Suspense fallback={<CreatePolicyViewSkeleton />}>
+      <CreatePolicyView
+        defaultScope={defaultScope as AccessScope | undefined}
+      />
+    </Suspense>
   )
 }
 

@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'rounded-xl cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-bold tracking-tight shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]',
+          'rounded-xl justify-center cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-bold tracking-tight shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]',
 
         primary:
           'rounded-xl cursor-pointer bg-primary text-white shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.2)] hover:opacity-90 font-bold tracking-tight',

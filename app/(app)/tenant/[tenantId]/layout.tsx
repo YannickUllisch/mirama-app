@@ -1,4 +1,4 @@
-import { auth } from '@auth'
+// app/(app)/tenant/[tenantId]/layout.tsx
 import AppHeader from '@src/components/Header/AppHeader'
 import TenantSidebar from '@src/components/Sidebar/TenantSidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
@@ -20,7 +20,6 @@ const TenantLayout = async ({
   children: React.ReactNode
   params: Promise<{ tenantId: string }>
 }) => {
-  const session = await auth()
   const { tenantId } = await params
 
   return (
@@ -33,11 +32,7 @@ const TenantLayout = async ({
                 <AppHeader />
 
                 <div className="flex flex-1 pt-14">
-                  <TenantSidebar
-                    tenantId={tenantId}
-                    session={session}
-                    className="shrink-0"
-                  />
+                  <TenantSidebar tenantId={tenantId} className="shrink-0" />
 
                   <main className="flex-1 overflow-auto bg-card rounded-lg">
                     <div className="p-5 min-h-screen">{children}</div>

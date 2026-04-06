@@ -1,12 +1,10 @@
-import type { AccessScope } from '@/prisma/generated/client'
+// app/(app)/tenant/[tenantId]/roles/components/PoliciesTab.tsx
+import { AccessScope } from '@/prisma/generated/client'
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { SectionHeader } from '@src/modules/tenant/iam/components/SectionHeader'
 import { Building2, FileText, FolderKanban, Loader2 } from 'lucide-react'
-import { SectionHeader } from '../SectionHeader'
-import {
-  type PolicyTableData,
-  usePolicyColumns,
-} from '../columns/PolicyColumns'
+import { type PolicyTableData, usePolicyColumns } from './PolicyColumns'
 
 type Props = {
   policies: PolicyResponse[]
@@ -33,10 +31,10 @@ export const PoliciesTab = ({
   const columns = usePolicyColumns({ onEditPolicy, onDeletePolicy })
 
   const orgPolicies: PolicyTableData[] = policies.filter(
-    (p) => p.scope !== 'PROJECT',
+    (p) => p.scope !== AccessScope.PROJECT,
   )
   const projectPolicies: PolicyTableData[] = policies.filter(
-    (p) => p.scope === 'PROJECT',
+    (p) => p.scope === AccessScope.PROJECT,
   )
 
   if (isLoading) {
@@ -54,7 +52,7 @@ export const PoliciesTab = ({
           icon={Building2}
           title="Organization Policies"
           description="Grant access across the entire organization. Can include org-level actions like managing members, teams, and invitations."
-          onNew={() => onNewPolicy('ORGANIZATION')}
+          onNew={() => onNewPolicy(AccessScope.ORGANIZATION)}
         />
         {orgPolicies.length > 0 ? (
           <DataTable
@@ -81,7 +79,7 @@ export const PoliciesTab = ({
           icon={FolderKanban}
           title="Project Policies"
           description="Grant access within a specific project. Focused on project, task, milestone, and tag permissions. Union'd with org policies for effective access."
-          onNew={() => onNewPolicy('PROJECT')}
+          onNew={() => onNewPolicy(AccessScope.PROJECT)}
         />
         {projectPolicies.length > 0 ? (
           <DataTable

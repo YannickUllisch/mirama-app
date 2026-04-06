@@ -1,9 +1,10 @@
+// app/(app)/tenant/[tenantId]/roles/components/MemberAccessTab.tsx
 'use client'
 
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
-import type { OrganizationListResponse } from '@/server/modules/account/organizations/features/response'
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import apiRequest from '@hooks/query'
+
 import { Badge } from '@ui/badge'
 import {
   Select,
@@ -20,15 +21,11 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-react'
-import type { IamScope } from '../../types'
 
 type Props = {
-  scope: IamScope
   roles: RoleResponse[]
-  organizations: OrganizationListResponse[]
   selectedOrgId: string
   selectedProjectId: string
-  onOrgChange: (id: string) => void
   onProjectChange: (id: string) => void
 }
 
@@ -128,77 +125,19 @@ const OrgMembersSection = ({
 }
 
 export const MemberAccessTab = ({
-  scope,
   roles,
-  organizations,
   selectedOrgId,
   selectedProjectId,
-  onOrgChange,
   onProjectChange,
 }: Props) => {
-  const isFixed = scope.type === 'project'
+  const isFixed = true
 
   // Only fetch org projects when an org is selected (and not in fixed project mode)
-  const { data: orgProjects = [] } =
-    apiRequest.organization.fetchProjectsByOrg.useQuery(
-      isFixed ? '' : selectedOrgId,
-    )
+  //   const { data: orgProjects = [] } =
+  //     apiRequest.organization.fetchProjectsByOrg.useQuery(selectedOrgId)
 
   return (
     <div className="space-y-5">
-      {/* ── Scope selectors (hidden in project-settings mode) ── */}
-      {!isFixed && (
-        <div className="flex flex-wrap gap-3 p-4 rounded-xl border border-border bg-neutral-50/50 dark:bg-neutral-900/50">
-          <div className="flex-1 min-w-40 space-y-1">
-            <p className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">
-              Organization
-            </p>
-            <Select value={selectedOrgId} onValueChange={onOrgChange}>
-              <SelectTrigger className="h-8 text-sm">
-                <SelectValue placeholder="Select organization…" />
-              </SelectTrigger>
-              <SelectContent>
-                {organizations.map((o) => (
-                  <SelectItem key={o.id} value={o.id}>
-                    <span className="flex items-center gap-2">
-                      <Building2 className="w-3.5 h-3.5 text-neutral-400" />
-                      {o.name}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex-1 min-w-40 space-y-1">
-            <p className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">
-              Project{' '}
-              <span className="normal-case font-normal">(optional)</span>
-            </p>
-            <Select
-              value={selectedProjectId}
-              onValueChange={onProjectChange}
-              disabled={!selectedOrgId}
-            >
-              <SelectTrigger className="h-8 text-sm">
-                <SelectValue placeholder="All projects…" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="_all">All projects</SelectItem>
-                {orgProjects.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    <span className="flex items-center gap-2">
-                      <FolderKanban className="w-3.5 h-3.5 text-neutral-400" />
-                      {p.name}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      )}
-
       {!selectedOrgId && !isFixed ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-neutral-400">
           <Building2 className="w-8 h-8 mb-3 text-neutral-300 dark:text-neutral-700" />
@@ -225,14 +164,7 @@ export const MemberAccessTab = ({
           </div>
 
           {/* Organization-level members ─ */}
-          <OrgMembersSection
-            organizationId={
-              isFixed && scope.type === 'project'
-                ? scope.organizationId
-                : selectedOrgId
-            }
-            roles={roles}
-          />
+          <OrgMembersSection organizationId={selectedOrgId} roles={roles} />
 
           {/* Available roles reference  */}
           <section>
