@@ -51,7 +51,7 @@ const AppLayout = async ({
                     />
 
                     <main className="flex-1 overflow-auto bg-card rounded-lg">
-                      <div className="p-5">{children}</div>
+                      <div className="p-5 min-h-screen">{children}</div>
                     </main>
                   </div>
                 </div>

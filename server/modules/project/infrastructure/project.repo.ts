@@ -10,16 +10,16 @@ const PROJECT_INCLUDE = {
 
 export const ProjectRepository = (db: ScopedDb) => ({
   async findAll(opts: {
-    sessionUserId: string
+    memberId: string
     archived: boolean
-    isAdminOrOwner: boolean
+    hasOrgWideAccess: boolean
   }) {
     return await db.project.findMany({
       where: {
         archived: opts.archived,
-        ...(opts.isAdminOrOwner
+        ...(opts.hasOrgWideAccess
           ? {}
-          : { members: { some: { memberId: opts.sessionUserId } } }),
+          : { members: { some: { memberId: opts.memberId } } }),
       },
       include: PROJECT_INCLUDE,
       orderBy: { name: 'asc' },

@@ -1,7 +1,10 @@
+import { evaluateStatements } from '@/server/shared/domain/evaluate-permissions'
 import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import { auth } from '@auth'
-import type { OrganizationRole, TenantRole } from '@prisma/client'
+import database from '@db'
+import type { TenantRole } from '@prisma/client'
 import type { NextRequest } from 'next/server'
+import type { PermissionRequirement } from '../shared/domain/permissions'
 import type {
   AuthConfig,
   BaseContext,
@@ -22,7 +25,7 @@ export const withAuth = (
       return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const { tenantId, organizationId, tenantRole, orgRole } = session.user
+    const { tenantId, organizationId, tenantRole } = session.user
 
     // IDOR Protection, we validate URL path IDs match session
     if (pathPattern) {
@@ -60,17 +63,19 @@ export const withAuth = (
       }
     }
 
-    // Org Check
-    if (config.allowedOrgRoles && config.allowedOrgRoles !== 'ANY') {
-      if (
-        !orgRole ||
-        !organizationId ||
-        !config.allowedOrgRoles.includes(orgRole as OrganizationRole)
-      ) {
-        return Response.json(
-          { message: 'Forbidden: Organization Role Required' },
-          { status: 403 },
+    // IAM Permission Check
+    if (config.permissions) {
+      const requirements = Array.isArray(config.permissions)
+        ? config.permissions
+        : [config.permissions]
+
+      if (requirements.length > 0 && session.user.email && organizationId) {
+        const forbidden = await checkPermissions(
+          session.user.email,
+          organizationId,
+          requirements,
         )
+        if (forbidden) return forbidden
       }
     }
 
@@ -90,4 +95,49 @@ export const withAuth = (
 
     return handler(req, authCtx, { params: undefined, body: undefined })
   }
+}
+
+const checkPermissions = async (
+  email: string,
+  organizationId: string,
+  requirements: PermissionRequirement[],
+): Promise<Response | null> => {
+  const member = await database.member.findFirst({
+    where: { email, organizationId },
+    select: {
+      iamRole: {
+        select: {
+          policies: {
+            select: {
+              statements: {
+                select: { effect: true, action: true, resource: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!member?.iamRole) {
+    return Response.json(
+      { message: 'Forbidden: No IAM role assigned' },
+      { status: 403 },
+    )
+  }
+
+  const statements = member.iamRole.policies.flatMap((p) => p.statements)
+
+  for (const req of requirements) {
+    if (!evaluateStatements(statements, req.action, req.resource)) {
+      return Response.json(
+        {
+          message: `Forbidden: Missing permission ${req.action} on ${req.resource}`,
+        },
+        { status: 403 },
+      )
+    }
+  }
+
+  return null
 }

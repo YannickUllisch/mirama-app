@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Team',
-  description: 'Overview of Team',
+  title: 'Members & Roles',
+  description: 'Manage organization and project member roles',
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

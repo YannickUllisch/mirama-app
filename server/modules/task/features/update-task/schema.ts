@@ -8,10 +8,10 @@ const NewTagSchema = z.object({
 export const UpdateTaskSchema = z
   .object({
     title: z.string().min(1, { message: 'Title cannot be empty.' }),
-    type: z.nativeEnum(TaskType),
+    type: z.enum(TaskType),
     description: z.string().nullable(),
-    priority: z.nativeEnum(PriorityType),
-    status: z.nativeEnum(TaskStatusType),
+    priority: z.enum(PriorityType),
+    status: z.enum(TaskStatusType),
     startDate: z.coerce.date(),
     dueDate: z.coerce.date(),
     tags: z.string().array(),

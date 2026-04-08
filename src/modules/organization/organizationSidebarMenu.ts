@@ -3,12 +3,10 @@ import { OrganizationRole } from '@prisma/client'
 import type { AppMenuItem } from '@src/types/types'
 import {
   BookAIcon,
-  Calendar,
   ClipboardList,
   CreditCardIcon,
   Folders,
   Home,
-  Users,
 } from 'lucide-react'
 
 export const OrganizationSidebarMenu: AppMenuItem[] = [
@@ -34,26 +32,13 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     roles: Object.values(OrganizationRole) as OrganizationRole[],
   },
   {
-    title: 'Calendar',
-    icon: Calendar,
-    href: '/organization/[organizationId]/calendar',
-    isCollapsible: false,
-    roles: Object.values(OrganizationRole) as OrganizationRole[],
-  },
-  {
     title: 'Finances',
     icon: CreditCardIcon,
     href: '/organization/[organizationId]/finances',
     isCollapsible: false,
     roles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
   },
-  {
-    title: 'Teams',
-    icon: Users,
-    href: '/organization/[organizationId]/team',
-    isCollapsible: false,
-    roles: Object.values(OrganizationRole) as OrganizationRole[],
-  },
+
   {
     title: 'Management',
     icon: BookAIcon,
@@ -62,9 +47,9 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     roles: Object.values(OrganizationRole) as OrganizationRole[],
     items: [
       {
-        title: 'Company',
-        href: '/organization/[organizationId]/company',
-        roles: [OrganizationRole.ADMIN, OrganizationRole.OWNER],
+        title: 'Members',
+        href: '/organization/[organizationId]/members',
+        roles: Object.values(OrganizationRole) as OrganizationRole[],
       },
       {
         title: 'Archive',

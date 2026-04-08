@@ -1,7 +1,8 @@
 import type { OrganizationRole, TenantRole } from '@prisma/client'
-import type { NextRequest } from 'next/server'
 import type { Session } from 'next-auth'
+import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
+import type { PermissionRequirement } from '../shared/domain/permissions'
 import type { AppContext } from '../shared/infrastructure/types'
 
 // The starting point for all requests
@@ -11,19 +12,11 @@ export type BaseContext = {
   startTime: number
 }
 
-export type AuthConfig =
-  | {
-      allowedTenantRoles: TenantRole[] | 'ANY'
-      allowedOrgRoles?: OrganizationRole[] | 'ANY'
-    }
-  | {
-      allowedTenantRoles?: TenantRole[] | 'ANY'
-      allowedOrgRoles: OrganizationRole[] | 'ANY'
-    }
-  | {
-      allowedTenantRoles: TenantRole[] | 'ANY'
-      allowedOrgRoles: OrganizationRole[] | 'ANY'
-    }
+export type AuthConfig = {
+  allowedTenantRoles?: TenantRole[] | 'ANY'
+  allowedOrgRoles?: OrganizationRole[] | 'ANY'
+  permissions?: PermissionRequirement | PermissionRequirement[]
+}
 
 type AuthContextBase = BaseContext & {
   ctx: AppContext

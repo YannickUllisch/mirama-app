@@ -1,4 +1,6 @@
+// app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
+
 import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
@@ -10,7 +12,9 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
+import { capitalize } from '@src/lib/utils'
+import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -21,34 +25,81 @@ import {
 } from '@ui/dropdown-menu'
 import { Archive, CalendarDays, Ellipsis, PenSquareIcon } from 'lucide-react'
 import { DateTime } from 'luxon'
-import type { Session } from 'next-auth'
 import { useMemo, useState } from 'react'
+
+const ActionsCell = ({
+  row,
+  canUpdate,
+  canDelete,
+  organizationId,
+  archiveMutation,
+}: {
+  row: ProjectResponse
+  canUpdate: boolean
+  canDelete: boolean
+  organizationId: string
+  archiveMutation: (args: { id: string; archive: boolean }) => void
+}) => {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  return (
+    <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+      <DropdownMenuTrigger asChild>
+        <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {canUpdate && (
+          <HoverLink
+            href={`/organization/${organizationId}/projects/edit/${row.id}`}
+          >
+            <DropdownMenuItem className="gap-2">
+              <PenSquareIcon className="w-3.5 h-3.5" />
+              Edit
+            </DropdownMenuItem>
+          </HoverLink>
+        )}
+        {canDelete && (
+          <DropdownMenuItem
+            onClick={() =>
+              archiveMutation({
+                id: row.id,
+                archive: !row.archived,
+              })
+            }
+            className="gap-2"
+          >
+            <Archive className="w-3.5 h-3.5" />
+            {row.archived ? 'Unarchive' : 'Archive'}
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 const columnHelper = createColumnHelper<ProjectResponse>()
 
 export const useProjectColumns = ({
-  session,
   users,
   handleFieldUpdate,
   archiveMutation,
 }: {
-  session: Session | null
   users: MemberResponse[]
   handleFieldUpdate: HandleFieldUpdate<ProjectResponse>
-
   archiveMutation: UseMutateFunction<
-    {
-      success: boolean
-    },
+    { success: boolean },
     Error,
-    {
-      id: string
-      archive: boolean
-    },
+    { id: string; archive: boolean },
     unknown
   >
 }) => {
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+  const { can } = usePermissions()
+  const { activeOrganizationId } = useOrganizationResource()
+
+  const canUpdate = can('project', 'update')
+  const canDelete = can('project', 'delete')
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: columns depend on permission flags
   return useMemo(
     () => [
       columnHelper.accessor((row) => row.name, {
@@ -57,12 +108,13 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Name" />
         ),
         cell: ({ row, getValue }) => {
-          if (isOrgAdminOrOwner(session)) {
+          const link = `/organization/${activeOrganizationId}/projects/${row.original.name}`
+          if (canUpdate) {
             return (
               <EditableCell
                 displayValue={
                   <HoverLink
-                    href={`/app/projects/${row.original.name}`}
+                    href={link}
                     className="hover:underline underline-offset-4"
                   >
                     {getValue()}
@@ -77,17 +129,14 @@ export const useProjectColumns = ({
             )
           }
           return (
-            <HoverLink
-              href={`/app/projects/${row.original.name}`}
-              className="hover:underline"
-            >
+            <HoverLink href={link} className="hover:underline">
               {getValue() as string}
             </HoverLink>
           )
         },
       }),
 
-      columnHelper.accessor('members.id', {
+      columnHelper.display({
         id: 'users',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Managed By" />
@@ -102,9 +151,9 @@ export const useProjectColumns = ({
               .map((u) => u.name as string) ?? []
 
           return (
-            managerNames && (
+            managerNames.length > 0 && (
               <AvatarGroup
-                usernames={managerNames ?? []}
+                usernames={managerNames}
                 avatarSize={7}
                 previewAmount={2}
                 fontSize={10}
@@ -121,7 +170,7 @@ export const useProjectColumns = ({
         ),
         cell: ({ row, getValue }) => {
           const date = new Date(getValue())
-          if (isOrgAdminOrOwner(session)) {
+          if (canUpdate) {
             return (
               <EditableCell
                 displayValue={
@@ -153,7 +202,7 @@ export const useProjectColumns = ({
         ),
         cell: ({ row, getValue }) => {
           const date = new Date(getValue())
-          if (isOrgAdminOrOwner(session)) {
+          if (canUpdate) {
             return (
               <EditableCell
                 displayValue={
@@ -185,11 +234,9 @@ export const useProjectColumns = ({
         ),
         cell: ({ row }) => {
           const endDate = row.original.endDate.toString()
-          const daysRemaining = useMemo(() => {
-            return -Math.floor(
-              DateTime.utc().diff(DateTime.fromISO(endDate), 'days').days,
-            )
-          }, [endDate])
+          const daysRemaining = -Math.floor(
+            DateTime.utc().diff(DateTime.fromISO(endDate), 'days').days,
+          )
 
           return (
             <div
@@ -213,7 +260,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Priority" />
         ),
         cell: ({ row, getValue }) => {
-          if (isOrgAdminOrOwner(session)) {
+          if (canUpdate) {
             return (
               <EditableCell
                 value={getValue()}
@@ -242,7 +289,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Status" />
         ),
         cell: ({ row, getValue }) => {
-          if (isOrgAdminOrOwner(session)) {
+          if (canUpdate) {
             return (
               <EditableCell
                 value={getValue()}
@@ -267,7 +314,7 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Budget" />
         ),
         cell: ({ row, getValue }) => {
-          if (isOrgAdminOrOwner(session)) {
+          if (canUpdate) {
             return (
               <EditableCell
                 value={getValue()}
@@ -282,50 +329,26 @@ export const useProjectColumns = ({
         },
       }),
 
-      columnHelper.display({
-        id: 'actions',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Actions" />
-        ),
-        cell: ({ row }) => {
-          const [menuOpen, setMenuOpen] = useState(false)
-
-          if (isOrgAdminOrOwner(session)) {
-            return (
-              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {isOrgAdminOrOwner(session) && (
-                    <>
-                      <HoverLink href={`/app/projects/edit/${row.original.id}`}>
-                        <DropdownMenuItem className="gap-2">
-                          <PenSquareIcon className="w-3.5 h-3.5" />
-                          Edit
-                        </DropdownMenuItem>
-                      </HoverLink>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          archiveMutation({
-                            id: row.original.id,
-                            archive: !row.original.archived,
-                          })
-                        }
-                        className="gap-2"
-                      >
-                        <Archive className="w-3.5 h-3.5" />
-                        Archive
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )
-          }
-        },
-      }),
+      ...(canUpdate || canDelete
+        ? [
+            columnHelper.display({
+              id: 'actions',
+              header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Actions" />
+              ),
+              cell: ({ row }) => (
+                <ActionsCell
+                  row={row.original}
+                  canUpdate={canUpdate}
+                  canDelete={canDelete}
+                  organizationId={activeOrganizationId}
+                  archiveMutation={archiveMutation}
+                />
+              ),
+            }),
+          ]
+        : []),
     ],
-    [users, session],
+    [users, canUpdate, canDelete, activeOrganizationId],
   )
 }

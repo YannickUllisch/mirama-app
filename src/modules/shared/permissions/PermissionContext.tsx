@@ -1,6 +1,10 @@
 // src/modules/shared/permissions/PermissionContext.tsx
 'use client'
 
+import type {
+  ActionFor,
+  ResourceName,
+} from '@/server/shared/domain/permissions'
 import { createContext, useContext, useMemo } from 'react'
 
 type PermissionContextType = {
@@ -30,14 +34,13 @@ export const PermissionProvider = ({
 // ── Hook ───────────────────────────────────────────────────────────────────
 
 /**
- * Returns a `can(action, resource)` function that evaluates the current
- * user's flattened permission set.
+ * Returns a type-safe `can(resource, action)` function that evaluates the
+ * current user's flattened permission set.
  *
- * Supports wildcard matching following the `action::resource` convention
- * from PolicyStatement seed data:
- *  - `*::*`                → full access
- *  - `project:*::project/*`  → any action on projects
- *  - `*:read::*`           → read on everything
+ * Usage:
+ *   const { can } = usePermissions()
+ *   can('project', 'read')   // boolean
+ *   can('task', 'assign')    // boolean
  */
 export const usePermissions = () => {
   const ctx = useContext(PermissionContext)
@@ -48,12 +51,18 @@ export const usePermissions = () => {
   const can = useMemo(() => {
     const grantSet = ctx.grants
 
-    return (action: string, resource: string): boolean => {
+    return <R extends ResourceName>(
+      resource: R,
+      action: ActionFor<R>,
+    ): boolean => {
+      const target = `${resource}:${action}`
+      const targetResource = `${resource}/*`
+
       for (const grant of grantSet) {
         const [gAction, gResource] = grant.split('::')
         if (
-          matchPattern(gAction, action) &&
-          matchPattern(gResource, resource)
+          matchPattern(gAction, target) &&
+          matchPattern(gResource, targetResource)
         ) {
           return true
         }

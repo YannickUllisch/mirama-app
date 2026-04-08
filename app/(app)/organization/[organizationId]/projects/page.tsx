@@ -1,80 +1,22 @@
-'use client'
-import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@hooks/utils/useEditableColumns'
-import type { ProjectResponse } from '@server/modules/project/features/response'
-import {
-  type UpdateProjectRequest,
-  UpdateProjectSchema,
-} from '@server/modules/project/features/update-project/schema'
+// app/(app)/organization/[organizationId]/projects/page.tsx
 import PageHeader from '@src/components/PageHeader'
-import { DataTable } from '@src/components/Tables/DataTable'
 import { Folders } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-import { toast } from 'sonner'
-import { useProjectColumns } from './columns'
+import { Suspense } from 'react'
+import ProjectsTable from './_components/ProjectsTable'
+import ProjectsTableSkeleton from './_components/ProjectsTableSkeleton'
 
 const ProjectsPage = () => {
-  // Session
-  const { data: session } = useSession({ required: true })
-
-  // Hooks
-  const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
-  const { mutate: projectMutation } = apiRequest.project.update.useMutation()
-  const { mutate: useArchiveMutation } =
-    apiRequest.project.archive.useMutation()
-
-  // Column Update handler
-  const { handleFieldUpdate } = useEditableColumns<
-    ProjectResponse,
-    UpdateProjectRequest
-  >({
-    mutate: projectMutation,
-    updateSchema: UpdateProjectSchema,
-    mapToUpdateInput: (data) => ({
-      ...data,
-      tags: data.tags.map((t) => t.id),
-      newTags: [],
-      members: data.members.map((u) => ({
-        isManager: u.isManager,
-        memberId: u.id,
-      })),
-    }),
-    prepareMutation: (id, data) => ({
-      id,
-      data,
-    }),
-    onValidationError: (err) => {
-      const firstMessage = err.issues?.[0]?.message || 'Input Error'
-      toast.error(`Input Error: ${firstMessage}`)
-    },
-  })
-
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <PageHeader
         title="Your Projects"
         description="Manage your projects"
         icon={Folders}
       />
-      <DataTable
-        tableIdentifier="projectPageTable"
-        columns={useProjectColumns({
-          session: session,
-          users: users ?? [],
-          handleFieldUpdate,
-          archiveMutation: useArchiveMutation,
-        })}
-        data={projects ?? []}
-        dataLoading={isLoading}
-        toolbarOptions={{
-          showFilterOption: true,
-        }}
-        footerOptions={{
-          showPagination: true,
-        }}
-      />
-    </>
+      <Suspense fallback={<ProjectsTableSkeleton />}>
+        <ProjectsTable />
+      </Suspense>
+    </div>
   )
 }
 

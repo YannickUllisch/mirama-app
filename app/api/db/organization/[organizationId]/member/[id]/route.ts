@@ -1,13 +1,14 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteMemberCommand } from '@/server/modules/account/members/features/delete-member/handler'
 import { MemberIdParams } from '@/server/modules/account/members/features/delete-member/schema'
 import { UpdateMemberCommand } from '@/server/modules/account/members/features/update-member/handler'
 import { UpdateMemberSchema } from '@/server/modules/account/members/features/update-member/schema'
+import { P } from '@/server/shared/domain/permissions'
+import type { OrganizationRole } from '@prisma/client'
 
 export const PUT = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: { permissions: P.member.update },
     params: MemberIdParams,
     body: UpdateMemberSchema,
     pathPattern: '/api/db/organization/:organizationId/member/:id',
@@ -25,7 +26,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: { permissions: P.member.delete },
     params: MemberIdParams,
     pathPattern: '/api/db/organization/:organizationId/member/:id',
   },

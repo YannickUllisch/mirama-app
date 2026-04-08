@@ -2,6 +2,7 @@ import type { CreateRoleRequest } from '@/server/modules/account/roles/features/
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
 import { optimisticList } from '@hooks/query/helpers'
+import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -23,6 +24,16 @@ const role = {
   fetchAll: {
     useQuery: () => {
       const { activeTenantId } = useTenantResource()
+      return useQuery<RoleResponse[]>({
+        queryKey: roleKeys.list(activeTenantId),
+        queryFn: () => fetchRolesFn(activeTenantId),
+      })
+    },
+  },
+
+  fetchAllOrganizationSpecific: {
+    useQuery: () => {
+      const { activeTenantId } = useOrganizationResource()
       return useQuery<RoleResponse[]>({
         queryKey: roleKeys.list(activeTenantId),
         queryFn: () => fetchRolesFn(activeTenantId),
