@@ -11,8 +11,9 @@ import {
   FolderKanban,
   ShieldCheck,
 } from 'lucide-react'
-import { OrgMembersSection, ProjectMembersSection } from './MemberRoleRow'
 import type { ProjectWithMembers } from './types'
+import { OrgMembersSection } from './OrgMembersSection'
+import { ProjectMembersSection } from './ProjectMembersSection'
 
 const MembersContent = () => {
   const { activeOrganizationId } = useOrganizationResource()
