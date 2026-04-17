@@ -1,5 +1,5 @@
 import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import type { OrganizationRole } from '@prisma/client'
+import { OrganizationRole } from '@prisma/client'
 
 export const InvitationRepository = (db: ScopedDb) => ({
   async findByEmail(email: string) {
@@ -15,7 +15,6 @@ export const InvitationRepository = (db: ScopedDb) => ({
   async create(data: {
     email: string
     name: string
-    role: OrganizationRole
     inviterId: string
     expiresAt: Date
     iamRoleId?: string
@@ -24,6 +23,7 @@ export const InvitationRepository = (db: ScopedDb) => ({
     return await db.organizationInvitation.create({
       data: {
         ...data,
+        role: OrganizationRole.CLIENT,
         organizationId: '',
       },
     })

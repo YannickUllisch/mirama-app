@@ -46,7 +46,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
     defaultValues: {
       email: '',
       name: '',
-      role: OrganizationRole.USER,
+      iamRoleId: '',
     },
   })
 
@@ -114,7 +114,7 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
               />
               <FormField
                 control={form.control}
-                name="role"
+                name="iamRoleId"
                 render={({ field }) => (
                   <FormItem className="col-span-3">
                     <FormLabel>Role</FormLabel>

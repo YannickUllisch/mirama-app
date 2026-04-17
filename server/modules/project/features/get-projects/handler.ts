@@ -6,6 +6,7 @@ import { toProjectResponse } from '../response'
 export const GetProjectsQuery =
   ({ db, logger }: AppContext) =>
   async (email: string, archived: boolean) => {
+    logger.info('HERE INSIDE THING')
     const member = await db.member.findFirst({
       where: { email },
       select: {
@@ -27,13 +28,16 @@ export const GetProjectsQuery =
 
     const statements =
       member?.iamRole?.policies.flatMap((p) => p.statements) ?? []
+
     const hasOrgWideAccess = evaluateStatements(
       statements,
       'project:read',
       'project/*',
     )
+    logger.info(`member has orgwide access status of: ${hasOrgWideAccess}`)
 
     logger.info({ archived, hasOrgWideAccess }, 'Fetching projects')
+    logger.info(member?.id)
 
     const repo = ProjectRepository(db)
     const projects = await repo.findAll({
@@ -41,6 +45,8 @@ export const GetProjectsQuery =
       archived,
       hasOrgWideAccess,
     })
+
+    logger.info(`got projects of count ${projects.length}`)
 
     return projects.map(toProjectResponse)
   }

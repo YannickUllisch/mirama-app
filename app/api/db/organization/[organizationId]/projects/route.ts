@@ -11,6 +11,9 @@ export const GET = createRoute(
   },
   async (req, { session, ctx }) => {
     const archived = req.nextUrl.searchParams.get('archived') === 'true'
+    ctx.logger.info(session.user.email)
+    ctx.logger.info(archived)
+
     const data = await GetProjectsQuery(ctx)(session.user.email ?? '', archived)
 
     return Response.json({ success: true, data })
@@ -23,8 +26,11 @@ export const POST = createRoute(
     body: CreateProjectSchema,
     pathPattern: '/api/db/organization/:organizationId/project',
   },
-  async (_req, { ctx }, { body }) => {
-    const data = await CreateProjectCommand(ctx)(body)
+  async (_req, { ctx, session }, { body }) => {
+    const data = await CreateProjectCommand(ctx)(
+      body,
+      session.user.organizationId ?? '',
+    )
 
     return Response.json({ success: true, data }, { status: 201 })
   },

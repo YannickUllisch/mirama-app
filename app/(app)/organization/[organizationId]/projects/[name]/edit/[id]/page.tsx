@@ -54,7 +54,7 @@ import {
 } from 'lucide-react'
 import { notFound, useRouter } from 'next/navigation'
 import { use, useContext, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, type Resolver, useForm } from 'react-hook-form'
 
 const EditTaskPage = ({
   params,
@@ -85,7 +85,7 @@ const EditTaskPage = ({
 
   // Form Logic and Functions
   const form = useForm<UpdateTaskRequest>({
-    resolver: zodResolver(UpdateTaskSchema),
+    resolver: zodResolver(UpdateTaskSchema) as Resolver<UpdateTaskRequest>,
   })
 
   useEffect(() => {

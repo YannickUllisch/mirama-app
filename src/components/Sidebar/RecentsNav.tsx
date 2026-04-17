@@ -1,20 +1,12 @@
 // src/components/Sidebar/RecentsNav.tsx
 'use client'
 import apiRequest from '@hooks/query'
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@ui/sidebar'
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu } from '@ui/sidebar'
 import { Spinner } from '@ui/spinner'
-import { FolderOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import HoverLink from '../HoverLink'
 
 const RecentsNav = () => {
-  const pathname = usePathname()
+  const _pathname = usePathname()
   const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
 
   // const recents = useMemo(() => {
@@ -36,7 +28,7 @@ const RecentsNav = () => {
       ) : null}
 
       <SidebarMenu>
-        {projects?.map((item) => (
+        {/* {projects?.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild
@@ -58,7 +50,7 @@ const RecentsNav = () => {
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
-        ))}
+        ))} */}
       </SidebarMenu>
     </SidebarGroup>
   )

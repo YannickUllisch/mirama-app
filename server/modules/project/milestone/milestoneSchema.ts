@@ -20,7 +20,7 @@ export const MilestoneProjectResponseSchema = z.object({
 // TMP
 export const MilestoneSchema = z.object({
   id: z.string(),
-  date: z.coerce.date(),
+  date: z.date(),
   title: z.string(),
   colors: z.string(),
   projectId: z.string(),

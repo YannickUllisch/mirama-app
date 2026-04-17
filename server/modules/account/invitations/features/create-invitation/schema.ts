@@ -1,4 +1,3 @@
-import { OrganizationRoleSchema } from '@server/shared/enumSchemas'
 import { z } from 'zod'
 
 export const CreateInvitationSchema = z.object({
@@ -6,7 +5,6 @@ export const CreateInvitationSchema = z.object({
     .string()
     .min(3, { message: 'Name must include at least 3 characters' }),
   email: z.string().email({ message: 'Invalid email format' }),
-  role: OrganizationRoleSchema.default('USER'),
   iamRoleId: z.string().optional(),
 })
 

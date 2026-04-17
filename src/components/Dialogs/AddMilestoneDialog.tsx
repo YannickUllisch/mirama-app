@@ -83,7 +83,7 @@ const AddMilestoneDialog = ({
       <DialogTrigger asChild onClick={() => setIsOpen(true)}>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Configure Milestone</DialogTitle>
         </DialogHeader>

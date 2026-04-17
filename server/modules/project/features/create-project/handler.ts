@@ -5,10 +5,8 @@ import { toProjectResponse } from '../response'
 import type { CreateProjectRequest } from './schema'
 
 export const CreateProjectCommand =
-  ({ db, logger }: AppContext) =>
-  async (input: CreateProjectRequest) => {
-    logger.info({ name: input.name }, 'Creating project')
-
+  ({ db }: AppContext) =>
+  async (input: CreateProjectRequest, organizationId: string) => {
     const repo = ProjectRepository(db)
     const existing = await repo.findByName(input.name)
     ProjectEntity.assertUniqueProjectName(existing)
@@ -17,12 +15,21 @@ export const CreateProjectCommand =
 
     const project = await repo.create({
       ...proj,
+      organizationId,
       tags: {
         connect: tags.map((id) => ({ id })),
-        create: newTags.map((t) => ({ title: t.title })),
+        create: newTags.map((t) => ({ title: t.title, organizationId })),
       },
-      members: { createMany: { data: members } },
-      milestones: { createMany: { data: newMilestones } },
+      members: {
+        createMany: {
+          data: members.map((m) => ({ ...m, organizationId })),
+        },
+      },
+      milestones: {
+        createMany: {
+          data: newMilestones.map((ms) => ({ ...ms, organizationId })),
+        },
+      },
     })
 
     return toProjectResponse(project)

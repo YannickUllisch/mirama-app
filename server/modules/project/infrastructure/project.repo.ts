@@ -53,7 +53,6 @@ export const ProjectRepository = (db: ScopedDb) => ({
     })
   },
 
-  // organizationId auto-injected by ScopedDb
   async create(data: {
     name: string
     description: string | null
@@ -63,16 +62,29 @@ export const ProjectRepository = (db: ScopedDb) => ({
     status: StatusType
     archived: boolean
     budget: number
-    tags: { connect: { id: string }[]; create: { title: string }[] }
+    organizationId: string
+    tags: {
+      connect: { id: string }[]
+      create: { title: string; organizationId: string }[]
+    }
     members: {
-      createMany: { data: { memberId: string; isManager: boolean }[] }
+      createMany: {
+        data: { memberId: string; isManager: boolean; roleId: string }[]
+      }
     }
     milestones: {
-      createMany: { data: { date: Date; title: string; colors: string }[] }
+      createMany: {
+        data: {
+          date: Date
+          title: string
+          colors: string
+          organizationId: string
+        }[]
+      }
     }
   }) {
     return await db.project.create({
-      data: data as any,
+      data: data,
       include: PROJECT_INCLUDE,
     })
   },

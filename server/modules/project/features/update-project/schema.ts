@@ -3,12 +3,12 @@ import { z } from 'zod'
 
 const ProjectMemberLinkSchema = z.object({
   memberId: z.string().min(1),
-  isManager: z.boolean().default(false),
+  isManager: z.boolean(),
 })
 
 const MilestoneSchema = z.object({
   id: z.string().optional(),
-  date: z.coerce.date(),
+  date: z.date(),
   title: z.string().min(4),
   colors: z.string(),
 })
@@ -21,10 +21,10 @@ export const UpdateProjectSchema = z
   .object({
     name: z.string().min(1),
     description: z.string().nullable(),
-    startDate: z.coerce.date(),
-    endDate: z.coerce.date(),
-    priority: z.nativeEnum(PriorityType),
-    status: z.nativeEnum(StatusType),
+    startDate: z.date(),
+    endDate: z.date(),
+    priority: z.enum(PriorityType),
+    status: z.enum(StatusType),
     budget: z.number(),
     tags: z.string().array(),
     newTags: z.array(NewTagSchema),

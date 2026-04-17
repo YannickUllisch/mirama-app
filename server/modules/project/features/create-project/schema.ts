@@ -3,7 +3,8 @@ import { z } from 'zod'
 
 const ProjectMemberLinkSchema = z.object({
   memberId: z.string().min(1),
-  isManager: z.boolean().default(false),
+  roleId: z.string().min(1),
+  isManager: z.boolean(),
 })
 
 const NewMilestoneSchema = z.object({
@@ -22,10 +23,10 @@ export const CreateProjectSchema = z
     description: z.string().nullable(),
     startDate: z.coerce.date(),
     endDate: z.coerce.date(),
-    priority: z.nativeEnum(PriorityType).default(PriorityType.LOW),
-    status: z.nativeEnum(StatusType).default(StatusType.ACTIVE),
-    archived: z.boolean().default(false),
-    budget: z.number().default(0),
+    priority: z.enum(PriorityType),
+    status: z.enum(StatusType),
+    archived: z.boolean(),
+    budget: z.number(),
     tags: z.string().array(),
     newTags: z.array(NewTagSchema),
     members: z.array(ProjectMemberLinkSchema),

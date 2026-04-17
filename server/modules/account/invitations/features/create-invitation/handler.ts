@@ -1,21 +1,12 @@
 import type { AppContext } from '@/server/shared/infrastructure/types'
-import type { OrganizationRole } from '@prisma/client'
 import { InvitationEntity } from '../../domain/invitation.entity'
 import { InvitationRepository } from '../../infrastructure/invitation.repo'
 import { toInvitationResponse } from '../response'
 import type { CreateInvitationRequest } from './schema'
 
 export const CreateInvitationCommand =
-  ({ db, logger }: AppContext) =>
-  async (
-    inviterId: string,
-    sessionRole: OrganizationRole,
-    input: CreateInvitationRequest,
-  ) => {
-    logger.info({ email: input.email }, 'Creating invitation')
-
-    InvitationEntity.assertCanInviteRole(input.role, sessionRole)
-
+  ({ db }: AppContext) =>
+  async (inviterId: string, input: CreateInvitationRequest) => {
     const repo = InvitationRepository(db)
     const existing = await repo.findByEmail(input.email)
 
@@ -30,7 +21,6 @@ export const CreateInvitationCommand =
     const invitation = await repo.create({
       email: input.email,
       name: input.name,
-      role: input.role,
       inviterId,
       expiresAt,
       iamRoleId: input.iamRoleId,

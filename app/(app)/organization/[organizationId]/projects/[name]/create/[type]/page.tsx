@@ -53,7 +53,7 @@ import {
 } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useContext } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, type Resolver, useForm } from 'react-hook-form'
 
 const CreateTaskPage = () => {
   // Routing used to return to previous page.
@@ -78,7 +78,7 @@ const CreateTaskPage = () => {
 
   // Form Logic and Functions
   const form = useForm<CreateTaskRequest>({
-    resolver: zodResolver(CreateTaskSchema),
+    resolver: zodResolver(CreateTaskSchema) as Resolver<CreateTaskRequest>,
     defaultValues: {
       assignedToId: null,
       description: '',
