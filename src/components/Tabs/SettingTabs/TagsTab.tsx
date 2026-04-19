@@ -1,6 +1,6 @@
 'use client'
 import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { TagResponse } from '@server/modules/account/tags/features/response'
 import {
   type UpdateTagRequest,

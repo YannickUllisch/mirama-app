@@ -1,7 +1,6 @@
 'use client'
 import Loading from '@/app/loading'
 import apiRequest from '@hooks/query'
-import useLocalStorage from '@hooks/utils/useLocalStorage'
 import { OrganizationRole } from '@prisma/client'
 import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
@@ -16,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
+import useLocalStorage from '@src/modules/shared/hooks/utils/useLocalStorage'
 import {
   ClipboardList,
   GanttChart,
@@ -49,7 +49,7 @@ const ClientProjectPage = () => {
   const { data: tasks } = apiRequest.task.fetchByProject.useQuery(
     projectContext?.projectId ?? '',
   )
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: users } = apiRequest.members.fetchAll.useQuery()
 
   // Handling Project visit, by storing the project id in local storage (used to show recent projects)
   const [_, setRecentProjects] = useLocalStorage<string[]>(

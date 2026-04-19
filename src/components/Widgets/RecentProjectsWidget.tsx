@@ -1,4 +1,4 @@
-import useLocalStorage from '@hooks/utils/useLocalStorage'
+import useLocalStorage from '@src/modules/shared/hooks/utils/useLocalStorage'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'

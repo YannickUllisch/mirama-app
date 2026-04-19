@@ -12,6 +12,8 @@ const ORG_SCOPED_MODELS = new Set([
   'Task',
   'Member',
   'Team',
+  'TeamMember',
+  'ProjectTeam',
   'Tag',
   'OrganizationInvitation',
   'ProjectMember',

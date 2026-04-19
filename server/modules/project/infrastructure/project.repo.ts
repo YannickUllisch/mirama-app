@@ -69,7 +69,18 @@ export const ProjectRepository = (db: ScopedDb) => ({
     }
     members: {
       createMany: {
-        data: { memberId: string; isManager: boolean; roleId: string }[]
+        data: {
+          memberId: string
+          isManager: boolean
+          roleId: string
+          isInherited?: boolean
+          teamId?: string
+        }[]
+      }
+    }
+    projectTeams: {
+      createMany: {
+        data: { teamId: string; roleId: string; organizationId: string }[]
       }
     }
     milestones: {

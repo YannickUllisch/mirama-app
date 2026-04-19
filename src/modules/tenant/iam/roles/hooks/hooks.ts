@@ -1,7 +1,7 @@
 import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
-import { optimisticList } from '@hooks/query/helpers'
+import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'

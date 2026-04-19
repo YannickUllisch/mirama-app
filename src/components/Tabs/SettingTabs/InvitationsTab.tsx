@@ -5,7 +5,7 @@ import {
   UpdateInvitationSchema,
 } from '@/server/modules/account/invitations/features/update-invitation/schema'
 import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { OrganizationRole } from '@prisma/client'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'

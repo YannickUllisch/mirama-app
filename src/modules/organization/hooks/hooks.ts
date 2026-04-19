@@ -4,7 +4,7 @@ import type {
   OrganizationResponse,
 } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
-import { optimisticList } from '@hooks/query/helpers'
+import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import {
   createOrganizationFn,
   fetchOrganizationByIdFn,

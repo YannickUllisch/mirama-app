@@ -1,4 +1,4 @@
-import type { OrganizationRole, TenantRole } from '@prisma/client'
+import type { TenantRole } from '@prisma/client'
 import NextAuth from 'next-auth'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'
@@ -78,7 +78,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (foundOrg) {
           token.organizationId = foundOrg.id
-          token.orgRole = foundOrg.members[0].role
+          token.orgRole = foundOrg.members[0].iamRoleId
           token.tenantId = foundOrg.tenantId
         }
       }
@@ -91,7 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.name = token.name as string
         session.user.tenantId = token.tenantId as string
         session.user.organizationId = token.organizationId as string
-        session.user.orgRole = token.orgRole as OrganizationRole
+        session.user.orgRole = token.orgRole as string
         session.user.tenantRole = token.tenantRole as TenantRole
       }
       return session

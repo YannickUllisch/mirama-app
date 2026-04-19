@@ -45,7 +45,7 @@ const MemberRoleRow = ({
     </div>
     <div className="flex items-center gap-2 shrink-0">
       <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5">
-        {member.organizationRole}
+        {member.iamRoleId}
       </Badge>
       <Select value={member.iamRoleId ?? ''} onValueChange={onRoleChange}>
         <SelectTrigger className="h-7 text-xs w-40">
@@ -74,9 +74,8 @@ const OrgMembersSection = ({
   roles: RoleResponse[]
 }) => {
   const { data: members = [], isLoading } =
-    apiRequest.member.fetchByOrg.useQuery(organizationId)
-  const { mutate: updateMember } =
-    apiRequest.member.update.useMutation(organizationId)
+    apiRequest.members.fetchAll.useQuery()
+  const { mutate: updateMember } = apiRequest.members.update.useMutation()
 
   return (
     <section className="border border-border rounded-xl overflow-hidden">

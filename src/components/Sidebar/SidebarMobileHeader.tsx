@@ -1,6 +1,6 @@
 // src/components/Sidebar/SidebarMobileHeader.tsx
 'use client'
-import { useIsMobile } from '@hooks/utils/use-mobile'
+import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import HoverLink from '../HoverLink'
 import MiramaIcon from '../MiramaIcon'
 

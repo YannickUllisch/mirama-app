@@ -69,7 +69,6 @@ export const CreatePrismaAdapter = () => {
             name: user.name,
             userId: user.id,
             organizationId: invitation.organizationId,
-            role: invitation.role,
             iamRoleId: iamRole.id,
           },
         })

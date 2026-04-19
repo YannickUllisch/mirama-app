@@ -1,6 +1,6 @@
 import type { TenantSettingsResponse } from '@/server/modules/account/tenant/settings/features/response'
 import type { UpdateTenantSettingsRequest } from '@/server/modules/account/tenant/settings/features/update-settings/schema'
-import { optimisticList } from '@hooks/query/helpers'
+import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchTenantSettingsFn, updateTenantSettingsFn } from './api'

@@ -1,6 +1,6 @@
 // src/components/Sidebar/AppSidebar.tsx
 'use client'
-import { useIsMobile } from '@hooks/utils/use-mobile'
+import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import { cn } from '@src/lib/utils'
 import {
   Sidebar,

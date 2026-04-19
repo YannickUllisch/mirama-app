@@ -1,5 +1,4 @@
 import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import { OrganizationRole } from '@prisma/client'
 
 export const InvitationRepository = (db: ScopedDb) => ({
   async findByEmail(email: string) {
@@ -17,13 +16,11 @@ export const InvitationRepository = (db: ScopedDb) => ({
     name: string
     inviterId: string
     expiresAt: Date
-    iamRoleId?: string
+    iamRoleId: string
   }) {
-    // organizationId is auto-injected by ScopedDb
     return await db.organizationInvitation.create({
       data: {
         ...data,
-        role: OrganizationRole.CLIENT,
         organizationId: '',
       },
     })
@@ -33,7 +30,7 @@ export const InvitationRepository = (db: ScopedDb) => ({
     email: string,
     data: {
       name?: string
-      role?: OrganizationRole
+      iamRoleId?: string
       expiresAt?: Date
     },
   ) {

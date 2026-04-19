@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@src/components/ui/dialog'
 
-import { useMediaQuery } from '@hooks/utils/use-media-query'
+import { useMediaQuery } from '@src/modules/shared/hooks/utils/use-media-query'
 import {
   Drawer,
   DrawerClose,

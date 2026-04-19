@@ -7,7 +7,7 @@ export const MemberRepository = (db: ScopedDb) => ({
   },
 
   async findAll() {
-    return await db.member.findMany({ orderBy: { role: 'asc' } })
+    return await db.member.findMany()
   },
 
   async update(id: string, data: Record<string, unknown>) {

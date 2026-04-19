@@ -1,11 +1,12 @@
-import { OrganizationRoleSchema } from '@server/shared/enumSchemas'
 import { z } from 'zod'
 
 export const UpdateInvitationSchema = z.object({
   name: z
     .string()
     .min(3, { message: 'Name must include at least 3 characters' }),
-  organizationRole: OrganizationRoleSchema.default('USER'),
+  iamRoleId: z
+    .string()
+    .min(3, { message: 'Role must be defined in invitation' }),
   extendInvitation: z.boolean().default(false),
 })
 

@@ -1,6 +1,6 @@
 'use client'
 import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'

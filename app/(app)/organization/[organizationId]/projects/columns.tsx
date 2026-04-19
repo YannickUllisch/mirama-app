@@ -1,7 +1,6 @@
 // app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
-import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
 import { PriorityType, StatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
@@ -14,6 +13,7 @@ import {
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import { capitalize } from '@src/lib/utils'
 import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'

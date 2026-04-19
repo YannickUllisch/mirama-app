@@ -88,7 +88,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
 
   // Hooks
   const { data: project, isLoading } = apiRequest.project.fetchById.useQuery(id)
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: users } = apiRequest.members.fetchAll.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
 
   const { mutate: updateProjectMutation, isPending } =

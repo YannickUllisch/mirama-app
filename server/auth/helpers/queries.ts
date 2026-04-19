@@ -50,7 +50,7 @@ export const tryGetOrganization = async (userId: string, orgId: string) => {
       tenantId: true,
       members: {
         where: { email: user.email },
-        select: { role: true },
+        select: { iamRoleId: true },
       },
     },
   })

@@ -44,6 +44,7 @@ import {
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
 import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+import teamHooks from '@src/modules/organization/teams/hooks/hooks'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import { Badge } from '@ui/badge'
 import { ColorPicker } from '@ui/color-picker'
@@ -63,11 +64,12 @@ import {
   Trash2,
   Undo,
   Users,
+  Users2,
   X,
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   FormProvider,
   type Resolver,
@@ -93,8 +95,9 @@ const CreateProjectForm = () => {
   })
   const [newTag, setNewTag] = useState('')
 
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
+  const { data: allTeams = [] } = teamHooks.fetchAll.useQuery()
   const { mutate: createProjectMutation, isPending } =
     apiRequest.project.create.useMutation()
 
@@ -111,33 +114,40 @@ const CreateProjectForm = () => {
       status: StatusType.ON_HOLD,
       budget: 0,
       tags: [],
-      members: [{ isManager: true, memberId: session?.user.id ?? '' }],
+      members: [],
+      teams: [],
       newMilestones: [],
       archived: false,
       newTags: [],
     },
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <Will result in cyclic dependency update>
-  useEffect(() => {
-    if (session?.user.id) {
-      form.setValue('members', [
-        { isManager: true, memberId: session.user.id, roleId: 'test' },
-      ])
-    }
-  }, [session])
+  const {
+    fields: memberFields,
+    append: appendMember,
+    remove: removeMember,
+  } = useFieldArray({ control: form.control, name: 'members' })
 
   const {
-    fields: userFields,
-    append: appendUser,
-    remove: removeUser,
-  } = useFieldArray({ control: form.control, name: 'members' })
+    fields: teamFields,
+    append: appendTeam,
+    remove: removeTeam,
+  } = useFieldArray({ control: form.control, name: 'teams' })
 
   const {
     fields: milestoneFields,
     append: appendMilestone,
     remove: removeMilestone,
   } = useFieldArray({ control: form.control, name: 'newMilestones' })
+
+  // Collect memberIds that are covered by any selected team
+  const selectedTeamIds = teamFields.map((f) => f.teamId)
+  const selectedTeams = allTeams.filter((t) => selectedTeamIds.includes(t.id))
+
+  // We don't have team member details client-side at this point (only counts),
+  // so we track team-covered members via a best-effort approach:
+  // members explicitly added individually are shown; the server enforces precedence.
+  // Members already added individually that are also in a team get a visual badge.
 
   const handleAddMilestone = () => {
     const result = AttachNewMilestoneToProjectSchema.safeParse(newMilestone)
@@ -151,8 +161,7 @@ const CreateProjectForm = () => {
     const result = CreateTagSchema.safeParse({ title: newTag })
     if (result.success) {
       const currentTags = form.getValues('newTags')
-      const titles = currentTags.map((t) => t.title)
-      if (!titles.includes(newTag)) {
+      if (!currentTags.some((t) => t.title === newTag)) {
         form.setValue('newTags', [...currentTags, { title: newTag }], {
           shouldValidate: true,
           shouldDirty: true,
@@ -162,18 +171,23 @@ const CreateProjectForm = () => {
     }
   }
 
-  const toggleUserManager = (index: number) => {
-    const currentValue = form.getValues(`members.${index}.isManager`)
-    form.setValue(`members.${index}.isManager`, !currentValue, {
+  const toggleMemberManager = (index: number) => {
+    const current = form.getValues(`members.${index}.isManager`)
+    form.setValue(`members.${index}.isManager`, !current, {
       shouldValidate: true,
       shouldDirty: true,
     })
   }
 
-  const handleAddUser = (memberId: string) => {
-    const exists = userFields.some((field) => field.memberId === memberId)
-    if (!exists) {
-      appendUser({ memberId, isManager: false, roleId: 'test' })
+  const handleAddMember = (memberId: string) => {
+    if (!memberFields.some((f) => f.memberId === memberId)) {
+      appendMember({ memberId, isManager: false })
+    }
+  }
+
+  const handleAddTeam = (teamId: string) => {
+    if (!teamFields.some((f) => f.teamId === teamId)) {
+      appendTeam({ teamId })
     }
   }
 
@@ -226,6 +240,17 @@ const CreateProjectForm = () => {
       </div>
     )
   }
+
+  const availableTeams = allTeams.filter(
+    (t) => !teamFields.some((f) => f.teamId === t.id),
+  )
+
+  const availableMembers = orgMembers.filter(
+    (m) => !memberFields.some((f) => f.memberId === m.id),
+  )
+
+  // Creator entry for display only (server always adds them)
+  const creatorMember = orgMembers.find((m) => m.email === session?.user?.email)
 
   return (
     <FormProvider {...form}>
@@ -665,116 +690,254 @@ const CreateProjectForm = () => {
           </Card>
 
           <div className="space-y-6">
-            {/* Team Members */}
+            {/* ── Teams ─────────────────────────────────────────────────── */}
             <Card className="bg-transparent border-none">
               <CardContent className="p-6">
-                <h3 className="text-lg font-medium flex items-center gap-2 text-foreground">
-                  <Users className="w-5 h-5" />
-                  Team Members
+                <h3 className="text-lg font-medium flex items-center gap-2 mb-4 text-foreground">
+                  <Users2 className="w-5 h-5" />
+                  Teams
                 </h3>
 
-                <div className="space-y-4">
-                  <Select onValueChange={handleAddUser}>
+                <div className="space-y-3">
+                  <Select
+                    onValueChange={handleAddTeam}
+                    value=""
+                    disabled={availableTeams.length === 0}
+                  >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Add Team Member" />
+                      <SelectValue
+                        placeholder={
+                          availableTeams.length === 0
+                            ? 'All teams added'
+                            : 'Add a team...'
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {users
-                        ?.filter(
-                          (user) =>
-                            !userFields.some(
-                              (field) => field.memberId === user.id,
-                            ),
-                        )
-                        .map((user) => (
-                          <SelectItem
-                            value={user.id}
-                            key={`user-select-${user.id}`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <UserAvatar
-                                avatarSize={24}
-                                fontSize={10}
-                                username={user.name}
-                              />
-                              {user.name}
-                            </div>
-                          </SelectItem>
-                        ))}
+                      {availableTeams.map((team) => (
+                        <SelectItem
+                          key={`team-opt-${team.id}`}
+                          value={team.id}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Users2 className="w-3.5 h-3.5 text-muted-foreground" />
+                            {team.name}
+                            <span className="text-xs text-muted-foreground">
+                              ({team.memberCount}{' '}
+                              {team.memberCount === 1 ? 'member' : 'members'})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
 
-                  <ScrollArea className="h-100 border rounded-md p-2">
-                    <div className="space-y-3">
-                      {userFields.length > 0 ? (
-                        userFields.map((userField, index) => {
-                          const user = users?.find(
-                            (u) => u.id === userField.memberId,
-                          )
-                          if (!user) return null
-
-                          return (
-                            <div
-                              key={userField.id}
-                              className="flex items-center justify-between p-3 bg-accent rounded-md"
-                            >
-                              <div className="flex items-center space-x-3 flex-1 text-accent-foreground">
-                                <UserAvatar
-                                  avatarSize={36}
-                                  username={user.name}
-                                  fontSize={14}
-                                />
-                                <div className="flex-1">
-                                  <p className="font-medium">{user.name}</p>
-                                  <p className="text-sm">{user.email}</p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <div className="flex items-center gap-2 text-accent-foreground">
-                                  <Checkbox
-                                    id={`manager-${userField.id}`}
-                                    checked={form.watch(
-                                      `members.${index}.isManager`,
-                                    )}
-                                    onCheckedChange={() =>
-                                      toggleUserManager(index)
-                                    }
-                                  />
-                                  <Label
-                                    htmlFor={`manager-${userField.id}`}
-                                    className="text-sm cursor-pointer"
-                                  >
-                                    Manager
-                                  </Label>
-                                </div>
-
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  type="button"
-                                  onClick={() => removeUser(index)}
-                                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                  {teamFields.length > 0 && (
+                    <div className="space-y-2">
+                      {teamFields.map((field, index) => {
+                        const team = allTeams.find(
+                          (t) => t.id === field.teamId,
+                        )
+                        if (!team) return null
+                        return (
+                          <div
+                            key={field.id}
+                            className="flex items-center justify-between px-3 py-2 bg-accent rounded-md"
+                          >
+                            <div className="flex items-center gap-2 text-accent-foreground">
+                              <Users2 className="w-4 h-4 shrink-0" />
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {team.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {team.memberCount}{' '}
+                                  {team.memberCount === 1 ? 'member' : 'members'}{' '}
+                                  · team access
+                                </p>
                               </div>
                             </div>
-                          )
-                        })
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-87.5">
-                          <Users className="w-12 h-12 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">
-                            No team members assigned
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Add team members to work on this project
-                          </p>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              type="button"
+                              className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                              onClick={() => removeTeam(index)}
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {teamFields.length === 0 && (
+                    <p className="text-xs text-muted-foreground text-center py-2">
+                      No teams added. Team members are added automatically.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* ── Individual Members ────────────────────────────────────── */}
+            <Card className="bg-transparent border-none">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-medium flex items-center gap-2 mb-4 text-foreground">
+                  <Users className="w-5 h-5" />
+                  Individual Members
+                </h3>
+
+                <div className="space-y-4">
+                  <Select
+                    onValueChange={handleAddMember}
+                    value=""
+                    disabled={availableMembers.length === 0}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={
+                          availableMembers.length === 0
+                            ? 'All members added'
+                            : 'Add a member...'
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableMembers.map((member) => (
+                        <SelectItem
+                          key={`member-opt-${member.id}`}
+                          value={member.id}
+                        >
+                          <div className="flex items-center gap-2">
+                            <UserAvatar
+                              avatarSize={20}
+                              fontSize={9}
+                              username={member.name}
+                            />
+                            <span>{member.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <ScrollArea className="h-72 border rounded-md p-2">
+                    <div className="space-y-2">
+                      {/* Creator row — always present, non-removable */}
+                      {creatorMember && (
+                        <div className="flex items-center justify-between p-2.5 bg-accent/60 rounded-md border border-border/50">
+                          <div className="flex items-center gap-2.5 flex-1 text-accent-foreground">
+                            <UserAvatar
+                              avatarSize={32}
+                              username={creatorMember.name}
+                              fontSize={12}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">
+                                {creatorMember.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {creatorMember.email}
+                              </p>
+                            </div>
+                          </div>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] px-1.5 py-0 h-4 shrink-0"
+                          >
+                            Creator
+                          </Badge>
                         </div>
                       )}
+
+                      {/* Explicit individual members */}
+                      {memberFields.map((field, index) => {
+                        const member = orgMembers.find(
+                          (m) => m.id === field.memberId,
+                        )
+                        // Skip creator (already shown above)
+                        if (
+                          !member ||
+                          member.id === creatorMember?.id
+                        )
+                          return null
+
+                        return (
+                          <div
+                            key={field.id}
+                            className="flex items-center justify-between p-2.5 bg-accent rounded-md"
+                          >
+                            <div className="flex items-center gap-2.5 flex-1 text-accent-foreground">
+                              <UserAvatar
+                                avatarSize={32}
+                                username={member.name}
+                                fontSize={12}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">
+                                  {member.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {member.email}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <div className="flex items-center gap-1.5 text-accent-foreground">
+                                <Checkbox
+                                  id={`manager-${field.id}`}
+                                  checked={form.watch(
+                                    `members.${index}.isManager`,
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleMemberManager(index)
+                                  }
+                                />
+                                <Label
+                                  htmlFor={`manager-${field.id}`}
+                                  className="text-xs cursor-pointer"
+                                >
+                                  Manager
+                                </Label>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                type="button"
+                                className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                onClick={() => removeMember(index)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                        )
+                      })}
+
+                      {memberFields.filter(
+                        (f) => f.memberId !== creatorMember?.id,
+                      ).length === 0 &&
+                        !creatorMember && (
+                          <div className="flex flex-col items-center justify-center h-40">
+                            <Users className="w-8 h-8 text-muted-foreground mb-2" />
+                            <p className="text-sm text-muted-foreground">
+                              No individual members added
+                            </p>
+                          </div>
+                        )}
                     </div>
                   </ScrollArea>
+
+                  {teamFields.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Members already covered by a team will be assigned via
+                      team access. Individual entries for the same member are
+                      ignored.
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>

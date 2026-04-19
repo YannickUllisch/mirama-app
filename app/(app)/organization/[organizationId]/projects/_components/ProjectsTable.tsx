@@ -2,19 +2,20 @@
 'use client'
 
 import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@hooks/utils/useEditableColumns'
+
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import {
   type UpdateProjectRequest,
   UpdateProjectSchema,
 } from '@server/modules/project/features/update-project/schema'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { toast } from 'sonner'
 import { useProjectColumns } from '../columns'
 
 const ProjectsTable = () => {
   const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: users } = apiRequest.members.fetchAll.useQuery()
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
   const { mutate: archiveMutation } = apiRequest.project.archive.useMutation()
 

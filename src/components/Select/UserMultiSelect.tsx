@@ -24,7 +24,7 @@ const UserMultiSelect: FC<PropsWithChildren<UserMultiSelectProps>> = ({
     useState<string[]>(initialUserIds)
 
   // Fetching users depending on scope.
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: users } = apiRequest.members.fetchAll.useQuery()
 
   return (
     <MultiSelector

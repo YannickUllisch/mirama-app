@@ -1,5 +1,5 @@
 'use client'
-import { useIsMobile } from '@hooks/utils/use-mobile'
+import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import { Slot } from '@radix-ui/react-slot'
 import { cn } from '@src/lib/utils'
 import { Button } from '@ui/button'

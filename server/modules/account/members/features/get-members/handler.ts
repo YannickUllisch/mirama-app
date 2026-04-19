@@ -3,10 +3,8 @@ import { MemberRepository } from '../../infrastructure/member.repo'
 import { toMemberResponse } from '../response'
 
 export const GetMembersQuery =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async () => {
-    logger.info('Fetching all members for the current organization')
-
     const repo = MemberRepository(db)
     const members = await repo.findAll()
 

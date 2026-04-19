@@ -2,7 +2,6 @@
 'use client'
 
 import apiRequest from '@hooks/query'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import { Badge } from '@ui/badge'
 import {
@@ -11,23 +10,21 @@ import {
   FolderKanban,
   ShieldCheck,
 } from 'lucide-react'
-import type { ProjectWithMembers } from './types'
 import { OrgMembersSection } from './OrgMembersSection'
 import { ProjectMembersSection } from './ProjectMembersSection'
+import type { ProjectWithMembers } from './types'
 
 const MembersContent = () => {
-  const { activeOrganizationId } = useOrganizationResource()
   const { can } = usePermissions()
 
   const canUpdateMember = can('member', 'update')
 
   const { data: members = [], isLoading: membersLoading } =
-    apiRequest.member.fetchByOrg.useQuery(activeOrganizationId)
+    apiRequest.members.fetchAll.useQuery()
   const { data: roles = [] } =
     apiRequest.role.fetchAllOrganizationSpecific.useQuery()
   const { data: projects = [] } = apiRequest.project.fetchAll.useQuery()
-  const { mutate: updateMember } =
-    apiRequest.member.update.useMutation(activeOrganizationId)
+  const { mutate: updateMember } = apiRequest.members.update.useMutation()
 
   const orgRoles = roles.filter((r) => r.scope === 'ORGANIZATION')
 

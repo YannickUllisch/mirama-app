@@ -1,6 +1,6 @@
 import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
 import type { UpdatePolicyRequest } from '@/server/modules/account/policies/features/update-policy/schema'
-import { optimisticList } from '@hooks/query/helpers'
+import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'

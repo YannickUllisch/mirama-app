@@ -14,7 +14,7 @@ export const UpdateInvitationCommand =
     return toInvitationResponse(
       await repo.update(email, {
         name: input.name,
-        role: input.organizationRole,
+        iamRoleId: input.iamRoleId,
         ...(input.extendInvitation && {
           expiresAt: InvitationEntity.createExpiryDate(),
         }),

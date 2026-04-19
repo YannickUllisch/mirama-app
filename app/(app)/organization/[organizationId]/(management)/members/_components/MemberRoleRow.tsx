@@ -28,7 +28,7 @@ export const MemberRoleRow = ({
     </div>
     <div className="flex items-center gap-2 shrink-0">
       <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5">
-        {member.organizationRole}
+        {member.iamRoleId}
       </Badge>
       {canUpdate ? (
         <Select value={member.iamRoleId ?? ''} onValueChange={onRoleChange}>

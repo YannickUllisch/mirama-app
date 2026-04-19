@@ -30,6 +30,7 @@ export const POST = createRoute(
     const data = await CreateProjectCommand(ctx)(
       body,
       session.user.organizationId ?? '',
+      session.user.email ?? '',
     )
 
     return Response.json({ success: true, data }, { status: 201 })

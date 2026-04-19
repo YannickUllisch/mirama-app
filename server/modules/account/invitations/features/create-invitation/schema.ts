@@ -5,7 +5,7 @@ export const CreateInvitationSchema = z.object({
     .string()
     .min(3, { message: 'Name must include at least 3 characters' }),
   email: z.string().email({ message: 'Invalid email format' }),
-  iamRoleId: z.string().optional(),
+  iamRoleId: z.string(),
 })
 
 export type CreateInvitationRequest = z.infer<typeof CreateInvitationSchema>

@@ -1,4 +1,4 @@
-import type { HandleFieldUpdate } from '@hooks/utils/useEditableColumns'
+import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { PriorityType, TaskStatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TagResponse } from '@server/modules/account/tags/features/response'

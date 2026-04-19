@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
-  output = "./generated/client"
+  output        = "./generated/client"
 }
 
 datasource db {
@@ -86,8 +86,8 @@ model Plan {
   name          String
   description   String?
   price         Int // In cents
-  interval      String 
-  features      Json 
+  interval      String
+  features      Json
   subscriptions Subscription[]
 }
 
@@ -135,16 +135,17 @@ model Role {
   name        String
   description String?
 
-  tenantId    String? // NULL = System-level default role (e.g. Viewer, Owner)
-  tenant   Tenant?  @relation(fields: [tenantId], references: [id])
+  tenantId String? // NULL = System-level default role (e.g. Viewer, Owner)
+  tenant   Tenant? @relation(fields: [tenantId], references: [id])
 
   policies Policy[] @relation("RolePolicies")
 
-  scope     AccessScope @default(ORGANIZATION)
+  scope AccessScope @default(ORGANIZATION)
 
   organizationMembers Member[]
   projectMembers      ProjectMember[]
   invitations         OrganizationInvitation[]
+  projectTeams        ProjectTeam[]
 }
 
 model Policy {
@@ -154,7 +155,7 @@ model Policy {
   isManaged   Boolean @default(false) // TRUE for system-protected policies
   tenantId    String?
 
-  scope     AccessScope @default(ORGANIZATION)
+  scope AccessScope @default(ORGANIZATION)
 
   tenant     Tenant?           @relation(fields: [tenantId], references: [id])
   roles      Role[]            @relation("RolePolicies")
@@ -166,7 +167,7 @@ model PolicyStatement {
   policyId String
   effect   String @default("ALLOW")
 
-  action   String 
+  action   String
   resource String @default("*")
 
   policy Policy @relation(fields: [policyId], references: [id], onDelete: Cascade)
@@ -187,32 +188,14 @@ model Organization {
   zipCode     String
   dateCreated DateTime @default(now())
 
-  projects    Project[]
-  invitations OrganizationInvitation[]
-  tasks       Task[]
-  members     Member[]
-  teams       Team[]
-  tags        Tag[]
-}
-
-// TODO: delete after permission setup
-enum OrganizationRole {
-  OWNER
-  ADMIN
-  USER
-  FREELANCE
-  CLIENT
-}
-
-model Team {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String
-  members     Member[]
-  dateCreated DateTime @default(now())
-
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  projects         Project[]
+  invitations      OrganizationInvitation[]
+  tasks            Task[]
+  members          Member[]
+  projectTeamLinks ProjectTeam[]
+  teamMembers      TeamMember[]
+  teams            Team[]
+  tags             Tag[]
 }
 
 model Member {
@@ -220,16 +203,14 @@ model Member {
   name  String
   email String
 
-  role OrganizationRole @default(USER)
-
   userId String? // Make it nullable to support pending invites
   user   User?   @relation(fields: [userId], references: [id])
 
-  tasks Task[]
-  teams Team[]
+  tasks     Task[]
+  teamLinks TeamMember[]
 
-  iamRoleId  String
-  iamRole Role   @relation(fields: [iamRoleId], references: [id])
+  iamRoleId String
+  iamRole   Role   @relation(fields: [iamRoleId], references: [id])
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -248,7 +229,6 @@ model OrganizationInvitation {
 
   email     String           @id
   name      String
-  role      OrganizationRole
   inviterId String
   status    InvitationStatus @default(PENDING)
 
@@ -256,8 +236,8 @@ model OrganizationInvitation {
   organization   Organization @relation(fields: [organizationId], references: [id])
   expiresAt      DateTime     @default(now())
 
-  iamRoleId String?
-  iamRole   Role?   @relation(fields: [iamRoleId], references: [id])
+  iamRoleId String
+  iamRole   Role   @relation(fields: [iamRoleId], references: [id])
 }
 
 enum InvitationStatus {
@@ -292,8 +272,8 @@ model Project {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  // Relation to ProjectUser for managing the many-to-many relationship
   members    ProjectMember[]
+  teams      ProjectTeam[]
   tasks      Task[]
   tags       Tag[]
   expenses   Expense[]
@@ -303,10 +283,15 @@ model Project {
   @@index([organizationId, archived], map: "team_archived_idx")
 }
 
-// Join table to represent many-to-many relationship between Project and User
+// Join table to represent many-to-many relationship between Project and Member
 model ProjectMember {
-  id        String  @id @default(cuid())
-  isManager Boolean @default(false)
+  id          String  @id @default(cuid())
+  isInherited Boolean @default(false)
+
+  // When isInherited=true, this tracks the team that caused the membership.
+  // Cleared when a member is later directly assigned to the same project.
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id])
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -320,6 +305,59 @@ model ProjectMember {
   @@unique([projectId, memberId])
   @@index([projectId], map: "project_user_project_idx")
   @@index([memberId], map: "project_member_idx")
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  dateCreated DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  members      TeamMember[]
+  projectLinks ProjectTeam[]
+
+  // Tracks which ProjectMember records were inherited from this team
+  inheritedProjectMembers ProjectMember[]
+}
+
+model TeamMember {
+  id String @id @default(cuid())
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([teamId, memberId])
+  @@index([teamId])
+  @@index([memberId])
+}
+
+model ProjectTeam {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  // Role applied to every team member on assignment to a project, ProjectMember will be copied 
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([projectId, teamId])
+  @@index([organizationId])
 }
 
 model Milestone {

@@ -17,14 +17,14 @@ export type SeedPolicy = {
 
 const organizationPolicies: SeedPolicy[] = [
   {
-    name: "FullAccess",
+    name: "full-access-policy",
     description: "Unrestricted access to all resources",
     isManaged: true,
     scope: "ORGANIZATION",
     statements: [{ effect: "ALLOW", action: "*", resource: "*" }],
   },
   {
-    name: "OrganizationManage",
+    name: "organization-manager-policy",
     description: "Manage organization settings and configuration",
     isManaged: true,
     scope: "ORGANIZATION",
@@ -34,48 +34,33 @@ const organizationPolicies: SeedPolicy[] = [
     ],
   },
   {
-    name: "MemberManage",
-    description: "Full control over members, invitations, and teams",
+    name: "member-management-policy",
+    description: "Full control over members, invitations and teams",
     isManaged: true,
     scope: "ORGANIZATION",
     statements: [
       { effect: "ALLOW", action: "member:*", resource: "member/*" },
       { effect: "ALLOW", action: "invitation:*", resource: "invitation/*" },
       { effect: "ALLOW", action: "team:*", resource: "team/*" },
+      { effect: "ALLOW", action: "teammember:*", resource: "teammember/*" },
     ],
   },
   {
-    name: "ProjectManage",
+    name: "project-manager-policy",
     description: "Full CRUD on all projects across the organization",
     isManaged: true,
     scope: "ORGANIZATION",
     statements: [
       { effect: "ALLOW", action: "project:*", resource: "project/*" },
-    ],
-  },
-  {
-    name: "TaskManage",
-    description: "Full CRUD and assignment on all tasks across the organization",
-    isManaged: true,
-    scope: "ORGANIZATION",
-    statements: [
       { effect: "ALLOW", action: "task:*", resource: "task/*" },
-    ],
-  },
-  {
-    name: "ContentManage",
-    description: "Manage tags, comments, milestones, and expenses across the organization",
-    isManaged: true,
-    scope: "ORGANIZATION",
-    statements: [
-      { effect: "ALLOW", action: "tag:*", resource: "tag/*" },
       { effect: "ALLOW", action: "comment:*", resource: "comment/*" },
-      { effect: "ALLOW", action: "milestone:*", resource: "milestone/*" },
       { effect: "ALLOW", action: "expense:*", resource: "expense/*" },
+      { effect: "ALLOW", action: "milestone:*", resource: "milestone/*" },
+      { effect: "ALLOW", action: "tag:*", resource: "tag/*" },
     ],
   },
   {
-    name: "ReadOnly",
+    name: "read-only-policy",
     description: "Read-only access to all resources at the organization level",
     isManaged: true,
     scope: "ORGANIZATION",
@@ -88,14 +73,14 @@ const organizationPolicies: SeedPolicy[] = [
 
 const projectPolicies: SeedPolicy[] = [
   {
-    name: "ProjectFullAccess",
+    name: "project-full-access-policy",
     description: "Unrestricted access within a project",
     isManaged: true,
     scope: "PROJECT",
     statements: [{ effect: "ALLOW", action: "*", resource: "*" }],
   },
   {
-    name: "ProjectContribute",
+    name: "project-contributor-policy",
     description: "Create and manage tasks, milestones, comments, and expenses within a project",
     isManaged: true,
     scope: "PROJECT",
@@ -114,7 +99,7 @@ const projectPolicies: SeedPolicy[] = [
     ],
   },
   {
-    name: "ProjectReview",
+    name: "project-reviewer-policy",
     description: "Read-only access with the ability to leave comments — ideal for client reviews",
     isManaged: true,
     scope: "PROJECT",
@@ -129,7 +114,7 @@ const projectPolicies: SeedPolicy[] = [
     ],
   },
   {
-    name: "ProjectReadOnly",
+    name: "project-readonly-policy",
     description: "Read-only access within a project",
     isManaged: true,
     scope: "PROJECT",

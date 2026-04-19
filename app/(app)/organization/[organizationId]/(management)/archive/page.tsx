@@ -20,7 +20,7 @@ const ArchivePage = () => {
   const { mutate: useArchiveMutation } =
     apiRequest.project.archive.useMutation()
   const { mutate: deleteMutation } = apiRequest.project.delete.useMutation()
-  const { data: users } = apiRequest.team.fetchMembers.useQuery()
+  const { data: users } = apiRequest.members.fetchAll.useQuery()
 
   return (
     <>

@@ -3,8 +3,12 @@ import { z } from 'zod'
 
 const ProjectMemberLinkSchema = z.object({
   memberId: z.string().min(1),
-  roleId: z.string().min(1),
+  roleId: z.string().optional(),
   isManager: z.boolean(),
+})
+
+const ProjectTeamLinkSchema = z.object({
+  teamId: z.string().min(1),
 })
 
 const NewMilestoneSchema = z.object({
@@ -30,6 +34,7 @@ export const CreateProjectSchema = z
     tags: z.string().array(),
     newTags: z.array(NewTagSchema),
     members: z.array(ProjectMemberLinkSchema),
+    teams: z.array(ProjectTeamLinkSchema).default([]),
     newMilestones: z.array(NewMilestoneSchema),
   })
   .refine((data) => data.startDate <= data.endDate, {

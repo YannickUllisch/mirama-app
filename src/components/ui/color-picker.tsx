@@ -1,6 +1,6 @@
 'use client'
 
-import { useForwardedRef } from '@hooks/utils/use-forwarded-ref'
+import { useForwardedRef } from '@src/modules/shared/hooks/utils/use-forwarded-ref'
 import type { ButtonProps } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'
 import {

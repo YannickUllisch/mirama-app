@@ -1,18 +1,16 @@
 import { getSystemRole } from '@/server/shared/domain/iam-defaults'
 import type { AppContext } from '@/server/shared/infrastructure/types'
-import { OrganizationRole } from '@prisma/client'
 import { OrganizationEntity } from '../../domain/organization.entity'
 import { OrganizationRepository } from '../../infrastructure/organization.repo'
 import { toOrganizationResponse } from '../response'
 import type { CreateOrganizationRequest } from './schema'
 
 export const CreateOrganizationCommand =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (
     input: CreateOrganizationRequest,
     creator: { name: string; email: string },
   ) => {
-    logger.info('Creating organization')
     const slug = OrganizationEntity.createSlug(input.name)
 
     const repo = OrganizationRepository(db)
@@ -33,7 +31,6 @@ export const CreateOrganizationCommand =
       data: {
         name: creator.name,
         email: creator.email,
-        role: OrganizationRole.OWNER,
         organizationId: org.id,
         iamRoleId: ownerRole.id,
       },
