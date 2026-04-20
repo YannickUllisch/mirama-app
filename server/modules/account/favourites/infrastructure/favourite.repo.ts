@@ -1,5 +1,5 @@
+import type { FavouriteType } from '@/prisma/generated/client'
 import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import type { FavouriteType } from '@prisma/client'
 
 export const FavouriteRepository = (db: ScopedDb) => ({
   async findByMemberAndType(memberId: string, type: FavouriteType) {

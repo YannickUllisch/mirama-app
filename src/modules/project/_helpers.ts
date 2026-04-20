@@ -1,4 +1,8 @@
-import { type Project, type Task, TaskStatusType } from '@prisma/client'
+import {
+  type Project,
+  type Task,
+  TaskStatusType,
+} from '@/prisma/generated/client'
 import { differenceInDays } from 'date-fns'
 
 export const getDaysRemaining = (endDate: Date) => {

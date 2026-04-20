@@ -1,14 +1,11 @@
 'use client'
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
-import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
-import { OrganizationRole } from '@prisma/client'
-import type { OrganizationRoleType } from '@server/shared/enumSchemas'
 import {
   EditableCell,
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
+import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@ui/button'
@@ -45,6 +42,8 @@ export const useInvitationColumns = ({
     }
   >
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return useMemo(
     () => [
       columnHelper.accessor('name', {
@@ -75,32 +74,6 @@ export const useInvitationColumns = ({
           >
             {getValue()}
           </Link>
-        ),
-      }),
-
-      columnHelper.accessor('organizationRole', {
-        id: 'role',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Role" />
-        ),
-        cell: ({ row, getValue }) => (
-          <EditableCell
-            value={getValue()}
-            options={
-              Object.values(OrganizationRole).map((r) => ({
-                label: capitalize(r) as string,
-                value: r,
-              })) ?? []
-            }
-            onSave={(value) =>
-              handleFieldUpdate(
-                row.original,
-                'organizationRole',
-                value as OrganizationRoleType,
-              )
-            }
-            type={EditableCellType.SELECT}
-          />
         ),
       }),
 
@@ -139,10 +112,6 @@ export const useInvitationColumns = ({
           <DataTableColumnHeader column={column} title="Actions" />
         ),
         cell: ({ row }) => {
-          const [menuOpen, setMenuOpen] = useState(false)
-
-          if (!isOrgAdminOrOwner(session)) return null
-
           return (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
@@ -164,6 +133,6 @@ export const useInvitationColumns = ({
         },
       }),
     ],
-    [session, handleFieldUpdate, deleteMutation],
+    [handleFieldUpdate, deleteMutation, menuOpen],
   )
 }

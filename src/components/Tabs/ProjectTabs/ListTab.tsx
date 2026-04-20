@@ -1,7 +1,7 @@
 'use client'
 
+import { TaskStatusType, type TaskType } from '@/prisma/generated/client'
 import type { DragEndEvent } from '@dnd-kit/core'
-import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
@@ -14,14 +14,12 @@ import {
   ListItems,
   ListProvider,
 } from '@src/components/ui/roadmap-ui/list'
-import { postResource } from '@src/lib/api/postResource'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import {
   individualTaskTypes,
   isTaskTypeContainer,
-} from '@src/lib/helpers/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
-import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+} from '@src/modules/project/task/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import { Checkbox } from '@ui/checkbox'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import {
@@ -36,9 +34,8 @@ import {
 } from '@ui/dropdown-menu'
 import { Input } from '@ui/input'
 import { CircleOff, CornerDownRight, Loader2 } from 'lucide-react'
-import { DateTime } from 'luxon'
-import dynamic from 'next/dynamic'
 import { useSession } from 'next-auth/react'
+import dynamic from 'next/dynamic'
 import { useContext, useEffect, useRef, useState } from 'react'
 
 // Dynamically import ViewTaskSheet
@@ -95,7 +92,7 @@ const ListTab = ({
       return
     }
 
-    updateResourceById('task', active.id.toString(), { status })
+    // updateResourceById('task', active.id.toString(), { status })
   }
 
   const onAddItem = (
@@ -112,16 +109,16 @@ const ListTab = ({
 
   const handleInputSave = () => {
     if (newItem?.title.trim()) {
-      postResource('task', {
-        type: newItem.type,
-        title: newItem.title.trim(),
-        status: newItem.status,
-        priority: PriorityType.LOW,
-        projectId: projectContext?.projectId,
-        assignedToId: session?.user.id,
-        parentId: newItem.parentId,
-        dueDate: DateTime.now().plus({ week: 1 }).toJSDate(),
-      })
+      // postResource('task', {
+      //   type: newItem.type,
+      //   title: newItem.title.trim(),
+      //   status: newItem.status,
+      //   priority: PriorityType.LOW,
+      //   projectId: projectContext?.projectId,
+      //   assignedToId: session?.user.id,
+      //   parentId: newItem.parentId,
+      //   dueDate: DateTime.now().plus({ week: 1 }).toJSDate(),
+      // })
       // Call the final save function here
       setNewItem(null)
     }

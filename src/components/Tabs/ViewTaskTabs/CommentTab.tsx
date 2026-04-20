@@ -1,4 +1,4 @@
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { Avatar, AvatarFallback } from '@ui/avatar'
 import { Button } from '@ui/button'
 import { Card, CardContent } from '@ui/card'

@@ -1,5 +1,5 @@
+import type { PriorityType, StatusType } from '@/prisma/generated/client'
 import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import type { PriorityType, StatusType } from '@prisma/client'
 
 const PROJECT_INCLUDE = {
   milestones: true,
@@ -9,17 +9,11 @@ const PROJECT_INCLUDE = {
 } as const
 
 export const ProjectRepository = (db: ScopedDb) => ({
-  async findAll(opts: {
-    memberId: string
-    archived: boolean
-    hasOrgWideAccess: boolean
-  }) {
+  async findAll(opts: { memberId: string; archived: boolean }) {
     return await db.project.findMany({
       where: {
         archived: opts.archived,
-        ...(opts.hasOrgWideAccess
-          ? {}
-          : { members: { some: { memberId: opts.memberId } } }),
+        members: { some: { memberId: opts.memberId } },
       },
       include: PROJECT_INCLUDE,
       orderBy: { name: 'asc' },

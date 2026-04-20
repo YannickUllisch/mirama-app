@@ -4,10 +4,8 @@ import { TaskRepository } from '../../infrastructure/task.repo'
 import { toTaskResponse } from '../response'
 
 export const GetTaskQuery =
-  ({ db, logger }: AppContext) =>
-  async (taskId: string, sessionUserId: string, isAdminOrOwner: boolean) => {
-    logger.info({ taskId }, 'Fetching task by ID')
-
+  ({ db }: AppContext) =>
+  async (taskId: string, sessionUserId: string) => {
     const repo = TaskRepository(db)
     const task = await repo.findById(taskId)
     if (!task) throw new Error('Task not found')
@@ -19,7 +17,6 @@ export const GetTaskQuery =
     TaskEntity.assertProjectMemberOrAdmin(
       project.members.map((m) => m.memberId),
       sessionUserId,
-      isAdminOrOwner,
     )
 
     return toTaskResponse(task)

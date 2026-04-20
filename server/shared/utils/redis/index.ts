@@ -1,4 +1,4 @@
-import type { Prisma as PrismaType } from '@prisma/client'
+import type { Prisma as PrismaType } from '@/prisma/generated/client'
 import { Prisma } from '@prisma/client/extension'
 import { defaultCacheMethods, defaultMutationMethods } from './cacheMethods'
 import type {

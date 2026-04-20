@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteProjectCommand } from '@/server/modules/project/features/delete-project/handler'
 import { GetProjectQuery } from '@/server/modules/project/features/get-project/handler'
@@ -8,19 +7,14 @@ import { UpdateProjectSchema } from '@/server/modules/project/features/update-pr
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: ProjectIdParams,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
   },
   async (_req, { session, ctx }, { params }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
     const data = await GetProjectQuery(ctx)(
       params.projectId,
       session.user.id ?? '',
-      isAdmin,
     )
 
     return Response.json({ success: true, data })
@@ -29,9 +23,7 @@ export const GET = createRoute(
 
 export const PUT = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     params: ProjectIdParams,
     body: UpdateProjectSchema,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
@@ -45,9 +37,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     params: ProjectIdParams,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
   },

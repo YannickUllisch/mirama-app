@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from '@src/components/ui/form'
 import { Input } from '@src/components/ui/input'
-import { postResource } from '@src/lib/api/postResource'
 import { Loader2, Send } from 'lucide-react'
 import { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -34,14 +33,14 @@ const ContactForm = () => {
     },
   })
 
-  const onSubmit = (vals: ContactRequestType) => {
+  const onSubmit = (_vals: ContactRequestType) => {
     startTransition(() => {
-      postResource(
-        'contact',
-        vals,
-        undefined,
-        'Your message has been Sent!',
-      ).then(() => form.reset())
+      // postResource(
+      //   'contact',
+      //   vals,
+      //   undefined,
+      //   'Your message has been Sent!',
+      // ).then(() => form.reset())
     })
   }
 

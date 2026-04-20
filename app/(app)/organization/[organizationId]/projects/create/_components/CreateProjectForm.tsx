@@ -1,8 +1,8 @@
 // app/(app)/organization/[organizationId]/projects/create/_components/CreateProjectForm.tsx
 'use client'
+import { PriorityType, StatusType } from '@/prisma/generated/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
-import { PriorityType, StatusType } from '@prisma/client'
+import apiRequest from '@hooks'
 import { CreateTagSchema } from '@server/modules/account/tags/features/create-tag/schema'
 import {
   type CreateProjectRequest,
@@ -142,7 +142,7 @@ const CreateProjectForm = () => {
 
   // Collect memberIds that are covered by any selected team
   const selectedTeamIds = teamFields.map((f) => f.teamId)
-  const selectedTeams = allTeams.filter((t) => selectedTeamIds.includes(t.id))
+  const _selectedTeams = allTeams.filter((t) => selectedTeamIds.includes(t.id))
 
   // We don't have team member details client-side at this point (only counts),
   // so we track team-covered members via a best-effort approach:
@@ -715,10 +715,7 @@ const CreateProjectForm = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {availableTeams.map((team) => (
-                        <SelectItem
-                          key={`team-opt-${team.id}`}
-                          value={team.id}
-                        >
+                        <SelectItem key={`team-opt-${team.id}`} value={team.id}>
                           <div className="flex items-center gap-2">
                             <Users2 className="w-3.5 h-3.5 text-muted-foreground" />
                             {team.name}
@@ -735,9 +732,7 @@ const CreateProjectForm = () => {
                   {teamFields.length > 0 && (
                     <div className="space-y-2">
                       {teamFields.map((field, index) => {
-                        const team = allTeams.find(
-                          (t) => t.id === field.teamId,
-                        )
+                        const team = allTeams.find((t) => t.id === field.teamId)
                         if (!team) return null
                         return (
                           <div
@@ -752,7 +747,9 @@ const CreateProjectForm = () => {
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {team.memberCount}{' '}
-                                  {team.memberCount === 1 ? 'member' : 'members'}{' '}
+                                  {team.memberCount === 1
+                                    ? 'member'
+                                    : 'members'}{' '}
                                   · team access
                                 </p>
                               </div>
@@ -858,10 +855,7 @@ const CreateProjectForm = () => {
                           (m) => m.id === field.memberId,
                         )
                         // Skip creator (already shown above)
-                        if (
-                          !member ||
-                          member.id === creatorMember?.id
-                        )
+                        if (!member || member.id === creatorMember?.id)
                           return null
 
                         return (

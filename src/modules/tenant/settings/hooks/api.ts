@@ -1,6 +1,6 @@
 import type { TenantSettingsResponse } from '@/server/modules/account/tenant/settings/features/response'
 import type { UpdateTenantSettingsRequest } from '@/server/modules/account/tenant/settings/features/update-settings/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchTenantSettingsFn = async (
   tenantId: string,

@@ -1,6 +1,6 @@
 'use client'
-import apiRequest from '@hooks/query'
-import { TaskStatusType } from '@prisma/client'
+import { TaskStatusType } from '@/prisma/generated/client'
+import apiRequest from '@hooks'
 import HoverLink from '@src/components/HoverLink'
 import PageHeader from '@src/components/PageHeader'
 import { Badge } from '@ui/badge'

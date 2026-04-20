@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import {
   DeleteCommentCommand,
@@ -11,7 +10,7 @@ import {
 
 export const PUT = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: CommentIdParams,
     body: UpdateCommentSchema,
     pathPattern:
@@ -30,21 +29,13 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: CommentIdParams,
     pathPattern:
       '/api/db/organization/:organizationId/task/:taskId/comment/:commentId',
   },
   async (_req, { session, ctx }, { params }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
-    await DeleteCommentCommand(ctx)(
-      params.commentId,
-      session.user.id ?? '',
-      isAdmin,
-    )
+    await DeleteCommentCommand(ctx)(params.commentId, session.user.id ?? '')
 
     return Response.json(
       { success: true, message: 'Comment deleted successfully' },

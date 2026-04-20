@@ -1,6 +1,6 @@
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { MilestoneProjectResponseInput } from '@server/modules/project/milestone/milestoneSchema'
-import { capitalize, isOrgAdminOrOwner } from '@src/lib/utils'
+import { capitalize } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'
@@ -12,7 +12,6 @@ import {
   PenIcon,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { useSession } from 'next-auth/react'
 import type { FC } from 'react'
 import AvatarGroup from '../(application)/core/Avatar/AvatarGroup'
 import HoverLink from '../HoverLink'
@@ -24,7 +23,6 @@ interface HeaderInterface {
 }
 
 const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
-  const { data: session } = useSession()
   return (
     <header className="mb-2 bg-transparent rounded-lg p-5 pb-1 overflow-hidden">
       {!project ? (
@@ -102,14 +100,12 @@ const ProjectHeader: FC<HeaderInterface> = ({ project, upcomingMilestone }) => {
 
             <div className="hidden sm:flex items-center gap-2 rounded-sm cursor-pointer ml-auto mt-6">
               <TaskTypeCreate projectName={'Mirama'} />
-              {isOrgAdminOrOwner(session) && (
-                <HoverLink href={`/app/projects/edit/${project.id}`}>
-                  <Button variant={'secondary'} size={'sm'}>
-                    <PenIcon className="w-4 h-4" />
-                    <span>Edit Project</span>
-                  </Button>
-                </HoverLink>
-              )}
+              <HoverLink href={`/app/projects/edit/${project.id}`}>
+                <Button variant={'secondary'} size={'sm'}>
+                  <PenIcon className="w-4 h-4" />
+                  <span>Edit Project</span>
+                </Button>
+              </HoverLink>
             </div>
           </div>
         </>

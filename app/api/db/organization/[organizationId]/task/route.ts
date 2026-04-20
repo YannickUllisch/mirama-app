@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { CreateTaskCommand } from '@/server/modules/task/features/create-task/handler'
 import { CreateTaskSchema } from '@/server/modules/task/features/create-task/schema'
@@ -11,7 +10,7 @@ import {
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     pathPattern: '/api/db/organization/:organizationId/task',
   },
   async (req, { session, ctx }) => {
@@ -19,10 +18,6 @@ export const GET = createRoute(
     const personal = req.nextUrl.searchParams.get('personal') === 'true'
     const ignoreCompleted =
       req.nextUrl.searchParams.get('ignoreCompleted') === 'true'
-
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
 
     // Personal tasks — returns tasks assigned to the current user
     if (personal) {
@@ -44,7 +39,6 @@ export const GET = createRoute(
     const data = await GetTasksByProjectQuery(ctx)(
       projectId,
       session.user.id ?? '',
-      isAdmin,
       ignoreCompleted,
     )
 
@@ -54,20 +48,12 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     body: CreateTaskSchema,
     pathPattern: '/api/db/organization/:organizationId/task',
   },
   async (_req, { session, ctx }, { body }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
-    const data = await CreateTaskCommand(ctx)(
-      session.user.id ?? '',
-      isAdmin,
-      body,
-    )
+    const data = await CreateTaskCommand(ctx)(session.user.id ?? '', body)
 
     return Response.json({ success: true, data }, { status: 201 })
   },
@@ -75,20 +61,15 @@ export const POST = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     body: DeleteTasksBulkSchema,
     pathPattern: '/api/db/organization/:organizationId/task',
   },
   async (_req, { session, ctx }, { body }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
     await DeleteTasksBulkCommand(ctx)(
       body.ids,
       body.projectId,
       session.user.id ?? '',
-      isAdmin,
     )
 
     return Response.json(

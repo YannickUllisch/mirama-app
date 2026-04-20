@@ -1,3 +1,4 @@
+import { TaskStatusType } from '@/prisma/generated/client'
 import {
   DndContext,
   type DragEndEvent,
@@ -12,12 +13,8 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { TaskStatusType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import { postResource } from '@src/lib/api/postResource'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { createTree } from '@src/lib/createTree'
 import type { Board } from '@src/types/types'
 import { Input } from '@ui/input'
@@ -220,24 +217,24 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
     setBoards(updatedBoards)
 
     // Update database
-    let newParentId: string | null = null
+    let _newParentId: string | null = null
     if (overBoard.title === 'Unparented Tasks') {
-      newParentId = null
+      _newParentId = null
     } else if (overBoard.id.includes('board')) {
-      newParentId = overBoard.id.substring(6)
+      _newParentId = overBoard.id.substring(6)
     }
 
-    const newStatus = overColumn.title
+    const _newStatus = overColumn.title
 
     try {
-      const taskId = movedItem.id.toString().startsWith('item-')
+      const _taskId = movedItem.id.toString().startsWith('item-')
         ? movedItem.id.toString().substring(5)
         : movedItem.id
 
-      await updateResourceById('task', taskId.toString(), {
-        status: newStatus,
-        parentId: newParentId,
-      })
+      // await updateResourceById('task', taskId.toString(), {
+      //   status: newStatus,
+      //   parentId: newParentId,
+      // })
     } catch (error) {
       console.error('Failed to update item:', error)
     }
@@ -271,7 +268,7 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
       const item = column.items.find((item) => item.id === itemId)
       if (item) {
         item.task.title = newItemTitle.trim()
-        postResource('task', item.task)
+        // postResource('task', item.task)
       }
 
       setBoards([...boards])
@@ -289,13 +286,13 @@ const KanbanBoard: FC<KanbanBoardProps> = ({ tasks, projectId, users }) => {
     const deletedItem = container.items.find((item) => item.id === boardItemId)
     if (!deletedItem) return
 
-    deleteResources('task', [id]).then(() => {
-      // On Error we revert state
-      container.items = container.items.filter(
-        (item) => item.id !== boardItemId,
-      )
-      setBoards([...boards])
-    })
+    // deleteResources('task', [id]).then(() => {
+    //   // On Error we revert state
+    //   container.items = container.items.filter(
+    //     (item) => item.id !== boardItemId,
+    //   )
+    //   setBoards([...boards])
+    // })
   }
 
   const columnItemTotals = useMemo(() => {

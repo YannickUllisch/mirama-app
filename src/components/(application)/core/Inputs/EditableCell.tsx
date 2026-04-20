@@ -1,9 +1,8 @@
 'use client'
-import { type FC, useEffect, useState } from 'react'
 import { Input } from '@src/components/ui/tableInput'
-import { toast } from 'sonner'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { cn } from '@src/lib/utils'
+import { type FC, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface EditableCellProps {
   id: string
@@ -69,14 +68,14 @@ const EditableCell: FC<EditableCellProps> = ({
       return
     }
 
-    updateResourceById(
-      apiRoute,
-      id,
-      {
-        [paramToUpdate]: typeof initialValue === 'string' ? value : +value,
-      },
-      { mutate: mutate },
-    )
+    // updateResourceById(
+    //   apiRoute,
+    //   id,
+    //   {
+    //     [paramToUpdate]: typeof initialValue === 'string' ? value : +value,
+    //   },
+    //   { mutate: mutate },
+    // )
   }
   return (
     <Input

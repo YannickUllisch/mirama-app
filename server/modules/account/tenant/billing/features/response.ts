@@ -1,4 +1,4 @@
-import type { SubscriptionStatus } from '@prisma/client'
+import type { SubscriptionStatus } from '@/prisma/generated/client'
 
 export type PlanFeatures = {
   maxOrganizations: number

@@ -1,5 +1,5 @@
 'use client'
-import { TaskStatusType } from '@prisma/client'
+import { TaskStatusType } from '@/prisma/generated/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import TaskTree from '@src/components/Task/TaskTree'

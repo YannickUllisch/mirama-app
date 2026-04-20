@@ -6,10 +6,8 @@ import { toCommentResponse } from './response'
 import type { CreateCommentRequest, UpdateCommentRequest } from './schema'
 
 export const GetCommentsQuery =
-  ({ db, logger }: AppContext) =>
-  async (taskId: string, sessionUserId: string, isAdminOrOwner: boolean) => {
-    logger.info({ taskId }, 'Fetching comments for task')
-
+  ({ db }: AppContext) =>
+  async (taskId: string, sessionUserId: string) => {
     const taskRepo = TaskRepository(db)
     const task = await taskRepo.findById(taskId)
     if (!task) throw new Error('Task not found')
@@ -21,7 +19,6 @@ export const GetCommentsQuery =
     TaskEntity.assertProjectMemberOrAdmin(
       project.members.map((m) => m.memberId),
       sessionUserId,
-      isAdminOrOwner,
     )
 
     const repo = CommentRepository(db)
@@ -31,10 +28,8 @@ export const GetCommentsQuery =
   }
 
 export const CreateCommentCommand =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (taskId: string, input: CreateCommentRequest) => {
-    logger.info({ taskId }, 'Creating comment')
-
     const repo = CommentRepository(db)
     const comment = await repo.create({
       content: input.content,
@@ -47,14 +42,12 @@ export const CreateCommentCommand =
   }
 
 export const UpdateCommentCommand =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (
     commentId: string,
     sessionUserId: string,
     input: UpdateCommentRequest,
   ) => {
-    logger.info({ commentId }, 'Updating comment')
-
     const repo = CommentRepository(db)
 
     // Only comment author can update (Prisma where clause enforces memberId)
@@ -66,17 +59,15 @@ export const UpdateCommentCommand =
   }
 
 export const DeleteCommentCommand =
-  ({ db, logger }: AppContext) =>
-  async (commentId: string, sessionUserId: string, isAdminOrOwner: boolean) => {
-    logger.info({ commentId }, 'Deleting comment')
-
+  ({ db }: AppContext) =>
+  async (commentId: string, sessionUserId: string) => {
     const repo = CommentRepository(db)
     const comment = await repo.findById(commentId)
 
     if (!comment) throw new Error('Comment not found')
 
     // Only author or admin can delete
-    if (comment.memberId !== sessionUserId && !isAdminOrOwner) {
+    if (comment.memberId !== sessionUserId) {
       throw new Error('Insufficient permission')
     }
 

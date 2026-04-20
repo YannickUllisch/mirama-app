@@ -2,7 +2,7 @@ import type { CreatePolicyRequest } from '@/server/modules/account/policies/feat
 import type { UpdatePolicyRequest } from '@/server/modules/account/policies/features/update-policy/schema'
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchPoliciesFn = async (
   tenantId: string,

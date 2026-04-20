@@ -1,5 +1,5 @@
 import { AccessScope } from '@/prisma/generated/client'
-import { z } from 'zod'
+import z from 'zod'
 
 export const CreateRoleSchema = z.object({
   name: z.string().min(1, 'Role name is required').max(50),

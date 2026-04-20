@@ -1,4 +1,4 @@
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import {
   MultiSelector,

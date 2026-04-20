@@ -1,4 +1,4 @@
-import { TaskStatusType } from '@prisma/client'
+import { TaskStatusType } from '@/prisma/generated/client'
 import type { Board, BoardColumn } from '@src/types/types'
 import { v4 } from 'uuid'
 import type { GroupedContainerizedTasks } from '../Tree/ContainerizedTree'

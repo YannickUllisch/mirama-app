@@ -1,7 +1,6 @@
 import { auth } from '@auth'
 import db from '@db'
 import { ProjectViewContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
-import { isOrgAdminOrOwner } from '@src/lib/utils'
 import PermissionGate from '@src/modules/shared/permissions/PermissionGate'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
@@ -39,11 +38,7 @@ const Layout = async ({
     },
   })
 
-  if (
-    !project ||
-    (!isOrgAdminOrOwner(session) &&
-      project.members.some((u) => u.memberId === session?.user.id))
-  ) {
+  if (!project) {
     redirect(`/organization/${session?.user.organizationId}`)
   }
 

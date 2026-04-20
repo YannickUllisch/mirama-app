@@ -1,4 +1,4 @@
-import type { Favourite } from '@prisma/client'
+import type { Favourite } from '@/prisma/generated/client'
 
 export type FavouriteResponse = {
   id: string

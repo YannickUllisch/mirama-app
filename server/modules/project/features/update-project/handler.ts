@@ -5,10 +5,8 @@ import { toProjectResponse } from '../response'
 import type { UpdateProjectRequest } from './schema'
 
 export const UpdateProjectCommand =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (projectId: string, input: UpdateProjectRequest) => {
-    logger.info({ projectId }, 'Updating project')
-
     const repo = ProjectRepository(db)
 
     // Check unique name (exclude self)
@@ -53,7 +51,7 @@ export const UpdateProjectCommand =
       await prisma.projectMember.deleteMany({ where: { projectId } })
       if (members.length > 0) {
         await prisma.projectMember.createMany({
-          data: members.map((m: { memberId: string; isManager: boolean }) => ({
+          data: members.map((m: { memberId: string }) => ({
             ...m,
             projectId,
           })),

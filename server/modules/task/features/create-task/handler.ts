@@ -7,11 +7,7 @@ import type { CreateTaskRequest } from './schema'
 
 export const CreateTaskCommand =
   ({ db, logger }: AppContext) =>
-  async (
-    sessionUserId: string,
-    isAdminOrOwner: boolean,
-    input: CreateTaskRequest,
-  ) => {
+  async (sessionUserId: string, input: CreateTaskRequest) => {
     logger.info(
       { projectId: input.projectId, title: input.title },
       'Creating task',
@@ -30,7 +26,6 @@ export const CreateTaskCommand =
     TaskEntity.assertProjectMemberOrAdmin(
       project.members.map((m) => m.memberId),
       sessionUserId,
-      isAdminOrOwner,
     )
 
     const newTaskId = randomUUID()

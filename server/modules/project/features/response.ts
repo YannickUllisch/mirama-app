@@ -7,7 +7,7 @@ import type {
   StatusType,
   Tag,
   Task,
-} from '@prisma/client'
+} from '@/prisma/generated/client'
 
 export type ProjectResponse = {
   id: string
@@ -25,8 +25,8 @@ export type ProjectResponse = {
     id: string
     name: string
     email: string
-    organizationRole: string
-    isManager: boolean
+    isInherited: boolean
+    iamRoleId: string
   }[]
   tasks: {
     id: string
@@ -72,8 +72,8 @@ export const toProjectResponse = (
     id: m.memberId,
     name: m.member.name,
     email: m.member.email,
-    organizationRole: m.member.role,
-    isManager: m.isManager,
+    isInherited: m.isInherited,
+    iamRoleId: m.member.iamRoleId,
   })),
   tasks: input.tasks.map((t) => ({
     id: t.id,

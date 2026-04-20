@@ -1,8 +1,7 @@
 'use client'
 
-import apiRequest from '@hooks/query'
-import { PriorityType, TaskStatusType } from '@prisma/client'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
+import apiRequest from '@hooks'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
@@ -137,9 +136,10 @@ const ViewTaskSheet = ({ open, setOpen, taskId }: ViewTaskSheet) => {
                     variant={'primary'}
                     onClick={() => {
                       if (task.status !== TaskStatusType.DONE) {
-                        updateResourceById('task', task.id, {
-                          status: TaskStatusType.DONE,
-                        })
+                        console.info('TODO: Add update hook')
+                        // updateResourceById('task', task.id, {
+                        //   status: TaskStatusType.DONE,
+                        // })
                       }
                     }}
                     className="text-xs p-1 px-2 h-fit text-white flex gap-2 items-center"

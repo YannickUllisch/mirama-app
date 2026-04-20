@@ -15,7 +15,9 @@ export const CreateTeamCommand =
 
     const existing = await repo.findBySlug(slug)
     if (existing) {
-      throw new Error('A team with this name already exists in the organization.')
+      throw new Error(
+        'A team with this name already exists in the organization.',
+      )
     }
 
     const team = await repo.create({ name: input.name, slug })

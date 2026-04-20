@@ -79,7 +79,12 @@ const team = {
       const qc = useQueryClient()
       type Vars = { teamId: string; data: UpdateTeamRequest }
 
-      return useMutation<TeamResponse, Error, Vars, { previous?: TeamResponse[] }>({
+      return useMutation<
+        TeamResponse,
+        Error,
+        Vars,
+        { previous?: TeamResponse[] }
+      >({
         mutationFn: ({ teamId, data }) =>
           updateTeamFn(activeOrganizationId, teamId, data),
         ...optimisticList<TeamResponse, Vars>(

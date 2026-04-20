@@ -1,16 +1,15 @@
 'use client'
+
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import {
   type UpdateInvitationRequest,
   UpdateInvitationSchema,
 } from '@/server/modules/account/invitations/features/update-invitation/schema'
-import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
-import type { OrganizationRole } from '@prisma/client'
+import apiRequest from '@hooks'
 import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { isOrgAdminOrOwner } from '@src/lib/utils'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { Plus, UserPlus } from 'lucide-react'
 import type { Session } from 'next-auth'
 import { toast } from 'sonner'
@@ -36,7 +35,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
     mapToUpdateInput: (data) => ({
       extendInvitation: true,
       name: data.name,
-      organizationRole: data.organizationRole as OrganizationRole,
+      iamRoleId: '',
     }),
     prepareMutation: (email, data) => ({
       email,
@@ -66,7 +65,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
         dataLoading={isLoading}
         toolbarOptions={{
           showFilterOption: true,
-          addToolbarleft: isOrgAdminOrOwner(session) && (
+          addToolbarleft: (
             <AddMemberDialog>
               <div className="flex px-3 gap-2 items-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-sm cursor-pointer">
                 <Plus width={15} />

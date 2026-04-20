@@ -1,6 +1,6 @@
 // app/(app)/organization/[organizationId]/(management)/teams/_components/TeamsContent.tsx
 'use client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import teamHooks from '@src/modules/organization/teams/hooks/hooks'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'

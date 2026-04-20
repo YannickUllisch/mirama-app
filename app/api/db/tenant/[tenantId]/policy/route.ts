@@ -1,8 +1,8 @@
+import { TenantRole } from '@/prisma/generated/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { CreatePolicyCommand } from '@/server/modules/account/policies/features/create-policy/handler'
 import { CreatePolicySchema } from '@/server/modules/account/policies/features/create-policy/schema'
 import { GetPoliciesQuery } from '@/server/modules/account/policies/features/get-policies/handler'
-import { TenantRole } from '@prisma/client'
 
 export const GET = createRoute(
   {

@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { PriorityType, TaskStatusType, type TaskType } from '@prisma/client'
 import {
   type CreateTaskRequest,
@@ -39,9 +39,9 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize } from '@src/lib/utils'
+import { isTaskTypeContainer } from '@src/modules/project/task/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import {
   BookOpenCheck,
   CirclePlus,

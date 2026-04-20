@@ -1,8 +1,8 @@
+import { TenantRole } from '@/prisma/generated/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { CreateRoleCommand } from '@/server/modules/account/roles/features/create-role/handler'
 import { CreateRoleSchema } from '@/server/modules/account/roles/features/create-role/schema'
 import { GetRolesQuery } from '@/server/modules/account/roles/features/get-roles/handler'
-import { TenantRole } from '@prisma/client'
 
 export const GET = createRoute(
   {

@@ -1,4 +1,4 @@
-import { TenantRole } from '@prisma/client'
+import { TenantRole } from '@/prisma/generated/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { UpdateOrganizationCommand } from '@/server/modules/account/organizations/features/update-organization/handler'
 import {

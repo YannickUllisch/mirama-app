@@ -4,7 +4,7 @@ import type {
   CreateCommentRequest,
   UpdateCommentRequest,
 } from '@/server/modules/task/features/comments/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchCommentsByTaskIdFn = async (
   projectId: string,

@@ -1,4 +1,4 @@
-import { TaskType } from '@prisma/client'
+import { TaskType } from '@/prisma/generated/client'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 

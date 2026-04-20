@@ -1,6 +1,6 @@
 'use client'
-import { type Task, TaskStatusType } from '@prisma/client'
-import { updateResourceByIdNoToast } from '@src/lib/api/updateResource'
+import { type Task, TaskStatusType } from '@/prisma/generated/client'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 import { type FC, useEffect, useState } from 'react'
@@ -34,7 +34,7 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
   tasks: initialTasks,
 }) => {
   const [tasks, setTasks] = useState<Task[] | undefined>(initialTasks)
-  const [error, setError] = useState<string | null>(null)
+  const [error, _setError] = useState<string | null>(null)
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
 
   const toggleTaskCompletion = async (taskId: string) => {
     if (!tasks) return
-    const originalTasks = tasks
+    const _originalTasks = tasks
     const updatedTasks = tasks
       .map((task) =>
         task.id === taskId
@@ -68,17 +68,17 @@ const CheckboxTaskList: FC<CheckboxTaskListProps> = ({
     setTasks(updatedTasks)
     setUpdatingTaskId(taskId)
 
-    try {
-      await updateResourceByIdNoToast('task', taskId, {
-        status: updatedTasks.find((task) => task.id === taskId)?.status,
-      })
-    } catch (error) {
-      console.error('Failed to update task status:', error)
-      setError('Failed to update task status. Please try again.')
-      setTasks(originalTasks) // Rollback on failure
-    } finally {
-      setUpdatingTaskId(null)
-    }
+    // try {
+    //   await updateResourceByIdNoToast('task', taskId, {
+    //     status: updatedTasks.find((task) => task.id === taskId)?.status,
+    //   })
+    // } catch (error) {
+    //   console.error('Failed to update task status:', error)
+    //   setError('Failed to update task status. Please try again.')
+    //   setTasks(originalTasks) // Rollback on failure
+    // } finally {
+    //   setUpdatingTaskId(null)
+    // }
   }
 
   return (

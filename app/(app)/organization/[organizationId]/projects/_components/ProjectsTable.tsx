@@ -1,8 +1,7 @@
 // app/(app)/organization/[organizationId]/projects/_components/ProjectsTable.tsx
 'use client'
 
-import apiRequest from '@hooks/query'
-
+import apiRequest from '@hooks'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import {
   type UpdateProjectRequest,
@@ -30,7 +29,6 @@ const ProjectsTable = () => {
       tags: data.tags.map((t) => t.id),
       newTags: [],
       members: data.members.map((u) => ({
-        isManager: u.isManager,
         memberId: u.id,
       })),
     }),

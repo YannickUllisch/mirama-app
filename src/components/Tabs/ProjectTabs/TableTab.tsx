@@ -1,6 +1,5 @@
 'use client'
-import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import apiRequest from '@hooks'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
@@ -20,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { createMemoizedTree } from '@src/lib/createTree'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
 import { useState } from 'react'

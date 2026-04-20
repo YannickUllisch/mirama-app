@@ -1,8 +1,8 @@
-import { FavouriteType } from '@prisma/client'
+import { FavouriteType } from '@/prisma/generated/client'
 import { z } from 'zod'
 
 export const CreateFavouriteSchema = z.object({
-  type: z.nativeEnum(FavouriteType),
+  type: z.enum(FavouriteType),
   data: z.string().min(1, 'Data is required'),
 })
 

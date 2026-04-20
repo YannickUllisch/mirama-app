@@ -2,7 +2,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import {
   type CreateOrganizationRequest,
   CreateOrganizationSchema,

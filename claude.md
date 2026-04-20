@@ -51,7 +51,7 @@ Commands
 
 - Tenant isolation: `ScopedDb` injects `tenantId` and `organizationId` if in scope on all queries. Never bypass it.
 - IDOR: `withAuth` compares URL path params (`:tenantId`, `:organizationId`) to session values.
-- Role enforcement: Set `allowedTenantRoles`/`allowedOrgRoles` explicitly in every `createRoute` call.
+- Role enforcement: Set `allowedTenantRoles`/`permissions` explicitly in every `createRoute` call.
 - IAM: Fine-grained permissions use `Role` -> `Policy` -> `PolicyStatement`. Check in the features layer for resource-level access.
 - Input validation: All external input goes through Zod before reaching any handler.
 - No raw SQL: All DB access via Prisma with `ScopedDb`.

@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import {
   CreateCommentCommand,
@@ -9,19 +8,14 @@ import { TaskIdParams } from '@/server/modules/task/features/get-task/schema'
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: TaskIdParams,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId/comment',
   },
   async (_req, { session, ctx }, { params }) => {
-    const isAdmin = [OrganizationRole.ADMIN, OrganizationRole.OWNER].includes(
-      session.user.orgRole as any,
-    )
-
     const data = await GetCommentsQuery(ctx)(
       params.taskId,
       session.user.id ?? '',
-      isAdmin,
     )
 
     return Response.json({ success: true, data })
@@ -30,7 +24,7 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: TaskIdParams,
     body: CreateCommentSchema,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId/comment',

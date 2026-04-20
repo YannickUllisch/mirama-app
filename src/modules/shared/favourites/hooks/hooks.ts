@@ -1,7 +1,7 @@
 // src/modules/shared/favourites/hooks/hooks.ts
+import type { FavouriteType } from '@/prisma/generated/client'
 import type { CreateFavouriteRequest } from '@/server/modules/account/favourites/features/create-favourite/schema'
 import type { FavouriteResponse } from '@/server/modules/account/favourites/features/response'
-import type { FavouriteType } from '@prisma/client'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {

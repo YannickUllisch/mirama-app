@@ -1,6 +1,3 @@
-import { TaskStatusType } from '@prisma/client'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { ContextMenuContent, ContextMenuItem } from '@ui/context-menu'
 import { Separator } from '@ui/separator'
 import { CheckSquare, LinkIcon, Pencil, TrashIcon } from 'lucide-react'
@@ -29,8 +26,9 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
     <ContextMenuContent>
       <ContextMenuItem
         className="flex items-center gap-2"
-        onClick={() =>
-          updateResourceById('/task', taskId, { status: TaskStatusType.DONE })
+        onClick={
+          () => console.info('TODO: add update hook')
+          // updateResourceById('/task', taskId, { status: TaskStatusType.DONE })
         }
       >
         <CheckSquare size={16} className="text-muted-foreground" />
@@ -52,7 +50,10 @@ const TaskContextContent: FC<TaskContextContentProps> = ({
       </ContextMenuItem>
       <ContextMenuItem
         className="flex items-center gap-2 text-destructive"
-        onClick={() => deleteResources('task', [taskId])}
+        onClick={
+          () => console.info('TODO: Readd delete hook')
+          // deleteResources('task', [taskId])
+        }
       >
         <TrashIcon size={16} />
         Delete Task

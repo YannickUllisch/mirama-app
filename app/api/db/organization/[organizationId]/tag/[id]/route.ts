@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteTagCommand } from '@/server/modules/account/tags/features/delete-tag/handler'
 import { UpdateTagCommand } from '@/server/modules/account/tags/features/update-tag/handler'
@@ -9,9 +8,7 @@ import {
 
 export const PUT = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     params: TagIdParams,
     body: UpdateTagSchema,
     pathPattern: '/api/db/organization/:organizationId/tag/:id',
@@ -25,9 +22,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     params: TagIdParams,
     pathPattern: '/api/db/organization/:organizationId/tag/:id',
   },

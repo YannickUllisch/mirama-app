@@ -1,15 +1,13 @@
 import {
-  OrganizationRole,
   FavouriteType as PrismaFavouriteType,
   PriorityType as PrismaPriorityType,
   StatusType as PrismaStatusType,
   TaskStatusType as PrismaTaskStatusType,
   TaskType as PrismaTaskType,
   TenantRole,
-} from '@prisma/client'
+} from '@/prisma/generated/client'
 import z from 'zod'
 
-export const OrganizationRoleSchema = z.enum(OrganizationRole)
 export const TenantRoleSchema = z.enum(TenantRole)
 
 export const PriorityTypeSchema = z.enum(PrismaPriorityType)
@@ -18,7 +16,6 @@ export const TaskStatusTypeSchema = z.enum(PrismaTaskStatusType)
 export const TaskTypeSchema = z.enum(PrismaTaskType)
 export const FavouriteTypeSchema = z.enum(PrismaFavouriteType)
 
-export type OrganizationRoleType = z.infer<typeof OrganizationRoleSchema>
 export type TenantRoleType = z.infer<typeof TenantRoleSchema>
 export type PriorityType = z.infer<typeof PriorityTypeSchema>
 export type StatusType = z.infer<typeof StatusTypeSchema>

@@ -15,7 +15,6 @@ export const UpdateMemberCommand =
     return await repo.update(memberId, {
       ...(input.name && { name: input.name }),
       ...(input.email && { email: input.email }),
-      ...(input.organizationRole && { role: input.organizationRole }),
       ...(input.iamRoleId && { iamRoleId: input.iamRoleId }),
     })
   }

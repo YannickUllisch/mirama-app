@@ -1,6 +1,6 @@
 'use client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
-import { capitalize, isOrgAdminOrOwner, isRoleHigher } from '@src/lib/utils'
+import { capitalize } from '@src/lib/utils'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { Pencil, PencilLine, Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
@@ -50,50 +50,44 @@ const UserCard: FC<UserCardProps> = ({
         <span className="text-lg font-bold">{user.name}</span>
         <span className="text-xs text-text-secondary">{user.email}</span>
         <span className="text-sm">
-          {capitalize(user.organizationRole ?? 'No role')}
+          {capitalize(user.iamRoleId ?? 'No role')}
         </span>
       </div>
 
-      {isOrgAdminOrOwner(session) &&
-        !isRoleHigher(
-          user.organizationRole as any,
-          session?.user.orgRole ?? 'USER',
-        ) && (
-          <div>
-            <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent text-text text-xs gap-2 border dark:border-neutral-800 hover:bg-hover dark:hover:bg-neutral-700">
-                  Edit
-                  <Pencil className="w-[10px] h-[10px]" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setEditDialogOpen(true)
-                    setDropDownOpen(false)
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <PencilLine className="w-4 h-4" />
-                    Edit User
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setDeleteDialogOpen(true)
-                    setDropDownOpen(false)
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <Trash2 className="w-4 h-4" />
-                    {user.id === session?.user.id ? 'Leave' : 'Remove'}
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
+      <div>
+        <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button className="bg-transparent text-text text-xs gap-2 border dark:border-neutral-800 hover:bg-hover dark:hover:bg-neutral-700">
+              Edit
+              <Pencil className="w-[10px] h-[10px]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() => {
+                setEditDialogOpen(true)
+                setDropDownOpen(false)
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <PencilLine className="w-4 h-4" />
+                Edit User
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setDeleteDialogOpen(true)
+                setDropDownOpen(false)
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4" />
+                {user.id === session?.user.id ? 'Leave' : 'Remove'}
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <ConfirmationDialogWithOpenState
         isOpen={deleteDialogOpen}

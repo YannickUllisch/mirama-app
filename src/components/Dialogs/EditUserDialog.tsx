@@ -1,11 +1,11 @@
+import { OrganizationRole } from '@/prisma/generated/client'
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import {
   type UpdateMemberRequest,
   UpdateMemberSchema,
 } from '@/server/modules/account/members/features/update-member/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
-import { OrganizationRole } from '@prisma/client'
+import apiRequest from '@hooks'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,

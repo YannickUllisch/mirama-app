@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { ArchiveProjectCommand } from '@/server/modules/project/features/archive-project/handler'
 import { ArchiveProjectSchema } from '@/server/modules/project/features/archive-project/schema'
@@ -6,9 +5,7 @@ import { ProjectIdParams } from '@/server/modules/project/features/get-project/s
 
 export const POST = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     params: ProjectIdParams,
     body: ArchiveProjectSchema,
     pathPattern:

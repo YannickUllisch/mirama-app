@@ -50,8 +50,7 @@ const TeamSection = ({
   const { mutate: addMember, isPending: isAdding } =
     teamHooks.members.add.useMutation(team.id)
 
-  const { mutate: removeMember } =
-    teamHooks.members.remove.useMutation(team.id)
+  const { mutate: removeMember } = teamHooks.members.remove.useMutation(team.id)
 
   // Only show org members not already in this team
   const availableMembers = orgMembers.filter(
@@ -184,10 +183,7 @@ const TeamSection = ({
         onClose={() => setShowAddDialog(false)}
         availableMembers={availableMembers}
         onAdd={(memberId) =>
-          addMember(
-            { memberId },
-            { onSuccess: () => setShowAddDialog(false) },
-          )
+          addMember({ memberId }, { onSuccess: () => setShowAddDialog(false) })
         }
         isPending={isAdding}
       />

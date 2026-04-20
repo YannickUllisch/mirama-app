@@ -1,7 +1,7 @@
 // app/(app)/organization/[organizationId]/(management)/members/_components/MembersContent.tsx
 'use client'
 
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import { Badge } from '@ui/badge'
 import {
@@ -38,7 +38,6 @@ const MembersContent = () => {
         const orgMember = members.find((m) => m.id === pm.id)
         return {
           id: pm.id,
-          isManager: pm.isManager,
           member: {
             name: orgMember?.name ?? pm.name,
             email: orgMember?.email ?? pm.email,

@@ -1,4 +1,4 @@
-import type { Comment, Member } from '@prisma/client'
+import type { Comment, Member } from '@/prisma/generated/client'
 
 export type CommentResponse = {
   id: string

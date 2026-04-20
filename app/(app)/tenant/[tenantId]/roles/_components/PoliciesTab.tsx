@@ -1,4 +1,5 @@
 // app/(app)/tenant/[tenantId]/roles/components/PoliciesTab.tsx
+
 import { AccessScope } from '@/prisma/generated/client'
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import { DataTable } from '@src/components/Tables/DataTable'

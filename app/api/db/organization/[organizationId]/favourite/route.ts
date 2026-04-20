@@ -6,7 +6,7 @@ import { GetFavouritesParams } from '@/server/modules/account/favourites/feature
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: GetFavouritesParams,
     pathPattern: '/api/db/organization/:organizationId/favourite',
   },
@@ -22,7 +22,7 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     body: CreateFavouriteSchema,
     pathPattern: '/api/db/organization/:organizationId/favourite',
   },

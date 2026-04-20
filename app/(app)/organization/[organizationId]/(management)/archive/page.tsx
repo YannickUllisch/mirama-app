@@ -1,17 +1,14 @@
 'use client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { ArchiveIcon } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useArchivedProjectsColumns } from './columns'
 
 const ArchivePage = () => {
-  const { data: session } = useSession()
-
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   // Hooks
@@ -38,7 +35,6 @@ const ArchivePage = () => {
         expandedContent
         columns={useArchivedProjectsColumns({
           archiveMutation: useArchiveMutation,
-          session: session,
           users: users ?? [],
           setSelectedId: setSelectedId,
         })}

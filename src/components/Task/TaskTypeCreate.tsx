@@ -7,15 +7,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
+
+import { capitalize } from '@src/lib/utils'
 import {
   containerTaskTypes,
   individualTaskTypes,
-} from '@src/lib/helpers/TaskTypeHelpers'
-import { capitalize } from '@src/lib/utils'
+} from '@src/modules/project/task/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import { ChevronDown, Plus } from 'lucide-react'
 import Link from 'next/link'
 import type { FC } from 'react'
-import { getTaskTypeIcon } from '../../lib/helpers/TaskTypeIcons'
 
 interface TaskTypeCreateProps {
   projectName: string

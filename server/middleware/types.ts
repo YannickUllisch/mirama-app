@@ -1,4 +1,4 @@
-import type { OrganizationRole, TenantRole } from '@prisma/client'
+import type { TenantRole } from '@/prisma/generated/client'
 import type { Session } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import type { Logger } from 'pino'
@@ -14,7 +14,6 @@ export type BaseContext = {
 
 export type AuthConfig = {
   allowedTenantRoles?: TenantRole[] | 'ANY'
-  allowedOrgRoles?: OrganizationRole[] | 'ANY'
   permissions?: PermissionRequirement | PermissionRequirement[]
 }
 

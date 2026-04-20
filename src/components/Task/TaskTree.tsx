@@ -1,5 +1,5 @@
 'use client'
-import type { TaskStatusType } from '@prisma/client'
+import type { TaskStatusType } from '@/prisma/generated/client'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import {
   CollapseButton,
@@ -8,7 +8,7 @@ import {
   Tree,
 } from '@src/components/Tree/TreeViewAPI'
 import { createTree } from '@src/lib/createTree'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import { Badge } from '@ui/badge'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'

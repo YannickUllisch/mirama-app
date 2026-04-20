@@ -1,4 +1,8 @@
-import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
+import {
+  PriorityType,
+  TaskStatusType,
+  TaskType,
+} from '@/prisma/generated/client'
 import { z } from 'zod'
 
 const NewTagSchema = z.object({

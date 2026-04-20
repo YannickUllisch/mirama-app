@@ -1,4 +1,4 @@
-import { TaskType } from '@prisma/client'
+import { TaskType } from '@/prisma/generated/client'
 
 export const isTaskTypeContainer = (type: TaskType): boolean => {
   return [TaskType.EPIC, TaskType.FEATURE, TaskType.STORY].includes(type as any)

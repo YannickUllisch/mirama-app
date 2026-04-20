@@ -4,12 +4,7 @@ import type { TagResponse } from '@/server/modules/account/tags/features/respons
 import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  createTagFn,
-  deleteTagFn,
-  fetchTagsFn,
-  updateTagFn,
-} from './api'
+import { createTagFn, deleteTagFn, fetchTagsFn, updateTagFn } from './api'
 
 export const tagKeys = {
   root: ['tags'] as const,
@@ -50,16 +45,19 @@ const tag = {
     useMutation: () => {
       const qc = useQueryClient()
       type Vars = { id: string; data: UpdateTagRequest }
-      return useMutation<TagResponse, Error, Vars, { previous?: TagResponse[] }>(
-        {
-          mutationFn: ({ id, data }) => updateTagFn(id, data),
-          ...optimisticList<TagResponse, Vars>(qc, tagKeys.root, {
-            successMessage: 'Tag updated',
-            apply: (old, { id, data }) =>
-              old.map((t) => (t.id === id ? { ...t, ...data } : t)),
-          }),
-        },
-      )
+      return useMutation<
+        TagResponse,
+        Error,
+        Vars,
+        { previous?: TagResponse[] }
+      >({
+        mutationFn: ({ id, data }) => updateTagFn(id, data),
+        ...optimisticList<TagResponse, Vars>(qc, tagKeys.root, {
+          successMessage: 'Tag updated',
+          apply: (old, { id, data }) =>
+            old.map((t) => (t.id === id ? { ...t, ...data } : t)),
+        }),
+      })
     },
   },
 

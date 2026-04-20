@@ -1,4 +1,4 @@
-import { TenantRole } from '@prisma/client'
+import { TenantRole } from '@/prisma/generated/client'
 import type { AppMenuItem } from '@src/types/types'
 import { CreditCardIcon, Home, SettingsIcon, ShieldCheck } from 'lucide-react'
 

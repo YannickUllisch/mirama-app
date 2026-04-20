@@ -1,9 +1,9 @@
 'use client'
 
-import { TaskStatusType, type TaskType } from '@prisma/client'
+import { TaskStatusType, type TaskType } from '@/prisma/generated/client'
 import type { TaskResponse } from '@server/modules/task/features/response'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { cn } from '@src/lib/utils'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Spinner } from '@ui/spinner'

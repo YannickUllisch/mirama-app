@@ -5,7 +5,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/tableSelect'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { UserIcon } from 'lucide-react'
 import type React from 'react'
 import type { FC, PropsWithChildren } from 'react'
@@ -35,15 +34,16 @@ const GeneralTableSelect: FC<PropsWithChildren<GeneralTableSelectProps>> = ({
   stylingProps,
   clearable,
 }) => {
-  const onValueChange = (val: string) => {
-    updateResourceById(
-      apiRoute,
-      id,
-      {
-        [paramToUpdate]: val === 'undefined' ? 'removeLink' : val,
-      },
-      { mutate: mutate, onSuccess: onSuccess },
-    )
+  const onValueChange = (_val: string) => {
+    console.info('TODO: add update resource hook')
+    // updateResourceById(
+    //   apiRoute,
+    //   id,
+    //   {
+    //     [paramToUpdate]: val === 'undefined' ? 'removeLink' : val,
+    //   },
+    //   { mutate: mutate, onSuccess: onSuccess },
+    // )
   }
 
   return (

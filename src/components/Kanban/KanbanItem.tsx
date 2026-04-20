@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize, cn } from '@src/lib/utils'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import type { KanbanItemType } from '@src/types/types'
 import { SelectItem } from '@ui/select'
 import {

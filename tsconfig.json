@@ -22,12 +22,11 @@
     "paths": {
       "@auth": ["./server/auth/auth.ts"],
       "@db": ["./server/shared/utils/db.ts"],
+      "@hooks": ["./src/modules/shared/hooks/index.ts"],
       "@scopedDb": ["./server/shared/infrastructure/scoped-db.ts"],
       "@api": ["./src/lib/api.ts"],
       "@logger": ["./server/shared/utils/logger.ts"],
       "@server/*": ["./server/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@services/*": ["./src/services/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@public/*": ["./public/*"],
       "@src/*": ["./src/*"],

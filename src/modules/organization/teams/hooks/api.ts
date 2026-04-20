@@ -1,12 +1,12 @@
 // src/modules/organization/teams/hooks/api.ts
+import type { CreateTeamRequest } from '@/server/modules/account/teams/features/create-team/schema'
 import type {
   TeamMemberResponse,
   TeamResponse,
 } from '@/server/modules/account/teams/features/response'
-import type { CreateTeamRequest } from '@/server/modules/account/teams/features/create-team/schema'
-import type { UpdateTeamRequest } from '@/server/modules/account/teams/features/update-team/schema'
 import type { AddTeamMemberRequest } from '@/server/modules/account/teams/features/team-members/add-team-member/schema'
-import { api } from '@src/lib/api'
+import type { UpdateTeamRequest } from '@/server/modules/account/teams/features/update-team/schema'
+import { api } from '@src/modules/shared/api'
 
 export const fetchTeamsFn = async (
   organizationId: string,
@@ -19,7 +19,10 @@ export const createTeamFn = async (
   organizationId: string,
   payload: CreateTeamRequest,
 ): Promise<TeamResponse> => {
-  const { data } = await api.post(`organization/${organizationId}/team`, payload)
+  const { data } = await api.post(
+    `organization/${organizationId}/team`,
+    payload,
+  )
   return data.data
 }
 

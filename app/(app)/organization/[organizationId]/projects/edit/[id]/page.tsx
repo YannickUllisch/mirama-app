@@ -1,8 +1,8 @@
 'use client'
 import Loading from '@/app/loading'
+import { PriorityType, StatusType } from '@/prisma/generated/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
-import { PriorityType, StatusType } from '@prisma/client'
+import apiRequest from '@hooks'
 import { CreateTagSchema } from '@server/modules/account/tags/features/create-tag/schema'
 import {
   type UpdateProjectRequest,
@@ -127,7 +127,6 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
         tags: project.tags.map((t) => t.id),
         newTags: [],
         members: project.members.map((u) => ({
-          isManager: u.isManager,
           memberId: u.id,
         })),
       })

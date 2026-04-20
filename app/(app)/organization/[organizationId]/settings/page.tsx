@@ -1,5 +1,4 @@
 'use client'
-import { OrganizationRole } from '@prisma/client'
 import PageHeader from '@src/components/PageHeader'
 import AccountTab from '@src/components/Tabs/SettingTabs/AccountTab'
 import InvitationsTab from '@src/components/Tabs/SettingTabs/InvitationsTab'
@@ -20,19 +19,12 @@ const ProjectPage = () => {
   const { data: session } = useSession()
 
   const settingsTabs: {
-    roles: OrganizationRole[]
     id: string
     component: JSX.Element
     headerComponent: JSX.Element
   }[] = [
     {
       id: 'account',
-      roles: [
-        OrganizationRole.ADMIN,
-        OrganizationRole.OWNER,
-        OrganizationRole.FREELANCE,
-        OrganizationRole.USER,
-      ],
       component: <AccountTab session={session} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -42,7 +34,6 @@ const ProjectPage = () => {
     },
     {
       id: 'tabs',
-      roles: [OrganizationRole.ADMIN, OrganizationRole.OWNER],
       component: <TagsTab />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -52,7 +43,6 @@ const ProjectPage = () => {
     },
     {
       id: 'invitations',
-      roles: [OrganizationRole.ADMIN, OrganizationRole.OWNER],
       component: <InvitationsTab session={session} />,
       headerComponent: (
         <div className="flex justify-center gap-1 items-center">
@@ -88,8 +78,7 @@ const ProjectPage = () => {
         <TabsList className="justify-stretch absolute flex">
           {settingsTabs.map(
             (tabHeader) =>
-              session &&
-              tabHeader.roles.includes(session.user.orgRole as any) && (
+              session && (
                 <TabsTrigger
                   style={{ fontSize: 12 }}
                   value={tabHeader.id}
@@ -104,8 +93,7 @@ const ProjectPage = () => {
       <Separator className="m-4" />
       {settingsTabs.map(
         (tab) =>
-          session &&
-          tab.roles.includes(session.user.orgRole as any) && (
+          session && (
             <TabsContent className="px-10" value={tab.id} key={`${tab.id}-tab`}>
               {tab.component}
             </TabsContent>

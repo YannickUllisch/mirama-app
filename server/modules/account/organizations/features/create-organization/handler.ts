@@ -22,7 +22,6 @@ export const CreateOrganizationCommand =
       )
     }
 
-    // Resolve the "Owner" system role for the founding member
     const ownerRole = await getSystemRole(db, 'Owner')
 
     const org = await repo.create({ ...input, slug })

@@ -1,5 +1,4 @@
 import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
-import type { OrganizationRole } from '@prisma/client'
 
 export const MemberRepository = (db: ScopedDb) => ({
   async findById(id: string) {
@@ -18,12 +17,7 @@ export const MemberRepository = (db: ScopedDb) => ({
     return await db.member.deleteMany({ where: { id } })
   },
 
-  async create(data: {
-    name: string
-    email: string
-    role: OrganizationRole
-    iamRoleId: string
-  }) {
+  async create(data: { name: string; email: string; iamRoleId: string }) {
     return await db.member.create({
       data: {
         ...data,

@@ -2,7 +2,7 @@
 import type { CreateTagRequest } from '@/server/modules/account/tags/features/create-tag/schema'
 import type { TagResponse } from '@/server/modules/account/tags/features/response'
 import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchTagsFn = async (): Promise<TagResponse[]> => {
   const { data } = await api.get('tag')

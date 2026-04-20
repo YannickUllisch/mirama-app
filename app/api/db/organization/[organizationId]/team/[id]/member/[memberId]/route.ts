@@ -8,7 +8,8 @@ export const DELETE = createRoute(
   {
     auth: { permissions: P.team.update },
     params: RemoveTeamMemberParamsSchema,
-    pathPattern: '/api/db/organization/:organizationId/team/:id/member/:memberId',
+    pathPattern:
+      '/api/db/organization/:organizationId/team/:id/member/:memberId',
   },
   async (_req, { ctx }, { params }) => {
     await RemoveTeamMemberCommand(ctx)(params.id, params.memberId)

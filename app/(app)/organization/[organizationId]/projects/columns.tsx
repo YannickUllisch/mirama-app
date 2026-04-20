@@ -1,10 +1,9 @@
 // app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
-import { PriorityType, StatusType } from '@prisma/client'
+import { PriorityType, StatusType } from '@/prisma/generated/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
-import AvatarGroup from '@src/components/(application)/core/Avatar/AvatarGroup'
 import HoverLink from '@src/components/HoverLink'
 import {
   EditableCell,
@@ -136,32 +135,32 @@ export const useProjectColumns = ({
         },
       }),
 
-      columnHelper.display({
-        id: 'users',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Managed By" />
-        ),
-        cell: ({ row }) => {
-          const managedBy = row.original.members.filter(
-            (user) => user.isManager,
-          )
-          const managerNames =
-            users
-              ?.filter((u) => managedBy.some((m) => m.id === u.id))
-              .map((u) => u.name as string) ?? []
+      // columnHelper.display({
+      //   id: 'users',
+      //   header: ({ column }) => (
+      //     <DataTableColumnHeader column={column} title="Managed By" />
+      //   ),
+      //   cell: ({ row }) => {
+      //     const managedBy = row.original.members.filter(
+      //       (user) => user.isManager,
+      //     )
+      //     const managerNames =
+      //       users
+      //         ?.filter((u) => managedBy.some((m) => m.id === u.id))
+      //         .map((u) => u.name as string) ?? []
 
-          return (
-            managerNames.length > 0 && (
-              <AvatarGroup
-                usernames={managerNames}
-                avatarSize={7}
-                previewAmount={2}
-                fontSize={10}
-              />
-            )
-          )
-        },
-      }),
+      //     return (
+      //       managerNames.length > 0 && (
+      //         <AvatarGroup
+      //           usernames={managerNames}
+      //           avatarSize={7}
+      //           previewAmount={2}
+      //           fontSize={10}
+      //         />
+      //       )
+      //     )
+      //   },
+      // }),
 
       columnHelper.accessor((row) => row.startDate, {
         id: 'startDate',

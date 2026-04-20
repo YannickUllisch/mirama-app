@@ -1,3 +1,4 @@
+import { TenantRole } from '@/prisma/generated/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteRoleCommand } from '@/server/modules/account/roles/features/delete-role/handler'
 import {
@@ -10,7 +11,6 @@ import {
   RoleIdParams,
   UpdateRoleSchema,
 } from '@/server/modules/account/roles/features/update-role/schema'
-import { TenantRole } from '@prisma/client'
 
 export const PUT = createRoute(
   {

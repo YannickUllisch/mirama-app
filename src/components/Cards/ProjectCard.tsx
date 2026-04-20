@@ -1,5 +1,6 @@
 import type { ProjectResponse } from '@server/modules/project/features/response'
-import { getColorByName, isOrgAdminOrOwner } from '@src/lib/utils'
+import { getColorByName } from '@src/lib/utils'
+import { getDaysRemaining } from '@src/modules/project/_helpers'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
 import Centering from '@ui/centering'
@@ -21,9 +22,7 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
 import type React from 'react'
-import { getDaysRemaining } from '@/app/(app)/organization/[organizationId]/_helpers'
 import HoverLink from '../HoverLink'
 
 const ProjectCard = ({
@@ -33,7 +32,6 @@ const ProjectCard = ({
   project: ProjectResponse
   setRecentProjectIds: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
-  const { data: session } = useSession()
   return (
     <div className="relative shadow-xs">
       <div
@@ -76,16 +74,15 @@ const ProjectCard = ({
                       </Centering>
                     </DropdownMenuItem>
                   </Link>
-                  {isOrgAdminOrOwner(session) && (
-                    <HoverLink href={`/app/projects/edit/${project.id}`}>
-                      <DropdownMenuItem>
-                        <Centering>
-                          <Edit size={14} />
-                          <span> Edit Project </span>
-                        </Centering>
-                      </DropdownMenuItem>
-                    </HoverLink>
-                  )}
+
+                  <HoverLink href={`/app/projects/edit/${project.id}`}>
+                    <DropdownMenuItem>
+                      <Centering>
+                        <Edit size={14} />
+                        <span> Edit Project </span>
+                      </Centering>
+                    </DropdownMenuItem>
+                  </HoverLink>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="text-red-500"

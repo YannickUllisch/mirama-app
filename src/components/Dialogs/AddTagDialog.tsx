@@ -4,7 +4,7 @@ import {
   CreateTagSchema,
 } from '@/server/modules/account/tags/features/create-tag/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { Button } from '@src/components/ui/button'
 import {
   Dialog,

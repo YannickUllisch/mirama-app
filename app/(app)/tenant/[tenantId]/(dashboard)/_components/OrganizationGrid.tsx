@@ -1,6 +1,6 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/_components/OrganizationGrid.tsx
 'use client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { Button } from '@ui/button'

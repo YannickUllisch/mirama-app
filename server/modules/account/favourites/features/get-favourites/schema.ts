@@ -1,4 +1,4 @@
-import { FavouriteType } from '@prisma/client'
+import { FavouriteType } from '@/prisma/generated/client'
 import { z } from 'zod'
 
 export const GetFavouritesParams = z.object({

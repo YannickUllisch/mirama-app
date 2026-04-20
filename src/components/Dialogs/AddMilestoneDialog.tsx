@@ -1,6 +1,6 @@
 'use client'
+import type { Milestone } from '@/prisma/generated/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Milestone } from '@prisma/client'
 import { MilestoneSchema } from '@server/modules/project/milestone/milestoneSchema'
 import { Button } from '@src/components/ui/button'
 import {
@@ -13,8 +13,6 @@ import {
   DialogTrigger,
 } from '@src/components/ui/dialog'
 import { Input } from '@src/components/ui/input'
-import { postResource } from '@src/lib/api/postResource'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import type React from 'react'
@@ -53,28 +51,28 @@ const AddMilestoneDialog = ({
     },
   })
 
-  const onSubmit = (vals: z.infer<typeof MilestoneSchema>) => {
+  const onSubmit = (_vals: z.infer<typeof MilestoneSchema>) => {
     startTransition(() => {
-      if (vals.id === '') {
-        // If id is empty we need to create new milestone, else update it
-        postResource('project/milestones', vals)
-          .then(() => {
-            form.reset()
-            setIsOpen(false)
-          })
-          .catch(() => {
-            setIsOpen(false)
-          })
-      } else {
-        updateResourceById('project/milestones', vals.id, vals, {})
-          .then(() => {
-            form.reset()
-            setIsOpen(false)
-          })
-          .catch(() => {
-            setIsOpen(false)
-          })
-      }
+      // if (vals.id === '') {
+      //   // If id is empty we need to create new milestone, else update it
+      //   postResource('project/milestones', vals)
+      //     .then(() => {
+      //       form.reset()
+      //       setIsOpen(false)
+      //     })
+      //     .catch(() => {
+      //       setIsOpen(false)
+      //     })
+      // } else {
+      //   updateResourceById('project/milestones', vals.id, vals, {})
+      //     .then(() => {
+      //       form.reset()
+      //       setIsOpen(false)
+      //     })
+      //     .catch(() => {
+      //       setIsOpen(false)
+      //     })
+      // }
     })
   }
 

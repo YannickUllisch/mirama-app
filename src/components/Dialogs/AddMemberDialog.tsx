@@ -1,11 +1,11 @@
 'use client'
+import { OrganizationRole } from '@/prisma/generated/client'
 import {
   type CreateInvitationRequest,
   CreateInvitationSchema,
 } from '@/server/modules/account/invitations/features/create-invitation/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
-import { OrganizationRole } from '@prisma/client'
+import apiRequest from '@hooks'
 import { Button } from '@ui/button'
 import {
   Dialog,

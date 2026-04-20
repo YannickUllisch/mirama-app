@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/billing/_components/UsageSection.tsx
 'use client'
 
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
 import { Progress } from '@ui/progress'
 import { Building2, FolderOpen, Users } from 'lucide-react'

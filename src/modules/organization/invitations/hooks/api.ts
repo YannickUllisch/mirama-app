@@ -2,7 +2,7 @@
 import type { CreateInvitationRequest } from '@/server/modules/account/invitations/features/create-invitation/schema'
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import type { UpdateInvitationRequest } from '@/server/modules/account/invitations/features/update-invitation/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchInvitationsFn = async (
   orgId: string,

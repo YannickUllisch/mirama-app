@@ -1,8 +1,8 @@
 // src/modules/shared/favourites/hooks/api.ts
+import type { FavouriteType } from '@/prisma/generated/client'
 import type { CreateFavouriteRequest } from '@/server/modules/account/favourites/features/create-favourite/schema'
 import type { FavouriteResponse } from '@/server/modules/account/favourites/features/response'
-import type { FavouriteType } from '@prisma/client'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchFavouritesFn = async (): Promise<FavouriteResponse[]> => {
   const { data } = await api.get('favourite')

@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/billing/plans/_components/PlansGrid.tsx
 'use client'
 
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import type {
   BillingResponse,
   PlanResponse,

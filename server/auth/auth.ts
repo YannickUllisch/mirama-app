@@ -1,4 +1,4 @@
-import type { TenantRole } from '@prisma/client'
+import type { TenantRole } from '@/prisma/generated/client'
 import NextAuth from 'next-auth'
 import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'

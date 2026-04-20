@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/billing/_components/SubscriptionSection.tsx
 'use client'
 
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
 import { Badge } from '@ui/badge'
 import { AlertTriangle } from 'lucide-react'

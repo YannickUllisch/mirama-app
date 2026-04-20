@@ -1,6 +1,6 @@
 // src/components/Sidebar/RecentsNav.tsx
 'use client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu } from '@ui/sidebar'
 import { Spinner } from '@ui/spinner'
 import { usePathname } from 'next/navigation'

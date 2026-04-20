@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteTaskCommand } from '@/server/modules/task/features/delete-task/handler'
 import { GetTaskQuery } from '@/server/modules/task/features/get-task/handler'
@@ -8,20 +7,12 @@ import { UpdateTaskSchema } from '@/server/modules/task/features/update-task/sch
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: TaskIdParams,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
   },
   async (_req, { session, ctx }, { params }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
-    const data = await GetTaskQuery(ctx)(
-      params.taskId,
-      session.user.id ?? '',
-      isAdmin,
-    )
+    const data = await GetTaskQuery(ctx)(params.taskId, session.user.id ?? '')
 
     return Response.json({ success: true, data })
   },
@@ -29,20 +20,15 @@ export const GET = createRoute(
 
 export const PUT = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: TaskIdParams,
     body: UpdateTaskSchema,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
   },
   async (_req, { session, ctx }, { params, body }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
     const data = await UpdateTaskCommand(ctx)(
       params.taskId,
       session.user.id ?? '',
-      isAdmin,
       body,
     )
 
@@ -52,16 +38,12 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: TaskIdParams,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
   },
   async (_req, { session, ctx }, { params }) => {
-    const isAdmin = (
-      [OrganizationRole.ADMIN, OrganizationRole.OWNER] as OrganizationRole[]
-    ).includes(session.user.orgRole as OrganizationRole)
-
-    await DeleteTaskCommand(ctx)(params.taskId, session.user.id ?? '', isAdmin)
+    await DeleteTaskCommand(ctx)(params.taskId, session.user.id ?? '')
 
     return Response.json(
       { success: true, message: 'Task deleted successfully' },

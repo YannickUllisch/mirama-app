@@ -1,4 +1,4 @@
-import type { Tag } from '@prisma/client'
+import type { Tag } from '@/prisma/generated/client'
 
 export type TagResponse = {
   id: string

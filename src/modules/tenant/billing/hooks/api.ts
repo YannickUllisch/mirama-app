@@ -1,5 +1,5 @@
 import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchBillingFn = async (
   tenantId: string,

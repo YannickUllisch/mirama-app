@@ -1,5 +1,4 @@
-import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
-import { PriorityType, TaskStatusType } from '@prisma/client'
+import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TagResponse } from '@server/modules/account/tags/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
@@ -24,6 +23,7 @@ import {
   HoverCardTrigger,
 } from '@src/components/ui/hover-card'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
+import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@ui/button'

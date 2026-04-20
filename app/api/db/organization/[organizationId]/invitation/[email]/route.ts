@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeleteInvitationCommand } from '@/server/modules/account/invitations/features/delete-invitation/handler'
 import { UpdateInvitationCommand } from '@/server/modules/account/invitations/features/update-invitation/handler'
@@ -9,7 +8,7 @@ import {
 
 export const PUT = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: {},
     params: InvitationEmailParams,
     body: UpdateInvitationSchema,
     pathPattern: '/api/db/organization/:organizationId/invite/:email',
@@ -23,7 +22,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: {},
     params: InvitationEmailParams,
     pathPattern: '/api/db/organization/:organizationId/invite/:email',
   },

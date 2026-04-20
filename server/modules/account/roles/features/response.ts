@@ -1,5 +1,4 @@
-import type { Policy, Role } from '@/prisma/generated/client'
-import type { PolicyStatement } from '@prisma/client'
+import type { Policy, PolicyStatement, Role } from '@/prisma/generated/client'
 import type {
   PolicyResponse,
   PolicyStatementResponse,

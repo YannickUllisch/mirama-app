@@ -1,7 +1,7 @@
 // src/modules/organization/members/hooks/api.ts
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import type { UpdateMemberRequest } from '@/server/modules/account/members/features/update-member/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchOrgMembersFn = async (
   organizationId: string,

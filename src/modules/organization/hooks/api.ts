@@ -1,7 +1,7 @@
 import type { CreateOrganizationRequest } from '@/server/modules/account/organizations/features/create-organization/schema'
 import type { OrganizationListResponse } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export type OrgProjectSummary = { id: string; name: string }
 

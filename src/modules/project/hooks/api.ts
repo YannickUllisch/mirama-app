@@ -4,7 +4,7 @@ import type { MemberResponse } from '@/server/modules/account/members/features/r
 import type { CreateProjectRequest } from '@/server/modules/project/features/create-project/schema'
 import type { ProjectResponse } from '@/server/modules/project/features/response'
 import type { UpdateProjectRequest } from '@/server/modules/project/features/update-project/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchProjectsFn = async (
   organizationId: string,

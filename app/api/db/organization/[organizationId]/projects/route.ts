@@ -14,7 +14,7 @@ export const GET = createRoute(
     ctx.logger.info(session.user.email)
     ctx.logger.info(archived)
 
-    const data = await GetProjectsQuery(ctx)(session.user.email ?? '', archived)
+    const data = await GetProjectsQuery(ctx)(session.user.id ?? '', archived)
 
     return Response.json({ success: true, data })
   },

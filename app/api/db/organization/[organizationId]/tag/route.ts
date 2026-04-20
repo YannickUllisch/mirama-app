@@ -1,4 +1,3 @@
-import { OrganizationRole } from '@prisma/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { CreateTagCommand } from '@/server/modules/account/tags/features/create-tag/handler'
 import { CreateTagSchema } from '@/server/modules/account/tags/features/create-tag/schema'
@@ -6,7 +5,7 @@ import { GetTagsQuery } from '@/server/modules/account/tags/features/get-tags/ha
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     pathPattern: '/api/db/organization/:organizationId/tag',
   },
   async (_req, { ctx }) => {
@@ -18,9 +17,7 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: {
-      allowedOrgRoles: [OrganizationRole.OWNER, OrganizationRole.ADMIN],
-    },
+    auth: {},
     body: CreateTagSchema,
     pathPattern: '/api/db/organization/:organizationId/tag',
   },

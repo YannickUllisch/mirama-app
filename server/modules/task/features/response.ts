@@ -3,7 +3,7 @@ import type {
   Task,
   TaskStatusType,
   TaskType,
-} from '@prisma/client'
+} from '@/prisma/generated/client'
 import type { TaskWithRelations } from '../infrastructure/task.repo'
 
 export type TaskResponse = {
@@ -26,7 +26,6 @@ export type TaskResponse = {
     id: string
     name: string
     email: string
-    role: string
   } | null
   projectId: string
   projectName: string | undefined
@@ -92,7 +91,6 @@ export const toTaskResponse = (input: TaskWithRelations): TaskResponse => ({
         id: input.assignedTo.id,
         name: input.assignedTo.name,
         email: input.assignedTo.email,
-        role: input.assignedTo.role,
       }
     : null,
   projectId: input.projectId,

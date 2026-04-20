@@ -2,7 +2,7 @@
 'use client'
 
 import type { AccessScope } from '@/prisma/generated/client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { Badge } from '@ui/badge'

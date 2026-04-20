@@ -1,7 +1,6 @@
 'use client'
 import Loading from '@/app/loading'
-import apiRequest from '@hooks/query'
-import { OrganizationRole } from '@prisma/client'
+import apiRequest from '@hooks'
 import { ProjectDataContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
 import ProjectHeader from '@src/components/Header/ProjectHeader'
 import BoardTab from '@src/components/Tabs/ProjectTabs/BoardTab'
@@ -15,6 +14,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
+import { addProjectIdToLocalStorage } from '@src/modules/project/_helpers'
 import useLocalStorage from '@src/modules/shared/hooks/utils/useLocalStorage'
 import {
   ClipboardList,
@@ -30,7 +30,6 @@ import {
   useSearchParams,
 } from 'next/navigation'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { addProjectIdToLocalStorage } from '../../_helpers'
 
 const ClientProjectPage = () => {
   // Context for ProjectId and Name
@@ -83,7 +82,6 @@ const ClientProjectPage = () => {
     return [
       {
         id: 'overview',
-        roles: Object.values(OrganizationRole),
         component: (
           <OverviewTab project={project ?? null} tasks={tasks ?? []} />
         ),
@@ -95,7 +93,6 @@ const ClientProjectPage = () => {
       },
       {
         id: 'table',
-        roles: Object.values(OrganizationRole),
         component: (
           <TableTab
             project={project ?? null}
@@ -111,7 +108,6 @@ const ClientProjectPage = () => {
       },
       {
         id: 'list',
-        roles: Object.values(OrganizationRole),
         component: <ListTab project={project ?? null} tasks={tasks ?? []} />,
         headerComponent: (
           <div className="flex justify-center gap-1 items-center">
@@ -121,7 +117,6 @@ const ClientProjectPage = () => {
       },
       {
         id: 'kanban',
-        roles: Object.values(OrganizationRole),
         component: (
           <BoardTab
             project={project ?? null}
@@ -137,7 +132,6 @@ const ClientProjectPage = () => {
       },
       {
         id: 'timeline',
-        roles: Object.values(OrganizationRole),
         component: <GanttTab project={project ?? null} tasks={tasks ?? []} />,
         headerComponent: (
           <div className="flex justify-center gap-1 items-center">

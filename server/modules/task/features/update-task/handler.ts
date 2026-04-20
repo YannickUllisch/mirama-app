@@ -6,12 +6,7 @@ import type { UpdateTaskRequest } from './schema'
 
 export const UpdateTaskCommand =
   ({ db, logger }: AppContext) =>
-  async (
-    taskId: string,
-    sessionUserId: string,
-    isAdminOrOwner: boolean,
-    input: UpdateTaskRequest,
-  ) => {
+  async (taskId: string, sessionUserId: string, input: UpdateTaskRequest) => {
     logger.info({ taskId }, 'Updating task')
 
     const { tags, newTags, subtasks, parentId, ...rest } = input
@@ -31,7 +26,6 @@ export const UpdateTaskCommand =
     TaskEntity.assertProjectMemberOrAdmin(
       project.members.map((m) => m.memberId),
       sessionUserId,
-      isAdminOrOwner,
     )
 
     const task = await repo.update(taskId, {

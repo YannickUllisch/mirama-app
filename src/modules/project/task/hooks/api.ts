@@ -3,7 +3,7 @@ import type { CreateTaskRequest } from '@/server/modules/task/features/create-ta
 import type { DeleteTasksBulkRequest } from '@/server/modules/task/features/delete-task/schema'
 import type { TaskResponse } from '@/server/modules/task/features/response'
 import type { UpdateTaskRequest } from '@/server/modules/task/features/update-task/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchTasksByProjectFn = async (
   id: string,

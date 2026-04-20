@@ -1,5 +1,5 @@
+import type { TaskType } from '@/prisma/generated/client'
 import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { TaskType } from '@prisma/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import type { LucideIcon } from 'lucide-react'

@@ -4,7 +4,7 @@ import { ProjectIdParams } from '@/server/modules/project/features/get-project/s
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: ProjectIdParams,
     pathPattern:
       '/api/db/organization/:organizationId/project/:projectId/member',

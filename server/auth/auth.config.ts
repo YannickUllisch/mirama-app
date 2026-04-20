@@ -1,10 +1,10 @@
+import type { TenantRole } from '@/prisma/generated/client'
 import {
   type AttributeType,
   AuthFlowType,
   GetUserCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
-import type { OrganizationRole, TenantRole } from '@prisma/client'
 import type { NextAuthConfig } from 'next-auth'
 import type { CognitoProfile } from 'next-auth/providers/cognito'
 import CognitoProvider from 'next-auth/providers/cognito'
@@ -105,7 +105,7 @@ export default {
         session.user.name = token.name as string
         session.user.tenantId = token.tenantId as string
         session.user.organizationId = token.organizationId as string
-        session.user.orgRole = token.orgRole as OrganizationRole
+        session.user.orgRole = token.orgRole as string
         session.user.tenantRole = token.tenantRole as TenantRole
       }
       return session

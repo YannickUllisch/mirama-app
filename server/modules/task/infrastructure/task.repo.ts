@@ -1,4 +1,3 @@
-import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import type {
   Comment,
   Member,
@@ -6,7 +5,8 @@ import type {
   Tag,
   Task,
   TaskStatusType,
-} from '@prisma/client'
+} from '@/prisma/generated/client'
+import type { ScopedDb } from '@/server/shared/infrastructure/scoped-db'
 
 const TASK_INCLUDE = {
   assignedTo: true,

@@ -10,7 +10,9 @@ export const UpdateOrganizationCommand =
     const repo = OrganizationRepository(db)
     const org = await repo.findById(organizationId)
 
-    if (!org) throw new Error('Organization not found')
+    if (!org) {
+      throw new Error('Organization not found')
+    }
 
     const data: Record<string, unknown> = { ...input }
 

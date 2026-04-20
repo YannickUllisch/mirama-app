@@ -1,6 +1,6 @@
 'use client'
 import Loading from '@/app/loading'
-import type { Milestone } from '@prisma/client'
+import type { Milestone } from '@/prisma/generated/client'
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import type { MilestoneProjectResponseInput } from '@server/modules/project/milestone/milestoneSchema'
 import type { TaskResponse } from '@server/modules/task/features/response'
@@ -29,10 +29,8 @@ import {
   ContextMenuTrigger,
 } from '@src/components/ui/context-menu'
 import { Label } from '@src/components/ui/label'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import { updateResourceById } from '@src/lib/api/updateResource'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize } from '@src/lib/utils'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import get from 'lodash.get'
 import groupBy from 'lodash.groupby'
 import dynamic from 'next/dynamic'
@@ -127,11 +125,15 @@ const GanttTab = ({
     setIsMilestoneDialogOpen(true)
   }
 
-  const handleMoveFeature = (id: string, startAt: Date, endAt: Date | null) => {
+  const handleMoveFeature = (
+    _id: string,
+    _startAt: Date,
+    endAt: Date | null,
+  ) => {
     if (!endAt) {
       return
     }
-    updateResourceById('task', id, { startDate: startAt, dueDate: endAt })
+    // updateResourceById('task', id, { startDate: startAt, dueDate: endAt })
   }
 
   const handleAddFeature = (date: Date) =>
@@ -258,8 +260,9 @@ const GanttTab = ({
                   id={milestone.id}
                   label={milestone.title}
                   backgroundHex={milestone.colors}
-                  onRemove={() =>
-                    deleteResources('project/milestones', [milestone.id], {})
+                  onRemove={
+                    () => console.info('Readd delete hook')
+                    // deleteResources('project/milestones', [milestone.id], {})
                   }
                   onInteract={handleInteractMarker}
                 />

@@ -1,4 +1,4 @@
-import type { Comment } from '@prisma/client'
+import type { Comment } from '@/prisma/generated/client'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Textarea } from '@ui/textarea'

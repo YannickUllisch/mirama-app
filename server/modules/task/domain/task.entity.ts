@@ -1,4 +1,4 @@
-import { TaskType } from '@prisma/client'
+import { TaskType } from '@/prisma/generated/client'
 
 const CONTAINER_TYPES = new Set([
   TaskType.EPIC,
@@ -50,9 +50,8 @@ export class TaskEntity {
   static assertProjectMemberOrAdmin(
     memberIds: string[],
     sessionUserId: string,
-    isAdminOrOwner: boolean,
   ): void {
-    if (!isAdminOrOwner && !memberIds.includes(sessionUserId)) {
+    if (!memberIds.includes(sessionUserId)) {
       throw new Error('Insufficient permission')
     }
   }

@@ -1,4 +1,4 @@
-import type { Task } from '@prisma/client'
+import type { Task } from '@/prisma/generated/client'
 import { updateResourceById } from '@src/lib/api/updateResource'
 import { capitalize } from '@src/lib/utils'
 import { type FC, type PropsWithChildren, useState } from 'react'

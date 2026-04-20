@@ -1,7 +1,7 @@
 // src/components/Header/HeaderFavouriteToggle.tsx
 'use client'
-import apiRequest from '@hooks/query'
-import { FavouriteType } from '@prisma/client'
+import { FavouriteType } from '@/prisma/generated/client'
+import apiRequest from '@hooks'
 import { cn } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Star } from 'lucide-react'

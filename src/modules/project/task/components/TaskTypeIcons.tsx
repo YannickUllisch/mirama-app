@@ -1,4 +1,5 @@
-import type { TaskType } from '@prisma/client'
+import type { TaskType } from '@/prisma/generated/client'
+import { cn } from '@src/lib/utils'
 import {
   BookOpen,
   Bug,
@@ -7,7 +8,6 @@ import {
   FlaskConical,
   Trophy,
 } from 'lucide-react'
-import { cn } from '../utils'
 
 const ICON_SIZE = 16
 

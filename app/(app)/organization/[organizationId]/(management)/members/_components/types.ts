@@ -1,6 +1,5 @@
 export type ProjectMemberEntry = {
   id: string
-  isManager: boolean
   member: { name: string; email: string }
 }
 

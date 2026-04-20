@@ -22,7 +22,9 @@ export const UpdateTeamCommand =
       const slug = TeamEntity.createSlug(input.name)
       const slugConflict = await repo.findBySlug(slug)
       if (slugConflict && slugConflict.id !== teamId) {
-        throw new Error('A team with this name already exists in the organization.')
+        throw new Error(
+          'A team with this name already exists in the organization.',
+        )
       }
       updates.name = input.name
       updates.slug = slug

@@ -2,7 +2,7 @@
 
 import type { AccessScope } from '@/prisma/generated/client'
 import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import HoverLink from '@src/components/HoverLink'
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'

@@ -79,9 +79,6 @@ const TeamWorkloadWidget = ({ project, isLoading }: WorkloadWidgetProps) => {
                     <span className="block text-xs font-bold text-neutral-900 dark:text-neutral-100">
                       {user.name}
                     </span>
-                    <span className="text-[10px] text-neutral-400 font-medium">
-                      {user.isManager ? 'Lead' : 'Operator'}
-                    </span>
                   </div>
                 </div>
 

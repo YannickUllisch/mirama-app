@@ -47,6 +47,9 @@ export const DELETE = createRoute(
   async (_req, { ctx }, { params }) => {
     await DeleteTeamCommand(ctx)(params.id)
 
-    return Response.json({ success: true, message: 'Team deleted successfully' })
+    return Response.json({
+      success: true,
+      message: 'Team deleted successfully',
+    })
   },
 )

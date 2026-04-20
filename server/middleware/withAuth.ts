@@ -1,8 +1,8 @@
+import type { TenantRole } from '@/prisma/generated/client'
 import { evaluateStatements } from '@/server/shared/domain/evaluate-permissions'
 import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import { auth } from '@auth'
 import database from '@db'
-import type { TenantRole } from '@prisma/client'
 import type { NextRequest } from 'next/server'
 import type { PermissionRequirement } from '../shared/domain/permissions'
 import type {

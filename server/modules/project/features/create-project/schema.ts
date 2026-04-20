@@ -1,4 +1,4 @@
-import { PriorityType, StatusType } from '@prisma/client'
+import { PriorityType, StatusType } from '@/prisma/generated/client'
 import { z } from 'zod'
 
 const ProjectMemberLinkSchema = z.object({

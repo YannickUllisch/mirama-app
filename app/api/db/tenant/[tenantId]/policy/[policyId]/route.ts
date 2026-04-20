@@ -1,3 +1,4 @@
+import { TenantRole } from '@/prisma/generated/client'
 import { createRoute } from '@/server/middleware/createRoute'
 import { DeletePolicyCommand } from '@/server/modules/account/policies/features/delete-policy/handler'
 import { UpdatePolicyCommand } from '@/server/modules/account/policies/features/update-policy/handler'
@@ -5,7 +6,6 @@ import {
   PolicyIdParams,
   UpdatePolicySchema,
 } from '@/server/modules/account/policies/features/update-policy/schema'
-import { TenantRole } from '@prisma/client'
 
 export const PUT = createRoute(
   {

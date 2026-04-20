@@ -6,4 +6,6 @@ export const RemoveTeamMemberParamsSchema = z.object({
   memberId: z.string().min(1),
 })
 
-export type RemoveTeamMemberParams = z.infer<typeof RemoveTeamMemberParamsSchema>
+export type RemoveTeamMemberParams = z.infer<
+  typeof RemoveTeamMemberParamsSchema
+>

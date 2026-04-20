@@ -1,9 +1,8 @@
-import type { Task } from '@prisma/client'
-import { Label } from '../ui/label'
+import type { Task } from '@/prisma/generated/client'
+import { capitalize } from '@src/lib/utils'
 import { CornerDownRight, X } from 'lucide-react'
 import Link from 'next/link'
-import { capitalize } from '@src/lib/utils'
-import { updateResourceById } from '@src/lib/api/updateResource'
+import { Label } from '../ui/label'
 
 const SubTasksGroup = ({
   tasks,
@@ -37,16 +36,16 @@ const SubTasksGroup = ({
             </div>
             <X
               className="shrink-0 cursor-pointer h-4 w-4 absolute top-1 right-1 invisible group-hover:visible"
-              onClick={() =>
-                updateResourceById(
-                  'task',
-                  task.id,
-                  {
-                    parentId: null,
-                  },
-                  { mutate: mutate },
-                )
-              }
+              // onClick={() =>
+              //   updateResourceById(
+              //     'task',
+              //     task.id,
+              //     {
+              //       parentId: null,
+              //     },
+              //     { mutate: mutate },
+              //   )
+              // }
             />
           </div>
           <div className="ml-7 gap-2">

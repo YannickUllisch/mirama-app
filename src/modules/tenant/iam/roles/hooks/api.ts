@@ -1,7 +1,7 @@
 import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
-import { api } from '@src/lib/api'
+import { api } from '@src/modules/shared/api'
 
 export const fetchRolesFn = async (
   tenantId: string,

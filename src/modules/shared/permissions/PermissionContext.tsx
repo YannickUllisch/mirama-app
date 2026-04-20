@@ -8,13 +8,10 @@ import type {
 import { createContext, useContext, useMemo } from 'react'
 
 type PermissionContextType = {
-  /** Raw granted entries in "action::resource" format, including wildcards */
   grants: string[]
 }
 
 const PermissionContext = createContext<PermissionContextType | null>(null)
-
-// ── Provider ───────────────────────────────────────────────────────────────
 
 export const PermissionProvider = ({
   children,
@@ -30,8 +27,6 @@ export const PermissionProvider = ({
     </PermissionContext.Provider>
   )
 }
-
-// ── Hook ───────────────────────────────────────────────────────────────────
 
 /**
  * Returns a type-safe `can(resource, action)` function that evaluates the
@@ -73,8 +68,6 @@ export const usePermissions = () => {
 
   return { can, grants: ctx.grants }
 }
-
-// ── Pattern matching ───────────────────────────────────────────────────────
 
 /**
  * Matches a grant pattern against a concrete value.

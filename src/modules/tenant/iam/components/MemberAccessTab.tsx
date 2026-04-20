@@ -3,7 +3,7 @@
 
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 
 import { Badge } from '@ui/badge'
 import {

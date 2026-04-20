@@ -46,14 +46,6 @@ export const ProjectMembersSection = ({
                       {pm.member.email}
                     </p>
                   </div>
-                  {pm.isManager && (
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0 h-5 shrink-0"
-                    >
-                      Manager
-                    </Badge>
-                  )}
                 </div>
               ))
             )}

@@ -1,16 +1,16 @@
 'use client'
+import type { Project } from '@/prisma/generated/client'
 import { Calendar } from '@src/components/ui/calendar'
-import { CalendarDays } from 'lucide-react'
-import { type FC, useState } from 'react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@src/components/ui/popover'
-import type { Project } from '@prisma/client'
-import { toast } from 'sonner'
-import { DateTime } from 'luxon'
 import { updateResourceById } from '@src/lib/api/updateResource'
+import { CalendarDays } from 'lucide-react'
+import { DateTime } from 'luxon'
+import { type FC, useState } from 'react'
+import { toast } from 'sonner'
 
 interface CalendarTableSelectProps {
   startingDate: Date

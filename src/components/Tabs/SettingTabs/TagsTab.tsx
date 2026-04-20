@@ -1,6 +1,5 @@
 'use client'
-import apiRequest from '@hooks/query'
-import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import apiRequest from '@hooks'
 import type { TagResponse } from '@server/modules/account/tags/features/response'
 import {
   type UpdateTagRequest,
@@ -9,6 +8,7 @@ import {
 import AddTagDialog from '@src/components/Dialogs/AddTagDialog'
 import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
+import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { TagsIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'

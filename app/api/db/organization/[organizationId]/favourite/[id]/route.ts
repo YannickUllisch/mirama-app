@@ -4,7 +4,7 @@ import { FavouriteIdParams } from '@/server/modules/account/favourites/features/
 
 export const DELETE = createRoute(
   {
-    auth: { allowedOrgRoles: 'ANY' },
+    auth: {},
     params: FavouriteIdParams,
     pathPattern: '/api/db/organization/:organizationId/favourite/:id',
   },

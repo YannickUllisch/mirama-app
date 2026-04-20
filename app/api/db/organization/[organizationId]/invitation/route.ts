@@ -2,11 +2,10 @@ import { createRoute } from '@/server/middleware/createRoute'
 import { CreateInvitationCommand } from '@/server/modules/account/invitations/features/create-invitation/handler'
 import { CreateInvitationSchema } from '@/server/modules/account/invitations/features/create-invitation/schema'
 import { GetInvitationsQuery } from '@/server/modules/account/invitations/features/get-invitations/handler'
-import { OrganizationRole } from '@prisma/client'
 
 export const GET = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: {},
     pathPattern: '/api/db/organization/:organizationId/invite',
   },
   async (_req, { ctx }) => {
@@ -18,7 +17,7 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: { allowedOrgRoles: [OrganizationRole.ADMIN, OrganizationRole.OWNER] },
+    auth: {},
     body: CreateInvitationSchema,
     pathPattern: '/api/db/organization/:organizationId/invite',
   },

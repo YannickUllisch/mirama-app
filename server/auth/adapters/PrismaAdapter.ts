@@ -1,7 +1,7 @@
+import { InvitationStatus, TenantRole } from '@/prisma/generated/client'
 import { getSystemRole } from '@/server/shared/domain/iam-defaults'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import db from '@db'
-import { InvitationStatus, TenantRole } from '@prisma/client'
 import { DateTime } from 'luxon'
 
 export const CreatePrismaAdapter = () => {

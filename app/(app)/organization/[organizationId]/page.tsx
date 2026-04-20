@@ -1,5 +1,5 @@
 'use client'
-import apiRequest from '@hooks/query'
+import apiRequest from '@hooks'
 import HoverLink from '@src/components/HoverLink'
 import PageHeader from '@src/components/PageHeader'
 import MetricCard from '@src/components/ProjectDashboard/MetricCard'

@@ -1,8 +1,6 @@
-import type { Expense } from '@prisma/client'
+import type { Expense } from '@/prisma/generated/client'
 import GeneralTooltip from '@src/components/GeneralTooltip'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { deleteResources } from '@src/lib/api/deleteResource'
-import { isOrgAdminOrOwner } from '@src/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import type { Session } from 'next-auth'
@@ -46,20 +44,19 @@ export const getExpenseColumns = ({ session }: { session: Session | null }) => {
         <DataTableColumnHeader column={column} title="Actions" />
       ),
       cell: ({ row }) => {
-        if (isOrgAdminOrOwner(session)) {
-          return (
-            <div className="flex items-center gap-1.5">
-              <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
-                <Trash2
-                  onClick={() =>
-                    deleteResources('project/expense', [row.original.id], {})
-                  }
-                  className="w-3.5 h-3.5 text-rose-600 cursor-pointer"
-                />
-              </GeneralTooltip>
-            </div>
-          )
-        }
+        return (
+          <div className="flex items-center gap-1.5">
+            <GeneralTooltip key={`delete_${row.id}`} tipText="Remove">
+              <Trash2
+                onClick={
+                  () => console.info('TODO: add delete hook')
+                  // deleteResources('project/expense', [row.original.id], {})
+                }
+                className="w-3.5 h-3.5 text-rose-600 cursor-pointer"
+              />
+            </GeneralTooltip>
+          </div>
+        )
       },
     },
   ]

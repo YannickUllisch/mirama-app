@@ -8,7 +8,6 @@ export const GetTasksByProjectQuery =
   async (
     projectId: string,
     sessionUserId: string,
-    isAdminOrOwner: boolean,
     ignoreCompleted: boolean,
   ) => {
     logger.info({ projectId, ignoreCompleted }, 'Fetching tasks by project')
@@ -22,7 +21,6 @@ export const GetTasksByProjectQuery =
     TaskEntity.assertProjectMemberOrAdmin(
       project.members.map((m) => m.memberId),
       sessionUserId,
-      isAdminOrOwner,
     )
 
     const tasks = await repo.findByProject({ projectId, ignoreCompleted })

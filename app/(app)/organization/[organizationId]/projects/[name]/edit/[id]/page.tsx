@@ -1,8 +1,13 @@
 'use client'
+
 import Loading from '@/app/loading'
+import {
+  PriorityType,
+  TaskStatusType,
+  TaskType,
+} from '@/prisma/generated/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiRequest from '@hooks/query'
-import { PriorityType, TaskStatusType, TaskType } from '@prisma/client'
+import apiRequest from '@hooks'
 import {
   type UpdateTaskRequest,
   UpdateTaskSchema,
@@ -40,9 +45,9 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { isTaskTypeContainer } from '@src/lib/helpers/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/lib/helpers/TaskTypeIcons'
 import { capitalize } from '@src/lib/utils'
+import { isTaskTypeContainer } from '@src/modules/project/task/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
 import {
   BookOpenCheck,
   FileEdit,
