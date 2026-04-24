@@ -10,12 +10,10 @@ import PageHeader from '@src/components/PageHeader'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { TagsIcon } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import { useTagColumns } from './helper/TagTabColumns'
 
 const TagsTab = () => {
-  const { data: session } = useSession()
   const { data: tags, isLoading } = apiRequest.tag.fetchAll.useQuery()
   const { mutate: useDeleteTag } = apiRequest.tag.delete.useMutation()
   const { mutate: useUpdateTag } = apiRequest.tag.update.useMutation()
@@ -50,7 +48,6 @@ const TagsTab = () => {
         tableIdentifier="tagsTable"
         columns={useTagColumns({
           deleteMutation: useDeleteTag,
-          session: session,
           handleFieldUpdate: handleFieldUpdate,
         })}
         data={tags ?? []}

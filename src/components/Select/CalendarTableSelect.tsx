@@ -6,7 +6,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@src/components/ui/popover'
-import { updateResourceById } from '@src/lib/api/updateResource'
 import { CalendarDays } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { type FC, useState } from 'react'
@@ -31,14 +30,15 @@ export const CalendarTableSelect: FC<CalendarTableSelectProps> = ({
   const handleSelect = (date: Date) => {
     setPopupOpen(false)
     try {
-      updateResourceById(
-        'project',
-        project.id,
-        {
-          [dateType === 'start' ? 'startDate' : 'endDate']: date,
-        },
-        { mutate: mutate },
-      )
+      console.error('not updated to new system yet', date)
+      // updateResourceById(
+      //   'project',
+      //   project.id,
+      //   {
+      //     [dateType === 'start' ? 'startDate' : 'endDate']: date,
+      //   },
+      //   { mutate: mutate },
+      // )
     } catch (error: any) {
       toast.error(error)
     }

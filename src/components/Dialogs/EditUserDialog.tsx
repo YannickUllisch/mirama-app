@@ -1,4 +1,4 @@
-import { OrganizationRole } from '@/prisma/generated/client'
+'use client'
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import {
   type UpdateMemberRequest,
@@ -56,16 +56,16 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
     defaultValues: {
       email: user.email,
       name: user.name,
-      organizationRole: user.organizationRole as OrganizationRole,
+      iamRoleId: user.iamRoleId,
     },
   })
 
-  const { mutate: mutateUser } = apiRequest.team.update.useMutation()
+  const { mutate: mutateUser } = apiRequest.members.update.useMutation()
 
   const onSubmit = (vals: UpdateMemberRequest) => {
     startTransition(() => {
       mutateUser(
-        { id: user.id, payload: { ...vals } },
+        { memberId: user.id, data: { ...vals } },
         {
           onSuccess: () => {
             updateSession()
@@ -77,7 +77,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -112,7 +112,7 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
-                  name="organizationRole"
+                  name="iamRoleId"
                   render={({ field }) => (
                     <FormItem className="col-span-3">
                       <FormLabel>Role</FormLabel>
@@ -123,11 +123,9 @@ const EditUserDialog: FC<EditUserDialogProps> = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Object.keys(OrganizationRole).map((role) => (
-                            <SelectItem key={`role-item-${role}`} value={role}>
-                              {role}
-                            </SelectItem>
-                          ))}
+                          <SelectItem key={'role-item'} value={'TODO'}>
+                            TODO ADD ROLES
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

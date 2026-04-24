@@ -15,7 +15,6 @@ import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { Button } from '@src/components/ui/button'
 import { Card, CardContent } from '@src/components/ui/card'
-import { Checkbox } from '@src/components/ui/checkbox'
 import {
   FormControl,
   FormField,
@@ -118,7 +117,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     },
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <error otherwise>
   useEffect(() => {
     if (project) {
       form.reset({
@@ -177,17 +176,10 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   }
 
-  const toggleUserManager = (index: number) => {
-    const currentValue = form.getValues(`members.${index}.isManager`)
-    form.setValue(`members.${index}.isManager`, !currentValue, {
-      shouldValidate: true,
-    })
-  }
-
   const handleAddUser = (memberId: string) => {
     const exists = userFields.some((field) => field.memberId === memberId)
     if (!exists) {
-      appendUser({ memberId, isManager: false })
+      appendUser({ memberId })
     }
   }
 
@@ -247,7 +239,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
     <FormProvider {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 pb-[50px]"
+        className="space-y-6 pb-12.5"
       >
         <PageHeader
           title="Update Project"
@@ -296,13 +288,13 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
         <Card>
           <CardContent>
             <div className="form-group">
-              <div className="min-h-[30px] justify-between flex items-center gap-2">
+              <div className="min-h-7.5 justify-between flex items-center gap-2">
                 <div className="flex items-center gap-2">
                   <ClipboardPen className="w-5 h-5" />
                   <h3 className="font-medium">Project Title</h3>
                   {form.watch().name.length < 1 ? (
                     <div className="flex items-center gap-2 text-destructive">
-                      <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
+                      <MessageCircleWarning className="w-3.75 h-3.75" />{' '}
                       {'Field "Name" cannot be empty.'}{' '}
                     </div>
                   ) : (
@@ -554,7 +546,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                     </div>
 
                     {milestoneFields.length > 0 ? (
-                      <ScrollArea className="h-[200px] border rounded-md p-4">
+                      <ScrollArea className="h-50 border rounded-md p-4">
                         <div className="space-y-3">
                           {milestoneFields.map((milestone, index) => (
                             <div
@@ -591,7 +583,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                         </div>
                       </ScrollArea>
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-[200px] border rounded-md p-4 bg-secondary/10">
+                      <div className="flex flex-col items-center justify-center h-50 border rounded-md p-4 bg-secondary/10">
                         <MilestoneIcon className="w-12 h-12 text-muted-foreground" />
                         <p className="text-muted-foreground">
                           No milestones added yet
@@ -754,7 +746,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                     </SelectContent>
                   </Select>
 
-                  <ScrollArea className="h-[400px] border rounded-md p-2">
+                  <ScrollArea className="h-100 border rounded-md p-2">
                     <div className="space-y-3">
                       {userFields.length > 0 ? (
                         userFields.map((userField, index) => {
@@ -782,24 +774,6 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                               </div>
 
                               <div className="flex items-center gap-2">
-                                <div className="flex items-center gap-2 text-accent-foreground">
-                                  <Checkbox
-                                    id={`manager-${userField.id}`}
-                                    checked={form.watch(
-                                      `members.${index}.isManager`,
-                                    )}
-                                    onCheckedChange={() =>
-                                      toggleUserManager(index)
-                                    }
-                                  />
-                                  <Label
-                                    htmlFor={`manager-${userField.id}`}
-                                    className="text-sm cursor-pointer"
-                                  >
-                                    Manager
-                                  </Label>
-                                </div>
-
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -814,7 +788,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                           )
                         })
                       ) : (
-                        <div className="flex flex-col items-center justify-center h-[350px]">
+                        <div className="flex flex-col items-center justify-center h-87.5">
                           <Users className="w-12 h-12 text-muted-foreground mb-2" />
                           <p className="text-muted-foreground">
                             No team members assigned
@@ -838,7 +812,7 @@ const CreateProjectForm = ({ params }: { params: Promise<{ id: string }> }) => {
                 </h3>
 
                 <Textarea
-                  className="min-h-[200px]"
+                  className="min-h-50"
                   {...form.register('description')}
                   placeholder="Describe the project goals, scope, and other important details..."
                 />

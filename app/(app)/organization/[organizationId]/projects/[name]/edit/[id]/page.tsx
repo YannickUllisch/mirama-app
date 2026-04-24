@@ -189,14 +189,14 @@ const EditTaskPage = ({
         </PageHeader>
 
         <div className="form-group pt-5">
-          <div className="min-h-[30px] text-sm flex items-center gap-3">
+          <div className="min-h-7.5 text-sm flex items-center gap-3">
             <span className="flex gap-1 text-text-secondary items-center">
               {getTaskTypeIcon(task?.type.toUpperCase() as TaskType)}
               {`${task?.type.toUpperCase()} ${task?.taskCode}`}
             </span>
             {form.watch().title?.length < 1 ? (
               <div className="flex items-center gap-2 text-red-500 ">
-                <MessageCircleWarning className="w-[15px] h-[15px]" />{' '}
+                <MessageCircleWarning className="w-3.75 h-3.75" />{' '}
                 {'Field "Title" cannot be empty.'}{' '}
               </div>
             ) : (
@@ -240,7 +240,7 @@ const EditTaskPage = ({
                           className="m-4 flex items-center"
                           placeholder={
                             <div className="flex items-center gap-4 ml-1">
-                              <UserIcon className="w-[18px]" />
+                              <UserIcon className="w-4.5" />
                               <span>Unassigned</span>
                             </div>
                           }
@@ -322,7 +322,7 @@ const EditTaskPage = ({
             <div className="p-1">
               <Textarea
                 disabled={isPending}
-                className="min-h-[150px]"
+                className="min-h-37.5"
                 {...form.register('description')}
                 placeholder="Add task description here."
               />
@@ -452,7 +452,7 @@ const EditTaskPage = ({
                         key={`parent-select-${field.value}`}
                       >
                         <FormControl>
-                          <SelectTrigger className="border dark:border-neutral-800 w-[200px]">
+                          <SelectTrigger className="border dark:border-neutral-800 w-50">
                             <SelectValue
                               className="m-4 flex items-center"
                               placeholder={

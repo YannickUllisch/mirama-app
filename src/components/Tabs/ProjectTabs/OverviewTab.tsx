@@ -53,11 +53,11 @@ const OverviewTab = ({
   }, [taskStats])
 
   const managers = useMemo(
-    () => project?.members.filter((u) => u.isManager) ?? [],
+    () => project?.members.filter((u) => u.isInherited) ?? [],
     [project],
   )
   const teamMembers = useMemo(
-    () => project?.members.filter((u) => !u.isManager) ?? [],
+    () => project?.members.filter((u) => !u.isInherited) ?? [],
     [project],
   )
 

@@ -12,7 +12,6 @@ import {
   Sparkles,
   Users2,
 } from 'lucide-react'
-import { DateTime } from 'luxon'
 
 const HeroScreenWidget = () => {
   return (
@@ -106,7 +105,7 @@ const HeroScreenWidget = () => {
                   </p>
                 </div>
                 <div className="text-[10px] font-black text-secondary bg-secondary/5 border border-secondary/10 px-4 py-2 rounded-lg tracking-widest uppercase">
-                  {DateTime.utc().toFormat('MMMM dd, yyyy')}
+                  TODAY
                 </div>
               </div>
 

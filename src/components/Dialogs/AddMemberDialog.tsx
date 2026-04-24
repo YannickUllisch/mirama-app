@@ -1,5 +1,4 @@
 'use client'
-import { OrganizationRole } from '@/prisma/generated/client'
 import {
   type CreateInvitationRequest,
   CreateInvitationSchema,
@@ -118,21 +117,16 @@ const AddMemberDialog: FC<PropsWithChildren> = ({ children }) => {
                 render={({ field }) => (
                   <FormItem className="col-span-3">
                     <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={OrganizationRole.USER}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={''}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select Role for Member" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.keys(OrganizationRole).map((role) => (
-                          <SelectItem key={`role-item-${role}`} value={role}>
-                            {role}
-                          </SelectItem>
-                        ))}
+                        <SelectItem key={'role-item'} value={'TODO'}>
+                          TODO ADD ROLES
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

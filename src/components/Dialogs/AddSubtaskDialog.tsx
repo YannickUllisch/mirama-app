@@ -1,5 +1,5 @@
 import type { Task } from '@/prisma/generated/client'
-import { updateResourceById } from '@src/lib/api/updateResource'
+
 import { capitalize } from '@src/lib/utils'
 import { type FC, type PropsWithChildren, useState } from 'react'
 import { Button } from '../ui/button'
@@ -36,18 +36,18 @@ const AddSubtaskDialog: FC<PropsWithChildren<AddSubtaskdialogProps>> = ({
   const [selectedTaskId, setSelectedTaskId] = useState<string>('')
 
   const LinkSubtask = () => {
-    updateResourceById(
-      'task',
-      selectedTaskId,
-      { parentId: parentId },
-      { mutate: mutate },
-    )
+    // updateResourceById(
+    //   'task',
+    //   selectedTaskId,
+    //   { parentId: parentId },
+    //   { mutate: mutate },
+    // )
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Link Subtask</DialogTitle>
           <DialogDescription>

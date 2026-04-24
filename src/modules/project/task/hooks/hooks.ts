@@ -71,7 +71,16 @@ const task = {
           ])
 
           const optimistic: TaskResponse = {
-            ...(payload as TaskResponse),
+            ...payload,
+            taskCode: 'TMP',
+            dateCreated: new Date(),
+            updatedAt: new Date(),
+            parent: null,
+            assignedTo: null,
+            projectName: '',
+            comments: [],
+            subtasks: [],
+            tags: [],
             id: `optimistic-${Date.now()}`,
             projectId: id,
           }

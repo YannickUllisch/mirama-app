@@ -44,10 +44,7 @@ const OrganizationSidebar = ({
       headerSlot={
         <>
           <SidebarMobileHeader />
-          <SidebarNewButton
-            session={session ?? null}
-            organizationId={session?.user.organizationId}
-          />
+          <SidebarNewButton organizationId={session?.user.organizationId} />
         </>
       }
     >
