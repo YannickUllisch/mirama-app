@@ -35,20 +35,20 @@ interface OrganizationCardProps {
 
 const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => (
   <Card
-    className="group relative flex flex-col hover:border-primary/50 transition-colors duration-200 cursor-pointer"
+    className="group relative flex flex-col hover:border-black/20 dark:hover:border-white/20 transition-colors duration-200 cursor-pointer"
     onClick={() => onEnter(org)}
   >
     <CardHeader className="pb-2">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-primary" />
+          <div className="shrink-0 w-8 h-8 rounded-lg bg-mirama-blue/10 flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-mirama-blue" />
           </div>
           <div className="min-w-0">
-            <CardTitle className="text-sm font-semibold truncate">
+            <CardTitle className="text-[15px] font-semibold [letter-spacing:-0.1px] truncate">
               {org.name}
             </CardTitle>
-            <Badge variant="secondary" className="text-[10px] mt-0.5 font-mono">
+            <Badge variant="secondary" className="mt-0.5 font-mono">
               {org.slug}
             </Badge>
           </div>
@@ -89,7 +89,7 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => (
         </DropdownMenu>
       </div>
 
-      <CardDescription className="flex items-center gap-1.5 text-xs mt-1">
+      <CardDescription className="flex items-center gap-1.5 mt-1">
         <MapPin className="w-3 h-3 shrink-0" />
         <span className="truncate">
           {org.street} {org.zipCode} {org.city}, {org.country}
@@ -98,7 +98,7 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => (
     </CardHeader>
 
     <CardContent className="pt-0 mt-auto">
-      <div className="flex items-center gap-4 text-xs text-neutral-400 dark:text-neutral-500 pt-2 border-t border-border/60">
+      <div className="flex items-center gap-4 text-[12px] font-medium text-warm-gray-300 pt-2 border-t border-black/10 dark:border-white/10">
         <span className="flex items-center gap-1.5">
           <Users className="w-3.5 h-3.5" />
           {org._count.members} {org._count.members === 1 ? 'member' : 'members'}

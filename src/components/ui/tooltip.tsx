@@ -1,3 +1,4 @@
+// src/components/ui/tooltip.tsx
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { cn } from '@src/lib/utils'
 import * as React from 'react'
@@ -14,16 +15,18 @@ const TooltipContent = React.forwardRef<
     ref={ref}
     sideOffset={sideOffset}
     className={cn(
-      'z-50 overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800',
-      'bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md px-3 py-1.5 shadow-xl',
-      'text-[11px] font-bold tracking-tight text-neutral-900 dark:text-neutral-100',
-      'animate-in fade-in-0 zoom-in-95 duration-200',
+      // Whisper border, white bg, soft card shadow, 8px radius
+      'z-50 overflow-hidden rounded-lg border border-black/10 dark:border-white/10',
+      'bg-card px-3 py-1.5',
+      'shadow-[rgba(0,0,0,0.04)_0px_4px_18px,rgba(0,0,0,0.027)_0px_2.025px_7.85px,rgba(0,0,0,0.02)_0px_0.8px_2.93px]',
+      // 12px / weight 500 — caption / micro-label per DESIGN.md
+      'text-[12px] font-medium text-foreground',
+      'animate-in fade-in-0 zoom-in-95 duration-150',
       'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
       'data-[side=bottom]:slide-in-from-top-2',
       'data-[side=left]:slide-in-from-right-2',
       'data-[side=right]:slide-in-from-left-2',
       'data-[side=top]:slide-in-from-bottom-2',
-
       className,
     )}
     {...props}

@@ -47,7 +47,7 @@ const EditPolicyViewSkeleton = () => (
       {/* Permissions accordion */}
       <div className="space-y-2">
         <Skeleton className="h-4 w-24" />
-        <div className="border border-border rounded-xl overflow-hidden divide-y divide-border">
+        <div className="border border-black/10 dark:border-white/10 rounded-xl overflow-hidden divide-y divide-black/10 dark:divide-white/10">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="px-3 py-2.5 flex items-center gap-2.5">
               <Skeleton className="h-4 w-24" />

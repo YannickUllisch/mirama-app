@@ -1,12 +1,20 @@
+// app/layout.tsx
 import type { Metadata, Viewport } from 'next'
-import { DM_Sans } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-const dmMono = DM_Sans({
+/**
+ * Inter — primary font loaded via Google Fonts.
+ * NotionInter (a modified Inter used by Mirama) requires a local or CDN
+ * install. Inter serves as the drop-in fallback via the --font-inter CSS var
+ * referenced in globals.css.
+ */
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '700', '800', '900'],
-  variable: '--font-dm-sans',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
 })
 
 export const viewport: Viewport = {
@@ -19,9 +27,10 @@ export const metadata: Metadata = {
   description:
     'Welcome to Mirama, a modern platform for project and task management. Discover powerful tools for teams and organizations to collaborate, organize, and achieve more.',
 }
+
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning lang="en" className={dmMono.variable}>
+    <html suppressHydrationWarning lang="en" className={inter.variable}>
       <body className="bg-background">
         <Toaster />
         {children}

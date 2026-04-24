@@ -42,23 +42,17 @@ export const IamManager = ({ defaultTab }: { defaultTab?: string }) => {
     <div>
       <Tabs defaultValue={defaultTab ?? 'roles'} className="space-y-5">
         <TabsList className="h-9">
-          <TabsTrigger value="roles" className="text-xs gap-1.5">
+          <TabsTrigger value="roles" className="gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5" />
             Roles
-            <Badge
-              variant="secondary"
-              className="text-[10px] px-1.5 py-0 h-4 ml-0.5"
-            >
+            <Badge variant="secondary" className="ml-0.5">
               {roles.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="policies" className="text-xs gap-1.5">
+          <TabsTrigger value="policies" className="gap-1.5">
             <FileText className="w-3.5 h-3.5" />
             Policies
-            <Badge
-              variant="secondary"
-              className="text-[10px] px-1.5 py-0 h-4 ml-0.5"
-            >
+            <Badge variant="secondary" className="ml-0.5">
               {policies.length}
             </Badge>
           </TabsTrigger>

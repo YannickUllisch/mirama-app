@@ -16,7 +16,7 @@ type Props = {
 }
 
 const EmptySection = ({ label }: { label: string }) => (
-  <div className="flex items-center gap-2 text-xs text-muted-foreground/60 py-3 border border-dashed border-border rounded-xl px-4">
+  <div className="flex items-center gap-2 text-[12px] font-medium text-warm-gray-300 py-3 border border-dashed border-black/10 dark:border-white/10 rounded-xl px-4">
     <FileText className="w-3.5 h-3.5 shrink-0" />
     {label}
   </div>
@@ -41,7 +41,7 @@ export const PoliciesTab = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        <Loader2 className="w-5 h-5 animate-spin text-warm-gray-300" />
       </div>
     )
   }
@@ -73,7 +73,7 @@ export const PoliciesTab = ({
         )}
       </div>
 
-      <div className="border-t border-border/60" />
+      <div className="border-t border-black/10 dark:border-white/10" />
 
       <div className="space-y-3">
         <SectionHeader

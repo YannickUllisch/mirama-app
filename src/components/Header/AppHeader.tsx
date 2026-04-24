@@ -13,7 +13,7 @@ import HeaderSidebarTrigger from './HeaderSidebarTrigger'
 
 const AppHeader = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-background border-b border-neutral-100 dark:border-neutral-900">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-sidebar">
       <div className="flex h-14 items-center gap-4 px-4 justify-between">
         <div className="flex items-center gap-4">
           <HeaderSidebarTrigger />
@@ -26,7 +26,7 @@ const AppHeader = () => {
             <MiramaIcon />
           </Link>
 
-          <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-800 mx-1 hidden sm:block" />
+          <div className="h-6 w-px bg-black/10 dark:bg-white/10 mx-1 hidden sm:block" />
 
           <Suspense fallback={<BreadcrumbSkeleton />}>
             <HeaderBreadcrumbs />
@@ -40,7 +40,7 @@ const AppHeader = () => {
             <HeaderFavouriteToggle />
           </Suspense>
 
-          <div className="h-6 w-px bg-text/30 mx-1" />
+          <div className="h-6 w-px bg-black/10 dark:bg-white/10 mx-1" />
 
           <Suspense fallback={<HeaderProfileSkeleton />}>
             <HeaderProfile />

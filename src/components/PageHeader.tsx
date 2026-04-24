@@ -1,3 +1,4 @@
+// src/components/PageHeader.tsx
 import { cn } from '@src/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 import type React from 'react'
@@ -6,7 +7,7 @@ type PageHeaderProps = {
   title: string
   description?: string
   children?: React.ReactNode
-  icon: LucideIcon
+  icon?: LucideIcon
   className?: string
 }
 
@@ -18,24 +19,33 @@ const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   return (
-    <header className={cn(className)}>
-      <div className="flex items-center justify-between px-6 md:px-10 h-20 w-full transition-all duration-300">
-        <div className="flex flex-col gap-0.5 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <Icon className="w-3.5 h-3.5 text-text" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
-              Currently Viewing
-            </span>
-          </div>
+    <header
+      className={cn(
+        // White surface, whisper bottom border — clean horizontal bar
+        'w-full bg-background border-b border-black/10 dark:border-white/10',
+        className,
+      )}
+    >
+      <div className="flex items-center justify-between px-6 md:px-8 h-16 w-full">
+        {/* Left — icon + title + description */}
+        <div className="flex items-center gap-3 min-w-0">
+          {Icon && (
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-warm-white dark:bg-warm-dark border border-black/10 dark:border-white/10 shrink-0">
+              <Icon className="w-4 h-4 text-warm-gray-500" />
+            </div>
+          )}
 
-          <div className="flex items-center gap-3 overflow-hidden">
-            <h1 className="text-xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 truncate">
+          <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+            {/* 22px / weight 700 / -0.25px — Card Title in DESIGN.md */}
+            <h1 className="text-[22px] font-bold [letter-spacing:-0.25px] leading-[1.27] text-foreground truncate">
               {title}
             </h1>
+
             {description && (
-              <div className="hidden lg:flex items-center gap-3 shrink-0">
-                <span className="h-4 w-px bg-neutral-200 dark:bg-neutral-800 rotate-20" />
-                <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 tracking-wider">
+              <div className="hidden md:flex items-center gap-3 shrink-0">
+                <span className="h-3.5 w-px bg-black/10 dark:bg-white/10" />
+                {/* 14px / weight 400 / warm gray 500 — Caption Light in DESIGN.md */}
+                <span className="text-sm font-normal text-warm-gray-500 dark:text-warm-gray-300">
                   {description}
                 </span>
               </div>
@@ -43,7 +53,8 @@ const PageHeader = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">{children}</div>
+        {/* Right — action slot */}
+        <div className="flex items-center gap-2 shrink-0">{children}</div>
       </div>
     </header>
   )

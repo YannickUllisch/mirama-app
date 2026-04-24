@@ -13,6 +13,7 @@ import SidebarNewButton from './SidebarNewButton'
 
 interface OrganizationSidebarProps {
   organizationId: string
+  tenantId: string
   className?: string
 }
 
@@ -33,6 +34,7 @@ const injectOrgId = (
 const OrganizationSidebar = ({
   className,
   organizationId,
+  tenantId,
 }: OrganizationSidebarProps) => {
   const { data: session } = useSession()
   const localizedMenu = injectOrgId(OrganizationSidebarMenu, organizationId)
@@ -40,6 +42,8 @@ const OrganizationSidebar = ({
 
   return (
     <AppSidebar
+      tenantId={tenantId}
+      organizationId={organizationId}
       className={className}
       headerSlot={
         <>

@@ -33,24 +33,14 @@ export const usePolicyColumns = ({
                   {p.name}
                 </span>
                 {p.isManaged && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
-                  >
-                    managed
-                  </Badge>
+                  <Badge variant="secondary">managed</Badge>
                 )}
                 {!p.tenantId && (
-                  <Badge
-                    variant="outline"
-                    className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
-                  >
-                    system
-                  </Badge>
+                  <Badge variant="outline">system</Badge>
                 )}
               </div>
               {p.description && (
-                <p className="text-xs text-muted-foreground truncate max-w-60">
+                <p className="text-sm text-warm-gray-500 truncate max-w-60">
                   {p.description}
                 </p>
               )}
@@ -85,9 +75,9 @@ export const usePolicyColumns = ({
               {Object.entries(groups).map(([resource, effects]) => (
                 <div
                   key={resource}
-                  className="flex items-start gap-2 rounded-lg bg-neutral-50/80 dark:bg-neutral-800/30 px-2.5 py-1.5 border border-border/50"
+                  className="flex items-start gap-2 rounded-lg bg-warm-white dark:bg-warm-dark/30 px-2.5 py-1.5 border border-black/10 dark:border-white/10"
                 >
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight pt-0.5 shrink-0 min-w-14">
+                  <span className="text-[12px] font-semibold tracking-[0.125px] text-warm-gray-300 uppercase pt-0.5 shrink-0 min-w-14">
                     {resource}
                   </span>
                   <div className="flex flex-col gap-1">
@@ -98,7 +88,7 @@ export const usePolicyColumns = ({
                           <Badge
                             key={action}
                             variant="secondary"
-                            className="text-[10px] px-1.5 py-0 h-4 font-mono"
+                            className="font-mono"
                           >
                             {action}
                           </Badge>
@@ -112,7 +102,7 @@ export const usePolicyColumns = ({
                           <Badge
                             key={action}
                             variant="secondary"
-                            className="text-[10px] px-1.5 py-0 h-4 font-mono"
+                            className="font-mono"
                           >
                             {action}
                           </Badge>
@@ -143,7 +133,7 @@ export const usePolicyColumns = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                className="h-7 w-7 text-warm-gray-300"
                 onClick={(e) => {
                   e.stopPropagation()
                   onEditPolicy(p)
@@ -154,7 +144,7 @@ export const usePolicyColumns = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                className="h-7 w-7 text-warm-gray-300 hover:bg-orange/10 hover:text-orange"
                 onClick={(e) => {
                   e.stopPropagation()
                   onDeletePolicy(p.id)

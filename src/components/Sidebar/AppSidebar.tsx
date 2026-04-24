@@ -1,7 +1,7 @@
 // src/components/Sidebar/AppSidebar.tsx
 'use client'
-import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import { cn } from '@src/lib/utils'
+import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import {
   Sidebar,
   SidebarContent,
@@ -11,16 +11,24 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from '@ui/sidebar'
-import { CircleHelp } from 'lucide-react'
+import { NotepadTextIcon, SettingsIcon } from 'lucide-react'
 import HoverLink from '../HoverLink'
 
 interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'children'> {
   headerSlot?: React.ReactNode
   children: React.ReactNode
+  tenantId: string
+  organizationId?: string
 }
 
-const AppSidebar = ({ headerSlot, children, ...props }: AppSidebarProps) => {
+const AppSidebar = ({
+  organizationId,
+  tenantId,
+  headerSlot,
+  children,
+  ...props
+}: AppSidebarProps) => {
   const isMobile = useIsMobile()
 
   return (
@@ -35,10 +43,22 @@ const AppSidebar = ({ headerSlot, children, ...props }: AppSidebarProps) => {
       </SidebarContent>
       <SidebarFooter className="p-2">
         <SidebarMenu>
-          <HoverLink href="/contact">
+          <HoverLink href={`/tenant/${tenantId}/documentation`}>
             <SidebarMenuButton>
-              <CircleHelp className="w-4 h-4" />
-              Contact
+              <NotepadTextIcon className="w-4 h-4" />
+              Documentation
+            </SidebarMenuButton>
+          </HoverLink>
+          <HoverLink
+            href={
+              organizationId
+                ? `/organization/${organizationId}/settings`
+                : `/tenant/${tenantId}/settings`
+            }
+          >
+            <SidebarMenuButton>
+              <SettingsIcon className="w-4 h-4" />
+              Settings
             </SidebarMenuButton>
           </HoverLink>
         </SidebarMenu>
