@@ -1,146 +1,309 @@
-# Design System Inspired by Intercom
+# Design System Inspired by Mirama
 
 ## 1. Visual Theme & Atmosphere
 
-Intercom's website is a warm, confident customer service platform that communicates "AI-first helpdesk" through a clean, editorial design language. The page operates on a warm off-white canvas (`#faf9f6`) with off-black (`#111111`) text, creating an intimate, magazine-like reading experience. The signature Fin Orange (`#ff5600`) — named after Intercom's AI agent — serves as the singular vibrant accent against the warm neutral palette.
+Mirama's website embodies the philosophy of the tool itself: a blank canvas that gets out of your way. The design system is built on warm neutrals rather than cold grays, creating a distinctly approachable minimalism that feels like quality paper rather than sterile glass. The page canvas is pure white (`#ffffff`) but the text isn't pure black -- it's a warm near-black (`rgba(0,0,0,0.95)`) that softens the reading experience imperceptibly. The warm gray scale (`#f6f5f4`, `#31302e`, `#615d59`, `#a39e98`) carries subtle yellow-brown undertones, giving the interface a tactile, almost analog warmth.
 
-The typography uses Saans — a custom geometric sans-serif with aggressive negative letter-spacing (-2.4px at 80px, -0.48px at 24px) and a consistent 1.00 line-height across all heading sizes. This creates ultra-compressed, billboard-like headlines that feel engineered and precise. Serrif provides the serif companion for editorial moments, and SaansMono handles code and uppercase technical labels. MediumLL and LLMedium appear for specific UI contexts, creating a rich five-font ecosystem.
+The custom NotionInter font (a modified Inter) is the backbone of the system. At display sizes (64px), it uses aggressive negative letter-spacing (-2.125px), creating headlines that feel compressed and precise. The weight range is broader than typical systems: 400 for body, 500 for UI elements, 600 for semi-bold labels, and 700 for display headings. OpenType features `"lnum"` (lining numerals) and `"locl"` (localized forms) are enabled on larger text, adding typographic sophistication that rewards close reading.
 
-What distinguishes Intercom is its remarkably sharp geometry — 4px border-radius on buttons creates near-rectangular interactive elements that feel industrial and precise, contrasting with the warm surface colors. Button hover states use `scale(1.1)` expansion, creating a physical "growing" interaction. The border system uses warm oat tones (`#dedbd6`) and oklab-based opacity values for sophisticated color management.
+What makes Mirama's visual language distinctive is its border philosophy. Rather than heavy borders or shadows, Mirama uses ultra-thin `1px solid rgba(0,0,0,0.1)` borders -- borders that exist as whispers, barely perceptible division lines that create structure without weight. The shadow system is equally restrained: multi-layer stacks with cumulative opacity never exceeding 0.05, creating depth that's felt rather than seen.
 
 **Key Characteristics:**
-- Warm off-white canvas (`#faf9f6`) with oat-toned borders (`#dedbd6`)
-- Saans font with extreme negative tracking (-2.4px at 80px) and 1.00 line-height
-- Fin Orange (`#ff5600`) as singular brand accent
-- Sharp 4px border-radius — near-rectangular buttons and elements
-- Scale(1.1) hover with scale(0.85) active — physical button interaction
-- SaansMono uppercase labels with wide tracking (0.6px–1.2px)
-- Rich multi-color report palette (blue, green, red, pink, lime, orange)
-- oklab color values for sophisticated opacity management
+- NotionInter (modified Inter) with negative letter-spacing at display sizes (-2.125px at 64px)
+- Warm neutral palette: grays carry yellow-brown undertones (`#f6f5f4` warm white, `#31302e` warm dark)
+- Near-black text via `rgba(0,0,0,0.95)` -- not pure black, creating micro-warmth
+- Ultra-thin borders: `1px solid rgba(0,0,0,0.1)` throughout -- whisper-weight division
+- Multi-layer shadow stacks with sub-0.05 opacity for barely-there depth
+- Mirama Blue (`#0075de`) as the singular accent color for CTAs and interactive elements
+- Pill badges (9999px radius) with tinted blue backgrounds for status indicators
+- 8px base spacing unit with an organic, non-rigid scale
 
 ## 2. Color Palette & Roles
 
 ### Primary
-- **Off Black** (`#111111`): `--color-off-black`, primary text, button backgrounds
-- **Pure White** (`#ffffff`): `--wsc-color-content-primary`, primary surface
-- **Warm Cream** (`#faf9f6`): Button backgrounds, card surfaces
-- **Fin Orange** (`#ff5600`): `--color-fin`, primary brand accent
-- **Report Orange** (`#fe4c02`): `--color-report-orange`, data visualization
+- **Mirama Black** (`rgba(0,0,0,0.95)` / `#000000f2`): Primary text, headings, body copy. The 95% opacity softens pure black without sacrificing readability.
+- **Pure White** (`#ffffff`): Page background, card surfaces, button text on blue.
+- **Mirama Blue** (`#0075de`): Primary CTA, link color, interactive accent -- the only saturated color in the core UI chrome.
 
-### Report Palette
-- **Report Blue** (`#65b5ff`): `--color-report-blue`
-- **Report Green** (`#0bdf50`): `--color-report-green`
-- **Report Red** (`#c41c1c`): `--color-report-red`
-- **Report Pink** (`#ff2067`): `--color-report-pink`
-- **Report Lime** (`#b3e01c`): `--color-report-lime-300`
-- **Green** (`#00da00`): `--color-green`
-- **Deep Blue** (`#0007cb`): Deep blue accent
+### Brand Secondary
+- **Deep Navy** (`#213183`): Secondary brand color, used sparingly for emphasis and dark feature sections.
+- **Active Blue** (`#005bab`): Button active/pressed state -- darker variant of Mirama Blue.
 
-### Neutral Scale (Warm)
-- **Black 80** (`#313130`): `--wsc-color-black-80`, dark neutral
-- **Black 60** (`#626260`): `--wsc-color-black-60`, mid neutral
-- **Black 50** (`#7b7b78`): `--wsc-color-black-50`, muted text
-- **Content Tertiary** (`#9c9fa5`): `--wsc-color-content-tertiary`
-- **Oat Border** (`#dedbd6`): Warm border color
-- **Warm Sand** (`#d3cec6`): Light warm neutral
+### Warm Neutral Scale
+- **Warm White** (`#f6f5f4`): Background surface tint, section alternation, subtle card fill. The yellow undertone is key.
+- **Warm Dark** (`#31302e`): Dark surface background, dark section text. Warmer than standard grays.
+- **Warm Gray 500** (`#615d59`): Secondary text, descriptions, muted labels.
+- **Warm Gray 300** (`#a39e98`): Placeholder text, disabled states, caption text.
+
+### Semantic Accent Colors
+- **Teal** (`#2a9d99`): Success states, positive indicators.
+- **Green** (`#1aae39`): Confirmation, completion badges.
+- **Orange** (`#dd5b00`): Warning states, attention indicators.
+- **Pink** (`#ff64c8`): Decorative accent, feature highlights.
+- **Purple** (`#391c57`): Premium features, deep accents.
+- **Brown** (`#523410`): Earthy accent, warm feature sections.
+
+### Interactive
+- **Link Blue** (`#0075de`): Primary link color with underline-on-hover.
+- **Link Light Blue** (`#62aef0`): Lighter link variant for dark backgrounds.
+- **Focus Blue** (`#097fe8`): Focus ring on interactive elements.
+- **Badge Blue Bg** (`#f2f9ff`): Pill badge background, tinted blue surface.
+- **Badge Blue Text** (`#097fe8`): Pill badge text, darker blue for readability.
+
+### Shadows & Depth
+- **Card Shadow** (`rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px`): Multi-layer card elevation.
+- **Deep Shadow** (`rgba(0,0,0,0.01) 0px 1px 3px, rgba(0,0,0,0.02) 0px 3px 7px, rgba(0,0,0,0.02) 0px 7px 15px, rgba(0,0,0,0.04) 0px 14px 28px, rgba(0,0,0,0.05) 0px 23px 52px`): Five-layer deep elevation for modals and featured content.
+- **Whisper Border** (`1px solid rgba(0,0,0,0.1)`): Standard division border -- cards, dividers, sections.
 
 ## 3. Typography Rules
 
-### Font Families
-- **Primary**: `Saans`, fallbacks: `Saans Fallback, ui-sans-serif, system-ui`
-- **Serif**: `Serrif`, fallbacks: `Serrif Fallback, ui-serif, Georgia`
-- **Monospace**: `SaansMono`, fallbacks: `SaansMono Fallback, ui-monospace`
-- **UI**: `MediumLL` / `LLMedium`, fallbacks: `system-ui, -apple-system`
+### Font Family
+- **Primary**: `NotionInter`, with fallbacks: `Inter, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, Segoe UI Emoji, Segoe UI Symbol`
+- **OpenType Features**: `"lnum"` (lining numerals) and `"locl"` (localized forms) enabled on display and heading text.
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing |
-|------|------|------|--------|-------------|----------------|
-| Display Hero | Saans | 80px | 400 | 1.00 (tight) | -2.4px |
-| Section Heading | Saans | 54px | 400 | 1.00 | -1.6px |
-| Sub-heading | Saans | 40px | 400 | 1.00 | -1.2px |
-| Card Title | Saans | 32px | 400 | 1.00 | -0.96px |
-| Feature Title | Saans | 24px | 400 | 1.00 | -0.48px |
-| Body Emphasis | Saans | 20px | 400 | 0.95 | -0.2px |
-| Nav / UI | Saans | 18px | 400 | 1.00 | normal |
-| Body | Saans | 16px | 400 | 1.50 | normal |
-| Body Light | Saans | 14px | 300 | 1.40 | normal |
-| Button | Saans | 16px / 14px | 400 | 1.50 / 1.43 | normal |
-| Button Bold | LLMedium | 16px | 700 | 1.20 | 0.16px |
-| Serif Body | Serrif | 16px | 300 | 1.40 | -0.16px |
-| Mono Label | SaansMono | 12px | 400–500 | 1.00–1.30 | 0.6px–1.2px uppercase |
+| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
+|------|------|------|--------|-------------|----------------|-------|
+| Display Hero | NotionInter | 64px (4.00rem) | 700 | 1.00 (tight) | -2.125px | Maximum compression, billboard headlines |
+| Display Secondary | NotionInter | 54px (3.38rem) | 700 | 1.04 (tight) | -1.875px | Secondary hero, feature headlines |
+| Section Heading | NotionInter | 48px (3.00rem) | 700 | 1.00 (tight) | -1.5px | Feature section titles, with `"lnum"` |
+| Sub-heading Large | NotionInter | 40px (2.50rem) | 700 | 1.50 | normal | Card headings, feature sub-sections |
+| Sub-heading | NotionInter | 26px (1.63rem) | 700 | 1.23 (tight) | -0.625px | Section sub-titles, content headers |
+| Card Title | NotionInter | 22px (1.38rem) | 700 | 1.27 (tight) | -0.25px | Feature cards, list titles |
+| Body Large | NotionInter | 20px (1.25rem) | 600 | 1.40 | -0.125px | Introductions, feature descriptions |
+| Body | NotionInter | 16px (1.00rem) | 400 | 1.50 | normal | Standard reading text |
+| Body Medium | NotionInter | 16px (1.00rem) | 500 | 1.50 | normal | Navigation, emphasized UI text |
+| Body Semibold | NotionInter | 16px (1.00rem) | 600 | 1.50 | normal | Strong labels, active states |
+| Body Bold | NotionInter | 16px (1.00rem) | 700 | 1.50 | normal | Headlines at body size |
+| Nav / Button | NotionInter | 15px (0.94rem) | 600 | 1.33 | normal | Navigation links, button text |
+| Caption | NotionInter | 14px (0.88rem) | 500 | 1.43 | normal | Metadata, secondary labels |
+| Caption Light | NotionInter | 14px (0.88rem) | 400 | 1.43 | normal | Body captions, descriptions |
+| Badge | NotionInter | 12px (0.75rem) | 600 | 1.33 | 0.125px | Pill badges, tags, status labels |
+| Micro Label | NotionInter | 12px (0.75rem) | 400 | 1.33 | 0.125px | Small metadata, timestamps |
+
+### Principles
+- **Compression at scale**: NotionInter at display sizes uses -2.125px letter-spacing at 64px, progressively relaxing to -0.625px at 26px and normal at 16px. The compression creates density at headlines while maintaining readability at body sizes.
+- **Four-weight system**: 400 (body/reading), 500 (UI/interactive), 600 (emphasis/navigation), 700 (headings/display). The broader weight range compared to most systems allows nuanced hierarchy.
+- **Warm scaling**: Line height tightens as size increases -- 1.50 at body (16px), 1.23-1.27 at sub-headings, 1.00-1.04 at display. This creates denser, more impactful headlines.
+- **Badge micro-tracking**: The 12px badge text uses positive letter-spacing (0.125px) -- the only positive tracking in the system, creating wider, more legible small text.
 
 ## 4. Component Stylings
 
 ### Buttons
 
-**Primary Dark**
-- Background: `#111111`
+**Primary Blue**
+- Background: `#0075de` (Mirama Blue)
 - Text: `#ffffff`
-- Padding: 0px 14px
-- Radius: 4px
-- Hover: white background, dark text, scale(1.1)
-- Active: green background (`#2c6415`), scale(0.85)
+- Padding: 8px 16px
+- Radius: 4px (subtle)
+- Border: `1px solid transparent`
+- Hover: background darkens to `#005bab`
+- Active: scale(0.9) transform
+- Focus: `2px solid` focus outline, `var(--shadow-level-200)` shadow
+- Use: Primary CTA ("Get Mirama free", "Try it")
 
-**Outlined**
+**Secondary / Tertiary**
+- Background: `rgba(0,0,0,0.05)` (translucent warm gray)
+- Text: `#000000` (near-black)
+- Padding: 8px 16px
+- Radius: 4px
+- Hover: text color shifts, scale(1.05)
+- Active: scale(0.9) transform
+- Use: Secondary actions, form submissions
+
+**Ghost / Link Button**
 - Background: transparent
-- Text: `#111111`
-- Border: `1px solid #111111`
-- Radius: 4px
-- Same scale hover/active behavior
+- Text: `rgba(0,0,0,0.95)`
+- Decoration: underline on hover
+- Use: Tertiary actions, inline links
 
-**Warm Card Button**
-- Background: `#faf9f6`
-- Text: `#111111`
-- Padding: 16px
-- Border: `1px solid oklab(... / 0.1)`
+**Pill Badge Button**
+- Background: `#f2f9ff` (tinted blue)
+- Text: `#097fe8`
+- Padding: 4px 8px
+- Radius: 9999px (full pill)
+- Font: 12px weight 600
+- Use: Status badges, feature labels, "New" tags
 
 ### Cards & Containers
-- Background: `#faf9f6` (warm cream)
-- Border: `1px solid #dedbd6` (warm oat)
-- Radius: 8px
-- No visible shadows
+- Background: `#ffffff`
+- Border: `1px solid rgba(0,0,0,0.1)` (whisper border)
+- Radius: 12px (standard cards), 16px (featured/hero cards)
+- Shadow: `rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px`
+- Hover: subtle shadow intensification
+- Image cards: 12px top radius, image fills top half
+
+### Inputs & Forms
+- Background: `#ffffff`
+- Text: `rgba(0,0,0,0.9)`
+- Border: `1px solid #dddddd`
+- Padding: 6px
+- Radius: 4px
+- Focus: blue outline ring
+- Placeholder: warm gray `#a39e98`
 
 ### Navigation
-- Saans 16px for links
-- Off-black text on white
-- Small 4px–6px radius buttons
-- Orange Fin accent for AI features
+- Clean horizontal nav on white, not sticky
+- Brand logo left-aligned (33x34px icon + wordmark)
+- Links: NotionInter 15px weight 500-600, near-black text
+- Hover: color shift to `var(--color-link-primary-text-hover)`
+- CTA: blue pill button ("Get Mirama free") right-aligned
+- Mobile: hamburger menu collapse
+- Product dropdowns with multi-level categorized menus
+
+### Image Treatment
+- Product screenshots with `1px solid rgba(0,0,0,0.1)` border
+- Top-rounded images: `12px 12px 0px 0px` radius
+- Dashboard/workspace preview screenshots dominate feature sections
+- Warm gradient backgrounds behind hero illustrations (decorative character illustrations)
+
+### Distinctive Components
+
+**Feature Cards with Illustrations**
+- Large illustrative headers (The Great Wave, product UI screenshots)
+- 12px radius card with whisper border
+- Title at 22px weight 700, description at 16px weight 400
+- Warm white (`#f6f5f4`) background variant for alternating sections
+
+**Trust Bar / Logo Grid**
+- Company logos (trusted teams section) in their brand colors
+- Horizontal scroll or grid layout with team counts
+- Metric display: large number + description pattern
+
+**Metric Cards**
+- Large number display (e.g., "$4,200 ROI")
+- NotionInter 40px+ weight 700 for the metric
+- Description below in warm gray body text
+- Whisper-bordered card container
 
 ## 5. Layout Principles
 
-### Spacing: 8px, 10px, 12px, 14px, 16px, 20px, 24px, 32px, 40px, 48px, 60px, 64px, 80px, 96px
-### Border Radius: 4px (buttons), 6px (nav items), 8px (cards, containers)
+### Spacing System
+- Base unit: 8px
+- Scale: 2px, 3px, 4px, 5px, 6px, 7px, 8px, 11px, 12px, 14px, 16px, 24px, 32px
+- Non-rigid organic scale with fractional values (5.6px, 6.4px) for micro-adjustments
+
+### Grid & Container
+- Max content width: approximately 1200px
+- Hero: centered single-column with generous top padding (80-120px)
+- Feature sections: 2-3 column grids for cards
+- Full-width warm white (`#f6f5f4`) section backgrounds for alternation
+- Code/dashboard screenshots as contained with whisper border
+
+### Whitespace Philosophy
+- **Generous vertical rhythm**: 64-120px between major sections. Mirama lets content breathe with vast vertical padding.
+- **Warm alternation**: White sections alternate with warm white (`#f6f5f4`) sections, creating gentle visual rhythm without harsh color breaks.
+- **Content-first density**: Body text blocks are compact (line-height 1.50) but surrounded by ample margin, creating islands of readable content in a sea of white space.
+
+### Border Radius Scale
+- Micro (4px): Buttons, inputs, functional interactive elements
+- Subtle (5px): Links, list items, menu items
+- Standard (8px): Small cards, containers, inline elements
+- Comfortable (12px): Standard cards, feature containers, image tops
+- Large (16px): Hero cards, featured content, promotional blocks
+- Full Pill (9999px): Badges, pills, status indicators
+- Circle (100%): Tab indicators, avatars
 
 ## 6. Depth & Elevation
-Minimal shadows. Depth through warm border colors and surface tints.
 
-## 7. Do's and Don'ts
+| Level | Treatment | Use |
+|-------|-----------|-----|
+| Flat (Level 0) | No shadow, no border | Page background, text blocks |
+| Whisper (Level 1) | `1px solid rgba(0,0,0,0.1)` | Standard borders, card outlines, dividers |
+| Soft Card (Level 2) | 4-layer shadow stack (max opacity 0.04) | Content cards, feature blocks |
+| Deep Card (Level 3) | 5-layer shadow stack (max opacity 0.05, 52px blur) | Modals, featured panels, hero elements |
+| Focus (Accessibility) | `2px solid var(--focus-color)` outline | Keyboard focus on all interactive elements |
 
-### Do
-- Use Saans with 1.00 line-height and negative tracking on all headings
-- Apply 4px radius on buttons — sharp geometry is the identity
-- Use Fin Orange (#ff5600) for AI/brand accent only
-- Apply scale(1.1) hover on buttons
-- Use warm neutrals (#faf9f6, #dedbd6)
+**Shadow Philosophy**: Mirama's shadow system uses multiple layers with extremely low individual opacity (0.01 to 0.05) that accumulate into soft, natural-looking elevation. The 4-layer card shadow spans from 1.04px to 18px blur, creating a gradient of depth rather than a single hard shadow. The 5-layer deep shadow extends to 52px blur at 0.05 opacity, producing ambient occlusion that feels like natural light rather than computer-generated depth. This layered approach makes elements feel embedded in the page rather than floating above it.
 
-### Don't
-- Don't round buttons beyond 4px
-- Don't use Fin Orange decoratively
-- Don't use cool gray borders — always warm oat tones
-- Don't skip the negative tracking on headings
+### Decorative Depth
+- Hero section: decorative character illustrations (playful, hand-drawn style)
+- Section alternation: white to warm white (`#f6f5f4`) background shifts
+- No hard section borders -- separation comes from background color changes and spacing
 
-## 8. Responsive Behavior
-Breakpoints: 425px, 530px, 600px, 640px, 768px, 896px
+## 7. Responsive Behavior
+
+### Breakpoints
+| Name | Width | Key Changes |
+|------|-------|-------------|
+| Mobile Small | <400px | Tight single column, minimal padding |
+| Mobile | 400-600px | Standard mobile, stacked layout |
+| Tablet Small | 600-768px | 2-column grids begin |
+| Tablet | 768-1080px | Full card grids, expanded padding |
+| Desktop Small | 1080-1200px | Standard desktop layout |
+| Desktop | 1200-1440px | Full layout, maximum content width |
+| Large Desktop | >1440px | Centered, generous margins |
+
+### Touch Targets
+- Buttons use comfortable padding (8px-16px vertical)
+- Navigation links at 15px with adequate spacing
+- Pill badges have 8px horizontal padding for tap targets
+- Mobile menu toggle uses standard hamburger button
+
+### Collapsing Strategy
+- Hero: 64px display -> scales to 40px -> 26px on mobile, maintains proportional letter-spacing
+- Navigation: horizontal links + blue CTA -> hamburger menu
+- Feature cards: 3-column -> 2-column -> single column stacked
+- Product screenshots: maintain aspect ratio with responsive images
+- Trust bar logos: grid -> horizontal scroll on mobile
+- Footer: multi-column -> stacked single column
+- Section spacing: 80px+ -> 48px on mobile
+
+### Image Behavior
+- Workspace screenshots maintain whisper border at all sizes
+- Hero illustrations scale proportionally
+- Product screenshots use responsive images with consistent border radius
+- Full-width warm white sections maintain edge-to-edge treatment
+
+## 8. Accessibility & States
+
+### Focus System
+- All interactive elements receive visible focus indicators
+- Focus outline: `2px solid` with focus color + shadow level 200
+- Tab navigation supported throughout all interactive components
+- High contrast text: near-black on white exceeds WCAG AAA (>14:1 ratio)
+
+### Interactive States
+- **Default**: Standard appearance with whisper borders
+- **Hover**: Color shift on text, scale(1.05) on buttons, underline on links
+- **Active/Pressed**: scale(0.9) transform, darker background variant
+- **Focus**: Blue outline ring with shadow reinforcement
+- **Disabled**: Warm gray (`#a39e98`) text, reduced opacity
+
+### Color Contrast
+- Primary text (rgba(0,0,0,0.95)) on white: ~18:1 ratio
+- Secondary text (#615d59) on white: ~5.5:1 ratio (WCAG AA)
+- Blue CTA (#0075de) on white: ~4.6:1 ratio (WCAG AA for large text)
+- Badge text (#097fe8) on badge bg (#f2f9ff): ~4.5:1 ratio (WCAG AA for large text)
 
 ## 9. Agent Prompt Guide
 
 ### Quick Color Reference
-- Text: Off Black (`#111111`)
-- Background: Warm Cream (`#faf9f6`)
-- Accent: Fin Orange (`#ff5600`)
-- Border: Oat (`#dedbd6`)
-- Muted: `#7b7b78`
+- Primary CTA: Mirama Blue (`#0075de`)
+- Background: Pure White (`#ffffff`)
+- Alt Background: Warm White (`#f6f5f4`)
+- Heading text: Near-Black (`rgba(0,0,0,0.95)`)
+- Body text: Near-Black (`rgba(0,0,0,0.95)`)
+- Secondary text: Warm Gray 500 (`#615d59`)
+- Muted text: Warm Gray 300 (`#a39e98`)
+- Border: `1px solid rgba(0,0,0,0.1)`
+- Link: Mirama Blue (`#0075de`)
+- Focus ring: Focus Blue (`#097fe8`)
 
 ### Example Component Prompts
-- "Create hero: warm cream (#faf9f6) background. Saans 80px weight 400, line-height 1.00, letter-spacing -2.4px, #111111. Dark button (#111111, 4px radius). Hover: scale(1.1), white bg."
+- "Create a hero section on white background. Headline at 64px NotionInter weight 700, line-height 1.00, letter-spacing -2.125px, color rgba(0,0,0,0.95). Subtitle at 20px weight 600, line-height 1.40, color #615d59. Blue CTA button (#0075de, 4px radius, 8px 16px padding, white text) and ghost button (transparent bg, near-black text, underline on hover)."
+- "Design a card: white background, 1px solid rgba(0,0,0,0.1) border, 12px radius. Use shadow stack: rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.85px, rgba(0,0,0,0.02) 0px 0.8px 2.93px, rgba(0,0,0,0.01) 0px 0.175px 1.04px. Title at 22px NotionInter weight 700, letter-spacing -0.25px. Body at 16px weight 400, color #615d59."
+- "Build a pill badge: #f2f9ff background, #097fe8 text, 9999px radius, 4px 8px padding, 12px NotionInter weight 600, letter-spacing 0.125px."
+- "Create navigation: white header. NotionInter 15px weight 600 for links, near-black text. Blue pill CTA 'Get Mirama free' right-aligned (#0075de bg, white text, 4px radius)."
+- "Design an alternating section layout: white sections alternate with warm white (#f6f5f4) sections. Each section has 64-80px vertical padding, max-width 1200px centered. Section heading at 48px weight 700, line-height 1.00, letter-spacing -1.5px."
+
+### Iteration Guide
+1. Always use warm neutrals -- Mirama's grays have yellow-brown undertones (#f6f5f4, #31302e, #615d59, #a39e98), never blue-gray
+2. Letter-spacing scales with font size: -2.125px at 64px, -1.875px at 54px, -0.625px at 26px, normal at 16px
+3. Four weights: 400 (read), 500 (interact), 600 (emphasize), 700 (announce)
+4. Borders are whispers: 1px solid rgba(0,0,0,0.1) -- never heavier
+5. Shadows use 4-5 layers with individual opacity never exceeding 0.05
+6. The warm white (#f6f5f4) section background is essential for visual rhythm
+7. Pill badges (9999px) for status/tags, 4px radius for buttons and inputs
+8. Mirama Blue (#0075de) is the only saturated color in core UI -- use it sparingly for CTAs and links
