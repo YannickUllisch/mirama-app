@@ -4,10 +4,11 @@ import { GetTaskQuery } from '@/server/modules/task/features/get-task/handler'
 import { TaskIdParams } from '@/server/modules/task/features/get-task/schema'
 import { UpdateTaskCommand } from '@/server/modules/task/features/update-task/handler'
 import { UpdateTaskSchema } from '@/server/modules/task/features/update-task/schema'
+import { P } from '@/server/shared/domain/permissions'
 
 export const GET = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.read },
     params: TaskIdParams,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
   },
@@ -20,7 +21,7 @@ export const GET = createRoute(
 
 export const PUT = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.update },
     params: TaskIdParams,
     body: UpdateTaskSchema,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
@@ -38,7 +39,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.delete },
     params: TaskIdParams,
     pathPattern: '/api/db/organization/:organizationId/task/:taskId',
   },

@@ -4,9 +4,11 @@ import type {
   PriorityType,
   Project,
   ProjectMember,
+  ProjectTeam,
   StatusType,
   Tag,
   Task,
+  Team,
 } from '@/prisma/generated/client'
 
 export type ProjectResponse = {
@@ -28,6 +30,7 @@ export type ProjectResponse = {
     isInherited: boolean
     iamRoleId: string
   }[]
+  teams: { id: string; teamId: string; name: string }[]
   tasks: {
     id: string
     title: string
@@ -47,6 +50,7 @@ type ProjectWithRelations = Project & {
   tags: Tag[]
   tasks: Task[]
   members: (ProjectMember & { member: Member })[]
+  teams: (ProjectTeam & { team: Team })[]
 }
 
 export const toProjectResponse = (
@@ -74,6 +78,11 @@ export const toProjectResponse = (
     email: m.member.email,
     isInherited: m.isInherited,
     iamRoleId: m.member.iamRoleId,
+  })),
+  teams: input.teams.map((t) => ({
+    id: t.id,
+    teamId: t.teamId,
+    name: t.team.name,
   })),
   tasks: input.tasks.map((t) => ({
     id: t.id,

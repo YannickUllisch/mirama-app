@@ -3,18 +3,21 @@ import { CreateProjectCommand } from '@/server/modules/project/features/create-p
 import { CreateProjectSchema } from '@/server/modules/project/features/create-project/schema'
 import { GetProjectsQuery } from '@/server/modules/project/features/get-projects/handler'
 import { P } from '@/server/shared/domain/permissions'
+import z from 'zod'
 
 export const GET = createRoute(
   {
     auth: { permissions: P.project.read },
     pathPattern: '/api/db/organization/:organizationId/project',
+    params: z.object({ archived: z.string().optional() }),
   },
-  async (req, { session, ctx }) => {
-    const archived = req.nextUrl.searchParams.get('archived') === 'true'
-    ctx.logger.info(session.user.email)
-    ctx.logger.info(archived)
+  async (_req, { session, ctx }, { params }) => {
+    const archived = params.archived === 'true'
 
-    const data = await GetProjectsQuery(ctx)(session.user.id ?? '', archived)
+    const data = await GetProjectsQuery(ctx)(
+      session.user.memberId ?? '',
+      archived,
+    )
 
     return Response.json({ success: true, data })
   },

@@ -1,5 +1,7 @@
+// server/modules/project/features/create-project/handler.ts
 import type { AppContext } from '@/server/shared/infrastructure/types'
 import { ProjectEntity } from '../../domain/project.entity'
+import { resolveProjectRoster } from '../../domain/resolve-project-roster'
 import { ProjectRepository } from '../../infrastructure/project.repo'
 import { toProjectResponse } from '../response'
 import type { CreateProjectRequest } from './schema'
@@ -18,136 +20,66 @@ export const CreateProjectCommand =
 
     const { tags, newTags, members, teams, newMilestones, ...proj } = input
 
-    // ── 1. Resolve creator Member ────────────────────────────────────────────
-    const creator = await db.member.findFirst({
-      where: { email: creatorEmail },
-      select: { id: true, iamRoleId: true },
-    })
-    const creatorMemberId = creator?.id ?? ''
-
-    // ── 2. Fetch selected teams with their members' IAM roles (single query) ─
-    const teamsWithMembers =
-      teams.length > 0
-        ? await db.team.findMany({
-            where: { id: { in: teams.map((t) => t.teamId) } },
-            include: {
-              members: {
-                select: {
-                  memberId: true,
-                  member: { select: { iamRoleId: true } },
-                },
-              },
+    // ── Step 1: Parallel pre-work ────────────────────────────────────────────
+    // Resolve the creator, the member/team roster, and pre-create any new tags
+    // concurrently. New tags are created as top-level ScopedDb calls so that
+    // organizationId gets injected correctly, and we get back real IDs to
+    // connect to the project.
+    const [creator, { memberRows, teamRows }, createdTags] = await Promise.all([
+      db.member.findFirst({
+        where: { email: creatorEmail },
+        select: { id: true, iamRoleId: true },
+      }),
+      resolveProjectRoster(db, { members, teams }),
+      Promise.all(
+        newTags.map((t) =>
+          // organizationId is omitted here — ScopedDb injects it at runtime
+          db.tag.create({
+            data: { title: t.title } as {
+              title: string
+              organizationId: string
             },
-          })
-        : []
+            select: { id: true },
+          }),
+        ),
+      ),
+    ])
 
-    // ── 3. Build team-covered member set ─────────────────────────────────────
-    const teamMemberIdSet = new Set(
-      teamsWithMembers.flatMap((t) => t.members.map((m) => m.memberId)),
-    )
-
-    // ── 4. Build inherited ProjectMember rows from teams ────────────────────
-    const inheritedMemberData = teamsWithMembers.flatMap((team) =>
-      team.members.map((m) => ({
-        memberId: m.memberId,
-        isManager: false,
-        roleId: m.member.iamRoleId,
-        isInherited: true,
-        teamId: team.id,
-        organizationId,
-      })),
-    )
-
-    // ── 5. Filter direct members — team takes precedence ────────────────────
-    const directMemberInputs = members.filter(
-      (m) => !teamMemberIdSet.has(m.memberId),
-    )
-
-    // ── 6. Resolve roleIds for direct members in one batch query ─────────────
-    const directMemberIds = [
-      ...new Set(directMemberInputs.map((m) => m.memberId)),
-    ]
-    const memberRecords =
-      directMemberIds.length > 0
-        ? await db.member.findMany({
-            where: { id: { in: directMemberIds } },
-            select: { id: true, iamRoleId: true },
-          })
-        : []
-    const memberRoleMap = new Map(memberRecords.map((m) => [m.id, m.iamRoleId]))
-
-    const directMemberData = directMemberInputs.map((m) => ({
-      memberId: m.memberId,
-      isManager: m.isManager,
-      roleId: memberRoleMap.get(m.memberId) ?? m.roleId ?? '',
-      isInherited: false,
-      organizationId,
-    }))
-
-    // ── 7. Always include creator — inject if not already covered ────────────
-    const creatorInAnySlot =
-      teamMemberIdSet.has(creatorMemberId) ||
-      directMemberData.some((m) => m.memberId === creatorMemberId)
-
-    if (!creatorInAnySlot && creatorMemberId) {
-      directMemberData.push({
-        memberId: creatorMemberId,
-        isManager: true,
-        roleId: creator?.iamRoleId ?? '',
-        isInherited: false,
-        organizationId,
-      })
-    } else if (creatorMemberId) {
-      // Ensure the creator is marked as manager if they're a direct member
-      const creatorDirectIdx = directMemberData.findIndex(
-        (m) => m.memberId === creatorMemberId,
-      )
-      const creatorEntry = directMemberData[creatorDirectIdx]
-      if (creatorDirectIdx !== -1 && creatorEntry) {
-        creatorEntry.isManager = true
+    // Inject creator into the roster now that we have their id
+    if (creator) {
+      const alreadyCovered = memberRows.some((m) => m.memberId === creator.id)
+      if (!alreadyCovered) {
+        memberRows.push({
+          memberId: creator.id,
+          roleId: creator.iamRoleId,
+          isInherited: false,
+        })
       }
     }
 
-    // ── 8. ProjectTeam link rows ─────────────────────────────────────────────
-    // Use a default org role for the team-level assignment. Each team member
-    // already carries their own iamRoleId in the inherited ProjectMember rows.
-    const defaultRole =
-      teams.length > 0
-        ? await db.role.findFirst({
-            where: { scope: 'ORGANIZATION' },
-            select: { id: true },
-            orderBy: { name: 'asc' },
-          })
-        : null
+    const allTagIds = [...tags, ...createdTags.map((t) => t.id)]
 
-    const projectTeamData = teamsWithMembers.map((team) => ({
-      teamId: team.id,
-      roleId: defaultRole?.id ?? creator?.iamRoleId ?? '',
-      organizationId,
-    }))
-
-    // ── 9. Create project with all resolved data in one shot ─────────────────
-    const allMemberData = [...inheritedMemberData, ...directMemberData]
-
-    const project = await repo.create({
+    // ── Step 2: Create the project core ──────────────────────────────────────
+    // Tags are connected by ID only — no nested creates. Milestones, members,
+    // and teams are written separately so ScopedDb handles each model correctly.
+    const { id: projectId } = await repo.create({
       ...proj,
       organizationId,
-      tags: {
-        connect: tags.map((id) => ({ id })),
-        create: newTags.map((t) => ({ title: t.title, organizationId })),
-      },
-      members: {
-        createMany: { data: allMemberData },
-      },
-      projectTeams: {
-        createMany: { data: projectTeamData },
-      },
-      milestones: {
-        createMany: {
-          data: newMilestones.map((ms) => ({ ...ms, organizationId })),
-        },
-      },
+      tagIds: allTagIds,
     })
+
+    // ── Step 3: Parallel post-writes ─────────────────────────────────────────
+    // All three operations run concurrently within the same transaction
+    // (provided by withTransaction middleware).
+    await Promise.all([
+      repo.addMembers(projectId, memberRows),
+      repo.addTeams(projectId, organizationId, teamRows),
+      repo.addMilestones(projectId, newMilestones),
+    ])
+
+    // ── Step 4: Return the fully populated project ───────────────────────────
+    const project = await repo.findById(projectId)
+    if (!project) throw new Error(`Project ${projectId} not found after create`)
 
     return toProjectResponse(project)
   }

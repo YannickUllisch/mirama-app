@@ -1,7 +1,7 @@
 // app/(app)/organization/[organizationId]/projects/create/page.tsx
 import { Skeleton } from '@src/components/ui/skeleton'
+import ProjectForm from '@src/modules/project/components/ProjectForm'
 import { Suspense } from 'react'
-import CreateProjectForm from './_components/CreateProjectForm'
 
 const CreateProjectFormSkeleton = () => (
   <div className="space-y-6 pb-12.5">
@@ -32,7 +32,7 @@ const CreateProjectFormSkeleton = () => (
 const CreateProjectPage = () => {
   return (
     <Suspense fallback={<CreateProjectFormSkeleton />}>
-      <CreateProjectForm />
+      <ProjectForm mode="create" />
     </Suspense>
   )
 }

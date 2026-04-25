@@ -1,5 +1,7 @@
+// server/modules/project/features/update-project/handler.ts
 import type { AppContext } from '@/server/shared/infrastructure/types'
 import { ProjectEntity } from '../../domain/project.entity'
+import { resolveProjectRoster } from '../../domain/resolve-project-roster'
 import { ProjectRepository } from '../../infrastructure/project.repo'
 import { toProjectResponse } from '../response'
 import type { UpdateProjectRequest } from './schema'
@@ -9,85 +11,61 @@ export const UpdateProjectCommand =
   async (projectId: string, input: UpdateProjectRequest) => {
     const repo = ProjectRepository(db)
 
-    // Check unique name (exclude self)
+    // Check name uniqueness (exclude self)
     const existing = await repo.findByName(input.name)
     if (existing && existing.id !== projectId) {
       ProjectEntity.assertUniqueProjectName(existing)
     }
 
-    const { members, milestones, tags, newTags, ...proj } = input
+    const { tags, newTags, members, teams, milestones, ...proj } = input
 
-    // Fetch existing milestones to diff
-    const existingMilestones = await db.milestone.findMany({
-      where: { projectId },
-      select: { id: true },
-    })
-    const inputIds = milestones.filter((m) => m.id).map((m) => m.id as string)
-    const idsToDelete = existingMilestones
-      .map((m) => m.id)
-      .filter((id) => !inputIds.includes(id))
-
-    // Use a transaction for atomicity
-    const project = await db.$transaction(async (prisma: any) => {
-      // Update project fields + tags
-      const updated = await prisma.project.update({
-        where: { id: projectId },
-        data: {
-          ...proj,
-          tags: {
-            set: tags.map((id: string) => ({ id })),
-            create: newTags.map((t: { title: string }) => ({ title: t.title })),
-          },
-        },
-        include: {
-          milestones: true,
-          tags: true,
-          tasks: true,
-          members: { include: { member: true } },
-        },
-      })
-
-      // Replace member relations
-      await prisma.projectMember.deleteMany({ where: { projectId } })
-      if (members.length > 0) {
-        await prisma.projectMember.createMany({
-          data: members.map((m: { memberId: string }) => ({
-            ...m,
-            projectId,
-          })),
-        })
-      }
-
-      // Delete removed milestones
-      if (idsToDelete.length > 0) {
-        await prisma.milestone.deleteMany({
-          where: { id: { in: idsToDelete } },
-        })
-      }
-
-      // Upsert milestones
-      await Promise.all(
-        milestones.map((m) =>
-          prisma.milestone.upsert({
-            where: { id: m.id ?? '' },
-            update: {
-              date: m.date,
-              title: m.title,
-              colors: m.colors,
-              projectId,
-            },
-            create: {
-              date: m.date,
-              title: m.title,
-              colors: m.colors,
-              projectId,
-            },
-          }),
+    // ── Step 1: Parallel pre-work ────────────────────────────────────────────
+    // Resolve the roster and pre-create any new tags concurrently.
+    // New tags go through ScopedDb individually so organizationId is injected.
+    const [{ memberRows, teamRows }, createdTags, projectData] =
+      await Promise.all([
+        resolveProjectRoster(db, { members, teams }),
+        Promise.all(
+          newTags.map((t) =>
+            // organizationId is omitted here — ScopedDb injects it at runtime
+            db.tag.create({
+              data: { title: t.title } as {
+                title: string
+                organizationId: string
+              },
+              select: { id: true },
+            }),
+          ),
         ),
-      )
+        db.project.findFirst({
+          where: { id: projectId },
+          select: { organizationId: true },
+        }),
+      ])
 
-      return updated
+    const organizationId = projectData?.organizationId ?? ''
+    const allTagIds = [...tags, ...createdTags.map((t) => t.id)]
+
+    // ── Step 2: Update project core + tag set ────────────────────────────────
+    await repo.updateCore(projectId, {
+      ...proj,
+      organizationId,
+      tagIds: allTagIds,
     })
+
+    // ── Step 3: Parallel relation replacements ───────────────────────────────
+    // Members and teams are fully replaced; milestones are diffed (existing
+    // ones updated, removed ones deleted, new ones created). All run within
+    // the same transaction from withTransaction middleware.
+    await Promise.all([
+      repo.replaceMembers(projectId, memberRows),
+      repo.replaceTeams(projectId, organizationId, teamRows),
+      repo.syncMilestones(projectId, milestones),
+    ])
+
+    // ── Step 4: Return the fully populated project ───────────────────────────
+    const project = await repo.findById(projectId)
+    if (!project) throw new Error(`Project ${projectId} not found after update`)
 
     return toProjectResponse(project)
   }

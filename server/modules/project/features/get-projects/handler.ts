@@ -3,15 +3,9 @@ import { ProjectRepository } from '../../infrastructure/project.repo'
 import { toProjectResponse } from '../response'
 
 export const GetProjectsQuery =
-  ({ db, logger }: AppContext) =>
+  ({ db }: AppContext) =>
   async (memberId: string, archived: boolean) => {
     const repo = ProjectRepository(db)
-    const projects = await repo.findAll({
-      memberId,
-      archived,
-    })
-
-    logger.info(`got projects of count ${projects.length}`)
-
+    const projects = await repo.findAll({ memberId, archived })
     return projects.map(toProjectResponse)
   }

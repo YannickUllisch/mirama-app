@@ -7,10 +7,11 @@ import {
   GetPersonalTasksQuery,
   GetTasksByProjectQuery,
 } from '@/server/modules/task/features/get-tasks/handler'
+import { P } from '@/server/shared/domain/permissions'
 
 export const GET = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.read },
     pathPattern: '/api/db/organization/:organizationId/task',
   },
   async (req, { session, ctx }) => {
@@ -48,7 +49,7 @@ export const GET = createRoute(
 
 export const POST = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.create },
     body: CreateTaskSchema,
     pathPattern: '/api/db/organization/:organizationId/task',
   },
@@ -61,7 +62,7 @@ export const POST = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.task.delete },
     body: DeleteTasksBulkSchema,
     pathPattern: '/api/db/organization/:organizationId/task',
   },

@@ -10,7 +10,7 @@ export const fetchProjectsFn = async (
   organizationId: string,
 ): Promise<ProjectResponse[]> => {
   const { data } = await api.get(`organization/${organizationId}/projects`)
-  return data
+  return data.data
 }
 
 export const fetchArchivedProjectsFn = async (
@@ -19,7 +19,7 @@ export const fetchArchivedProjectsFn = async (
   const { data } = await api.get(`organization/${organizationId}/projects`, {
     params: { archived: true },
   })
-  return data
+  return data.data
 }
 
 export const fetchProjectByIdFn = async (
@@ -29,7 +29,7 @@ export const fetchProjectByIdFn = async (
   const { data } = await api.get(
     `organization/${organizationId}/projects/${id}`,
   )
-  return data ?? null
+  return data.data ?? null
 }
 
 export const fetchProjectAssigneesFn = async (
@@ -39,7 +39,7 @@ export const fetchProjectAssigneesFn = async (
   const { data } = await api.get(
     `organization/${organizationId}/projects/${id}/members`,
   )
-  return data ?? null
+  return data.data ?? null
 }
 
 export const createProjectFn = async (
@@ -50,7 +50,7 @@ export const createProjectFn = async (
     `organization/${organizationId}/projects`,
     payload,
   )
-  return data
+  return data.data
 }
 
 export const updateProjectFn = async (
@@ -62,14 +62,14 @@ export const updateProjectFn = async (
     `organization/${organizationId}/projects/${id}`,
     payload,
   )
-  return data
+  return data.data
 }
 
 export const deleteProjectFn = async (organizationId: string, id: string) => {
   const { data } = await api.delete(
     `organization/${organizationId}/projects/${id}`,
   )
-  return data
+  return data.data
 }
 
 export const archiveProjectFn = async (
@@ -81,5 +81,5 @@ export const archiveProjectFn = async (
   const { data } = await api.post(
     `organization/${organizationId}/projects/${id}/${archiveRoute}`,
   )
-  return data
+  return data.data
 }

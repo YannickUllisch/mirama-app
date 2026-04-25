@@ -16,8 +16,8 @@ const ORG_SCOPED_MODELS = new Set([
   'ProjectTeam',
   'Tag',
   'OrganizationInvitation',
-  'ProjectMember',
-  'Milestone',
+  // ProjectMember — no organizationId field; isolation is through Project
+  // Milestone     — no organizationId field; isolation is through Project
   'Comment',
   'Expense',
   'Notification',

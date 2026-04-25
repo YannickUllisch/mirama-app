@@ -67,19 +67,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.name = existingUser.name
 
       if (trigger === 'update' && session?.organizationId) {
-        console.info(session.organizationId)
-
         const foundOrg = await tryGetOrganization(
           token.sub as string,
           session.organizationId,
         )
 
-        console.info(foundOrg, token.sub)
-
         if (foundOrg) {
           token.organizationId = foundOrg.id
           token.orgRole = foundOrg.members[0].iamRoleId
+          token.memberId = foundOrg.members[0].id
           token.tenantId = foundOrg.tenantId
+        }
+      } else if (token.organizationId && !token.memberId) {
+        const foundOrg = await tryGetOrganization(
+          token.sub as string,
+          token.organizationId as string,
+        )
+        if (foundOrg?.members[0]) {
+          token.orgRole = foundOrg.members[0].iamRoleId
+          token.memberId = foundOrg.members[0].id
         }
       }
 
@@ -93,6 +99,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.organizationId = token.organizationId as string
         session.user.orgRole = token.orgRole as string
         session.user.tenantRole = token.tenantRole as TenantRole
+        session.user.memberId = token.memberId as string | undefined
       }
       return session
     },

@@ -36,8 +36,6 @@ export const tryGetOrganization = async (userId: string, orgId: string) => {
     select: { email: true },
   })
 
-  console.info(`found user: ${user?.email}`)
-
   if (!user) return null
 
   const organization = await client.organization.findFirst({
@@ -50,7 +48,7 @@ export const tryGetOrganization = async (userId: string, orgId: string) => {
       tenantId: true,
       members: {
         where: { email: user.email },
-        select: { iamRoleId: true },
+        select: { id: true, iamRoleId: true },
       },
     },
   })

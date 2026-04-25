@@ -4,10 +4,11 @@ import { GetProjectQuery } from '@/server/modules/project/features/get-project/h
 import { ProjectIdParams } from '@/server/modules/project/features/get-project/schema'
 import { UpdateProjectCommand } from '@/server/modules/project/features/update-project/handler'
 import { UpdateProjectSchema } from '@/server/modules/project/features/update-project/schema'
+import { P } from '@/server/shared/domain/permissions'
 
 export const GET = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.project.read },
     params: ProjectIdParams,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
   },
@@ -23,7 +24,7 @@ export const GET = createRoute(
 
 export const PUT = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.project.update },
     params: ProjectIdParams,
     body: UpdateProjectSchema,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
@@ -37,7 +38,7 @@ export const PUT = createRoute(
 
 export const DELETE = createRoute(
   {
-    auth: {},
+    auth: { permissions: P.project.delete },
     params: ProjectIdParams,
     pathPattern: '/api/db/organization/:organizationId/project/:projectId',
   },

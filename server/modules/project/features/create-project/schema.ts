@@ -1,25 +1,12 @@
+// server/modules/project/features/create-project/schema.ts
 import { PriorityType, StatusType } from '@/prisma/generated/client'
 import { z } from 'zod'
-
-const ProjectMemberLinkSchema = z.object({
-  memberId: z.string().min(1),
-  roleId: z.string().optional(),
-  isManager: z.boolean(),
-})
-
-const ProjectTeamLinkSchema = z.object({
-  teamId: z.string().min(1),
-})
-
-const NewMilestoneSchema = z.object({
-  date: z.coerce.date(),
-  title: z.string().min(4),
-  colors: z.string(),
-})
-
-const NewTagSchema = z.object({
-  title: z.string().min(2),
-})
+import {
+  MilestoneSchema,
+  NewTagSchema,
+  ProjectMemberLinkSchema,
+  ProjectTeamLinkSchema,
+} from '../../domain/project.schema'
 
 export const CreateProjectSchema = z
   .object({
@@ -35,7 +22,8 @@ export const CreateProjectSchema = z
     newTags: z.array(NewTagSchema),
     members: z.array(ProjectMemberLinkSchema),
     teams: z.array(ProjectTeamLinkSchema).default([]),
-    newMilestones: z.array(NewMilestoneSchema),
+    // Milestones on create never have ids — strip with omit so the type is clear
+    newMilestones: z.array(MilestoneSchema.omit({ id: true })),
   })
   .refine((data) => data.startDate <= data.endDate, {
     message: 'Start Date must be before or equal to End Date',
