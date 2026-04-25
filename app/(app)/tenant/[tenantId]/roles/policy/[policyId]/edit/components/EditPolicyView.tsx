@@ -41,7 +41,7 @@ export const EditPolicyView = ({ policyId }: { policyId: string }) => {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-5 h-5 animate-spin text-warm-gray-300" />
+          <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
         </div>
       ) : policy ? (
         <PolicyForm

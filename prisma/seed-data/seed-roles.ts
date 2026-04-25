@@ -9,6 +9,8 @@ export type SeedRole = {
   policyNames: string[];
 };
 
+// ── Organization-scoped roles ──────────────────────────────────────────────
+
 const organizationRoles: SeedRole[] = [
   {
     name: "Owner",

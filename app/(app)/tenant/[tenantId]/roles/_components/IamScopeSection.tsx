@@ -31,7 +31,7 @@ const IamScopeSection = ({
   <div className="space-y-3">
     <SectionHeader icon={icon} title={title} description={description} />
     {roles.length === 0 ? (
-      <div className="flex items-center gap-2 text-[12px] font-medium text-warm-gray-300 py-3 border border-dashed border-black/10 dark:border-white/10 rounded-xl px-4">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground/60 py-3 border border-dashed border-border rounded-xl px-4">
         <Shield className="w-3.5 h-3.5 shrink-0" />
         {emptyLabel}
       </div>

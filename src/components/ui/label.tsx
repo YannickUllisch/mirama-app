@@ -1,12 +1,10 @@
-// src/components/ui/label.tsx
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { cn } from '@src/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const labelVariants = cva(
-  // 14px / weight 500 — Caption role per DESIGN.md
-  'text-sm font-medium leading-[1.43] text-foreground select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-40 transition-colors duration-200',
+  'text-[11px] font-black uppercase tracking-[0.05em] leading-none text-neutral-500 dark:text-neutral-400 select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 transition-colors duration-200',
 )
 
 const Label = React.forwardRef<
@@ -16,7 +14,11 @@ const Label = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
-    className={cn(labelVariants(), 'group-focus-within:text-mirama-blue', className)}
+    className={cn(
+      labelVariants(),
+      'group-focus-within:text-primary',
+      className,
+    )}
     {...props}
   />
 ))

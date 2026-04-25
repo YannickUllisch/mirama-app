@@ -32,7 +32,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
     <TableHeader
       ref={headerRef}
       style={{ zIndex: 4 }}
-      className={`bg-warm-white dark:bg-warm-dark/60 border-b border-black/10 dark:border-white/10 ${
+      className={`bg-neutral-50/80 dark:bg-neutral-800/50 backdrop-blur-sm border-b border-border ${
         isSticky ? 'sticky -top-0.75' : ''
       }`}
     >
@@ -44,8 +44,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
           {headerGroup.headers.map((header) => (
             <TableHead
               key={header.id}
-              // Badge micro-label style: 12px / semibold / +0.125px tracking / uppercase per DESIGN.md
-              className="relative text-[12px] font-semibold [letter-spacing:0.125px] text-warm-gray-300 uppercase py-2.5"
+              className="relative text-[10px] font-semibold text-muted-foreground uppercase tracking-widest py-2.5"
               style={{
                 width: header.getSize() === 0 ? undefined : header.getSize(),
               }}

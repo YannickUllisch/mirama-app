@@ -225,7 +225,7 @@ export const DataTable = <TData extends TableData<TData>>({
         setGlobalFilter={setGlobalFilter}
         table={table}
       />
-      <div className="w-full overflow-x-auto border-x border-black/10 dark:border-white/10">
+      <div className="w-full overflow-x-auto border-r border-l">
         <div className="min-w-max">
           <Table className="min-w-full table-auto">
             <DataTableHeader table={table} />

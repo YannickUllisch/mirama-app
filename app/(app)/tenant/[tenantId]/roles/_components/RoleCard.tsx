@@ -45,7 +45,7 @@ export const RoleCard = ({
   )
 
   return (
-    <div className="group relative border border-black/10 dark:border-white/10 rounded-xl bg-card hover:border-black/20 dark:hover:border-white/20 transition-all duration-200 overflow-hidden">
+    <div className="group relative border border-border rounded-xl bg-card hover:border-primary/30 transition-all duration-200 overflow-hidden">
       <button
         type="button"
         aria-expanded={expanded}
@@ -58,12 +58,12 @@ export const RoleCard = ({
       <div className="relative z-10 pointer-events-none flex items-center gap-4 px-4 py-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <ChevronRight
-            className={`w-4 h-4 text-warm-gray-300 transition-transform duration-200 ${
+            className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
               expanded ? 'rotate-90' : ''
             }`}
           />
-          <div className="shrink-0 w-9 h-9 rounded-xl bg-mirama-blue/5 border border-mirama-blue/10 flex items-center justify-center">
-            <ShieldCheck className="w-4 h-4 text-mirama-blue" />
+          <div className="shrink-0 w-9 h-9 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center">
+            <ShieldCheck className="w-4 h-4 text-primary" />
           </div>
 
           <div className="min-w-0">
@@ -72,23 +72,31 @@ export const RoleCard = ({
                 {role.name}
               </span>
               {isSystem && (
-                <Badge variant="secondary">system</Badge>
+                <Badge
+                  variant="secondary"
+                  className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                >
+                  system
+                </Badge>
               )}
-              <Badge variant="outline">
+              <Badge
+                variant="outline"
+                className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+              >
                 {role.scope === 'PROJECT' ? 'project' : 'org'}
               </Badge>
             </div>
             {role.description ? (
-              <p className="text-sm text-warm-gray-500 truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {role.description}
               </p>
             ) : (
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-[12px] font-medium text-warm-gray-300 flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
                   <FileText className="w-3 h-3" /> {role.policies.length}{' '}
                   Policies
                 </span>
-                <span className="text-[12px] font-medium text-warm-gray-300 flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
                   <Users className="w-3 h-3" />{' '}
                   {role._count.organizationMembers} Members
                 </span>
@@ -104,7 +112,7 @@ export const RoleCard = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -112,7 +120,7 @@ export const RoleCard = ({
               <DropdownMenuContent align="end" className="w-52">
                 {unattached.length > 0 && (
                   <>
-                    <div className="px-2 py-1.5 text-[12px] font-semibold tracking-[0.125px] text-warm-gray-300 uppercase">
+                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                       Attach Policy
                     </div>
                     {unattached.slice(0, 5).map((p) => (
@@ -128,7 +136,7 @@ export const RoleCard = ({
                   </>
                 )}
                 <DropdownMenuItem
-                  className="text-orange focus:text-orange focus:bg-orange/10"
+                  className="text-destructive focus:text-destructive focus:bg-destructive/10"
                   onClick={onDelete}
                 >
                   <Trash2 className="mr-2 h-3.5 w-3.5" />
@@ -141,12 +149,12 @@ export const RoleCard = ({
       </div>
 
       {expanded && (
-        <div className="relative z-10 border-t border-black/10 dark:border-white/10 bg-warm-white/50 dark:bg-warm-dark/30">
+        <div className="relative z-10 border-t bg-neutral-50/30 dark:bg-neutral-900/30">
           <div className="px-4 py-3 flex items-center justify-between">
-            <h4 className="text-[12px] font-semibold tracking-[0.125px] text-warm-gray-300 uppercase">
+            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               Active Permissions
             </h4>
-            <div className="h-px flex-1 bg-black/10 dark:bg-white/10 mx-4" />
+            <div className="h-px flex-1 bg-border mx-4" />
           </div>
 
           <div className="px-2 pb-2 space-y-1">
@@ -164,8 +172,8 @@ export const RoleCard = ({
               ))
             ) : (
               <div className="py-8 flex flex-col items-center justify-center text-center">
-                <FileText className="w-8 h-8 text-warm-gray-300/40 mb-2" />
-                <p className="text-sm text-warm-gray-300">
+                <FileText className="w-8 h-8 text-neutral-200 mb-2" />
+                <p className="text-xs text-neutral-400">
                   No policies attached.
                 </p>
               </div>

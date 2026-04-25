@@ -1,7 +1,7 @@
-// src/components/ui/separator.tsx
-import * as SeparatorPrimitive from '@radix-ui/react-separator'
-import { cn } from '@src/lib/utils'
 import * as React from 'react'
+import * as SeparatorPrimitive from '@radix-ui/react-separator'
+
+import { cn } from '@src/lib/utils'
 
 const Separator = React.forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
@@ -15,9 +15,8 @@ const Separator = React.forwardRef<
       ref={ref}
       decorative={decorative}
       orientation={orientation}
-      // Whisper border — rgba(0,0,0,0.1) per DESIGN.md
       className={cn(
-        'shrink-0 bg-black/10 dark:bg-white/10',
+        'shrink-0 bg-border',
         orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
         className,
       )}

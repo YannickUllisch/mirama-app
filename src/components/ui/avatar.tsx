@@ -1,7 +1,7 @@
-// src/components/ui/avatar.tsx
-import * as AvatarPrimitive from '@radix-ui/react-avatar'
-import { cn } from '@src/lib/utils'
 import * as React from 'react'
+import * as AvatarPrimitive from '@radix-ui/react-avatar'
+
+import { cn } from '@src/lib/utils'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -9,9 +9,8 @@ const Avatar = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Root
     ref={ref}
-    // Circle per DESIGN.md (100% radius)
     className={cn(
-      'relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full border border-black/10 dark:border-white/10',
+      'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
       className,
     )}
     {...props}
@@ -37,9 +36,8 @@ const AvatarFallback = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Fallback
     ref={ref}
-    // Warm white fallback surface with warm gray text
     className={cn(
-      'flex h-full w-full items-center justify-center rounded-full bg-warm-white dark:bg-warm-dark text-[11px] font-semibold text-warm-gray-500 dark:text-warm-gray-300',
+      'flex h-full w-full items-center justify-center bg-muted',
       className,
     )}
     {...props}
@@ -47,4 +45,4 @@ const AvatarFallback = React.forwardRef<
 ))
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
-export { Avatar, AvatarFallback, AvatarImage }
+export { Avatar, AvatarImage, AvatarFallback }

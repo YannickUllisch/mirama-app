@@ -1,55 +1,50 @@
-// src/components/ui/button.tsx
 import { Slot } from '@radix-ui/react-slot'
 import { cn } from '@src/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center gap-2 whitespace-nowrap transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-blue focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 select-none cursor-pointer',
+  'inline-flex items-center gap-3 whitespace-nowrap transition-all focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
   {
     variants: {
       variant: {
-        primary:
-          'rounded-[4px] bg-mirama-blue text-white font-semibold hover:bg-active-blue active:scale-[0.95]',
-
-        // Default / secondary — translucent dark bg
         default:
-          'rounded-[4px] bg-black/5 dark:bg-white/5 text-foreground font-medium hover:bg-black/10 dark:hover:bg-white/10 active:scale-[0.95]',
+          'rounded-xl justify-center cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-bold tracking-tight shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]',
 
-        // Outlined — whisper border, transparent bg
-        outline:
-          'rounded-[4px] border border-black/10 dark:border-white/10 bg-transparent text-foreground font-medium hover:bg-warm-white dark:hover:bg-warm-dark active:scale-[0.95]',
+        primary:
+          'rounded-xl cursor-pointer bg-primary text-white shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.2)] hover:opacity-90 font-bold tracking-tight',
 
-        // Ghost — no border, underline link on hover
-        ghost:
-          'rounded-[4px] items-center bg-transparent text-foreground font-medium hover:bg-warm-white dark:hover:bg-warm-dark active:scale-[0.95]',
-
-        // Link — pure text, underline on hover
-        link: 'h-auto p-0 text-mirama-blue font-medium underline-offset-4 hover:underline',
-
-        // Destructive — orange warning tone
-        destructive:
-          'rounded-[4px] bg-orange/10 border border-orange/20 text-orange font-medium hover:bg-orange hover:text-white active:scale-[0.95]',
-
-        // Pill badge button — blue tinted, full pill
-        pill: 'rounded-full bg-badge-blue-bg text-badge-blue-text font-semibold [letter-spacing:0.125px] hover:bg-blue-100',
-
-        // Dark / brand-secondary surface
         secondary:
-          'rounded-[4px] bg-warm-dark text-white font-semibold hover:bg-warm-dark/80 active:scale-[0.95]',
+          'rounded-xl cursor-pointer bg-secondary text-white shadow-xs hover:opacity-90 font-bold tracking-tight',
 
-        // Tertiary deep navy
         tertiary:
-          'rounded-[4px] bg-deep-navy text-white font-semibold hover:opacity-90 active:scale-[0.95]',
+          'rounded-xl cursor-pointer bg-tertiary text-white shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.2)] hover:opacity-90 font-bold tracking-tight',
+
+        outline:
+          'rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-800 bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 font-medium tracking-tight',
+
+        destructive:
+          'rounded-xl cursor-pointer border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-medium tracking-tight hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all duration-200 shadow-xs shadow-red-500/5',
+
+        link: 'cursor-pointer h-auto p-0 text-[11px] font-bold text-text/70 underline-offset-4 hover:underline',
+
+        ghost:
+          'rounded-xl justify-center cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 hover:text-tertiary font-medium tracking-tight',
+
+        brutalist:
+          'rounded-none whitespace-nowrap rounded-md text-sm font-black uppercase tracking-widest bg-blue-600 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:bg-red-500 hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
+        neo: 'rounded-none whitespace-nowrap text-sm font-bold tracking-widest bg-secondary text-white shadow-[8px_8px_0px_0px_hsl(var(--accent))] hover:translate-x-1 hover:translate-y-1 hover:shadow-none',
+
+        'industrial-icon':
+          'border border-border bg-background hover:bg-tertiary hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] hover:shadow-none hover:translate-x-1 hover:translate-y-1',
       },
       size: {
-        default: 'h-9 px-4 text-[15px]',
-        sm: 'h-7 px-3 text-[13px]',
-        lg: 'h-10 px-6 text-[15px]',
-        xl: 'h-12 px-8 text-base',
-        icon: 'h-9 w-9 flex items-center justify-center',
-        'icon-sm': 'h-7 w-7 flex items-center justify-center',
-        pill: 'h-7 px-3 text-[12px]',
+        default: 'h-10 px-5 text-sm',
+        sm: 'h-8 px-3 text-[11px]',
+        lg: 'h-12 px-8 text-base',
+        xl: 'h-14 px-10 text-lg',
+        icon: 'h-10 w-10',
+        'pub-lg': 'h-16 px-12 text-sm font-black uppercase tracking-[0.2em]',
       },
     },
     defaultVariants: {

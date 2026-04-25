@@ -173,8 +173,7 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        // Input-style: whisper border, 4px radius, white bg
-        'flex flex-wrap gap-1 p-1 py-1.5 rounded-[4px] border border-input bg-background transition-all focus-within:border-focus-blue focus-within:ring-2 focus-within:ring-focus-blue/20',
+        'flex flex-wrap gap-1 p-1 py-1.5 border rounded-lg bg-transparent',
         className,
       )}
       {...props}
@@ -183,10 +182,10 @@ const MultiSelectorTrigger = forwardRef<
         <Badge
           key={item}
           className={cn(
-            'px-2 flex items-center gap-1',
-            activeIndex === index && 'ring-2 ring-focus-blue/30',
+            'px-1 rounded-sm flex items-center gap-1',
+            activeIndex === index && 'ring-2 ring-muted-foreground ',
           )}
-          variant={'default'}
+          variant={'outline'}
         >
           <span className="text-xs">
             {renderValue ? renderValue(item) : item}
@@ -231,7 +230,7 @@ const MultiSelectorInput = forwardRef<
         setActiveIndex(-1)
       }}
       className={cn(
-        'ml-2 bg-transparent outline-none text-sm font-normal placeholder:text-warm-gray-300 w-full',
+        'ml-2 bg-transparent outline-hidden placeholder:text-muted-foreground text-wrap ewew-full',
         className,
         activeIndex !== -1 && 'caret-transparent',
       )}
@@ -267,10 +266,7 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        // 8px radius, whisper border, soft card shadow
-        'p-1.5 flex flex-col gap-1 rounded-lg w-full bg-card text-foreground z-10',
-        'border border-black/10 dark:border-white/10',
-        'shadow-[rgba(0,0,0,0.04)_0px_4px_18px,rgba(0,0,0,0.027)_0px_2.025px_7.85px,rgba(0,0,0,0.02)_0px_0.8px_2.93px,rgba(0,0,0,0.01)_0px_0.175px_1.04px]',
+        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full bg-background text-text shadow-md z-10 border',
         className,
       )}
     >
@@ -307,11 +303,10 @@ const MultiSelectorItem = forwardRef<
         setInputValue('')
       }}
       className={cn(
-        'rounded-[4px] cursor-pointer px-3 py-1.5 text-sm font-normal transition-colors flex justify-between items-center',
-        'focus:bg-warm-white dark:focus:bg-warm-dark/60',
+        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between ',
         className,
-        isIncluded && 'opacity-40 cursor-default',
-        props.disabled && 'opacity-40 cursor-not-allowed',
+        isIncluded && 'opacity-50 cursor-default',
+        props.disabled && 'opacity-50 cursor-not-allowed',
       )}
       onMouseDown={mousePreventDefault}
     >

@@ -40,16 +40,16 @@ const OrganizationGrid = () => {
   if (!organizations || organizations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-warm-white dark:bg-warm-dark border border-black/10 dark:border-white/10 flex items-center justify-center mb-4">
-          <Building2 className="w-6 h-6 text-warm-gray-300" />
+        <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
+          <Building2 className="w-6 h-6 text-neutral-400 dark:text-neutral-500" />
         </div>
-        <p className="text-[15px] font-semibold text-foreground">
+        <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
           No organizations yet
         </p>
-        <p className="text-sm font-normal text-warm-gray-500 mt-1 mb-5">
+        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 mb-5">
           Create your first organization to get started.
         </p>
-        <Button variant="primary" size="sm" asChild>
+        <Button variant="tertiary" size="sm" asChild>
           <Link href={`/tenant/${activeTenantId}/organization/create`}>
             <Plus className="w-4 h-4" />
             New Organization

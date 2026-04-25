@@ -30,7 +30,7 @@ const IamManagerSkeleton = () => (
       {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={i}
-          className="border border-black/10 dark:border-white/10 rounded-xl px-4 py-4 flex items-center gap-4"
+          className="border border-border rounded-xl px-4 py-4 flex items-center gap-4"
         >
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-9 w-9 rounded-xl" />
@@ -44,7 +44,7 @@ const IamManagerSkeleton = () => (
     </div>
 
     {/* Divider */}
-    <div className="border-t border-black/10 dark:border-white/10" />
+    <div className="border-t border-border/60" />
 
     {/* Section header 2 */}
     <div className="flex items-start gap-3">
@@ -60,7 +60,7 @@ const IamManagerSkeleton = () => (
       {Array.from({ length: 2 }).map((_, i) => (
         <div
           key={i}
-          className="border border-black/10 dark:border-white/10 rounded-xl px-4 py-4 flex items-center gap-4"
+          className="border border-border rounded-xl px-4 py-4 flex items-center gap-4"
         >
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-9 w-9 rounded-xl" />

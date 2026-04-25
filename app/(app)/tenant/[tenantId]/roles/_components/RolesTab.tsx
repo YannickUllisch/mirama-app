@@ -48,7 +48,7 @@ export const RolesTab = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-warm-gray-300" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
           <Input
             placeholder="Search roles..."
             value={search}
@@ -61,7 +61,7 @@ export const RolesTab = ({
 
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-5 h-5 animate-spin text-warm-gray-300" />
+          <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
         </div>
       ) : (
         <div className="space-y-6">
@@ -78,7 +78,7 @@ export const RolesTab = ({
             onEditPolicy={onEditPolicy}
           />
 
-          <div className="border-t border-black/10 dark:border-white/10" />
+          <div className="border-t border-border/60" />
 
           <IamScopeSection
             icon={FolderKanban}

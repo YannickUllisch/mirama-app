@@ -159,7 +159,7 @@ export const PolicyForm = ({
           </div>
         </PageHeader>
 
-        <div className="mx-auto lg:mx-10 gap-5 flex flex-col">
+        <div className="mx-auto lg:mx-10">
           <FormField
             control={form.control}
             name="scope"

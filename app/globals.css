@@ -14,7 +14,6 @@
 }
 
 @theme {
-  /* ── Semantic tokens (consumed via hsl()) ── */
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -60,42 +59,10 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  /* ── Mirama Brand Palette (direct hex — generates bg-*, text-*, etc.) ── */
-
-  /* Core brand */
-  --color-mirama-blue: #0075de;
-  --color-active-blue: #005bab;
-  --color-deep-navy: #213183;
-  --color-pure-white: #ffffff;
-
-  /* Warm neutral scale */
-  --color-warm-white: #f6f5f4;
-  --color-warm-dark: #31302e;
-  --color-warm-gray-500: #615d59;
-  --color-warm-gray-300: #a39e98;
-
-  /* Semantic accent colors */
-  --color-teal: #2a9d99;
-  --color-success: #1aae39;
-  --color-orange: #dd5b00;
-  --color-pink: #ff64c8;
-  --color-purple: #391c57;
-  --color-brown: #523410;
-
-  /* Interactive / status */
-  --color-focus-blue: #097fe8;
-  --color-badge-blue-bg: #f2f9ff;
-  --color-badge-blue-text: #097fe8;
-  --color-link-light-blue: #62aef0;
-
-  /* ── Radius scale ── */
-  /* sm=4px (buttons/inputs), md=6px, lg=8px (small cards) */
-  /* Standard cards use rounded-xl (12px), hero cards rounded-2xl (16px) */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* ── Animations ── */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-marquee: marquee var(--duration) infinite linear;
@@ -181,238 +148,90 @@
   }
 }
 
-/* ─────────────────────────────────────────────
-   LIGHT MODE  (Mirama Design System)
-   ───────────────────────────────────────────── */
 @layer base {
   :root {
-    /* Font stacks.
-       NotionInter is a modified Inter; it requires a local or CDN install.
-       Inter (loaded via next/font/google) serves as the primary fallback. */
-    --font-sans: "NotionInter", var(--font-inter), Inter, -apple-system,
-      BlinkMacSystemFont, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
-    --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
-      "Liberation Mono", monospace;
-
-    /* Surfaces */
-    --background: 0 0% 100%;              /* #ffffff — pure white */
-    --foreground: 0 0% 4%;               /* rgba(0,0,0,0.95) near-black */
-    --card: 0 0% 100%;                   /* #ffffff */
-    --card-foreground: 0 0% 4%;          /* near-black */
-    --popover: 0 0% 100%;               /* #ffffff */
-    --popover-foreground: 0 0% 4%;       /* near-black */
-
-    /* Brand / Interactive */
-    --primary: 208 100% 44%;             /* #0075de — Mirama Blue */
-    --primary-light: 208 93% 47%;        /* #097fe8 — Focus / Badge Blue */
-    --primary-dark: 208 100% 34%;        /* #005bab — Active Blue */
-
-    /* Secondary = Warm Dark surface */
-    --secondary: 40 3% 19%;             /* #31302e */
-    --secondary-foreground: 0 0% 100%;   /* #ffffff */
-
-    /* Tertiary = Deep Navy */
-    --tertiary: 230 60% 32%;            /* #213183 */
-
-    /* Muted = Warm White */
-    --muted: 30 10% 96%;                /* #f6f5f4 */
-    --muted-foreground: 30 4% 37%;      /* #615d59 — Warm Gray 500 */
-
-    /* Accent = Warm White tint */
-    --accent: 30 10% 96%;               /* #f6f5f4 */
-    --accent-foreground: 0 0% 4%;        /* near-black */
-
-    /* Destructive = Orange warning */
-    --destructive: 25 100% 43%;          /* #dd5b00 */
-    --destructive-foreground: 0 0% 100%; /* #ffffff */
-
-    /* Borders & Inputs */
-    /* rgba(0,0,0,0.1) on white ≈ rgb(229,229,229) */
-    --border: 0 0% 90%;                  /* whisper border */
-    --input: 0 0% 87%;                   /* #dddddd — form input border */
-    --ring: 208 93% 47%;                 /* #097fe8 — focus ring */
-
-    /* Radius: sm=4px (buttons), md=6px, lg=8px */
+    --background: 0 0% 97%;
+    --foreground: 11 32% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 11 32% 15%;
+    --popover: 249 7% 96%;
+    --popover-foreground: 11 32% 15%;
+    --primary: 6 100% 56%;
+    --primary-light: 10 100% 63%;
+    --primary-dark: 4 100% 45%;
+    --secondary: 197 35% 17%;
+    --secondary-foreground: 249 7% 96%;
+    --tertiary: 221 97% 54%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 30%;
+    --accent: 40 14% 92%;
+    --accent-foreground: 40 14% 30%;
+    --destructive: 6 100% 56%;
+    --destructive-foreground: 249 7% 96%;
+    --border: 40 10% 85%;
+    --input: 40 10% 85%;
+    --ring: 6 100% 56%;
     --radius: 0.5rem;
+    --text: 11 32% 15%;
+    --text-inverted: 249 7% 96%;
+    --text-secondary: 11 10% 40%;
+    --hover: 40 14% 92%;
 
-    /* Text roles */
-    --text: 0 0% 4%;                     /* rgba(0,0,0,0.95) near-black */
-    --text-secondary: 30 4% 37%;         /* #615d59 — Warm Gray 500 */
-    --text-inverted: 0 0% 100%;          /* #ffffff */
-
-    /* Hover surface */
-    --hover: 30 10% 93%;                 /* warm white tint hover */
-
-    /* Sidebar */
-    --sidebar-background: 30 10% 96%;    /* #f6f5f4 warm white */
-    --sidebar-foreground: 0 0% 4%;       /* near-black */
-    --sidebar-primary: 208 100% 44%;     /* #0075de */
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 197 35% 10%;
+    --sidebar-primary: 6 100% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 10% 93%;        /* warm tint */
-    --sidebar-accent-foreground: 0 0% 4%;
-    --sidebar-border: 0 0% 90%;          /* whisper border */
-    --sidebar-ring: 208 93% 47%;         /* #097fe8 */
+    --sidebar-accent: 6 100% 56%;
+    --sidebar-accent-foreground: 197 35% 95%;
+    --sidebar-border: 40 10% 85%;
+    --sidebar-ring: 6 100% 56%;
 
-    /* Charts */
-    --chart-1: 208 100% 44%;             /* #0075de — Mirama Blue */
-    --chart-2: 178 58% 39%;              /* #2a9d99 — Teal */
-    --chart-3: 133 74% 39%;              /* #1aae39 — Green */
-    --chart-4: 25 100% 43%;              /* #dd5b00 — Orange */
-    --chart-5: 321 100% 70%;             /* #ff64c8 — Pink */
-
-    /* ── Design-system shadow tokens ── */
-    /* Whisper border — the standard division line */
-    --border-whisper: 1px solid rgba(0, 0, 0, 0.1);
-
-    /* Multi-layer soft card shadow (max individual opacity: 0.04) */
-    --shadow-card:
-      rgba(0, 0, 0, 0.04) 0px 4px 18px,
-      rgba(0, 0, 0, 0.027) 0px 2.025px 7.84688px,
-      rgba(0, 0, 0, 0.02) 0px 0.8px 2.925px,
-      rgba(0, 0, 0, 0.01) 0px 0.175px 1.04062px;
-
-    /* Five-layer deep shadow for modals and featured content (max: 0.05) */
-    --shadow-deep:
-      rgba(0, 0, 0, 0.01) 0px 1px 3px,
-      rgba(0, 0, 0, 0.02) 0px 3px 7px,
-      rgba(0, 0, 0, 0.02) 0px 7px 15px,
-      rgba(0, 0, 0, 0.04) 0px 14px 28px,
-      rgba(0, 0, 0, 0.05) 0px 23px 52px;
-
-    /* Elevation aliases */
-    --shadow-level-1: var(--border-whisper);
-    --shadow-level-2: var(--shadow-card);
-    --shadow-level-3: var(--shadow-deep);
+    --chart-1: 6 100% 56%;
+    --chart-2: 197 35% 17%;
   }
-
-  /* ─────────────────────────────────────────────
-     DARK MODE  (warm dark palette — #31302e based)
-     ───────────────────────────────────────────── */
   .dark {
-    /* Surfaces */
-    --background: 40 5% 8%;              /* #141210 — very dark warm black */
-    --foreground: 30 10% 96%;            /* #f6f5f4 — warm white text */
-    --card: 40 3% 19%;                   /* #31302e — warm dark */
-    --card-foreground: 30 10% 96%;       /* #f6f5f4 */
-    --popover: 40 4% 14%;               /* slightly lighter than bg */
-    --popover-foreground: 30 10% 96%;    /* #f6f5f4 */
-
-    /* Brand / Interactive — Mirama Blue stays consistent */
-    --primary: 208 100% 44%;             /* #0075de */
-    --primary-light: 208 93% 47%;        /* #097fe8 */
-    --primary-dark: 208 100% 34%;        /* #005bab */
-
-    /* Secondary = darker warm surface */
-    --secondary: 40 4% 25%;             /* darker warm gray */
-    --secondary-foreground: 30 10% 96%; /* warm white */
-
-    /* Tertiary */
-    --tertiary: 230 60% 32%;            /* #213183 — Deep Navy */
-
-    /* Muted */
-    --muted: 40 3% 23%;                 /* dark warm gray surface */
-    --muted-foreground: 33 6% 62%;      /* #a39e98 — Warm Gray 300 lightened */
-
-    /* Accent */
-    --accent: 40 4% 25%;               /* dark warm accent surface */
-    --accent-foreground: 30 10% 96%;    /* warm white */
-
-    /* Destructive */
-    --destructive: 25 100% 43%;          /* #dd5b00 */
-    --destructive-foreground: 0 0% 100%;
-
-    /* Borders & Inputs */
-    --border: 30 5% 28%;                /* warm gray whisper border on dark */
-    --input: 30 5% 28%;
-    --ring: 208 93% 47%;                /* #097fe8 — focus ring */
-
-    /* Text */
-    --text: 30 10% 96%;                 /* #f6f5f4 — warm white */
-    --text-secondary: 33 6% 62%;        /* Warm Gray 300 */
-    --text-inverted: 0 0% 4%;           /* near-black */
-
-    /* Hover */
-    --hover: 40 4% 23%;                 /* slightly lighter than card */
-
-    /* Sidebar */
-    --sidebar-background: 40 5% 7%;     /* darkest warm surface */
-    --sidebar-foreground: 30 10% 96%;   /* warm white */
-    --sidebar-primary: 208 100% 44%;    /* #0075de */
+    --background: 0 0% 7.6%;
+    --foreground: 249 7% 96%;
+    --card: 0 0% 10%;
+    --card-foreground: 249 7% 96%;
+    --popover: 197 65% 12%;
+    --popover-foreground: 249 7% 96%;
+    --primary: 6 100% 56%;
+    --primary-foreground: 10 100% 63%;
+    --secondary: 205 18.42% 14.9%;
+    --secondary-foreground: 249 7% 96%;
+    --tertiary: 221 97% 54%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 40 14% 60%;
+    --accent-foreground: 40 14% 10%;
+    --destructive: 6 100% 56%;
+    --destructive-foreground: 249 7% 96%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 6 100% 56%;
+    --text: 249 7% 96%;
+    --text-inverted: 11 32% 15%;
+    --text-secondary: 249 7% 70%;
+    --hover: 0 0% 18%;
+    --sidebar-background: 0 0% 7.9%;
+    --sidebar-foreground: 249 7% 96%;
+    --sidebar-primary: 6 100% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 4% 23%;        /* dark warm hover */
-    --sidebar-accent-foreground: 30 10% 96%;
-    --sidebar-border: 30 5% 28%;        /* warm dark border */
-    --sidebar-ring: 208 93% 47%;
+    --sidebar-accent: 6 100% 56%;
+    --sidebar-accent-foreground: 197 35% 95%;
+    --sidebar-border: 40 10% 85%;
+    --sidebar-ring: 6 100% 56%;
 
-    /* Charts — same hues, slightly lighter on dark */
-    --chart-1: 208 100% 55%;
-    --chart-2: 178 58% 50%;
-    --chart-3: 133 74% 50%;
-    --chart-4: 25 100% 55%;
-    --chart-5: 321 100% 75%;
-
-    /* Shadows are more visible on dark backgrounds */
-    --shadow-card:
-      rgba(0, 0, 0, 0.2) 0px 4px 18px,
-      rgba(0, 0, 0, 0.15) 0px 2.025px 7.84688px,
-      rgba(0, 0, 0, 0.1) 0px 0.8px 2.925px,
-      rgba(0, 0, 0, 0.06) 0px 0.175px 1.04062px;
-
-    --shadow-deep:
-      rgba(0, 0, 0, 0.1) 0px 1px 3px,
-      rgba(0, 0, 0, 0.15) 0px 3px 7px,
-      rgba(0, 0, 0, 0.2) 0px 7px 15px,
-      rgba(0, 0, 0, 0.25) 0px 14px 28px,
-      rgba(0, 0, 0, 0.3) 0px 23px 52px;
-
-    --border-whisper: 1px solid rgba(255, 255, 255, 0.08);
-    --shadow-level-1: var(--border-whisper);
-    --shadow-level-2: var(--shadow-card);
-    --shadow-level-3: var(--shadow-deep);
+    --chart-1: 6 100% 56%;
+    --chart-2: 197 35% 17%;
   }
 }
-
-/* ─────────────────────────────────────────────
-   BASE STYLES
-   ───────────────────────────────────────────── */
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-sans);
-    /* "lnum" = lining numerals, "locl" = localized forms */
-    font-feature-settings: "lnum", "locl";
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Display headings: enable lnum + locl OpenType features */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-feature-settings: "lnum", "locl";
-    color: hsl(var(--text));
-  }
-
-  code,
-  kbd,
-  samp,
-  pre {
-    font-family: var(--font-mono);
-    font-feature-settings: normal;
-  }
-}
-
-/* ─────────────────────────────────────────────
-   UTILITY ANIMATIONS
-   ───────────────────────────────────────────── */
 @layer utilities {
+  body {
+    font-family: var(--font-dm-sans);
+  }
+
   @keyframes inAnimation {
     0% {
       opacity: 0;
@@ -435,10 +254,17 @@
   }
 }
 
-/* ─────────────────────────────────────────────
-   MARQUEE UTILITY CLASSES
-   ───────────────────────────────────────────── */
-@keyframes marquee-scroll {
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* In your globals.css */
+@keyframes marquee {
   0% {
     transform: translateX(-50%);
   }
@@ -450,7 +276,7 @@
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 30s linear infinite;
+  animation: marquee 30s linear infinite;
 }
 
 @keyframes bounce-slow {

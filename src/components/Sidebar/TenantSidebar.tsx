@@ -28,11 +28,7 @@ const TenantSidebar = ({ tenantId, className }: TenantSidebarProps) => {
   const localizedMenu = buildTenantMenu(tenantId)
 
   return (
-    <AppSidebar
-      tenantId={tenantId}
-      className={className}
-      headerSlot={<SidebarMobileHeader />}
-    >
+    <AppSidebar className={className} headerSlot={<SidebarMobileHeader />}>
       <SidebarMainNav items={localizedMenu} />
     </AppSidebar>
   )

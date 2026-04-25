@@ -58,7 +58,7 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="primary" size="sm">
+        <Button variant="tertiary" size="sm">
           <Plus className="w-4 h-4" />
           New Role
         </Button>
@@ -90,23 +90,23 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
                       className={cn(
                         'flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all',
                         scope === 'ORGANIZATION'
-                          ? 'border-mirama-blue bg-mirama-blue/5 ring-1 ring-mirama-blue/20'
-                          : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20',
+                          ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
+                          : 'border-border hover:border-primary/30',
                       )}
                     >
                       <div
                         className={cn(
                           'shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5',
                           scope === 'ORGANIZATION'
-                            ? 'bg-mirama-blue/10 text-mirama-blue'
-                            : 'bg-warm-white dark:bg-warm-dark text-warm-gray-300',
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500',
                         )}
                       >
                         <Building2 className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <p className="text-[13px] font-semibold">Organization</p>
-                        <p className="text-[12px] text-warm-gray-500 mt-0.5">
+                        <p className="text-xs font-semibold">Organization</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                           Applies across all projects
                         </p>
                       </div>
@@ -121,23 +121,23 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
                       className={cn(
                         'flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all',
                         scope === 'PROJECT'
-                          ? 'border-mirama-blue bg-mirama-blue/5 ring-1 ring-mirama-blue/20'
-                          : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20',
+                          ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
+                          : 'border-border hover:border-primary/30',
                       )}
                     >
                       <div
                         className={cn(
                           'shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5',
                           scope === 'PROJECT'
-                            ? 'bg-mirama-blue/10 text-mirama-blue'
-                            : 'bg-warm-white dark:bg-warm-dark text-warm-gray-300',
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500',
                         )}
                       >
                         <FolderKanban className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <p className="text-[13px] font-semibold">Project</p>
-                        <p className="text-[12px] text-warm-gray-500 mt-0.5">
+                        <p className="text-xs font-semibold">Project</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                           Applies to a specific project only
                         </p>
                       </div>
@@ -189,8 +189,8 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" disabled={isPending}>
-                {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Create Role
               </Button>
             </DialogFooter>

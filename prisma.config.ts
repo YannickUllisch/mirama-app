@@ -10,6 +10,6 @@ export default defineConfig({
     url: env('POSTGRES_PRISMA_URL'),
   },
   migrations: {
-    seed: 'yarn tsx prisma/seed.ts',
+    seed: 'tsx prisma/seed.ts',
   },
 }) satisfies PrismaConfig

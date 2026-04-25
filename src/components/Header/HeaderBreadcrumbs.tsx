@@ -41,20 +41,20 @@ const HeaderBreadcrumbs = () => {
             <React.Fragment key={segment}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="text-[12px] font-semibold tracking-[0.125px] text-foreground">
+                  <BreadcrumbPage className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-neutral-100">
                     {label}
                   </BreadcrumbPage>
                 ) : (
                   <HoverLink
                     href={accumulatedPaths[index]}
-                    className="text-[12px] font-semibold tracking-[0.125px] text-warm-gray-300 hover:text-warm-gray-500 transition-colors"
+                    className="text-[10px] font-bold uppercase tracking-tighter text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   >
                     {label}
                   </HoverLink>
                 )}
               </BreadcrumbItem>
               {!isLast && (
-                <BreadcrumbSeparator className="text-black/20 dark:text-white/20 scale-75" />
+                <BreadcrumbSeparator className="text-neutral-200 dark:text-neutral-800 scale-75" />
               )}
             </React.Fragment>
           )

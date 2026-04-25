@@ -1,7 +1,7 @@
-// src/components/ui/tabs.tsx
 import * as TabsPrimitive from '@radix-ui/react-tabs'
-import { cn } from '@src/lib/utils'
 import * as React from 'react'
+
+import { cn } from '@src/lib/utils'
 
 const Tabs = TabsPrimitive.Root
 
@@ -12,8 +12,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      // Warm white pill container with whisper border
-      'inline-flex h-9 items-center justify-center rounded-[4px] bg-warm-white dark:bg-warm-dark/50 border border-black/10 dark:border-white/10 p-1 gap-0.5',
+      'inline-flex h-9 items-center justify-center rounded-lg p-1 text-muted-foreground',
       className,
     )}
     {...props}
@@ -28,14 +27,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      // 15px / weight 500 — nav/button text in DESIGN.md
-      'inline-flex items-center justify-center whitespace-nowrap rounded-[4px] px-3 py-1 text-[15px] font-medium transition-all outline-none',
-      'text-warm-gray-500 dark:text-warm-gray-300',
-      'hover:text-foreground hover:bg-white/60 dark:hover:bg-white/5',
-      'focus-visible:ring-2 focus-visible:ring-focus-blue/30',
-      'disabled:pointer-events-none disabled:opacity-40',
-      // Active: white bg (or dark surface) with whisper border shadow
-      'data-[state=active]:bg-white dark:data-[state=active]:bg-warm-dark data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.08)]',
+      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-neutral-200/40 dark:data-[state=active]:bg-neutral-800/70 data-[state=active]:text-foreground',
       className,
     )}
     {...props}
@@ -50,7 +42,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      'mt-3 outline-none focus-visible:ring-2 focus-visible:ring-focus-blue/30',
+      'mt-2 ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
       className,
     )}
     {...props}
@@ -58,4 +50,4 @@ const TabsContent = React.forwardRef<
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsContent, TabsList, TabsTrigger }
+export { Tabs, TabsList, TabsTrigger, TabsContent }

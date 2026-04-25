@@ -41,25 +41,29 @@ const main = async () => {
     policyMap.set(policy.name, existing.id);
   }
 
- for (const role of DEFAULT_SYSTEM_ROLES) {
-  const policyIds = role.policyNames
-    .map((pName) => policyMap.get(pName))
-    .filter((id): id is string => !!id);
+  for (const role of DEFAULT_SYSTEM_ROLES) {
+    const existing = await prisma.role.findFirst({
+      where: { name: role.name, tenantId: null },
+    });
+    if (existing) {
+      continue;
+    }
 
-  console.log(`Connecting ${role.name} to policies:`, policyIds);
-
-  await prisma.role.create({
-    data: {
-      name: role.name,
-      description: role.description,
-      scope: role.scope,
-      tenantId: null,
-      policies: {
-        connect: policyIds.map((id) => ({ id })),
+    await prisma.role.create({
+      data: {
+        name: role.name,
+        description: role.description,
+        scope: role.scope,
+        tenantId: null,
+        policies: {
+          connect: role.policyNames
+            .filter((pName) => policyMap.has(pName))
+            .map((pName) => ({ id: policyMap.get(pName) as string })),
+        },
       },
-    },
-  });
-}
+    });
+    console.log(`Created role: ${role.name}`);
+  }
 
   for (const plan of DEFAULT_PLANS) {
     const existingPlan = await prisma.plan.findFirst({

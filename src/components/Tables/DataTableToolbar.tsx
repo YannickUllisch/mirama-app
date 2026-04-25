@@ -51,31 +51,40 @@ const DataTableToolbar = <TData extends TableData<TData>>({
               type="button"
               onClick={() => setShowFilters((prev) => !prev)}
               className={cn(
-                'group relative flex items-center gap-2 px-3 h-9 rounded-[4px] transition-colors outline-none select-none',
-                'border bg-background',
+                'group relative flex items-center gap-2 px-3 h-9 rounded-xl transition-all duration-200 outline-hidden select-none',
+                'bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xs',
+
                 showFilters
-                  ? 'border-mirama-blue bg-badge-blue-bg text-mirama-blue'
-                  : 'border-input text-warm-gray-500 hover:border-warm-gray-300 hover:bg-warm-white dark:hover:bg-warm-dark/40',
-                'focus-visible:ring-2 focus-visible:ring-focus-blue/20 active:scale-[0.98]',
+                  ? 'border-primary/40 bg-primary/5 text-primary'
+                  : 'border-neutral-200 dark:border-neutral-800 text-neutral-500 hover:border-neutral-300 dark:hover:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-900',
+
+                'focus-visible:ring-4 focus-visible:ring-primary/10 active:scale-[0.98]',
               )}
             >
               {(columnFilters.length > 0 || globalFilter !== '') && (
                 <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mirama-blue opacity-40" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-mirama-blue border-2 border-background" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-40" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary border-2 border-white dark:border-[#0a0a0a]" />
                 </span>
               )}
 
-              <SlidersHorizontal className="w-3.5 h-3.5 transition-colors" />
+              <SlidersHorizontal
+                className={cn(
+                  'w-3.5 h-3.5 transition-colors',
+                  showFilters
+                    ? 'text-primary'
+                    : 'text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300',
+                )}
+              />
 
-              <span className="text-[12px] font-semibold [letter-spacing:0.125px] uppercase">
+              <span className="text-[10px] font-black uppercase tracking-widest">
                 {showFilters ? 'Hide Filters' : 'Show Filters'}
               </span>
 
               <ChevronDown
                 className={cn(
-                  'w-3 h-3 transition-transform duration-300 ease-in-out',
-                  showFilters && 'rotate-180',
+                  'w-3 h-3 transition-transform duration-300 ease-in-out text-neutral-400',
+                  showFilters && 'rotate-180 text-primary',
                 )}
               />
             </button>
