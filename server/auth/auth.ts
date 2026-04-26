@@ -66,7 +66,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.tenantRole = existingUser.role
       token.name = existingUser.name
 
-      if (trigger === 'update' && session?.organizationId) {
+      if (trigger === 'update' && session?.organizationId === null) {
+        // Explicit clear — user left org context (returned to tenant portal)
+        token.organizationId = undefined
+        token.orgRole = undefined
+        token.memberId = undefined
+      } else if (trigger === 'update' && session?.organizationId) {
         const foundOrg = await tryGetOrganization(
           token.sub as string,
           session.organizationId,

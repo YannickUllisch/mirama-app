@@ -8,7 +8,7 @@ export const fetchInvitationsFn = async (
   orgId: string,
 ): Promise<InvitationResponse[]> => {
   const { data } = await api.get(`organization/${orgId}/invitations`)
-  return data
+  return data.data
 }
 
 export const createInviteFn = async (
@@ -16,7 +16,7 @@ export const createInviteFn = async (
   payload: CreateInvitationRequest,
 ) => {
   const { data } = await api.post(`organization/${orgId}/invitations`, payload)
-  return data
+  return data.data
 }
 
 export const updateInvitationFn = async (
@@ -28,12 +28,12 @@ export const updateInvitationFn = async (
     `organization/${orgId}/invitations/${email}`,
     payload,
   )
-  return data
+  return data.data
 }
 
 export const deleteInvitationFn = async (orgId: string, email: string) => {
   const { data } = await api.delete(
     `organization/${orgId}/invitations/${email}`,
   )
-  return data
+  return data.data
 }

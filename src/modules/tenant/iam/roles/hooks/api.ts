@@ -10,6 +10,14 @@ export const fetchRolesFn = async (
   return data.data
 }
 
+export const fetchRoleByIdFn = async (
+  tenantId: string,
+  roleId: string,
+): Promise<RoleResponse> => {
+  const { data } = await api.get(`tenant/${tenantId}/role/${roleId}`)
+  return data.data
+}
+
 export const createRoleFn = async (
   tenantId: string,
   payload: CreateRoleRequest,

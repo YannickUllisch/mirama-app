@@ -1,8 +1,8 @@
 import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
 import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -10,6 +10,7 @@ import {
   createRoleFn,
   deleteRoleFn,
   detachPolicyFn,
+  fetchRoleByIdFn,
   fetchRolesFn,
   updateRoleFn,
 } from './api'
@@ -18,6 +19,8 @@ export const roleKeys = {
   root: ['roles'] as const,
   tenant: (tenantId: string) => [...roleKeys.root, tenantId] as const,
   list: (tenantId: string) => [...roleKeys.tenant(tenantId), 'list'] as const,
+  detail: (tenantId: string, roleId: string) =>
+    [...roleKeys.tenant(tenantId), 'detail', roleId] as const,
 }
 
 const role = {
@@ -27,6 +30,18 @@ const role = {
       return useQuery<RoleResponse[]>({
         queryKey: roleKeys.list(activeTenantId),
         queryFn: () => fetchRolesFn(activeTenantId),
+      })
+    },
+  },
+
+  fetchCurrentUserRole: {
+    useQuery: (roleId: string) => {
+      const { activeTenantId } = useOrganizationResource()
+
+      return useQuery<RoleResponse>({
+        queryKey: roleKeys.detail(activeTenantId, roleId),
+        queryFn: () => fetchRoleByIdFn(activeTenantId, roleId),
+        enabled: !!roleId && !!activeTenantId,
       })
     },
   },

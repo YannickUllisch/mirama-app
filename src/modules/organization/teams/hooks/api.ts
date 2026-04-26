@@ -78,5 +78,5 @@ export const removeTeamMemberFn = async (
   const { data } = await api.delete(
     `organization/${organizationId}/team/${teamId}/member/${memberId}`,
   )
-  return data
+  return data.data
 }

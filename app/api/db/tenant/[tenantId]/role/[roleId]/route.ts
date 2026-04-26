@@ -11,6 +11,21 @@ import {
   RoleIdParams,
   UpdateRoleSchema,
 } from '@/server/modules/account/roles/features/update-role/schema'
+import { GetRoleByIdQuery } from '@server/modules/account/roles/features/get-role/handler'
+import z from 'zod'
+
+export const GET = createRoute(
+  {
+    auth: {},
+    params: z.object({ roleId: z.string().min(1) }),
+    pathPattern: '/api/db/tenant/:tenantId/role/:roleId',
+  },
+  async (_req, { ctx }, { params }) => {
+    const data = await GetRoleByIdQuery(ctx)(params.roleId)
+
+    return Response.json({ success: true, data })
+  },
+)
 
 export const PUT = createRoute(
   {
