@@ -4,6 +4,7 @@ import PageHeader from '@src/components/PageHeader'
 import { Button } from '@ui/button'
 import { Building2, PlusIcon } from 'lucide-react'
 import { Suspense } from 'react'
+import InvitationPanel from './_components/InvitationPanel'
 import OrganizationGrid from './_components/OrganizationGrid'
 import OrganizationGridSkeleton from './_components/OrganizationGridSkeleton'
 
@@ -26,6 +27,7 @@ const TenantPage = async ({
       </PageHeader>
 
       <div className="flex-1 px-6 md:px-10 py-6 space-y-6">
+        <InvitationPanel />
         <Suspense fallback={<OrganizationGridSkeleton />}>
           <OrganizationGrid />
         </Suspense>

@@ -30,7 +30,7 @@ export function BasicFilterModel<TData>({
     <div className="flex items-center justify-between m-2">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-37.5 lg:w-62.5"
           placeholder="Filter Table.."
           type="text"
           autoComplete="off"

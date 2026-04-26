@@ -35,14 +35,17 @@ const ColorPicker = forwardRef<
         <button
           type="button"
           className={cn(
-            'group relative h-10 w-10 shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 p-1 transition-all hover:border-primary/40 focus:outline-hidden focus:ring-4 focus:ring-primary/10 disabled:opacity-50 disabled:cursor-not-allowed',
+            'h-9 w-9 shrink-0 rounded-lg border border-border bg-background p-1 transition-colors',
+            'hover:border-primary/50',
+            'focus:outline-none focus:ring-[0.125rem] focus:ring-ring',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
             className,
           )}
           onClick={() => setOpen(true)}
           onBlur={onBlur}
         >
           <div
-            className="h-full w-full rounded-lg shadow-xs"
+            className="h-full w-full rounded-md"
             style={{ backgroundColor: parsedValue }}
           />
         </button>
@@ -50,16 +53,16 @@ const ColorPicker = forwardRef<
 
       <PopoverContent
         sideOffset={8}
-        className="w-60 p-3 rounded-2xl border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md shadow-2xl flex flex-col gap-3"
+        className="w-56 p-3 flex flex-col gap-3"
       >
         <style
           // biome-ignore lint/security/noDangerouslySetInnerHtml: <Used for styling>
           dangerouslySetInnerHTML={{
             __html: `
-            .react-colorful { width: 100% !important; height: 160px !important; border-radius: 12px !important; }
-            .react-colorful__saturation { border-bottom: none !important; border-radius: 12px 12px 0 0 !important; }
-            .react-colorful__hue { height: 12px !important; border-radius: 0 0 12px 12px !important; }
-            .react-colorful__pointer { width: 16px !important; height: 16px !important; border: 2px solid white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important; }
+            .react-colorful { width: 100% !important; height: 148px !important; border-radius: 8px !important; }
+            .react-colorful__saturation { border-bottom: none !important; border-radius: 8px 8px 0 0 !important; }
+            .react-colorful__hue { height: 10px !important; border-radius: 0 0 8px 8px !important; }
+            .react-colorful__pointer { width: 14px !important; height: 14px !important; border: 2px solid white !important; }
           `,
           }}
         />
@@ -67,11 +70,11 @@ const ColorPicker = forwardRef<
         <HexColorPicker color={parsedValue} onChange={onChange} />
 
         <div className="flex items-center gap-2">
-          <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400 pl-1">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
             HEX
-          </div>
+          </span>
           <Input
-            className="h-8 text-xs font-bold font-mono"
+            className="h-7 text-xs font-mono"
             maxLength={7}
             onChange={(e) => onChange(e?.currentTarget?.value)}
             ref={ref}

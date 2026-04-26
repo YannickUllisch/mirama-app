@@ -1,6 +1,6 @@
-import type * as React from 'react'
 import { Badge } from '@src/components/ui/badge'
 import { Button } from '@src/components/ui/button'
+import { Checkbox } from '@src/components/ui/checkbox'
 import {
   Command,
   CommandEmpty,
@@ -18,7 +18,7 @@ import {
 import { Separator } from '@src/components/ui/separator'
 import type { Column } from '@tanstack/react-table'
 import { PlusCircle } from 'lucide-react'
-import { Checkbox } from '@src/components/ui/checkbox'
+import type * as React from 'react'
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
@@ -83,7 +83,7 @@ export const DataTableFacetedFilter = <TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 border" align="start">
+      <PopoverContent className="w-50 p-0 border" align="start">
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>

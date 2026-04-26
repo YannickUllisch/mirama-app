@@ -3,6 +3,11 @@ import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
 import DataTableToolbar from '@src/components/Tables/DataTableToolbar'
 import { DataTablePagination } from '@src/components/Tables/TablePagination'
+import {
+  inDateRangeFilterFn,
+  inEnumSetFilterFn,
+  inNumberRangeFilterFn,
+} from '@src/components/Tables/Filters/filter-fns'
 import { Table } from '@src/components/ui/table'
 import {
   type ColumnDef,
@@ -56,7 +61,6 @@ interface DataTableProps<TData extends TableData<TData>> {
     addToolbarleft?: React.ReactNode
     addToolbarright?: React.ReactNode
     showFilterOption?: boolean
-    filterOptionType?: 'TASK' | 'PROJECT'
   }
 
   footerOptions?: {
@@ -80,53 +84,40 @@ export const DataTable = <TData extends TableData<TData>>({
   toolbarOptions,
   footerOptions,
 }: DataTableProps<TData>) => {
-  // States
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
 
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
-    // Check the localStorage if a filterModel is defined
     const localStorageItem = getLocalStorageItem({
       item: `${tableIdentifier}-table-sizing`,
     })
-
     if (localStorageItem) return localStorageItem
-
     return { items: [] }
   })
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
-      // Check the localStorage if a filterModel is defined
       const localStorageItem = getLocalStorageItem({
         item: `${tableIdentifier}-table-visibility`,
       })
-
       if (localStorageItem) return localStorageItem
-
       return { items: [] }
     },
   )
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
-    // Local storage needs to be defined
     const localStorageItem = getLocalStorageItem({
       item: `${tableIdentifier}-table-filter`,
     })
-
     if (localStorageItem) return localStorageItem
-
     return []
   })
 
   const onColumnFiltersChange = (filterModel: Updater<ColumnFiltersState>) => {
-    // Convert to columnfiltersstate
     const newFilters =
       typeof filterModel === 'function'
         ? filterModel(columnFilters)
         : filterModel
-
-    // Save new filter in localStorage
     localStorage.setItem(
       `${tableIdentifier}-table-filter`,
       JSON.stringify(newFilters),
@@ -141,7 +132,6 @@ export const DataTable = <TData extends TableData<TData>>({
       typeof visibilityModel === 'function'
         ? visibilityModel(columnVisibility)
         : visibilityModel
-
     localStorage.setItem(
       `${tableIdentifier}-table-visibility`,
       JSON.stringify(newVisibilityState),
@@ -156,7 +146,6 @@ export const DataTable = <TData extends TableData<TData>>({
       typeof columnSizeModel === 'function'
         ? columnSizeModel(columnSizing)
         : columnSizeModel
-
     localStorage.setItem(
       `${tableIdentifier}-table-sizing`,
       JSON.stringify(newColSizeState),
@@ -169,7 +158,11 @@ export const DataTable = <TData extends TableData<TData>>({
   const table = useReactTable<TData>({
     data,
     columns,
-    // Sets row ID to the ID of the given data.
+    filterFns: {
+      inEnumSet: inEnumSetFilterFn,
+      inDateRange: inDateRangeFilterFn,
+      inNumberRange: inNumberRangeFilterFn,
+    },
     getRowId: (row, _, parent) =>
       parent ? [parent.id, row.id].join('.') : row.id,
     getSubRows: (row) => (!ignoreSubrows ? row.subtasks || [] : undefined),
@@ -194,7 +187,6 @@ export const DataTable = <TData extends TableData<TData>>({
     enableGlobalFilter: true,
     globalFilterFn: 'includesString',
     filterFromLeafRows: true,
-
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
@@ -206,7 +198,6 @@ export const DataTable = <TData extends TableData<TData>>({
     },
     initialState: {
       pagination: { pageSize: 10 },
-
       sorting: sortingState ? sortingState : sorting,
     },
     defaultColumn: {
@@ -216,36 +207,43 @@ export const DataTable = <TData extends TableData<TData>>({
   })
 
   return (
-    <>
-      <DataTableToolbar
-        tableIdentifier={tableIdentifier}
-        toolbarOptions={toolbarOptions}
-        columnFilters={columnFilters}
-        globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}
-        table={table}
-      />
-      <div className="w-full overflow-x-auto border-r border-l">
-        <div className="min-w-max">
-          <Table className="min-w-full table-auto">
-            <DataTableHeader table={table} />
-            <DataTableContent
-              columns={columns}
-              table={table}
-              dataLoading={dataLoading}
-              enableRowSelection={enableRowSelection}
-              expandedContent={expandedContent}
-              onRowSelectionChange={onRowSelectionChange}
-            />
-            {footerOptions?.addFooterRow}
-          </Table>
-        </div>
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      {/* Toolbar */}
+      <div className="border-b border-border bg-background/60">
+        <DataTableToolbar
+          tableIdentifier={tableIdentifier}
+          toolbarOptions={toolbarOptions}
+          columnFilters={columnFilters}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+          table={table}
+        />
       </div>
-      <DataTablePagination
-        table={table}
-        enableRowSelection={enableRowSelection}
-        pagination={footerOptions?.showPagination ?? false}
-      />
-    </>
+
+      {/* Table */}
+      <div className="w-full overflow-x-auto">
+        <Table className="min-w-full table-auto">
+          <DataTableHeader table={table} />
+          <DataTableContent
+            columns={columns}
+            table={table}
+            dataLoading={dataLoading}
+            enableRowSelection={enableRowSelection}
+            expandedContent={expandedContent}
+            onRowSelectionChange={onRowSelectionChange}
+          />
+          {footerOptions?.addFooterRow}
+        </Table>
+      </div>
+
+      {/* Pagination */}
+      <div className="border-t border-border bg-background/60">
+        <DataTablePagination
+          table={table}
+          enableRowSelection={enableRowSelection}
+          pagination={footerOptions?.showPagination ?? false}
+        />
+      </div>
+    </div>
   )
 }

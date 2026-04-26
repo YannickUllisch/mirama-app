@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Sans } from 'next/font/google'
+import { DM_Sans, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-const dmMono = DM_Sans({
+const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '700', '800', '900'],
   variable: '--font-dm-sans',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
 })
 
 export const viewport: Viewport = {
@@ -21,7 +27,7 @@ export const metadata: Metadata = {
 }
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning lang="en" className={dmMono.variable}>
+    <html suppressHydrationWarning lang="en" className={`${dmSans.variable} ${inter.variable}`}>
       <body className="bg-background">
         <Toaster />
         {children}

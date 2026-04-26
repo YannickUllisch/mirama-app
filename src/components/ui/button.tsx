@@ -4,47 +4,54 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center gap-3 whitespace-nowrap transition-all focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
+  'inline-flex items-center gap-3 whitespace-nowrap transition-all focus-visible:outline-hidden focus-visible:ring-[0.125rem] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
   {
     variants: {
       variant: {
+        // App / Brand variants — use CSS token system
         default:
-          'rounded-xl justify-center cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-bold tracking-tight shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]',
+          'rounded-full justify-center cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-medium tracking-tight',
 
         primary:
-          'rounded-xl cursor-pointer bg-primary text-white shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.2)] hover:opacity-90 font-bold tracking-tight',
+          'rounded-full cursor-pointer bg-primary text-white hover:opacity-85 font-medium tracking-tight',
 
         secondary:
-          'rounded-xl cursor-pointer bg-secondary text-white shadow-xs hover:opacity-90 font-bold tracking-tight',
+          'rounded-full cursor-pointer bg-secondary text-white hover:opacity-85 font-medium tracking-tight',
 
         tertiary:
-          'rounded-xl cursor-pointer bg-tertiary text-white shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.2)] hover:opacity-90 font-bold tracking-tight',
+          'rounded-full cursor-pointer bg-tertiary text-white hover:opacity-85 font-medium tracking-tight',
 
         outline:
-          'rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-800 bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900 text-neutral-600 dark:text-neutral-400 font-medium tracking-tight',
+          'rounded-full cursor-pointer border-2 border-border bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900 text-foreground font-medium tracking-tight',
 
         destructive:
-          'rounded-xl cursor-pointer border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-medium tracking-tight hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all duration-200 shadow-xs shadow-red-500/5',
+          'rounded-full cursor-pointer border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-medium tracking-tight hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all duration-200',
 
-        link: 'cursor-pointer h-auto p-0 text-[11px] font-bold text-text/70 underline-offset-4 hover:underline',
+        link: 'cursor-pointer h-auto p-0 text-[11px] font-medium text-text/70 underline-offset-4 hover:underline',
 
         ghost:
-          'rounded-xl justify-center cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 hover:text-tertiary font-medium tracking-tight',
+          'rounded-full justify-center cursor-pointer hover:bg-hover dark:hover:bg-neutral-900 text-text-secondary hover:text-tertiary font-medium tracking-tight',
 
-        brutalist:
-          'rounded-none whitespace-nowrap rounded-md text-sm font-black uppercase tracking-widest bg-blue-600 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:bg-red-500 hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
-        neo: 'rounded-none whitespace-nowrap text-sm font-bold tracking-widest bg-secondary text-white shadow-[8px_8px_0px_0px_hsl(var(--accent))] hover:translate-x-1 hover:translate-y-1 hover:shadow-none',
+        // Marketing surface variants — use Mirama marketing palette
+        'mkt-primary':
+          'rounded-full cursor-pointer bg-[var(--miui-dark)] text-white hover:opacity-85 font-medium tracking-tight',
 
-        'industrial-icon':
-          'border border-border bg-background hover:bg-tertiary hover:text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] hover:shadow-none hover:translate-x-1 hover:translate-y-1',
+        'mkt-secondary':
+          'rounded-full cursor-pointer bg-[var(--miui-surface)] text-black hover:opacity-85 font-medium tracking-tight',
+
+        'mkt-outline':
+          'rounded-full cursor-pointer border-2 border-[var(--miui-dark)] bg-transparent text-[var(--miui-dark)] hover:opacity-85 font-medium tracking-tight',
+
+        'mkt-ghost':
+          'rounded-full cursor-pointer border-2 border-[var(--miui-surface)] bg-[rgba(244,244,244,0.1)] text-[var(--miui-surface)] hover:opacity-85 font-medium tracking-tight',
       },
       size: {
-        default: 'h-10 px-5 text-sm',
-        sm: 'h-8 px-3 text-[11px]',
-        lg: 'h-12 px-8 text-base',
-        xl: 'h-14 px-10 text-lg',
+        default: 'h-10 px-8 py-[14px] text-sm',
+        sm: 'h-8 px-5 text-[11px]',
+        lg: 'h-12 px-8 py-[14px] text-base',
+        xl: 'h-14 px-10 py-[14px] text-lg',
         icon: 'h-10 w-10',
-        'pub-lg': 'h-16 px-12 text-sm font-black uppercase tracking-[0.2em]',
+        'pub-lg': 'h-16 px-12 text-sm font-medium uppercase tracking-[0.2em]',
       },
     },
     defaultVariants: {

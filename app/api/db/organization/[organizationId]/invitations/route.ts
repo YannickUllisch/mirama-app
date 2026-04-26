@@ -6,7 +6,7 @@ import { GetInvitationsQuery } from '@/server/modules/account/invitations/featur
 export const GET = createRoute(
   {
     auth: {},
-    pathPattern: '/api/db/organization/:organizationId/invite',
+    pathPattern: '/api/db/organization/:organizationId/invitation',
   },
   async (_req, { ctx }) => {
     const data = await GetInvitationsQuery(ctx)()
@@ -19,7 +19,7 @@ export const POST = createRoute(
   {
     auth: {},
     body: CreateInvitationSchema,
-    pathPattern: '/api/db/organization/:organizationId/invite',
+    pathPattern: '/api/db/organization/:organizationId/invitaton',
   },
   async (_req, { session, ctx }, { body }) => {
     const data = await CreateInvitationCommand(ctx)(session.user.id ?? '', body)

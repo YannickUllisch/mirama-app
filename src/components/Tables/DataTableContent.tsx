@@ -26,43 +26,18 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
   enableRowSelection,
 }: DataTableContentProps<TData, TValue>) => {
   return (
-    <TableBody className="overflow-auto">
+    <TableBody>
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
           <React.Fragment key={`cell${row.id}`}>
             <TableRow
               key={row.id}
-              // onClick={(event) => {
-              //   const target = event.target as Element
-              //   const isCheckbox = target.closest('.shadcn-checkbox')
-
-              //   if (isCheckbox) {
-              //     row.toggleSelected()
-              //   } else {
-              //     if (event.shiftKey) {
-              //       row.toggleSelected()
-              //     } else {
-              //       if (onRowSelectionChange) {
-              //         onRowSelectionChange({})
-              //       }
-              //       if (enableRowSelection) {
-              //         row.toggleSelected()
-              //       }
-              //     }
-              //   }
-              // }}
-              data-state={
-                enableRowSelection && row.getIsSelected() ? 'selected' : null
-              }
+              data-state={enableRowSelection && row.getIsSelected() ? 'selected' : null}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  className="group"
-                  style={{
-                    // width: cell.column.getSize(),
-                    minWidth: cell.column.columnDef.minSize,
-                  }}
+                  style={{ minWidth: cell.column.columnDef.minSize }}
                 >
                   {cell.column.id === 'select' ? (
                     <Checkbox
@@ -79,14 +54,18 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
           </React.Fragment>
         ))
       ) : (
-        <TableRow>
-          <TableCell colSpan={columns.length} className="h-24 text-center">
+        <TableRow className="hover:bg-transparent border-0">
+          <TableCell colSpan={columns.length} className="h-36">
             {dataLoading ? (
-              <div className="flex w-full align-center justify-center">
-                <Spinner className="bg-text" size={'md'} />
+              <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                <Spinner className="bg-text" size="md" />
+                <span className="text-sm">Loading data…</span>
               </div>
             ) : (
-              'No results.'
+              <div className="flex flex-col items-center justify-center gap-1.5 text-center">
+                <span className="text-sm font-medium text-foreground">No results found</span>
+                <span className="text-xs text-muted-foreground">Try adjusting your filters or search query</span>
+              </div>
             )}
           </TableCell>
         </TableRow>

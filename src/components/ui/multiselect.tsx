@@ -140,12 +140,9 @@ const MultiSelector = forwardRef<HTMLDivElement, MultiSelectorProps>(
         }}
       >
         <Command
-          ref={ref} // Pass ref to the main wrapper
+          ref={ref}
           onKeyDown={handleKeyDown}
-          className={cn(
-            'overflow-visible bg-transparent flex flex-col w-full',
-            className,
-          )}
+          className={cn('overflow-visible bg-transparent flex flex-col w-full', className)}
           dir={dir}
           {...props}
         >
@@ -173,7 +170,8 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'flex flex-wrap gap-1 p-1 py-1.5 border rounded-lg bg-transparent',
+        'flex flex-wrap gap-1.5 min-h-9 px-3 py-1.5 rounded-lg border border-border bg-background transition-colors',
+        'focus-within:ring-[0.125rem] focus-within:ring-ring focus-within:border-primary/60',
         className,
       )}
       {...props}
@@ -181,24 +179,22 @@ const MultiSelectorTrigger = forwardRef<
       {value.map((item, index) => (
         <Badge
           key={item}
+          variant="outline"
           className={cn(
-            'px-1 rounded-sm flex items-center gap-1',
-            activeIndex === index && 'ring-2 ring-muted-foreground ',
+            'h-6 gap-1 px-2 rounded-md text-xs font-medium',
+            activeIndex === index && 'ring-[0.125rem] ring-ring',
           )}
-          variant={'outline'}
         >
-          <span className="text-xs">
-            {renderValue ? renderValue(item) : item}
-          </span>
+          <span>{renderValue ? renderValue(item) : item}</span>
           <button
             aria-label={`Remove ${item} option`}
-            aria-roledescription="button to remove option"
             type="button"
             onMouseDown={mousePreventDefault}
             onClick={() => onValueChange(item)}
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <span className="sr-only">Remove {item} option</span>
-            <RemoveIcon className="h-4 w-4 hover:stroke-destructive" />
+            <RemoveIcon className="h-3 w-3" />
           </button>
         </Badge>
       ))}
@@ -215,9 +211,7 @@ const MultiSelectorInput = forwardRef<
 >(({ className, ...props }, ref) => {
   const { setOpen, inputValue, setInputValue, activeIndex, setActiveIndex } =
     useMultiSelect()
-  const resolvedValue = inputValue // This is the raw input value
-    ? inputValue // Show inputValue directly if not resolved
-    : ''
+  const resolvedValue = inputValue ? inputValue : ''
   return (
     <CommandPrimitive.Input
       {...props}
@@ -230,9 +224,9 @@ const MultiSelectorInput = forwardRef<
         setActiveIndex(-1)
       }}
       className={cn(
-        'ml-2 bg-transparent outline-hidden placeholder:text-muted-foreground text-wrap ewew-full',
-        className,
+        'flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground',
         activeIndex !== -1 && 'caret-transparent',
+        className,
       )}
     />
   )
@@ -248,7 +242,7 @@ const MultiSelectorContent = forwardRef<
   return (
     <div ref={ref} className="relative">
       {open && (
-        <div className="absolute z-10 top-full mt-2 left-1/2 transform -translate-x-1/2 w-full">
+        <div className="absolute z-10 top-full mt-1.5 left-0 w-full">
           {children}
         </div>
       )}
@@ -266,13 +260,13 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full bg-background text-text shadow-md z-10 border',
+        'rounded-xl border border-border bg-card text-card-foreground p-1 max-h-60 overflow-y-auto',
         className,
       )}
     >
       {children}
       <CommandEmpty>
-        <span className="text-muted-foreground">No results found</span>
+        <span className="text-sm text-muted-foreground px-2 py-1.5 block">No results found</span>
       </CommandEmpty>
     </CommandList>
   )
@@ -303,15 +297,16 @@ const MultiSelectorItem = forwardRef<
         setInputValue('')
       }}
       className={cn(
-        'rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between ',
-        className,
+        'flex items-center justify-between rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors',
+        'aria-selected:bg-primary/10 aria-selected:text-primary',
         isIncluded && 'opacity-50 cursor-default',
         props.disabled && 'opacity-50 cursor-not-allowed',
+        className,
       )}
       onMouseDown={mousePreventDefault}
     >
       {children}
-      {isIncluded && <Check className="h-4 w-4" />}
+      {isIncluded && <Check className="h-3.5 w-3.5 shrink-0" />}
     </CommandItem>
   )
 })

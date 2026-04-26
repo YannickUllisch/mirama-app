@@ -1,6 +1,7 @@
 // app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
+import '@src/components/Tables/Filters/column-filter-meta'
 import { PriorityType, StatusType } from '@/prisma/generated/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
@@ -164,6 +165,8 @@ export const useProjectColumns = ({
 
       columnHelper.accessor((row) => row.startDate, {
         id: 'startDate',
+        filterFn: 'inDateRange',
+        meta: { filter: { type: 'dateRange', title: 'Start Date' } },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Start Date" />
         ),
@@ -196,6 +199,8 @@ export const useProjectColumns = ({
 
       columnHelper.accessor('endDate', {
         id: 'endDate',
+        filterFn: 'inDateRange',
+        meta: { filter: { type: 'dateRange', title: 'End Date' } },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="End Date" />
         ),
@@ -255,6 +260,17 @@ export const useProjectColumns = ({
 
       columnHelper.accessor('priority', {
         id: 'priority',
+        filterFn: 'inEnumSet',
+        meta: {
+          filter: {
+            type: 'enum',
+            title: 'Priority',
+            options: Object.values(PriorityType).map((p) => ({
+              label: String(capitalize(p.replace('_', ' '))),
+              value: p,
+            })),
+          },
+        },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Priority" />
         ),
@@ -284,6 +300,17 @@ export const useProjectColumns = ({
 
       columnHelper.accessor('status', {
         id: 'status',
+        filterFn: 'inEnumSet',
+        meta: {
+          filter: {
+            type: 'enum',
+            title: 'Status',
+            options: Object.values(StatusType).map((s) => ({
+              label: String(capitalize(s.replace('_', ' '))),
+              value: s,
+            })),
+          },
+        },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Status" />
         ),
@@ -309,6 +336,8 @@ export const useProjectColumns = ({
 
       columnHelper.accessor('budget', {
         id: 'budget',
+        filterFn: 'inNumberRange',
+        meta: { filter: { type: 'numberRange', title: 'Budget', unit: '€' } },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Budget" />
         ),

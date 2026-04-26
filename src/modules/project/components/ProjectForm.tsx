@@ -16,7 +16,6 @@ import PageHeader from '@src/components/PageHeader'
 import CalendarSelect from '@src/components/Select/CalendarSelect'
 import { Button } from '@src/components/ui/button'
 import { Card, CardContent } from '@src/components/ui/card'
-import { Checkbox } from '@src/components/ui/checkbox'
 import {
   FormControl,
   FormField,
@@ -248,7 +247,7 @@ const ProjectForm = (props: ProjectFormProps) => {
 
   const handleAddMember = (memberId: string) => {
     if (!memberFields.some((f) => f.memberId === memberId)) {
-      appendMember({ memberId, isManager: false })
+      appendMember({ memberId })
     }
   }
 
@@ -258,13 +257,13 @@ const ProjectForm = (props: ProjectFormProps) => {
     }
   }
 
-  const toggleMemberManager = (index: number) => {
-    const current = form.getValues(`members.${index}.isManager`)
-    form.setValue(`members.${index}.isManager`, !current, {
-      shouldValidate: true,
-      shouldDirty: true,
-    })
-  }
+  // const toggleMemberManager = (index: number) => {
+  //   const current = form.getValues(`members.${index}.isManager`)
+  //   form.setValue(`members.${index}.isManager`, !current, {
+  //     shouldValidate: true,
+  //     shouldDirty: true,
+  //   })
+  // }
 
   const onSubmit = (values: ProjectFormValues) => {
     const { milestones, ...sharedFields } = values
@@ -1062,7 +1061,7 @@ const ProjectForm = (props: ProjectFormProps) => {
 
                             <div className="flex items-center gap-2 shrink-0">
                               <div className="flex items-center gap-1.5 text-accent-foreground">
-                                <Checkbox
+                                {/* <Checkbox
                                   id={`manager-${field.id}`}
                                   checked={form.watch(
                                     `members.${index}.isManager`,
@@ -1070,7 +1069,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                                   onCheckedChange={() =>
                                     toggleMemberManager(index)
                                   }
-                                />
+                                /> */}
                                 <Label
                                   htmlFor={`manager-${field.id}`}
                                   className="text-xs cursor-pointer"

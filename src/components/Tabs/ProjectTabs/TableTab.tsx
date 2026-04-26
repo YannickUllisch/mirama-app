@@ -132,7 +132,6 @@ const TableTab = ({
         setSortingState={setSortingState}
         toolbarOptions={{
           showFilterOption: true,
-          filterOptionType: 'TASK',
           addToolbarright: <ToolbarRight />,
         }}
         footerOptions={{ showPagination: true }}

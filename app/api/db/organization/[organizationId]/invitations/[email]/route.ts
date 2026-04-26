@@ -11,7 +11,7 @@ export const PUT = createRoute(
     auth: {},
     params: InvitationEmailParams,
     body: UpdateInvitationSchema,
-    pathPattern: '/api/db/organization/:organizationId/invite/:email',
+    pathPattern: '/api/db/organization/:organizationId/invitation/:email',
   },
   async (_req, { ctx }, { params, body }) => {
     const data = await UpdateInvitationCommand(ctx)(params.email, body)
@@ -24,7 +24,7 @@ export const DELETE = createRoute(
   {
     auth: {},
     params: InvitationEmailParams,
-    pathPattern: '/api/db/organization/:organizationId/invite/:email',
+    pathPattern: '/api/db/organization/:organizationId/invitation/:email',
   },
   async (_req, { ctx }, { params }) => {
     await DeleteInvitationCommand(ctx)(params.email)

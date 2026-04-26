@@ -14,6 +14,7 @@
 }
 
 @theme {
+  /* ─── App / Brand token mappings ─── */
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -62,6 +63,25 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-pill: 9999px;
+
+  /* ─── Mirama Marketing surface tokens (public pages only) ─── */
+  --miui-dark: #191c1f;
+  --miui-surface: #f4f4f4;
+  --miui-blue: #494fdf;
+  --miui-action-blue: #4f55f1;
+  --miui-blue-text: #376cd5;
+  --miui-danger: #e23b4a;
+  --miui-deep-pink: #e61e49;
+  --miui-warning: #ec7e00;
+  --miui-yellow: #b09000;
+  --miui-teal: #00a87e;
+  --miui-light-green: #428619;
+  --miui-light-blue: #007bc2;
+  --miui-brown: #936d62;
+  --miui-grey-tone-20: #c9c9cd;
+  --miui-mid-slate: #505a63;
+  --miui-cool-gray: #8d969e;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -229,7 +249,7 @@
 }
 @layer utilities {
   body {
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-inter, var(--font-dm-sans));
   }
 
   @keyframes inAnimation {

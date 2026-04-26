@@ -41,13 +41,13 @@ const HeaderBreadcrumbs = () => {
             <React.Fragment key={segment}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-neutral-100">
+                  <BreadcrumbPage className="text-[10px] font-black tracking-widest text-neutral-900 dark:text-neutral-100">
                     {label}
                   </BreadcrumbPage>
                 ) : (
                   <HoverLink
                     href={accumulatedPaths[index]}
-                    className="text-[10px] font-bold uppercase tracking-tighter text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                    className="text-[10px] font-bold tracking-widest text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   >
                     {label}
                   </HoverLink>

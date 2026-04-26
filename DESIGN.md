@@ -1,16 +1,16 @@
-# Design System Inspired by Revolut
+# Mirama Design System
 
 ## 1. Visual Theme & Atmosphere
 
-Revolut's website is fintech confidence distilled into pixels — a design system that communicates "your money is in capable hands" through massive typography, generous whitespace, and a disciplined neutral palette. The visual language is built on Aeonik Pro, a geometric grotesque that creates billboard-scale headlines at 136px with weight 500 and aggressive negative tracking (-2.72px). This isn't subtle branding; it's fintech at stadium scale.
+Mirama's website is fintech confidence distilled into pixels — a design system that communicates "your money is in capable hands" through massive typography, generous whitespace, and a disciplined neutral palette. The visual language is built on Aeonik Pro, a geometric grotesque that creates billboard-scale headlines at 136px with weight 500 and aggressive negative tracking (-2.72px). This isn't subtle branding; it's fintech at stadium scale.
 
-The color system is built on a comprehensive `--rui-*` (Revolut UI) token architecture with semantic naming for every state: danger (`#e23b4a`), warning (`#ec7e00`), teal (`#00a87e`), blue (`#494fdf`), deep-pink (`#e61e49`), and more. But the marketing surface itself is remarkably restrained — near-black (`#191c1f`) and pure white (`#ffffff`) dominate, with the colorful semantic tokens reserved for the product interface, not the marketing page.
+The color system is built on a comprehensive `--miui-*` (Mirama UI) token architecture with semantic naming for every state: danger (`#e23b4a`), warning (`#ec7e00`), teal (`#00a87e`), blue (`#494fdf`), deep-pink (`#e61e49`), and more. But the marketing surface itself is remarkably restrained — near-black (`#191c1f`) and pure white (`#ffffff`) dominate, with the colorful semantic tokens reserved for the product interface, not the marketing page.
 
-What distinguishes Revolut is its pill-everything button system. Every button uses 9999px radius — primary dark (`#191c1f`), secondary light (`#f4f4f4`), outlined (`transparent + 2px solid`), and ghost on dark (`rgba(244,244,244,0.1) + 2px solid`). The padding is generous (14px 32px–34px), creating large, confident touch targets. Combined with Inter for body text at various weights and positive letter-spacing (0.16px–0.24px), the result is a design that feels both premium and accessible — banking for the modern era.
+What distinguishes Mirama is its pill-everything button system. Every button uses 9999px radius — primary dark (`#191c1f`), secondary light (`#f4f4f4`), outlined (`transparent + 2px solid`), and ghost on dark (`rgba(244,244,244,0.1) + 2px solid`). The padding is generous (14px 32px–34px), creating large, confident touch targets. Combined with Inter for body text at various weights and positive letter-spacing (0.16px–0.24px), the result is a design that feels both premium and accessible — banking for the modern era.
 
 **Key Characteristics:**
 - Aeonik Pro display at 136px weight 500 — billboard-scale fintech headlines
-- Near-black (`#191c1f`) + white binary with comprehensive `--rui-*` semantic tokens
+- Near-black (`#191c1f`) + white binary with comprehensive `--miui-*` semantic tokens
 - Universal pill buttons (9999px radius) with generous padding (14px 32px)
 - Inter for body text with positive letter-spacing (0.16px–0.24px)
 - Rich semantic color system: blue, teal, pink, yellow, green, brown, danger, warning
@@ -19,32 +19,82 @@ What distinguishes Revolut is its pill-everything button system. Every button us
 
 ## 2. Color Palette & Roles
 
-### Primary
-- **Revolut Dark** (`#191c1f`): Primary dark surface, button background, near-black text
-- **Pure White** (`#ffffff`): `--rui-color-action-label`, primary light surface
+Mirama runs a **dual color system**: the **Marketing surface** uses the classic near-black + white palette below; the **App / Brand surface** uses the CSS token system defined in `globals.css`. Never mix the two — marketing colors stay on public pages, brand tokens power the product UI.
+
+---
+
+### Marketing Surface (Public Pages)
+
+#### Primary
+- **Mirama Dark** (`#191c1f`): Primary dark surface, button background, near-black text
+- **Pure White** (`#ffffff`): `--miui-color-action-label`, primary light surface
 - **Light Surface** (`#f4f4f4`): Secondary button background, subtle surface
 
-### Brand / Interactive
-- **Revolut Blue** (`#494fdf`): `--rui-color-blue`, primary brand blue
-- **Action Blue** (`#4f55f1`): `--rui-color-action-photo-header-text`, header accent
+#### Brand / Interactive
+- **Mirama Blue** (`#494fdf`): `--miui-color-blue`, primary brand blue
+- **Action Blue** (`#4f55f1`): `--miui-color-action-photo-header-text`, header accent
 - **Blue Text** (`#376cd5`): `--website-color-blue-text`, link blue
 
-### Semantic
-- **Danger Red** (`#e23b4a`): `--rui-color-danger`, error/destructive
-- **Deep Pink** (`#e61e49`): `--rui-color-deep-pink`, critical accent
-- **Warning Orange** (`#ec7e00`): `--rui-color-warning`, warning states
-- **Yellow** (`#b09000`): `--rui-color-yellow`, attention
-- **Teal** (`#00a87e`): `--rui-color-teal`, success/positive
-- **Light Green** (`#428619`): `--rui-color-light-green`, secondary success
+#### Semantic
+- **Danger Red** (`#e23b4a`): `--miui-color-danger`, error/destructive
+- **Deep Pink** (`#e61e49`): `--miui-color-deep-pink`, critical accent
+- **Warning Orange** (`#ec7e00`): `--miui-color-warning`, warning states
+- **Yellow** (`#b09000`): `--miui-color-yellow`, attention
+- **Teal** (`#00a87e`): `--miui-color-teal`, success/positive
+- **Light Green** (`#428619`): `--miui-color-light-green`, secondary success
 - **Green Text** (`#006400`): `--website-color-green-text`, green text
-- **Light Blue** (`#007bc2`): `--rui-color-light-blue`, informational
-- **Brown** (`#936d62`): `--rui-color-brown`, warm neutral accent
+- **Light Blue** (`#007bc2`): `--miui-color-light-blue`, informational
+- **Brown** (`#936d62`): `--miui-color-brown`, warm neutral accent
 - **Red Text** (`#8b0000`): `--website-color-red-text`, dark red text
 
-### Neutral Scale
+#### Neutral Scale
 - **Mid Slate** (`#505a63`): Secondary text
 - **Cool Gray** (`#8d969e`): Muted text, tertiary
-- **Gray Tone** (`#c9c9cd`): `--rui-color-grey-tone-20`, borders/dividers
+- **Gray Tone** (`#c9c9cd`): `--miui-color-grey-tone-20`, borders/dividers
+
+---
+
+### App / Brand Surface (Product UI — CSS Token System)
+
+These are the live CSS custom properties defined in `globals.css` and consumed by Tailwind via `--color-*` mappings. All product UI components must use these tokens — never hardcode hex values inside app routes.
+
+#### Core Brand Tokens
+| Token | Light Value | Dark Value | Role |
+|-------|-------------|------------|------|
+| `--primary` | `hsl(6 100% 56%)` | `hsl(6 100% 56%)` | Primary brand accent (Mirama Orange-Red) |
+| `--primary-light` | `hsl(10 100% 63%)` | `hsl(10 100% 63%)` | Lighter primary tint, hover states |
+| `--primary-dark` | `hsl(4 100% 45%)` | — | Darker primary, pressed/active states |
+| `--secondary` | `hsl(197 35% 17%)` | `hsl(205 18% 15%)` | Deep teal-navy, secondary surfaces |
+| `--tertiary` | `hsl(221 97% 54%)` | `hsl(221 97% 54%)` | Brand blue, links, interactive accents |
+
+#### Surface & Text Tokens
+| Token | Light Value | Dark Value | Role |
+|-------|-------------|------------|------|
+| `--background` | `hsl(0 0% 97%)` | `hsl(0 0% 7.6%)` | Page background |
+| `--foreground` | `hsl(11 32% 15%)` | `hsl(249 7% 96%)` | Primary text |
+| `--card` | `hsl(0 0% 100%)` | `hsl(0 0% 10%)` | Card / panel surface |
+| `--card-foreground` | `hsl(11 32% 15%)` | `hsl(249 7% 96%)` | Text on cards |
+| `--popover` | `hsl(249 7% 96%)` | `hsl(197 65% 12%)` | Popover / dropdown surface |
+| `--popover-foreground` | `hsl(11 32% 15%)` | `hsl(249 7% 96%)` | Text on popovers |
+| `--muted` | `hsl(0 0% 97%)` | `hsl(0 0% 97%)` | Muted / subdued surface |
+| `--muted-foreground` | `hsl(0 0% 30%)` | `hsl(0 0% 60%)` | Muted text |
+| `--text` | `hsl(11 32% 15%)` | `hsl(249 7% 96%)` | Semantic text color |
+| `--text-secondary` | `hsl(11 10% 40%)` | `hsl(249 7% 70%)` | Secondary / helper text |
+| `--text-inverted` | `hsl(249 7% 96%)` | `hsl(11 32% 15%)` | Inverted text (on dark surfaces) |
+
+#### Utility Tokens
+| Token | Role |
+|-------|------|
+| `--border` | Default border color |
+| `--input` | Form input border |
+| `--ring` | Focus ring (matches `--primary`) |
+| `--radius` | Base border radius (`0.5rem`) |
+| `--accent` | Accent / highlight surface |
+| `--destructive` | Destructive action color (maps to `--primary`) |
+| `--hover` | Hover state background |
+
+#### Combined Brand Reference
+The `--primary` orange-red and `--tertiary` blue pair are the two Mirama brand anchors. Use `--primary` for calls-to-action, badges, and progress indicators. Use `--tertiary` for links, info states, and secondary interactive elements. Reserve `--secondary` for structural dark surfaces (sidebars, headers).
 
 ## 3. Typography Rules
 
@@ -133,10 +183,10 @@ What distinguishes Revolut is its pill-everything button system. Every button us
 
 | Level | Treatment | Use |
 |-------|-----------|-----|
-| Flat (Level 0) | No shadow | Everything — Revolut uses zero shadows |
+| Flat (Level 0) | No shadow | Everything — Mirama uses zero shadows |
 | Focus | `0 0 0 0.125rem` ring | Accessibility focus |
 
-**Shadow Philosophy**: Revolut uses ZERO shadows. Depth comes entirely from the dark/light section contrast and the generous whitespace between elements.
+**Shadow Philosophy**: Mirama uses ZERO shadows. Depth comes entirely from the dark/light section contrast and the generous whitespace between elements.
 
 ## 7. Do's and Don'ts
 
@@ -148,7 +198,7 @@ What distinguishes Revolut is its pill-everything button system. Every button us
 - Apply positive letter-spacing on Inter body text
 
 ### Don't
-- Don't use shadows — Revolut is flat by design
+- Don't use shadows — Mirama is flat by design
 - Don't use bold (700) for Aeonik Pro headings — 500 is the weight
 - Don't use small buttons — the generous padding is intentional
 - Don't apply semantic colors to marketing surfaces — they're for the product
@@ -167,10 +217,10 @@ What distinguishes Revolut is its pill-everything button system. Every button us
 ## 9. Agent Prompt Guide
 
 ### Quick Color Reference
-- Dark: Revolut Dark (`#191c1f`)
+- Dark: Mirama Dark (`#191c1f`)
 - Light: White (`#ffffff`)
 - Surface: Light (`#f4f4f4`)
-- Blue: Revolut Blue (`#494fdf`)
+- Blue: Mirama Blue (`#494fdf`)
 - Danger: Red (`#e23b4a`)
 - Success: Teal (`#00a87e`)
 
@@ -181,5 +231,5 @@ What distinguishes Revolut is its pill-everything button system. Every button us
 ### Iteration Guide
 1. Aeonik Pro 500 for headings — never bold
 2. All buttons are pills (9999px) with generous padding
-3. Zero shadows — flat is the Revolut identity
+3. Zero shadows — flat is the Mirama identity
 4. Near-black + white for marketing, semantic colors for product

@@ -31,7 +31,6 @@ export const ProjectTeamLinkSchema = z.object({
 export const ProjectMemberLinkSchema = z.object({
   memberId: z.string().min(1),
   roleId: z.string().optional(),
-  isManager: z.boolean().default(false),
 })
 
 // ── Inferred types ────────────────────────────────────────────────────────────

@@ -1,3 +1,4 @@
+import '@src/components/Tables/Filters/column-filter-meta'
 import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { TagResponse } from '@server/modules/account/tags/features/response'
@@ -139,6 +140,17 @@ export const useTaskColumns = ({
 
       columnHelper.accessor((row) => row.priority, {
         id: 'priority',
+        filterFn: 'inEnumSet',
+        meta: {
+          filter: {
+            type: 'enum',
+            title: 'Priority',
+            options: Object.values(PriorityType).map((p) => ({
+              label: String(capitalize(p.replace('_', ' '))),
+              value: p,
+            })),
+          },
+        },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Priority" />
         ),
@@ -156,13 +168,21 @@ export const useTaskColumns = ({
             type={EditableCellType.SELECT}
           />
         ),
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id))
-        },
       }),
 
       columnHelper.accessor((row) => row.status, {
         id: 'status',
+        filterFn: 'inEnumSet',
+        meta: {
+          filter: {
+            type: 'enum',
+            title: 'Status',
+            options: Object.values(TaskStatusType).map((s) => ({
+              label: String(capitalize(s.replace('_', ' '))),
+              value: s,
+            })),
+          },
+        },
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Status" />
         ),
