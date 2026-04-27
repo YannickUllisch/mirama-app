@@ -1,7 +1,7 @@
 // src/components/Sidebar/AppSidebar.tsx
 'use client'
-import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import { cn } from '@src/lib/utils'
+import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import {
   Sidebar,
   SidebarContent,
@@ -18,9 +18,17 @@ interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'children'> {
   headerSlot?: React.ReactNode
   children: React.ReactNode
+  tenantId: string
+  organizationId?: string
 }
 
-const AppSidebar = ({ headerSlot, children, ...props }: AppSidebarProps) => {
+const AppSidebar = ({
+  headerSlot,
+  children,
+  tenantId,
+  organizationId,
+  ...props
+}: AppSidebarProps) => {
   const isMobile = useIsMobile()
 
   return (
@@ -35,10 +43,22 @@ const AppSidebar = ({ headerSlot, children, ...props }: AppSidebarProps) => {
       </SidebarContent>
       <SidebarFooter className="p-2">
         <SidebarMenu>
-          <HoverLink href="/contact">
+          <HoverLink href={`tenant/${tenantId}/documentation`}>
             <SidebarMenuButton>
               <CircleHelp className="w-4 h-4" />
-              Contact
+              Documentation
+            </SidebarMenuButton>
+          </HoverLink>
+          <HoverLink
+            href={
+              organizationId
+                ? `organization/${organizationId}/settings`
+                : `tenant/${tenantId}/settings`
+            }
+          >
+            <SidebarMenuButton>
+              <CircleHelp className="w-4 h-4" />
+              Documentation
             </SidebarMenuButton>
           </HoverLink>
         </SidebarMenu>

@@ -46,6 +46,7 @@ const AppLayout = async ({
 
                   <div className="flex flex-1 pt-14">
                     <OrganizationSidebar
+                      tenantId={session.user.tenantId}
                       organizationId={organizationId}
                       className="shrink-0"
                     />

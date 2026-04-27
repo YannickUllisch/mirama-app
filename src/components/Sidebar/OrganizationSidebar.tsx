@@ -13,6 +13,7 @@ import SidebarNewButton from './SidebarNewButton'
 
 interface OrganizationSidebarProps {
   organizationId: string
+  tenantId: string
   className?: string
 }
 
@@ -32,6 +33,7 @@ const injectOrgId = (
 
 const OrganizationSidebar = ({
   className,
+  tenantId,
   organizationId,
 }: OrganizationSidebarProps) => {
   const { data: session } = useSession()
@@ -41,6 +43,8 @@ const OrganizationSidebar = ({
   return (
     <AppSidebar
       className={className}
+      tenantId={tenantId}
+      organizationId={organizationId}
       headerSlot={
         <>
           <SidebarMobileHeader />
