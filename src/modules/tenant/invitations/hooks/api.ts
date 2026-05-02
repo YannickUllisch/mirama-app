@@ -2,8 +2,10 @@
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import { api } from '@src/modules/shared/api'
 
-export const fetchMyInvitationsFn = async (): Promise<InvitationResponse[]> => {
-  const { data } = await api.get('invitations')
+export const fetchMyInvitationsFn = async (
+  tenantId: string,
+): Promise<InvitationResponse[]> => {
+  const { data } = await api.get(`tenant/${tenantId}/invitations`)
   return data.data
 }
 

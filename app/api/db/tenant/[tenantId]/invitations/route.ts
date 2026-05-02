@@ -5,7 +5,7 @@ import { GetMyInvitationsQuery } from '@/server/modules/account/invitations/feat
 export const GET = createRoute(
   {
     auth: {},
-    pathPattern: '/api/db/invitations',
+    pathPattern: '/api/db/invitations/tenant/:tenantId',
   },
   async (_req, { ctx, session }) => {
     const email = session.user?.email

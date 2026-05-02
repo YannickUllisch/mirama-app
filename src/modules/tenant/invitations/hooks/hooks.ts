@@ -14,13 +14,16 @@ export const myInvitationKeys = {
   list: () => [...myInvitationKeys.root, 'list'] as const,
 }
 
-export const useMyInvitations = () =>
-  useQuery<InvitationResponse[]>({
+export const useMyInvitations = () => {
+  const { activeTenantId } = useTenantResource()
+
+  return useQuery<InvitationResponse[]>({
     queryKey: myInvitationKeys.list(),
-    queryFn: fetchMyInvitationsFn,
+    queryFn: () => fetchMyInvitationsFn(activeTenantId),
     refetchOnWindowFocus: false,
     retry: false,
   })
+}
 
 export const useAcceptInvitation = () => {
   const queryClient = useQueryClient()
