@@ -2,9 +2,9 @@
 import type { CreateTagRequest } from '@/server/modules/account/tags/features/create-tag/schema'
 import type { TagResponse } from '@/server/modules/account/tags/features/response'
 import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useOrganizationResource } from '../../organizationResourceContext'
 import { createTagFn, deleteTagFn, fetchTagsFn, updateTagFn } from './api'
 
 export const tagKeys = {

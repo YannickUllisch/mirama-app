@@ -4,7 +4,8 @@ import type { TagResponse } from '@/server/modules/account/tags/features/respons
 import type { CreateProjectRequest } from '@/server/modules/project/features/create-project/schema'
 import type { ProjectResponse } from '@/server/modules/project/features/response'
 import type { UpdateProjectRequest } from '@/server/modules/project/features/update-project/schema'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {

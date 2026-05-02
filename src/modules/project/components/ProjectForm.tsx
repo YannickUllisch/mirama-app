@@ -43,9 +43,9 @@ import {
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
-import teamHooks from '@src/modules/organization/teams/hooks/hooks'
+
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Badge } from '@ui/badge'
 import Centering from '@ui/centering'
 import { ColorPicker } from '@ui/color-picker'
@@ -143,7 +143,7 @@ const ProjectForm = (props: ProjectFormProps) => {
     apiRequest.project.fetchById.useQuery(projectId ?? '')
   const { data: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
   const { data: tags } = apiRequest.tag.fetchAll.useQuery()
-  const { data: allTeams = [] } = teamHooks.fetchAll.useQuery()
+  const { data: allTeams = [] } = apiRequest.team.fetchAll.useQuery()
 
   // Mutations
   const { mutate: createProject, isPending: isCreating } =

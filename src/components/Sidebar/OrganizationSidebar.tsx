@@ -1,7 +1,7 @@
 // src/components/Sidebar/OrganizationSidebar.tsx
 'use client'
 import SidebarProjectsSkeleton from '@src/components/Skeletons/SidebarProjectsSkeleton'
-import { OrganizationSidebarMenu } from '@src/modules/organization/organizationSidebarMenu'
+import { OrganizationSidebarMenu } from '@src/modules/tenant/organization/organizationSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import { useSession } from 'next-auth/react'
 import { Suspense } from 'react'

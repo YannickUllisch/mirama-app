@@ -1,9 +1,9 @@
 // src/modules/organization/members/hooks/hooks.ts
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import type { UpdateMemberRequest } from '@/server/modules/account/members/features/update-member/schema'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useOrganizationResource } from '../../organizationResourceContext'
 import { fetchOrgMembersFn, updateOrgMemberFn } from './api'
 
 export const memberKeys = {

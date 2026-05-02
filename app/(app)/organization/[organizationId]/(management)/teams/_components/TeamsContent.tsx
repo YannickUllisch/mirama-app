@@ -2,7 +2,7 @@
 'use client'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
-import teamHooks from '@src/modules/organization/teams/hooks/hooks'
+
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import { Button } from '@ui/button'
 import { Plus, Users2 } from 'lucide-react'
@@ -20,16 +20,16 @@ const TeamsContent = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [teamToDelete, setTeamToDelete] = useState<string | null>(null)
 
-  const { data: teams = [], isLoading } = teamHooks.fetchAll.useQuery()
+  const { data: teams = [], isLoading } = apiRequest.team.fetchAll.useQuery()
 
   // Org members are fetched once here and passed down so each TeamSection
   // can filter the add-member dropdown without additional requests.
   const { data: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
 
   const { mutate: createTeam, isPending: isCreating } =
-    teamHooks.create.useMutation()
+    apiRequest.team.create.useMutation()
 
-  const { mutate: deleteTeam } = teamHooks.remove.useMutation()
+  const { mutate: deleteTeam } = apiRequest.team.remove.useMutation()
 
   return (
     <div className="space-y-5">

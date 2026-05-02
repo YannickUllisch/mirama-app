@@ -5,17 +5,17 @@ import type {
 } from '@/server/modules/account/organizations/features/response'
 import type { UpdateOrganizationRequest } from '@/server/modules/account/organizations/features/update-organization/schema'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
-import {
-  createOrganizationFn,
-  fetchOrganizationByIdFn,
-  fetchOrganizationsFn,
-  fetchOrgProjectsFn,
-  updateOrganizationFn,
-  type OrgProjectSummary,
-} from '@src/modules/organization/hooks/api'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useOrganizationResource } from '../organizationResourceContext'
+import {
+  type OrgProjectSummary,
+  createOrganizationFn,
+  fetchOrgProjectsFn,
+  fetchOrganizationByIdFn,
+  fetchOrganizationsFn,
+  updateOrganizationFn,
+} from './api'
 
 export const organizationKeys = {
   // ['organizations']

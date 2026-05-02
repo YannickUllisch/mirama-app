@@ -3,9 +3,9 @@ import type { CreateInvitationRequest } from '@/server/modules/account/invitatio
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import type { UpdateInvitationRequest } from '@/server/modules/account/invitations/features/update-invitation/schema'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
+import { useOrganizationResource } from '../../organizationResourceContext'
 import {
   createInviteFn,
   deleteInvitationFn,

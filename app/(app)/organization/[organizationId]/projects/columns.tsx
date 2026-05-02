@@ -1,7 +1,6 @@
 // app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
-import '@src/components/Tables/Filters/column-filter-meta'
 import { PriorityType, StatusType } from '@/prisma/generated/client'
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import type { ProjectResponse } from '@server/modules/project/features/response'
@@ -11,10 +10,11 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import '@src/components/Tables/Filters/column-filter-meta'
 import { capitalize } from '@src/lib/utils'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {

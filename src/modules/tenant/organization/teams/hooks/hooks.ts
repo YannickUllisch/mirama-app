@@ -1,14 +1,15 @@
 // src/modules/organization/teams/hooks/hooks.ts
-import type { AddTeamMemberRequest } from '@/server/modules/account/teams/features/team-members/add-team-member/schema'
 import type { CreateTeamRequest } from '@/server/modules/account/teams/features/create-team/schema'
 import type {
   TeamMemberResponse,
   TeamResponse,
 } from '@/server/modules/account/teams/features/response'
+import type { AddTeamMemberRequest } from '@/server/modules/account/teams/features/team-members/add-team-member/schema'
 import type { UpdateTeamRequest } from '@/server/modules/account/teams/features/update-team/schema'
-import { useOrganizationResource } from '@src/modules/organization/organizationResourceContext'
+
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useOrganizationResource } from '../../organizationResourceContext'
 import {
   addTeamMemberFn,
   createTeamFn,

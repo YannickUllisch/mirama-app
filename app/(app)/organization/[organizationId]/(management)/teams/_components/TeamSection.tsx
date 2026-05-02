@@ -2,9 +2,9 @@
 'use client'
 import type { MemberResponse } from '@/server/modules/account/members/features/response'
 import type { TeamResponse } from '@/server/modules/account/teams/features/response'
+import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import { cn } from '@src/lib/utils'
-import teamHooks from '@src/modules/organization/teams/hooks/hooks'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import {
@@ -45,12 +45,14 @@ const TeamSection = ({
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null)
 
   const { data: members = [], isLoading: membersLoading } =
-    teamHooks.members.fetch.useQuery(team.id)
+    apiRequest.team.members.fetch.useQuery(team.id)
 
   const { mutate: addMember, isPending: isAdding } =
-    teamHooks.members.add.useMutation(team.id)
+    apiRequest.team.members.add.useMutation(team.id)
 
-  const { mutate: removeMember } = teamHooks.members.remove.useMutation(team.id)
+  const { mutate: removeMember } = apiRequest.team.members.remove.useMutation(
+    team.id,
+  )
 
   // Only show org members not already in this team
   const availableMembers = orgMembers.filter(
