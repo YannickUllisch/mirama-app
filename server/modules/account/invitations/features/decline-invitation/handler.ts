@@ -18,7 +18,9 @@ export const DeclineInvitationCommand =
       throw new Error('This invitation does not belong to you')
     }
 
-    await db.organizationInvitation.delete({ where: { email: invitation.email } })
+    await db.organizationInvitation.delete({
+      where: { email: invitation.email },
+    })
 
     logger.info({ invitationId }, 'Invitation declined')
 

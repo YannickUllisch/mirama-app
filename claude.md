@@ -88,7 +88,7 @@ export const GET = createRoute(
 
 **Model scoping rules:**
 - Tenant-scoped: `Organization`
-- Org-scoped: `Project`, `Task`, `Member`, `Team`, `TeamMember`, `ProjectTeam`, `Tag`, `OrganizationInvitation`, `ProjectMember`, `Milestone`, `Comment`, `Expense`, `Notification`, `Favourite`
+- Org-scoped: `Project`, `Task`, `Member`, `Team`, `TeamMember`, `ProjectTeam`, `Tag`, `OrganizationInvitation`, `ProjectMember`, `Milestone`, `Comment`, `Expense`, `Notification`
 - Tenant-inclusive (system + tenant records): `Role`, `Policy`
 
 ### Permissions & IAM

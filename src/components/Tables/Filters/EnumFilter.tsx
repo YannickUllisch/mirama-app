@@ -10,7 +10,11 @@ import {
   CommandList,
   CommandSeparator,
 } from '@src/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@src/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@src/components/ui/popover'
 import { cn } from '@src/lib/utils'
 import type { Column } from '@tanstack/react-table'
 import { Check, ChevronDown, ListFilter } from 'lucide-react'
@@ -22,9 +26,15 @@ interface EnumFilterProps<TData> {
   options: EnumFilterOption[]
 }
 
-export const EnumFilter = <TData,>({ column, title, options }: EnumFilterProps<TData>) => {
+export const EnumFilter = <TData,>({
+  column,
+  title,
+  options,
+}: EnumFilterProps<TData>) => {
   const facets = column.getFacetedUniqueValues()
-  const selected = new Set((column.getFilterValue() as string[] | undefined) ?? [])
+  const selected = new Set(
+    (column.getFilterValue() as string[] | undefined) ?? [],
+  )
   const isActive = selected.size > 0
 
   const toggle = (value: string) => {
@@ -55,7 +65,10 @@ export const EnumFilter = <TData,>({ column, title, options }: EnumFilterProps<T
             <>
               <span className="h-3 w-px bg-primary/30 mx-0.5" />
               {selected.size > 2 ? (
-                <Badge variant="secondary" className="h-4 px-1.5 rounded-full text-[10px] font-semibold">
+                <Badge
+                  variant="secondary"
+                  className="h-4 px-1.5 rounded-full text-[10px] font-semibold"
+                >
                   {selected.size}
                 </Badge>
               ) : (
@@ -81,10 +94,15 @@ export const EnumFilter = <TData,>({ column, title, options }: EnumFilterProps<T
 
       <PopoverContent align="start" className="w-52 p-0">
         <Command>
-          <CommandInput placeholder={`Search ${title.toLowerCase()}…`} className="h-8 text-sm" />
+          <CommandInput
+            placeholder={`Search ${title.toLowerCase()}…`}
+            className="h-8 text-sm"
+          />
           <CommandList>
             <CommandEmpty>
-              <span className="text-xs text-muted-foreground">No options found</span>
+              <span className="text-xs text-muted-foreground">
+                No options found
+              </span>
             </CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
@@ -105,7 +123,9 @@ export const EnumFilter = <TData,>({ column, title, options }: EnumFilterProps<T
                             : 'border-border',
                         )}
                       >
-                        {isSelected && <Check className="h-2.5 w-2.5" strokeWidth={3} />}
+                        {isSelected && (
+                          <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                        )}
                       </div>
                       {option.icon && (
                         <option.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />

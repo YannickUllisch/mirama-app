@@ -31,25 +31,30 @@ export function DataTablePagination<TData>({
     <div className="flex items-center justify-between px-3 py-2 min-h-10">
       {/* Selection count */}
       <div className="text-xs text-muted-foreground tabular-nums">
-        {enableRowSelection && table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <span>
-            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} selected
-          </span>
-        )}
+        {enableRowSelection &&
+          table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <span>
+              {table.getFilteredSelectedRowModel().rows.length} of{' '}
+              {table.getFilteredRowModel().rows.length} selected
+            </span>
+          )}
       </div>
 
       {pagination && (
         <div className="flex items-center gap-4 ml-auto">
           {/* Rows per page */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground whitespace-nowrap">Rows per page</span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              Rows per page
+            </span>
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => table.setPageSize(Number(value))}
             >
               <SelectTrigger className="h-7 w-16 text-xs">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
+                <SelectValue
+                  placeholder={table.getState().pagination.pageSize}
+                />
               </SelectTrigger>
               <SelectContent side="top">
                 {[5, 10, 20, 30, 40, 50].map((pageSize) => (

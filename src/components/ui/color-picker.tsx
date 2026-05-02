@@ -51,10 +51,7 @@ const ColorPicker = forwardRef<
         </button>
       </PopoverTrigger>
 
-      <PopoverContent
-        sideOffset={8}
-        className="w-56 p-3 flex flex-col gap-3"
-      >
+      <PopoverContent sideOffset={8} className="w-56 p-3 flex flex-col gap-3">
         <style
           // biome-ignore lint/security/noDangerouslySetInnerHtml: <Used for styling>
           dangerouslySetInnerHTML={{

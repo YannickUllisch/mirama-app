@@ -29,7 +29,10 @@ const InvitationPanelSkeleton = () => (
     </div>
     <div className="divide-y divide-border">
       {[1, 2].map((i) => (
-        <div key={i} className="px-5 py-4 flex items-center justify-between gap-4">
+        <div
+          key={i}
+          className="px-5 py-4 flex items-center justify-between gap-4"
+        >
           <div className="flex items-center gap-3">
             <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
             <div className="space-y-1.5">
@@ -128,9 +131,7 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
       )}
 
       {isExpired && (
-        <span className="text-xs text-muted-foreground shrink-0">
-          Expired
-        </span>
+        <span className="text-xs text-muted-foreground shrink-0">Expired</span>
       )}
     </div>
   )
@@ -147,7 +148,8 @@ const InvitationPanel = () => {
   if (isError || !invitations || invitations.length === 0) return null
 
   const activeInvitations = invitations.filter(
-    (inv) => DateTime.fromJSDate(new Date(inv.expiresAt)).diffNow('hours').hours > 0,
+    (inv) =>
+      DateTime.fromJSDate(new Date(inv.expiresAt)).diffNow('hours').hours > 0,
   )
 
   if (activeInvitations.length === 0) return null
@@ -170,7 +172,9 @@ const InvitationPanel = () => {
           </span>
         </div>
         <p className="text-xs text-muted-foreground hidden sm:block">
-          You've been invited to join {activeInvitations.length === 1 ? 'an organization' : 'organizations'}. Review and respond below.
+          You've been invited to join{' '}
+          {activeInvitations.length === 1 ? 'an organization' : 'organizations'}
+          . Review and respond below.
         </p>
       </div>
 

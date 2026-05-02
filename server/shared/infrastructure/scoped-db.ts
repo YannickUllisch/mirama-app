@@ -21,7 +21,6 @@ const ORG_SCOPED_MODELS = new Set([
   'Comment',
   'Expense',
   'Notification',
-  'Favourite',
 ])
 
 const READ_OPERATIONS = new Set([

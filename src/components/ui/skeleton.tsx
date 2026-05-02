@@ -1,6 +1,9 @@
 import { cn } from '@src/lib/utils'
 
-const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+const Skeleton = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       className={cn(

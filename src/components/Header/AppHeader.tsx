@@ -1,12 +1,10 @@
 // src/components/Header/AppHeader.tsx
 import BreadcrumbSkeleton from '@src/components/Skeletons/BreadcrumbSkeleton'
-import FavouriteButtonSkeleton from '@src/components/Skeletons/FavouriteButtonSkeleton'
 import HeaderProfileSkeleton from '@src/components/Skeletons/HeaderProfileSkeleton'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import MiramaIcon from '../MiramaIcon'
 import HeaderBreadcrumbs from './HeaderBreadcrumbs'
-import HeaderFavouriteToggle from './HeaderFavouriteToggle'
 import HeaderProfile from './HeaderProfile'
 import HeaderSearch from './HeaderSearch'
 import HeaderSidebarTrigger from './HeaderSidebarTrigger'
@@ -35,17 +33,9 @@ const AppHeader = () => {
 
         <HeaderSearch />
 
-        <div className="flex items-center gap-2">
-          <Suspense fallback={<FavouriteButtonSkeleton />}>
-            <HeaderFavouriteToggle />
-          </Suspense>
-
-          <div className="h-6 w-px bg-text/30 mx-1" />
-
-          <Suspense fallback={<HeaderProfileSkeleton />}>
-            <HeaderProfile />
-          </Suspense>
-        </div>
+        <Suspense fallback={<HeaderProfileSkeleton />}>
+          <HeaderProfile />
+        </Suspense>
       </div>
     </header>
   )

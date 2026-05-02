@@ -5,11 +5,16 @@ import { filterFns, type FilterFn } from '@tanstack/table-core'
 // array. Used for single-value enum columns (status, priority, etc.) where
 // the cell holds one string and the filter holds string[].
 
-export const inEnumSetFilterFn: FilterFn<unknown> = (row, columnId, filterValue: string[]) => {
+export const inEnumSetFilterFn: FilterFn<unknown> = (
+  row,
+  columnId,
+  filterValue: string[],
+) => {
   const cellValue = row.getValue<string>(columnId)
   return filterValue.includes(cellValue)
 }
-inEnumSetFilterFn.autoRemove = (val: unknown) => !val || (val as string[]).length === 0
+inEnumSetFilterFn.autoRemove = (val: unknown) =>
+  !val || (val as string[]).length === 0
 
 // ─── inDateRange ──────────────────────────────────────────────────────────────
 // Filter value shape: [Date | null, Date | null] — from and to, both inclusive.
@@ -47,4 +52,5 @@ inDateRangeFilterFn.autoRemove = (val: unknown) => {
 // Re-export the built-in TanStack filter function so it can be referenced
 // via the registered key 'inNumberRange' in filterFns.
 
-export const inNumberRangeFilterFn: FilterFn<unknown> = filterFns.inNumberRange as FilterFn<unknown>
+export const inNumberRangeFilterFn: FilterFn<unknown> =
+  filterFns.inNumberRange as FilterFn<unknown>

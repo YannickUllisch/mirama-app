@@ -45,7 +45,10 @@ const DataTableHeader = <TData extends TableData<TData>>({
             >
               {header.isPlaceholder
                 ? null
-                : flexRender(header.column.columnDef.header, header.getContext())}
+                : flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
               {header.column.getCanResize() && (
                 <div className="absolute top-1/2 -translate-y-1/2 right-0 h-4 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <GripVertical

@@ -218,7 +218,6 @@ model Member {
   projectLinks  ProjectMember[]
   comments      Comment[]
   notifications Notification[]
-  favourites    Favourite[]
 
   @@unique([organizationId, userId])
   @@index([organizationId, id], map: "member_organization_project_idx")
@@ -491,23 +490,6 @@ model Notification {
   resourceId String
 
   createdAt DateTime @default(now())
-}
-
-// ### FAVOURITE AGGREGATE ROOT SECTION ###
-model Favourite {
-  id String @id @default(cuid())
-
-  memberId String?
-  member   Member? @relation(fields: [memberId], references: [id])
-
-  type FavouriteType
-  data String
-}
-
-enum FavouriteType {
-  PROJECT
-  TASK
-  ROUTE
 }
 
 // ### OTHER MODELS ###

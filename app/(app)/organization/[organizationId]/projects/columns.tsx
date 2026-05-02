@@ -136,33 +136,6 @@ export const useProjectColumns = ({
         },
       }),
 
-      // columnHelper.display({
-      //   id: 'users',
-      //   header: ({ column }) => (
-      //     <DataTableColumnHeader column={column} title="Managed By" />
-      //   ),
-      //   cell: ({ row }) => {
-      //     const managedBy = row.original.members.filter(
-      //       (user) => user.isManager,
-      //     )
-      //     const managerNames =
-      //       users
-      //         ?.filter((u) => managedBy.some((m) => m.id === u.id))
-      //         .map((u) => u.name as string) ?? []
-
-      //     return (
-      //       managerNames.length > 0 && (
-      //         <AvatarGroup
-      //           usernames={managerNames}
-      //           avatarSize={7}
-      //           previewAmount={2}
-      //           fontSize={10}
-      //         />
-      //       )
-      //     )
-      //   },
-      // }),
-
       columnHelper.accessor((row) => row.startDate, {
         id: 'startDate',
         filterFn: 'inDateRange',

@@ -2,19 +2,19 @@
 import PageHeader from '@src/components/PageHeader'
 import { Folders } from 'lucide-react'
 import { Suspense } from 'react'
-import ProjectsTable from './_components/ProjectsTable'
+import ProjectsContent from './_components/ProjectsContent'
 import ProjectsTableSkeleton from './_components/ProjectsTableSkeleton'
 
 const ProjectsPage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <PageHeader
-        title="Your Projects"
-        description="Manage your projects"
+        title="Projects"
+        description="Creative project portfolio"
         icon={Folders}
       />
       <Suspense fallback={<ProjectsTableSkeleton />}>
-        <ProjectsTable />
+        <ProjectsContent />
       </Suspense>
     </div>
   )

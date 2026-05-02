@@ -142,7 +142,10 @@ const MultiSelector = forwardRef<HTMLDivElement, MultiSelectorProps>(
         <Command
           ref={ref}
           onKeyDown={handleKeyDown}
-          className={cn('overflow-visible bg-transparent flex flex-col w-full', className)}
+          className={cn(
+            'overflow-visible bg-transparent flex flex-col w-full',
+            className,
+          )}
           dir={dir}
           {...props}
         >
@@ -266,7 +269,9 @@ const MultiSelectorList = forwardRef<
     >
       {children}
       <CommandEmpty>
-        <span className="text-sm text-muted-foreground px-2 py-1.5 block">No results found</span>
+        <span className="text-sm text-muted-foreground px-2 py-1.5 block">
+          No results found
+        </span>
       </CommandEmpty>
     </CommandList>
   )

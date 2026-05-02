@@ -27,7 +27,11 @@ export const metadata: Metadata = {
 }
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning lang="en" className={`${dmSans.variable} ${inter.variable}`}>
+    <html
+      suppressHydrationWarning
+      lang="en"
+      className={`${dmSans.variable} ${inter.variable}`}
+    >
       <body className="bg-background">
         <Toaster />
         {children}

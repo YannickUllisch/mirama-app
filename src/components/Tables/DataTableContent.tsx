@@ -32,7 +32,9 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
           <React.Fragment key={`cell${row.id}`}>
             <TableRow
               key={row.id}
-              data-state={enableRowSelection && row.getIsSelected() ? 'selected' : null}
+              data-state={
+                enableRowSelection && row.getIsSelected() ? 'selected' : null
+              }
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell
@@ -63,8 +65,12 @@ const DataTableContent = <TData extends TableData<TData>, TValue>({
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-1.5 text-center">
-                <span className="text-sm font-medium text-foreground">No results found</span>
-                <span className="text-xs text-muted-foreground">Try adjusting your filters or search query</span>
+                <span className="text-sm font-medium text-foreground">
+                  No results found
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Try adjusting your filters or search query
+                </span>
               </div>
             )}
           </TableCell>

@@ -39,7 +39,9 @@ export const AcceptInvitationCommand =
       })
     }
 
-    await db.organizationInvitation.delete({ where: { email: invitation.email } })
+    await db.organizationInvitation.delete({
+      where: { email: invitation.email },
+    })
 
     logger.info(
       { invitationId, organizationId: invitation.organizationId },
