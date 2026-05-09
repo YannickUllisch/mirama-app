@@ -5,7 +5,7 @@ import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
 import { TenantResourceProvider } from '@src/modules/tenant/tenantResourceContext'
-import { SidebarProvider } from '@ui/sidebar'
+import { SidebarInset, SidebarProvider } from '@ui/sidebar'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -27,18 +27,14 @@ const TenantLayout = async ({
       <QueryClientWrapper>
         <TenantResourceProvider value={{ activeTenantId: tenantId }}>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <SidebarProvider>
-              <div className="w-full flex flex-col">
+            <SidebarProvider className="h-screen overflow-hidden">
+              <TenantSidebar tenantId={tenantId} className="shrink-0" />
+              <SidebarInset className="overflow-hidden">
                 <AppHeader />
-
-                <div className="flex flex-1 pt-14">
-                  <TenantSidebar tenantId={tenantId} className="shrink-0" />
-
-                  <main className="flex-1 overflow-auto bg-card rounded-lg">
-                    <div className="p-5 min-h-screen">{children}</div>
-                  </main>
-                </div>
-              </div>
+                <main className="flex-1 overflow-y-auto bg-card rounded-l-lg">
+                  <div className="p-5 min-h-full">{children}</div>
+                </main>
+              </SidebarInset>
             </SidebarProvider>
           </ThemeProvider>
         </TenantResourceProvider>

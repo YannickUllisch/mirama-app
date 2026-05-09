@@ -1,20 +1,18 @@
 // src/components/Sidebar/OrganizationSidebar.tsx
 'use client'
-import SidebarProjectsSkeleton from '@src/components/Skeletons/SidebarProjectsSkeleton'
 import { OrganizationSidebarMenu } from '@src/modules/tenant/organization/organizationSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
+import { SidebarSeparator } from '@ui/sidebar'
 import { useSession } from 'next-auth/react'
-import { Suspense } from 'react'
 import AppSidebar from './AppSidebar'
 import SidebarMainNav from './MainNav'
-import RecentsNav from './RecentsNav'
-import SidebarMobileHeader from './SidebarMobileHeader'
 import SidebarNewButton from './SidebarNewButton'
 
 interface OrganizationSidebarProps {
   organizationId: string
   tenantId: string
   className?: string
+  projectsSlot?: React.ReactNode
 }
 
 const injectOrgId = (
@@ -35,6 +33,7 @@ const OrganizationSidebar = ({
   className,
   tenantId,
   organizationId,
+  projectsSlot,
 }: OrganizationSidebarProps) => {
   const { data: session } = useSession()
   const localizedMenu = injectOrgId(OrganizationSidebarMenu, organizationId)
@@ -46,16 +45,13 @@ const OrganizationSidebar = ({
       tenantId={tenantId}
       organizationId={organizationId}
       headerSlot={
-        <>
-          <SidebarMobileHeader />
-          <SidebarNewButton organizationId={session?.user.organizationId} />
-        </>
+        <SidebarNewButton organizationId={session?.user.organizationId} />
       }
     >
       <SidebarMainNav items={localizedMenu} userRole={currentRole} />
-      <Suspense fallback={<SidebarProjectsSkeleton />}>
-        <RecentsNav />
-      </Suspense>
+      <SidebarSeparator />
+      {projectsSlot}
+      <SidebarSeparator />
     </AppSidebar>
   )
 }

@@ -1,23 +1,35 @@
 'use client'
 import type { AppMenuItem } from '@src/types/types'
-import { BookAIcon, ClipboardList, Folders, Home } from 'lucide-react'
+import {
+  BookAIcon,
+  ChartNoAxesColumnIcon,
+  Home,
+  Layers2Icon,
+  SquareCheckBigIcon,
+} from 'lucide-react'
 
 export const OrganizationSidebarMenu: AppMenuItem[] = [
   {
-    title: 'Dashboard',
+    title: 'Home',
     icon: Home,
     href: '/organization/[organizationId]',
     isCollapsible: false,
   },
   {
+    title: 'Dashboard',
+    icon: ChartNoAxesColumnIcon,
+    href: '/organization/[organizationId]/dashboard',
+    isCollapsible: false,
+  },
+  {
     title: 'Projects',
-    icon: Folders,
+    icon: Layers2Icon,
     href: '/organization/[organizationId]/projects',
     isCollapsible: false,
   },
   {
     title: 'My Tasks',
-    icon: ClipboardList,
+    icon: SquareCheckBigIcon,
     href: '/organization/[organizationId]/tasks',
     isCollapsible: false,
   },

@@ -12,7 +12,7 @@ const PROJECT_INCLUDE = {
   teams: { include: { team: true } },
 } as const
 
-// ── Domain input types ───────────────────────────────────────────────────────
+// Domain input types
 
 export type ProjectCoreInput = {
   name: string
@@ -30,10 +30,10 @@ export type ProjectCoreInput = {
 // Re-export for convenience so callers only need one import
 export type { MilestoneInput }
 
-// ── Repository ───────────────────────────────────────────────────────────────
+// Repository
 
 export const ProjectRepository = (db: ScopedDb) => ({
-  // ── Queries ────────────────────────────────────────────────────────────────
+  // Queries
 
   async findAll(opts: { memberId: string; archived: boolean }) {
     return db.project.findMany({
@@ -42,6 +42,21 @@ export const ProjectRepository = (db: ScopedDb) => ({
         members: { some: { memberId: opts.memberId } },
       },
       include: PROJECT_INCLUDE,
+      orderBy: { name: 'asc' },
+    })
+  },
+
+  async findForSidebar(opts: { memberId: string }) {
+    return db.project.findMany({
+      where: {
+        archived: false,
+        members: { some: { memberId: opts.memberId } },
+      },
+      select: {
+        id: true,
+        name: true,
+        _count: { select: { tasks: true } },
+      },
       orderBy: { name: 'asc' },
     })
   },
@@ -73,11 +88,9 @@ export const ProjectRepository = (db: ScopedDb) => ({
     })
   },
 
-  // ── Create ─────────────────────────────────────────────────────────────────
   // Tags must be pre-created before calling this so all tagIds are resolved.
   // Members, teams, and milestones are written via the separate methods below
   // so that ScopedDb can inject the correct context for each model.
-
   async create(input: ProjectCoreInput) {
     const { tagIds, ...core } = input
     return db.project.create({
@@ -117,8 +130,6 @@ export const ProjectRepository = (db: ScopedDb) => ({
       milestones.map((m) => db.milestone.create({ data: { ...m, projectId } })),
     )
   },
-
-  // ── Update helpers ─────────────────────────────────────────────────────────
 
   async updateCore(id: string, input: Omit<ProjectCoreInput, 'archived'>) {
     const { tagIds, ...core } = input

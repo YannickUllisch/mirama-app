@@ -66,6 +66,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.tenantRole = existingUser.role
       token.name = existingUser.name
 
+      token.iss = 'https://mirama.com'
+      token.aud = 'api://mirama.com'
+
       if (trigger === 'update' && session?.organizationId === null) {
         // Explicit clear — user left org context (returned to tenant portal)
         token.organizationId = undefined

@@ -155,7 +155,7 @@ const ClientProjectPage = () => {
       <ProjectHeader project={project} upcomingMilestone={upcomingMilestone} />
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <div className="flex w-full items-center shadow-md dark:shadow-neutral-800 bg-background rounded-lg h-[50px] gap-4 dark:text-white relative overflow-x-auto">
+        <div className="flex w-full items-center shadow-md dark:shadow-neutral-800 bg-background rounded-lg h-12.5 gap-4 dark:text-white relative overflow-x-auto">
           <TabsList className="absolute inline-flex items-center whitespace-nowrap sm:justify-center sm:gap-2 w-auto">
             {tabs.map((tabHeader) => (
               <TabsTrigger

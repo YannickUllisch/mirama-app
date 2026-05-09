@@ -4,7 +4,6 @@ import { TenantSidebarMenu } from '@src/modules/tenant/tenantSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import AppSidebar from './AppSidebar'
 import SidebarMainNav from './MainNav'
-import SidebarMobileHeader from './SidebarMobileHeader'
 
 interface TenantSidebarProps {
   tenantId: string
@@ -28,11 +27,7 @@ const TenantSidebar = ({ tenantId, className }: TenantSidebarProps) => {
   const localizedMenu = buildTenantMenu(tenantId)
 
   return (
-    <AppSidebar
-      tenantId={tenantId}
-      className={className}
-      headerSlot={<SidebarMobileHeader />}
-    >
+    <AppSidebar tenantId={tenantId} className={className}>
       <SidebarMainNav items={localizedMenu} />
     </AppSidebar>
   )

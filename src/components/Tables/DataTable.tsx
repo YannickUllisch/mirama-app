@@ -2,12 +2,12 @@
 import DataTableContent from '@src/components/Tables/DataTableContent'
 import DataTableHeader from '@src/components/Tables/DataTableHeader'
 import DataTableToolbar from '@src/components/Tables/DataTableToolbar'
-import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import {
   inDateRangeFilterFn,
   inEnumSetFilterFn,
   inNumberRangeFilterFn,
 } from '@src/components/Tables/Filters/filter-fns'
+import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import { Table } from '@src/components/ui/table'
 import {
   type ColumnDef,
@@ -207,9 +207,9 @@ export const DataTable = <TData extends TableData<TData>>({
   })
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
+    <div className="rounded-xl border bg-card border-border overflow-hidden">
       {/* Toolbar */}
-      <div className="border-b border-border bg-background/60">
+      <div className="border-b border-border bg-card">
         <DataTableToolbar
           tableIdentifier={tableIdentifier}
           toolbarOptions={toolbarOptions}
@@ -237,7 +237,7 @@ export const DataTable = <TData extends TableData<TData>>({
       </div>
 
       {/* Pagination */}
-      <div className="border-t border-border bg-background/60">
+      <div className="border-t border-border bg-card">
         <DataTablePagination
           table={table}
           enableRowSelection={enableRowSelection}

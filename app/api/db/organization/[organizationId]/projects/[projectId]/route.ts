@@ -15,7 +15,7 @@ export const GET = createRoute(
   async (_req, { session, ctx }, { params }) => {
     const data = await GetProjectQuery(ctx)(
       params.projectId,
-      session.user.id ?? '',
+      session.user.memberId ?? '',
     )
 
     return Response.json({ success: true, data })
