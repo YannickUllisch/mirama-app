@@ -155,19 +155,19 @@ const InvitationPanel = () => {
   if (activeInvitations.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-primary/40 bg-card overflow-hidden">
+    <div className="rounded-xl border border-signature-peach/40 bg-card overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-3.5 border-b border-primary/20 bg-primary/5 flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-signature-coral/20 bg-signature-coral/5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {/* Pulsing dot */}
           <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-60" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signature-coral opacity-60" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-signature-coral" />
           </span>
           <h2 className="text-sm font-semibold text-foreground">
             Pending Invitations
           </h2>
-          <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-white text-[10px] font-semibold tabular-nums">
+          <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-signature-coral text-white text-[10px] font-semibold tabular-nums">
             {activeInvitations.length}
           </span>
         </div>

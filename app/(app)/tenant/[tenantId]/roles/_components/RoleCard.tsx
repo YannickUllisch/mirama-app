@@ -2,6 +2,7 @@
 import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import type { RoleResponse } from '@server/modules/account/roles/features/response'
 import { PolicyRow } from '@src/modules/tenant/iam/policy/components/PolicyRow'
+import { cn } from '@src/lib/utils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import {
@@ -22,6 +23,23 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
+const SCOPE_STYLES = {
+  org: {
+    iconBg: 'bg-signature-coral/10 border-signature-coral/20',
+    iconText: 'text-signature-coral',
+    expandedBg: 'bg-signature-coral/5',
+    expandedBorder: 'border-signature-coral/15',
+    headerText: 'text-signature-coral',
+  },
+  project: {
+    iconBg: 'bg-signature-forest/10 border-signature-forest/20',
+    iconText: 'text-signature-forest dark:text-green-400',
+    expandedBg: 'bg-signature-forest/5',
+    expandedBorder: 'border-signature-forest/15',
+    headerText: 'text-signature-forest dark:text-green-400',
+  },
+}
+
 export const RoleCard = ({
   role,
   allPolicies,
@@ -39,13 +57,16 @@ export const RoleCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false)
   const isSystem = !role.tenantId
+  const isProject = role.scope === 'PROJECT'
+  const s = isProject ? SCOPE_STYLES.project : SCOPE_STYLES.org
+
   const attachedIds = new Set(role.policies.map((p) => p.id))
   const unattached = allPolicies.filter(
     (p) => !attachedIds.has(p.id) && p.scope === role.scope,
   )
 
   return (
-    <div className="group relative border border-border rounded-xl bg-card hover:border-primary/30 transition-all duration-200 overflow-hidden">
+    <div className="group relative border border-border rounded-xl bg-card hover:border-border/80 transition-all duration-200 overflow-hidden">
       <button
         type="button"
         aria-expanded={expanded}
@@ -58,12 +79,18 @@ export const RoleCard = ({
       <div className="relative z-10 pointer-events-none flex items-center gap-4 px-4 py-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <ChevronRight
-            className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
-              expanded ? 'rotate-90' : ''
-            }`}
+            className={cn(
+              'w-4 h-4 text-muted-foreground/50 transition-transform duration-200',
+              expanded && 'rotate-90',
+            )}
           />
-          <div className="shrink-0 w-9 h-9 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center">
-            <ShieldCheck className="w-4 h-4 text-primary" />
+          <div
+            className={cn(
+              'shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center',
+              s.iconBg,
+            )}
+          >
+            <ShieldCheck className={cn('w-4 h-4', s.iconText)} />
           </div>
 
           <div className="min-w-0">
@@ -74,16 +101,16 @@ export const RoleCard = ({
               {isSystem && (
                 <Badge
                   variant="secondary"
-                  className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                  className="text-[9px] px-1 h-3.5"
                 >
                   system
                 </Badge>
               )}
               <Badge
                 variant="outline"
-                className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                className="text-[9px] px-1 h-3.5"
               >
-                {role.scope === 'PROJECT' ? 'project' : 'org'}
+                {isProject ? 'project' : 'org'}
               </Badge>
             </div>
             {role.description ? (
@@ -112,7 +139,7 @@ export const RoleCard = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  className="h-8 w-8"
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -120,7 +147,7 @@ export const RoleCard = ({
               <DropdownMenuContent align="end" className="w-52">
                 {unattached.length > 0 && (
                   <>
-                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <div className="px-2 py-1.5 text-[10px] font-medium text-muted-foreground">
                       Attach Policy
                     </div>
                     {unattached.slice(0, 5).map((p) => (
@@ -149,12 +176,12 @@ export const RoleCard = ({
       </div>
 
       {expanded && (
-        <div className="relative z-10 border-t bg-neutral-50/30 dark:bg-neutral-900/30">
-          <div className="px-4 py-3 flex items-center justify-between">
-            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+        <div className={cn('relative z-10 border-t', s.expandedBorder, s.expandedBg)}>
+          <div className="px-4 py-3 flex items-center gap-3">
+            <h4 className={cn('text-xs font-medium', s.headerText)}>
               Active Permissions
             </h4>
-            <div className="h-px flex-1 bg-border mx-4" />
+            <div className="h-px flex-1 bg-border/60" />
           </div>
 
           <div className="px-2 pb-2 space-y-1">
@@ -172,8 +199,8 @@ export const RoleCard = ({
               ))
             ) : (
               <div className="py-8 flex flex-col items-center justify-center text-center">
-                <FileText className="w-8 h-8 text-neutral-200 mb-2" />
-                <p className="text-xs text-neutral-400">
+                <FileText className="w-8 h-8 text-muted-foreground/20 mb-2" />
+                <p className="text-xs text-muted-foreground/60">
                   No policies attached.
                 </p>
               </div>

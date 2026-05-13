@@ -1,3 +1,4 @@
+// src/modules/tenant/iam/components/PermissionAccordion.tsx
 import type { AccessScope } from '@/prisma/generated/client'
 import {
   Accordion,
@@ -50,7 +51,7 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
             value={rp.resource}
             className="border-0"
           >
-            <AccordionTrigger className="px-3 py-2.5 hover:no-underline hover:bg-neutral-50 dark:hover:bg-neutral-800/40 rounded-lg data-[state=open]:rounded-b-none transition-colors text-sm">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/40 data-[state=open]:bg-muted/40 transition-colors text-sm">
               <div className="flex items-center gap-2.5 flex-1 mr-2">
                 <span className="font-medium text-sm">{rp.label}</span>
                 <Badge
@@ -62,7 +63,7 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
                 {(wild || activeCount > 0) && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 h-4 text-primary border-primary/30 bg-primary/5"
+                    className="text-[10px] px-1.5 py-0 h-4 text-signature-coral border-signature-coral/30 bg-signature-coral/5"
                   >
                     {wild
                       ? 'full access'
@@ -72,15 +73,15 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
               </div>
             </AccordionTrigger>
 
-            <AccordionContent className="px-3 pt-1 pb-3 space-y-0">
+            <AccordionContent className="px-4 pt-1 pb-3 space-y-0">
               <p className="text-xs text-muted-foreground mb-3 mt-1">
                 {rp.description}
               </p>
               <div className="space-y-1">
-                {/* Wildcard Row */}
+                {/* Wildcard row */}
                 <label
                   htmlFor={`${rp.resource}-wildcard`}
-                  className="w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors"
+                  className="w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors"
                 >
                   <Checkbox
                     id={`${rp.resource}-wildcard`}
@@ -104,7 +105,7 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
                   <label
                     key={action}
                     htmlFor={`${rp.resource}-${action}`}
-                    className={`w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors ${
+                    className={`w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors ${
                       wild ? 'opacity-50 pointer-events-none' : ''
                     }`}
                   >

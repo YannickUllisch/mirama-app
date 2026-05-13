@@ -9,9 +9,9 @@ const PlansPage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <PageHeader
-        title="Plans"
+        title="Plans & Pricing"
         icon={LayoutGrid}
-        description="Compare & Choose"
+        description="Compare & choose a subscription"
       />
       <Suspense fallback={<PlansGridSkeleton />}>
         <PlansGrid />

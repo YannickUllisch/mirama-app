@@ -25,8 +25,8 @@ export function ToolbarViewOptions<TData>({
           <EyeIcon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuLabel>Columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

@@ -33,42 +33,68 @@ const OrganizationGrid = () => {
     router.push(`/tenant/${activeTenantId}/organization/${org.id}/edit`)
   }
 
-  if (isLoading) {
-    return <OrganizationGridSkeleton />
-  }
-
-  if (!organizations || organizations.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
-          <Building2 className="w-6 h-6 text-neutral-400 dark:text-neutral-500" />
+  return (
+    <div className="rounded-xl border border-border/50 overflow-hidden">
+      {/* Section header */}
+      <div className="px-5 py-4 bg-signature-coral flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-white/70" />
+          <span className="text-sm font-medium text-white">Organizations</span>
+          {!isLoading && organizations && (
+            <span className="text-xs text-white/50 ml-0.5">
+              ({organizations.length})
+            </span>
+          )}
         </div>
-        <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
-          No organizations yet
-        </p>
-        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 mb-5">
-          Create your first organization to get started.
-        </p>
-        <Button variant="tertiary" size="sm" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-white/80 hover:text-white hover:bg-white/15 gap-1.5"
+          asChild
+        >
           <Link href={`/tenant/${activeTenantId}/organization/create`}>
-            <Plus className="w-4 h-4" />
-            New Organization
+            <Plus className="w-3.5 h-3.5" />
+            New
           </Link>
         </Button>
       </div>
-    )
-  }
 
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {organizations.map((org) => (
-        <OrganizationCard
-          key={org.id}
-          org={org}
-          onEnter={handleEnterOrg}
-          onEdit={handleEditOrg}
-        />
-      ))}
+      {/* Content */}
+      <div className="p-4">
+        {isLoading ? (
+          <OrganizationGridSkeleton />
+        ) : !organizations || organizations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+              <Building2 className="w-5 h-5 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium text-foreground">
+              No organizations yet
+            </p>
+            <p className="text-xs text-muted-foreground mt-1 mb-5">
+              Create your first organization to get started.
+            </p>
+            <Button variant="tertiary" size="sm" asChild>
+              <Link href={`/tenant/${activeTenantId}/organization/create`}>
+                <Plus className="w-3.5 h-3.5" />
+                New Organization
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {organizations.map((org, i) => (
+              <OrganizationCard
+                key={org.id}
+                org={org}
+                colorIndex={i}
+                onEnter={handleEnterOrg}
+                onEdit={handleEditOrg}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

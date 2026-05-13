@@ -52,20 +52,20 @@ const DataTableToolbar = <TData extends TableData<TData>>({
                 'relative inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md border text-xs font-medium transition-colors outline-none select-none',
                 'focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]',
                 showFilters
-                  ? 'border-primary/50 bg-primary/10 text-primary'
+                  ? 'border-signature-coral/40 bg-signature-coral/8 text-signature-coral'
                   : 'border-border bg-card text-text-secondary hover:bg-hover hover:text-foreground hover:border-border',
               )}
             >
               {hasActiveFilters && (
                 <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-60" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signature-coral opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-signature-coral" />
                 </span>
               )}
               <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
               <span>Filters</span>
               {hasActiveFilters && (
-                <span className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-primary text-white text-[10px] font-semibold">
+                <span className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-signature-coral text-white text-[10px] font-semibold">
                   {columnFilters.length + (globalFilter ? 1 : 0)}
                 </span>
               )}

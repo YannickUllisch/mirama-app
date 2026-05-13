@@ -1,34 +1,30 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/page.tsx
-import HoverLink from '@src/components/HoverLink'
 import PageHeader from '@src/components/PageHeader'
-import { Button } from '@ui/button'
-import { Building2, PlusIcon } from 'lucide-react'
+import { LayoutDashboard } from 'lucide-react'
 import { Suspense } from 'react'
+import DashboardStats from './_components/DashboardStats'
 import InvitationPanel from './_components/InvitationPanel'
 import OrganizationGrid from './_components/OrganizationGrid'
-import OrganizationGridSkeleton from './_components/OrganizationGridSkeleton'
 
 const TenantPage = async ({
   params,
 }: {
   params: Promise<{ tenantId: string }>
 }) => {
-  const { tenantId } = await params
+  await params
 
   return (
     <div className="flex flex-col min-h-screen">
-      <PageHeader title="Organizations" icon={Building2}>
-        <HoverLink href={`/tenant/${tenantId}/organization/create`}>
-          <Button variant="tertiary" size={'sm'}>
-            <PlusIcon className="w-3 h-3" />
-            Create New Organizations
-          </Button>
-        </HoverLink>
-      </PageHeader>
+      <PageHeader
+        title="Workspace"
+        icon={LayoutDashboard}
+        description="Overview & organizations"
+      />
 
-      <div className="flex-1 px-6 md:px-10 py-6 space-y-6">
+      <div className="flex-1 px-4 py-5 space-y-4">
+        <DashboardStats />
         <InvitationPanel />
-        <Suspense fallback={<OrganizationGridSkeleton />}>
+        <Suspense>
           <OrganizationGrid />
         </Suspense>
       </div>

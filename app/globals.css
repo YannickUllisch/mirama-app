@@ -237,7 +237,7 @@
 
     --sidebar-background: 210 33% 98%; /* surface-soft */
     --sidebar-foreground: 218 23% 12%;
-    --sidebar-primary: 216 76% 45%; /* link blue #1b61c9 — active accent */
+    --sidebar-primary: 218 23% 12%; /* ink — neutral active accent */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 11% 89%; /* surface-strong — hover bg */
     --sidebar-accent-foreground: 218 23% 12%;
@@ -287,7 +287,7 @@
 
     --sidebar-background: 225 12% 13%; /* surface-dark-elevated */
     --sidebar-foreground: 210 33% 98%;
-    --sidebar-primary: 216 100% 64%; /* info-border bright blue — active accent */
+    --sidebar-primary: 210 33% 98%; /* near-white — neutral active accent */
     --sidebar-primary-foreground: 218 23% 12%;
     --sidebar-accent: 218 23% 12%; /* surface-dark — hover bg */
     --sidebar-accent-foreground: 210 33% 98%;
@@ -302,10 +302,18 @@
 @layer base {
   /* Tenant portal: coral accent */
   .portal-accent-coral {
-    --sidebar-primary: 16 90% 38%;
+    --sidebar-primary: 16 100% 33%;
   }
   .dark .portal-accent-coral {
     --sidebar-primary: 16 95% 62%;
+  }
+
+  /* Organization portal: forest accent */
+  .portal-accent-forest {
+    --sidebar-primary: 124 64% 20%;
+  }
+  .dark .portal-accent-forest {
+    --sidebar-primary: 124 60% 45%;
   }
 }
 

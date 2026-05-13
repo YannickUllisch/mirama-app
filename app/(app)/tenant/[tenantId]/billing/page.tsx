@@ -16,7 +16,7 @@ const BillingPage = () => {
         icon={CreditCard}
         description="Subscription & Usage"
       />
-      <div className="flex-1 px-6 md:px-10 py-6 space-y-6">
+      <div className="flex-1 px-4 py-5 space-y-4">
         <Suspense fallback={<SubscriptionSectionSkeleton />}>
           <SubscriptionSection />
         </Suspense>
@@ -25,22 +25,23 @@ const BillingPage = () => {
           <UsageSection />
         </Suspense>
 
-        <div className="flex items-center justify-between rounded-xl border border-border p-5">
-          <div>
-            <p className="text-sm font-semibold tracking-tight">
-              Plans & Pricing
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Compare all available plans and features
-            </p>
+        {/* Plans CTA */}
+        <div className="rounded-xl overflow-hidden bg-signature-mustard">
+          <div className="px-6 py-5 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-ink">Plans & Pricing</p>
+              <p className="text-xs text-ink/60 mt-0.5">
+                Compare all available plans and features
+              </p>
+            </div>
+            <Link
+              href="billing/plans"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-ink/70 transition-colors shrink-0"
+            >
+              View Plans
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <Link
-            href="billing/plans"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            View Plans
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
       </div>
     </div>

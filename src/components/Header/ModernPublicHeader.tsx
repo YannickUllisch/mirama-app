@@ -40,7 +40,7 @@ const ModernPublicHeader = async ({ session }: { session: Session | null }) => {
           </Link>
 
           {session ? (
-            <Link href="/app">
+            <Link href="/portal">
               <Button className="h-10 px-6 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-semibold rounded-full transition-all shadow-lg shadow-slate-200">
                 Dashboard
               </Button>

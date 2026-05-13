@@ -90,16 +90,16 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
                       className={cn(
                         'flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all',
                         scope === 'ORGANIZATION'
-                          ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                          : 'border-border hover:border-primary/30',
+                          ? 'border-signature-coral/40 bg-signature-coral/5 ring-1 ring-signature-coral/20'
+                          : 'border-border hover:border-signature-coral/30',
                       )}
                     >
                       <div
                         className={cn(
                           'shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5',
                           scope === 'ORGANIZATION'
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500',
+                            ? 'bg-signature-coral text-white'
+                            : 'bg-muted text-muted-foreground',
                         )}
                       >
                         <Building2 className="w-3.5 h-3.5" />
@@ -121,16 +121,16 @@ export const CreateRoleDialog = ({ onSubmit }: Props) => {
                       className={cn(
                         'flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all',
                         scope === 'PROJECT'
-                          ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                          : 'border-border hover:border-primary/30',
+                          ? 'border-signature-forest/40 bg-signature-forest/5 ring-1 ring-signature-forest/20'
+                          : 'border-border hover:border-signature-forest/30',
                       )}
                     >
                       <div
                         className={cn(
                           'shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5',
                           scope === 'PROJECT'
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500',
+                            ? 'bg-signature-forest text-white'
+                            : 'bg-muted text-muted-foreground',
                         )}
                       >
                         <FolderKanban className="w-3.5 h-3.5" />

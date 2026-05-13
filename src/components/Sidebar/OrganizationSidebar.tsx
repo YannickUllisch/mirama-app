@@ -1,5 +1,6 @@
 // src/components/Sidebar/OrganizationSidebar.tsx
 'use client'
+import { cn } from '@src/lib/utils'
 import { OrganizationSidebarMenu } from '@src/modules/tenant/organization/organizationSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import { SidebarSeparator } from '@ui/sidebar'
@@ -41,7 +42,7 @@ const OrganizationSidebar = ({
 
   return (
     <AppSidebar
-      className={className}
+      className={cn('portal-accent-forest', className)}
       tenantId={tenantId}
       organizationId={organizationId}
       headerSlot={

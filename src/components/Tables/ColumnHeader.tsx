@@ -40,10 +40,14 @@ export const DataTableColumnHeader = <TData, TValue>({
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-hover hover:bg-transparent gap-1 items-center text-muted-foreground hover:text-foreground"
+            className="-ml-3 h-8 data-[state=open]:bg-hover hover:bg-transparent gap-1.5 items-center text-muted-foreground hover:text-foreground"
           >
-            {icon}
-            <span className="text-sm">{title}</span>
+            {icon && (
+              <span className="flex items-center justify-center w-4 h-4 rounded-sm bg-muted shrink-0">
+                {icon}
+              </span>
+            )}
+            <span className="text-xs font-medium">{title}</span>
             {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="h-4 w-4" />
             ) : column.getIsSorted() === 'asc' ? (

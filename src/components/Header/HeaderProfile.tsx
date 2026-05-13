@@ -12,7 +12,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
-import { Check, LogOut, SunMoon, UserKeyIcon } from 'lucide-react'
+import { Check, LogOut, ShieldUserIcon, SunMoon } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import UserAvatar from '../(application)/core/Avatar/UserAvatar'
@@ -73,11 +73,11 @@ const HeaderProfile = () => {
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
-          <HoverLink href={`/tenant/${session?.user.tenantId}`}>
+          <HoverLink href={'/portal'}>
             <DropdownMenuItem className="cursor-pointer">
               <div className="flex items-center gap-3">
-                <UserKeyIcon width={17} />
-                Tenant Portal
+                <ShieldUserIcon width={17} />
+                Select Portal
               </div>
             </DropdownMenuItem>
           </HoverLink>

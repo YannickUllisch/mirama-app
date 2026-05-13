@@ -29,7 +29,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
     <TableHeader
       ref={headerRef}
       style={{ zIndex: 4 }}
-      className={`bg-muted border-b-2 border-border ${isSticky ? 'sticky -top-0.75' : ''}`}
+      className={`bg-muted/60 border-b border-border/60 ${isSticky ? 'sticky -top-0.75' : ''}`}
     >
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow

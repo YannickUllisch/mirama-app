@@ -13,7 +13,6 @@ import {
 import { CircleHelp, TextAlignEndIcon, TextAlignStart } from 'lucide-react'
 import Link from 'next/link'
 import HoverLink from '../HoverLink'
-import MiramaIcon from '../MiramaIcon'
 
 interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'children'> {
@@ -34,9 +33,14 @@ const AppSidebar = ({
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="p-0 border-b border-sidebar-border">
-        {/* Brand accent bar */}
-        <div className="h-0.5 w-full bg-sidebar-primary" />
+      <SidebarHeader className="p-0 border-b border-sidebar-border/40">
+        {/* Multi-color brand stripe */}
+        <div className="flex h-0.5 w-full">
+          <div className="flex-1 bg-signature-coral" />
+          <div className="flex-1 bg-signature-forest" />
+          <div className="flex-1 bg-signature-mint" />
+          <div className="flex-1 bg-signature-mustard" />
+        </div>
         <div
           className={`flex items-center h-13 px-3 gap-2 ${
             state === 'collapsed' ? 'justify-center' : 'justify-between'
@@ -47,12 +51,14 @@ const AppSidebar = ({
             prefetch={false}
             className="group-data-[state=collapsed]:hidden shrink-0 pl-1"
           >
-            <MiramaIcon />
+            <span className="text-base font-black tracking-tight text-sidebar-foreground">
+              MIRAMA<span className="text-sidebar-foreground/35">.</span>
+            </span>
           </Link>
           <button
             type="button"
             onClick={toggleSidebar}
-            className="p-1.5 rounded-md text-sidebar-foreground/40 hover:text-sidebar-primary hover:bg-sidebar-primary/10 transition-colors shrink-0"
+            className="p-1.5 rounded-md text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors shrink-0"
             aria-label="Toggle sidebar"
           >
             {state === 'expanded' ? (

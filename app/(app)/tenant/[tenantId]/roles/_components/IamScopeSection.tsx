@@ -5,6 +5,8 @@ import { SectionHeader } from '@src/modules/tenant/iam/components/SectionHeader'
 import { type LucideIcon, Shield } from 'lucide-react'
 import { RoleCard } from './RoleCard'
 
+type SectionColor = 'coral' | 'forest' | 'mint' | 'mustard'
+
 const IamScopeSection = ({
   icon,
   title,
@@ -12,6 +14,7 @@ const IamScopeSection = ({
   roles,
   policies,
   emptyLabel,
+  color,
   onAttachPolicy,
   onDetachPolicy,
   onDeleteRole,
@@ -23,13 +26,19 @@ const IamScopeSection = ({
   roles: RoleResponse[]
   policies: PolicyResponse[]
   emptyLabel: string
+  color?: SectionColor
   onAttachPolicy: (roleId: string, policyId: string) => void
   onDetachPolicy: (roleId: string, policyId: string) => void
   onDeleteRole: (id: string) => void
   onEditPolicy: (policy: PolicyResponse) => void
 }) => (
   <div className="space-y-3">
-    <SectionHeader icon={icon} title={title} description={description} />
+    <SectionHeader
+      icon={icon}
+      title={title}
+      description={description}
+      color={color}
+    />
     {roles.length === 0 ? (
       <div className="flex items-center gap-2 text-xs text-muted-foreground/60 py-3 border border-dashed border-border rounded-xl px-4">
         <Shield className="w-3.5 h-3.5 shrink-0" />

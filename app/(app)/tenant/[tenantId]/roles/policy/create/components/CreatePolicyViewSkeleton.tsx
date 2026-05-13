@@ -2,56 +2,54 @@
 import { Skeleton } from '@ui/skeleton'
 
 const CreatePolicyViewSkeleton = () => (
-  <div className="flex flex-col min-h-screen">
-    {/* Back button */}
-    <Skeleton className="h-5 w-44 ml-2 mt-2" />
+  <div className="flex flex-col">
+    {/* PageHeader */}
+    <div className="border-b border-border/50 px-6 h-16 flex items-center gap-3">
+      <Skeleton className="h-4 w-4 rounded" />
+      <Skeleton className="h-4 w-36" />
+    </div>
 
-    {/* PageHeader area */}
-    <div className="px-6 md:px-10 py-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-xl" />
-          <div className="space-y-1">
-            <Skeleton className="h-5 w-36" />
-            <Skeleton className="h-3 w-64" />
+    <div className="space-y-4 px-4 pt-5 pb-6">
+      {/* Policy Details card */}
+      <div className="rounded-xl border border-border overflow-hidden">
+        <div className="h-12 bg-signature-coral/20 px-6 flex items-center gap-2">
+          <Skeleton className="h-4 w-4 rounded" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <div className="p-5 space-y-5">
+          {/* Scope selector */}
+          <div className="space-y-2">
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="h-3 w-80" />
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <Skeleton className="h-20 rounded-xl" />
+              <Skeleton className="h-20 rounded-xl" />
+            </div>
+          </div>
+          {/* Name */}
+          <div className="space-y-2">
+            <Skeleton className="h-3.5 w-20" />
+            <Skeleton className="h-9 w-full rounded-lg" />
+          </div>
+          {/* Description */}
+          <div className="space-y-2">
+            <Skeleton className="h-3.5 w-20" />
+            <Skeleton className="h-16 w-full rounded-lg" />
           </div>
         </div>
-        <div className="flex gap-3">
-          <Skeleton className="h-9 w-20" />
-          <Skeleton className="h-9 w-32" />
+      </div>
+
+      {/* Permissions card */}
+      <div className="rounded-xl border border-border overflow-hidden">
+        <div className="h-12 bg-signature-forest/20 px-6 flex items-center gap-2">
+          <Skeleton className="h-4 w-4 rounded" />
+          <Skeleton className="h-4 w-24" />
         </div>
-      </div>
-
-      {/* Scope selector */}
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-3 w-80" />
-        <div className="grid grid-cols-2 gap-3 mt-2">
-          <Skeleton className="h-20 rounded-xl" />
-          <Skeleton className="h-20 rounded-xl" />
-        </div>
-      </div>
-
-      {/* Name field */}
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-10 w-full" />
-      </div>
-
-      {/* Description field */}
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-16 w-full" />
-      </div>
-
-      {/* Permissions accordion */}
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-24" />
-        <div className="border border-border rounded-xl overflow-hidden divide-y divide-border">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="px-3 py-2.5 flex items-center gap-2.5">
+        <div className="divide-y divide-border">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={`perm-skel-${i}`} className="px-4 py-3 flex items-center gap-2.5">
               <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-16 rounded-full" />
+              <Skeleton className="h-4 w-14 rounded-full" />
             </div>
           ))}
         </div>

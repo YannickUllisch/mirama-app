@@ -1,13 +1,11 @@
+// app/(app)/tenant/[tenantId]/roles/policy/create/components/CreatePolicyView.tsx
 'use client'
 
 import type { AccessScope } from '@/prisma/generated/client'
 import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
 import apiRequest from '@hooks'
-import HoverLink from '@src/components/HoverLink'
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
-import { Button } from '@ui/button'
-import { ChevronLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
@@ -30,20 +28,11 @@ export const CreatePolicyView = ({
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <HoverLink href={`/tenant/${activeTenantId}/roles`}>
-        <Button variant="link" className="text-xs w-fit">
-          <ChevronLeft className="w-3 h-3" />
-          Back to Roles &amp; Policies
-        </Button>
-      </HoverLink>
-
-      <PolicyForm
-        defaultScope={defaultScope}
-        onSubmit={handleSubmit}
-        onCancel={() => router.back()}
-        isPending={isPending}
-      />
-    </div>
+    <PolicyForm
+      defaultScope={defaultScope}
+      onSubmit={handleSubmit}
+      onCancel={() => router.back()}
+      isPending={isPending}
+    />
   )
 }

@@ -18,9 +18,9 @@ type FeatureRow = {
 
 const boolCell = (v: boolean) =>
   v ? (
-    <Check className="w-4 h-4 text-emerald-500 mx-auto" />
+    <Check className="w-4 h-4 text-success-border mx-auto" />
   ) : (
-    <X className="w-4 h-4 text-neutral-300 dark:text-neutral-600 mx-auto" />
+    <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
   )
 
 const numCell = (n: number) => (
@@ -91,7 +91,7 @@ const PlansGrid = () => {
   const currentPlanId = billing?.subscription?.plan.id ?? null
 
   return (
-    <div className="flex-1 px-6 md:px-10 py-6 space-y-8">
+    <div className="flex-1 px-4 py-5 space-y-8">
       {plans.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {plans.map((plan) => (
@@ -120,15 +120,15 @@ const PlansGrid = () => {
             <div className="rounded-xl border border-border overflow-hidden">
               {/* Header row */}
               <div className="flex items-center bg-muted/40 px-4 py-3 border-b border-border">
-                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground w-40 shrink-0">
+                <span className="text-xs font-medium text-muted-foreground w-40 shrink-0">
                   Feature
                 </span>
                 {plans.map((plan) => (
                   <span
                     key={plan.id}
-                    className={`flex-1 text-center text-xs font-semibold uppercase tracking-widest ${
+                    className={`flex-1 text-center text-xs font-semibold ${
                       plan.id === currentPlanId
-                        ? 'text-primary'
+                        ? 'text-signature-coral'
                         : 'text-muted-foreground'
                     }`}
                   >

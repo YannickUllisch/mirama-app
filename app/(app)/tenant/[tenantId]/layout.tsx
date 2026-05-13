@@ -32,7 +32,7 @@ const TenantLayout = async ({
               <SidebarInset className="overflow-hidden">
                 <AppHeader />
                 <main className="flex-1 overflow-y-auto bg-card rounded-l-lg">
-                  <div className="p-5 min-h-full">{children}</div>
+                  <div className="min-h-full">{children}</div>
                 </main>
               </SidebarInset>
             </SidebarProvider>

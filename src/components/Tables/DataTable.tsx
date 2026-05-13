@@ -207,11 +207,16 @@ export const DataTable = <TData extends TableData<TData>>({
   })
 
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden">
-      {/* Top accent */}
-      <div className="h-[2px] bg-tertiary" />
+    <div className="rounded-xl border border-border/50 bg-card overflow-hidden shadow-sm">
+      {/* Multi-color brand stripe */}
+      <div className="flex h-0.5 w-full">
+        <div className="flex-1 bg-signature-coral" />
+        <div className="flex-1 bg-signature-forest" />
+        <div className="flex-1 bg-signature-mint" />
+        <div className="flex-1 bg-signature-mustard" />
+      </div>
       {/* Toolbar */}
-      <div className="border-b border-border bg-card">
+      <div className="border-b border-border/50 bg-card">
         <DataTableToolbar
           tableIdentifier={tableIdentifier}
           toolbarOptions={toolbarOptions}
@@ -239,7 +244,7 @@ export const DataTable = <TData extends TableData<TData>>({
       </div>
 
       {/* Pagination */}
-      <div className="border-t border-border bg-card">
+      <div className="border-t border-border/50 bg-card">
         <DataTablePagination
           table={table}
           enableRowSelection={enableRowSelection}
