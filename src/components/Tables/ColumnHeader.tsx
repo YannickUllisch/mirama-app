@@ -4,8 +4,6 @@ import {
   CaretSortIcon,
   EyeNoneIcon,
 } from '@radix-ui/react-icons'
-import type { Column } from '@tanstack/react-table'
-import { cn } from '@src/lib/utils'
 import { Button } from '@src/components/ui/button'
 import {
   DropdownMenu,
@@ -14,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
+import { cn } from '@src/lib/utils'
+import type { Column } from '@tanstack/react-table'
 import type React from 'react'
 
 interface DataTableColumnHeaderProps<TData, TValue>
@@ -40,18 +40,16 @@ export const DataTableColumnHeader = <TData, TValue>({
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent hover:bg-transparent gap-1 items-center"
+            className="-ml-3 h-8 data-[state=open]:bg-hover hover:bg-transparent gap-1 items-center text-muted-foreground hover:text-foreground"
           >
             {icon}
-            <span className="dark:text-neutral-400" style={{ fontSize: 14 }}>
-              {title}
-            </span>
+            <span className="text-sm">{title}</span>
             {column.getIsSorted() === 'desc' ? (
-              <ArrowDownIcon className="h-4 w-4 dark:text-neutral-400" />
+              <ArrowDownIcon className="h-4 w-4" />
             ) : column.getIsSorted() === 'asc' ? (
-              <ArrowUpIcon className="h-4 w-4 dark:text-neutral-400" />
+              <ArrowUpIcon className="h-4 w-4" />
             ) : (
-              <CaretSortIcon className=" h-4 w-4 dark:text-neutral-400" />
+              <CaretSortIcon className="h-4 w-4 opacity-50" />
             )}
           </Button>
         </DropdownMenuTrigger>

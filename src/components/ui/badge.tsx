@@ -3,20 +3,16 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest transition-all select-none',
+  'inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest transition-colors select-none',
   {
     variants: {
       variant: {
-        default:
-          'border-primary/20 bg-primary/10 text-primary hover:bg-primary/20',
-        secondary:
-          'border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700',
-        destructive:
-          'border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20',
+        default: 'border-primary/20 bg-primary/8 text-primary',
+        secondary: 'border-border bg-muted text-muted-foreground',
+        destructive: 'border-destructive/20 bg-destructive/10 text-destructive',
         accent:
-          'border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20',
-        outline:
-          'border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900',
+          'border-[var(--color-signature-mustard)]/30 bg-[var(--color-signature-cream)] text-[var(--color-ink)]',
+        outline: 'border-border text-muted-foreground bg-transparent',
       },
     },
     defaultVariants: {

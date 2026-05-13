@@ -4,54 +4,66 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center gap-3 whitespace-nowrap transition-all focus-visible:outline-hidden focus-visible:ring-[0.125rem] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
+  'inline-flex items-center gap-2 whitespace-nowrap transition-all focus-visible:outline-hidden focus-visible:ring-[0.125rem] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none font-medium',
   {
     variants: {
       variant: {
-        // App / Brand variants — use CSS token system
+        // App variants — editorial near-black system
         default:
-          'rounded-full justify-center cursor-pointer border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 font-medium tracking-tight',
+          'rounded-lg justify-center cursor-pointer border border-border bg-card text-foreground hover:bg-hover',
 
         primary:
-          'rounded-full cursor-pointer bg-primary text-white hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer bg-primary text-primary-foreground hover:opacity-90 active:bg-primary-dark',
 
         secondary:
-          'rounded-full cursor-pointer bg-secondary text-white hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer bg-secondary text-secondary-foreground border border-border hover:bg-hover',
 
         tertiary:
-          'rounded-full cursor-pointer bg-tertiary text-white hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer bg-tertiary text-white hover:opacity-90',
 
         outline:
-          'rounded-full cursor-pointer border-2 border-border bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900 text-foreground font-medium tracking-tight',
+          'rounded-lg cursor-pointer border border-border bg-transparent hover:bg-hover text-foreground',
 
         destructive:
-          'rounded-full cursor-pointer border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-medium tracking-tight hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all duration-200',
+          'rounded-lg cursor-pointer bg-destructive text-destructive-foreground hover:opacity-90',
 
-        link: 'cursor-pointer h-auto p-0 text-[11px] font-medium text-text/70 underline-offset-4 hover:underline',
+        link: 'cursor-pointer h-auto p-0 text-[11px] font-medium text-[var(--color-link)] underline-offset-4 hover:underline',
 
         ghost:
-          'rounded-full justify-center cursor-pointer hover:bg-hover dark:hover:bg-neutral-900 text-text-secondary hover:text-tertiary font-medium tracking-tight',
+          'rounded-lg justify-center cursor-pointer hover:bg-hover text-text-secondary hover:text-foreground',
 
-        // Marketing surface variants — use Mirama marketing palette
+        // Semantic color variants
+        info: 'rounded-lg cursor-pointer bg-tertiary text-white hover:opacity-90 active:opacity-80',
+
+        coral:
+          'rounded-lg cursor-pointer bg-[var(--color-signature-coral)] text-white hover:opacity-90 active:opacity-80',
+
+        success:
+          'rounded-lg cursor-pointer bg-[var(--color-success)] text-white hover:opacity-90 active:opacity-80',
+
+        warning:
+          'rounded-lg cursor-pointer bg-[var(--color-signature-mustard)] text-[var(--color-ink)] hover:opacity-90 active:opacity-80',
+
+        // Marketing surface variants — Airtable editorial system
         'mkt-primary':
-          'rounded-full cursor-pointer bg-[var(--miui-dark)] text-white hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer bg-[var(--color-ink)] text-white hover:opacity-90 active:opacity-80',
 
         'mkt-secondary':
-          'rounded-full cursor-pointer bg-[var(--miui-surface)] text-black hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer bg-transparent text-[var(--color-ink)] border border-[var(--color-hairline)] hover:bg-[var(--color-surface-soft)]',
 
         'mkt-outline':
-          'rounded-full cursor-pointer border-2 border-[var(--miui-dark)] bg-transparent text-[var(--miui-dark)] hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer border border-[var(--color-ink)] bg-transparent text-[var(--color-ink)] hover:bg-[var(--color-surface-soft)]',
 
         'mkt-ghost':
-          'rounded-full cursor-pointer border-2 border-[var(--miui-surface)] bg-[rgba(244,244,244,0.1)] text-[var(--miui-surface)] hover:opacity-85 font-medium tracking-tight',
+          'rounded-lg cursor-pointer border border-white/30 bg-white/10 text-white hover:bg-white/20',
       },
       size: {
-        default: 'h-10 px-8 py-[14px] text-sm',
-        sm: 'h-8 px-5 text-[11px]',
-        lg: 'h-12 px-8 py-[14px] text-base',
-        xl: 'h-14 px-10 py-[14px] text-lg',
-        icon: 'h-10 w-10',
-        'pub-lg': 'h-16 px-12 text-sm font-medium uppercase tracking-[0.2em]',
+        default: 'h-11 px-6 text-sm',
+        sm: 'h-8 px-4 text-xs',
+        lg: 'h-12 px-8 text-base',
+        xl: 'h-14 px-10 text-lg',
+        icon: 'h-10 w-10 rounded-full',
+        'pub-lg': 'h-16 px-12 text-sm uppercase tracking-[0.2em]',
       },
     },
     defaultVariants: {

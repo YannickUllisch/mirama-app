@@ -34,9 +34,11 @@ const AppSidebar = ({
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="border-b border-sidebar-border p-0">
+      <SidebarHeader className="p-0 border-b border-sidebar-border">
+        {/* Brand accent bar */}
+        <div className="h-0.5 w-full bg-sidebar-primary" />
         <div
-          className={`flex items-center h-14 px-3 gap-2 ${
+          className={`flex items-center h-13 px-3 gap-2 ${
             state === 'collapsed' ? 'justify-center' : 'justify-between'
           }`}
         >
@@ -50,7 +52,7 @@ const AppSidebar = ({
           <button
             type="button"
             onClick={toggleSidebar}
-            className="p-1.5 rounded-md text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors shrink-0"
+            className="p-1.5 rounded-md text-sidebar-foreground/40 hover:text-sidebar-primary hover:bg-sidebar-primary/10 transition-colors shrink-0"
             aria-label="Toggle sidebar"
           >
             {state === 'expanded' ? (

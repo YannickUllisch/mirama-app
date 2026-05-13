@@ -12,8 +12,8 @@ const SidebarNewButton = ({ organizationId }: SidebarNewButtonProps) => {
 
   return (
     <HoverLink href={`/organization/${organizationId}/projects/create`}>
-      <Button className="w-full justify-start gap-2 p-3">
-        <span className="text-sidebar-primary">+</span>
+      <Button variant="primary" className="w-full justify-start gap-2">
+        <span className="text-lg leading-none">+</span>
         <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
           New
         </span>

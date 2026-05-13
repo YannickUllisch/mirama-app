@@ -21,7 +21,7 @@ const RecentsNav = () => {
     <SidebarGroup className="p-0 px-2">
       {isLoading ? (
         <div className="flex items-center justify-center w-full h-25">
-          <Spinner size="sm" className="bg-black dark:bg-white" />
+          <Spinner size="sm" className="bg-sidebar-primary" />
         </div>
       ) : null}
       {projects?.length && projects.length > 0 ? (
@@ -35,7 +35,7 @@ const RecentsNav = () => {
               asChild
               isActive={pathname.includes(item.name)}
               tooltip={item.name}
-              className="relative justify-between data-[active=true]:bg-transparent data-[active=true]:hover:bg-primary data-[active=true]:hover:text-sidebar-accent-foreground data-[active=true]:text-sidebar-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-0 data-[active=true]:before:bottom-0 data-[active=true]:before:w-1 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-r"
+              className="relative justify-between data-[active=true]:bg-sidebar-primary/10 data-[active=true]:text-sidebar-primary data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-1 data-[active=true]:before:bottom-1 data-[active=true]:before:w-0.5 data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:rounded-full"
             >
               <div className="flex items-center gap-2">
                 <HoverLink
@@ -45,7 +45,7 @@ const RecentsNav = () => {
                   <FolderOpen strokeWidth={1.5} className="size-4" />
                   <span>{item.name}</span>
                 </HoverLink>
-                <span className="ml-2 text-xs text-sidebar-foreground">
+                <span className="ml-2 text-xs text-sidebar-foreground/50">
                   {item.tasks.length}
                 </span>
               </div>

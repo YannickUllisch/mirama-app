@@ -458,7 +458,7 @@ const DropZoneArea = forwardRef<HTMLDivElement, DropZoneAreaProps>(
         {...props}
         aria-label="dropzone"
         className={cn(
-          'flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          'flex items-center justify-center rounded-md border border-border bg-background px-4 py-2 ring-offset-background focus-visible:outline-none focus-visible:ring-[0.125rem] focus-visible:ring-ring',
           context.isDragActive && 'animate-pulse bg-black/5',
           context.isInvalid && 'border-destructive',
           className,
@@ -584,7 +584,7 @@ const DropzoneFileListItem = forwardRef<
         aria-label="dropzone-file-list-item"
         aria-describedby={isInvalid ? messageId : undefined}
         className={cn(
-          'flex flex-col justify-center gap-2 rounded-md bg-muted/40 px-4 py-2',
+          'flex flex-col justify-center gap-2 rounded-md bg-hover/40 border border-border px-4 py-2',
           className,
         )}
       >
@@ -750,7 +750,7 @@ const DropzoneTrigger = forwardRef<HTMLLabelElement, DropzoneTriggerProps>(
         ref={ref}
         {...props}
         className={cn(
-          'cursor-pointer rounded-sm bg-secondary text-white px-4 py-2 font-medium ring-offset-background transition-colors focus-within:outline-none hover:bg-secondary/80 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring has-[input:focus-visible]:ring-offset-2',
+          'cursor-pointer rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 has-[input:focus-visible]:ring-[0.125rem] has-[input:focus-visible]:ring-ring',
           className,
         )}
       >

@@ -13,10 +13,6 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type ColumnSizingState,
-  type RowSelectionState,
-  type SortingState,
-  type Updater,
-  type VisibilityState,
   getCoreRowModel,
   getExpandedRowModel,
   getFacetedRowModel,
@@ -24,7 +20,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type RowSelectionState,
+  type SortingState,
+  type Updater,
   useReactTable,
+  type VisibilityState,
 } from '@tanstack/react-table'
 import type React from 'react'
 import { useState } from 'react'
@@ -207,7 +207,9 @@ export const DataTable = <TData extends TableData<TData>>({
   })
 
   return (
-    <div className="rounded-xl border bg-card border-border overflow-hidden">
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
+      {/* Top accent */}
+      <div className="h-[2px] bg-tertiary" />
       {/* Toolbar */}
       <div className="border-b border-border bg-card">
         <DataTableToolbar

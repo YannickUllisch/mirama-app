@@ -173,8 +173,8 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'flex flex-wrap gap-1.5 min-h-9 px-3 py-1.5 rounded-lg border border-border bg-background transition-colors',
-        'focus-within:ring-[0.125rem] focus-within:ring-ring focus-within:border-primary/60',
+        'flex flex-wrap gap-1.5 min-h-11 px-3 py-1.5 rounded-sm border border-border bg-background transition-colors',
+        'focus-within:ring-[0.125rem] focus-within:ring-ring focus-within:border-[var(--color-info-border)]',
         className,
       )}
       {...props}
@@ -263,7 +263,7 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        'rounded-xl border border-border bg-card text-card-foreground p-1 max-h-60 overflow-y-auto',
+        'rounded-lg border border-border bg-card text-card-foreground p-1 max-h-60 overflow-y-auto shadow-md',
         className,
       )}
     >

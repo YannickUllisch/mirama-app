@@ -1,6 +1,6 @@
 import type { TableData } from '@src/components/Tables/DataTable'
 import { TableHead, TableHeader, TableRow } from '@src/components/ui/table'
-import { type Table, flexRender } from '@tanstack/react-table'
+import { flexRender, type Table } from '@tanstack/react-table'
 import { GripVertical } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -29,7 +29,7 @@ const DataTableHeader = <TData extends TableData<TData>>({
     <TableHeader
       ref={headerRef}
       style={{ zIndex: 4 }}
-      className={`bg-background border-b border-border ${isSticky ? 'sticky -top-0.75' : ''}`}
+      className={`bg-muted border-b-2 border-border ${isSticky ? 'sticky -top-0.75' : ''}`}
     >
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow

@@ -35,8 +35,7 @@ const ColorPicker = forwardRef<
         <button
           type="button"
           className={cn(
-            'h-9 w-9 shrink-0 rounded-lg border border-border bg-background p-1 transition-colors',
-            'hover:border-primary/50',
+            'h-9 w-9 shrink-0 rounded-md border border-border bg-background p-1 transition-colors',
             'focus:outline-none focus:ring-[0.125rem] focus:ring-ring',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             className,
