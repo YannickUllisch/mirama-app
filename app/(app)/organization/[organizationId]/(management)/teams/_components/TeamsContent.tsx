@@ -2,7 +2,6 @@
 'use client'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
-
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
 import { Button } from '@ui/button'
 import { Plus, Users2 } from 'lucide-react'
@@ -21,9 +20,6 @@ const TeamsContent = () => {
   const [teamToDelete, setTeamToDelete] = useState<string | null>(null)
 
   const { data: teams = [], isLoading } = apiRequest.team.fetchAll.useQuery()
-
-  // Org members are fetched once here and passed down so each TeamSection
-  // can filter the add-member dropdown without additional requests.
   const { data: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
 
   const { mutate: createTeam, isPending: isCreating } =
@@ -32,7 +28,7 @@ const TeamsContent = () => {
   const { mutate: deleteTeam } = apiRequest.team.remove.useMutation()
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 md:px-10 py-10 space-y-5">
       {/* Top action bar */}
       <div className="flex items-center justify-end">
         {canCreate && (
@@ -50,8 +46,8 @@ const TeamsContent = () => {
       {/* Empty state */}
       {!isLoading && teams.length === 0 && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <Users2 className="w-10 h-10 text-neutral-300 dark:text-neutral-600 mb-3" />
-          <p className="text-sm font-semibold text-neutral-500">No teams yet</p>
+          <Users2 className="w-10 h-10 text-muted-foreground/30 mb-3" />
+          <p className="text-sm font-medium text-foreground">No teams yet</p>
           <p className="text-xs text-muted-foreground mt-1 mb-4 max-w-xs">
             Create a team to group members and assign them to projects together.
           </p>
@@ -68,14 +64,15 @@ const TeamsContent = () => {
         </div>
       )}
 
-      {/* Team sections — each fetches its own members independently */}
-      {teams.map((t) => (
+      {/* Team cards */}
+      {teams.map((t, index) => (
         <TeamSection
           key={t.id}
           team={t}
           orgMembers={orgMembers}
           canUpdate={canUpdate}
           canDelete={canDelete}
+          colorIndex={index}
           onDelete={setTeamToDelete}
         />
       ))}

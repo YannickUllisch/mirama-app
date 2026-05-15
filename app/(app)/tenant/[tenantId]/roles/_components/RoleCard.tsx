@@ -99,17 +99,11 @@ export const RoleCard = ({
                 {role.name}
               </span>
               {isSystem && (
-                <Badge
-                  variant="secondary"
-                  className="text-[9px] px-1 h-3.5"
-                >
+                <Badge variant="secondary" className="text-[9px] px-1 h-3.5">
                   system
                 </Badge>
               )}
-              <Badge
-                variant="outline"
-                className="text-[9px] px-1 h-3.5"
-              >
+              <Badge variant="outline" className="text-[9px] px-1 h-3.5">
                 {isProject ? 'project' : 'org'}
               </Badge>
             </div>
@@ -136,11 +130,7 @@ export const RoleCard = ({
           {!isSystem && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                >
+                <Button variant="ghost" size="icon" className="h-8 w-8">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -176,7 +166,13 @@ export const RoleCard = ({
       </div>
 
       {expanded && (
-        <div className={cn('relative z-10 border-t', s.expandedBorder, s.expandedBg)}>
+        <div
+          className={cn(
+            'relative z-10 border-t',
+            s.expandedBorder,
+            s.expandedBg,
+          )}
+        >
           <div className="px-4 py-3 flex items-center gap-3">
             <h4 className={cn('text-xs font-medium', s.headerText)}>
               Active Permissions

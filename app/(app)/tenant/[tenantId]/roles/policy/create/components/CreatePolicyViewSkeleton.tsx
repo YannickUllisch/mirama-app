@@ -47,7 +47,10 @@ const CreatePolicyViewSkeleton = () => (
         </div>
         <div className="divide-y divide-border">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`perm-skel-${i}`} className="px-4 py-3 flex items-center gap-2.5">
+            <div
+              key={`perm-skel-${i}`}
+              className="px-4 py-3 flex items-center gap-2.5"
+            >
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-4 w-14 rounded-full" />
             </div>

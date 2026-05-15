@@ -19,7 +19,11 @@ const STAT_COLORS = [
   { header: 'bg-signature-coral', sub: 'text-white/70', icon: 'text-white/60' },
   { header: 'bg-signature-mustard', sub: 'text-ink/65', icon: 'text-ink/50' },
   { header: 'bg-signature-mint', sub: 'text-ink/65', icon: 'text-ink/50' },
-  { header: 'bg-signature-forest', sub: 'text-white/70', icon: 'text-white/60' },
+  {
+    header: 'bg-signature-forest',
+    sub: 'text-white/70',
+    icon: 'text-white/60',
+  },
 ]
 
 const DashboardStatsSkeleton = () => (

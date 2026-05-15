@@ -186,7 +186,12 @@ const OrganizationCard = ({
 
         {/* Name + slug */}
         <div className="flex-1">
-          <p className={cn('text-base font-medium leading-tight truncate', c.text)}>
+          <p
+            className={cn(
+              'text-base font-medium leading-tight truncate',
+              c.text,
+            )}
+          >
             {org.name}
           </p>
           <p className={cn('text-xs font-mono mt-0.5 truncate', c.subtext)}>

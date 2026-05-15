@@ -93,9 +93,7 @@ const UsageSection = () => {
           label="Projects (across all orgs)"
           icon={<FolderOpen className="w-3.5 h-3.5" />}
           current={usage.projects}
-          max={
-            f ? (f.maxOrganizations ?? 1) * (f.maxProjectsPerOrg ?? -1) : -1
-          }
+          max={f ? (f.maxOrganizations ?? 1) * (f.maxProjectsPerOrg ?? -1) : -1}
         />
       </CardContent>
     </Card>
