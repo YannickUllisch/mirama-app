@@ -72,7 +72,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === 'update' && session?.organizationId === null) {
         // Explicit clear — user left org context (returned to tenant portal)
         token.organizationId = undefined
-        token.orgRole = undefined
+        token.roleId = undefined
         token.memberId = undefined
       } else if (trigger === 'update' && session?.organizationId) {
         const foundOrg = await tryGetOrganization(
@@ -82,7 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (foundOrg) {
           token.organizationId = foundOrg.id
-          token.orgRole = foundOrg.members[0].iamRoleId
+          token.roleId = foundOrg.members[0].iamRoleId
           token.memberId = foundOrg.members[0].id
           token.tenantId = foundOrg.tenantId
         }
@@ -92,7 +92,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.organizationId as string,
         )
         if (foundOrg?.members[0]) {
-          token.orgRole = foundOrg.members[0].iamRoleId
+          token.roleId = foundOrg.members[0].iamRoleId
           token.memberId = foundOrg.members[0].id
         }
       }
@@ -105,7 +105,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.name = token.name as string
         session.user.tenantId = token.tenantId as string
         session.user.organizationId = token.organizationId as string
-        session.user.orgRole = token.orgRole as string
+        session.user.roleId = token.roleId as string
         session.user.tenantRole = token.tenantRole as TenantRole
         session.user.memberId = token.memberId as string | undefined
       }

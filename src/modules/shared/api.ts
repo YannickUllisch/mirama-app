@@ -1,14 +1,12 @@
 import axios from 'axios'
 
-const envURL = {
-  dev: 'http://localhost:3000',
+const _envURL = {
+  dev: process.env.NEXT_PUBLIC_BASE_URL ?? '',
   prod: process.env.NEXT_PUBLIC_BASE_URL ?? '',
 }
 
 export const api = axios.create({
-  baseURL: `${
-    envURL[(process.env.NEXT_PUBLIC_ENV as 'dev' | 'prod') ?? 'dev']
-  }/api/db/`,
+  baseURL: `/api/v1/`,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

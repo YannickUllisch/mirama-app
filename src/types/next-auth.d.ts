@@ -4,7 +4,7 @@ export type ExtendedUser = DefaultSession['user'] & {
   tenantId: string
   tenantRole: TenantRole
   organizationId?: string
-  orgRole?: string
+  roleId?: string
   memberId?: string
 }
 

@@ -105,7 +105,7 @@ export default {
         session.user.name = token.name as string
         session.user.tenantId = token.tenantId as string
         session.user.organizationId = token.organizationId as string
-        session.user.orgRole = token.orgRole as string
+        session.user.roleId = token.roleId as string
         session.user.tenantRole = token.tenantRole as TenantRole
       }
       return session
