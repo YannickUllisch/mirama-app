@@ -1,99 +1,77 @@
-import type { TenantRole } from '@/prisma/generated/client'
 import NextAuth from 'next-auth'
-import { CreatePrismaAdapter } from './adapters/PrismaAdapter'
 import authConfig from './auth.config'
-import { getUserById, tryGetOrganization } from './helpers/queries'
+import {
+  getOrganizationMembership,
+  getUserByExternalId,
+  setupUser,
+} from './helpers/queries'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, profile, account }) {
-      const adapter = CreatePrismaAdapter()
-      const existingUser = await getUserById(user.id ?? '')
+    async signIn({ user, profile }) {
+      const externalId = user.id ?? ''
+      if (!externalId) return false
 
-      if (!existingUser) {
-        if (account?.provider === 'credentials') {
-          if (typeof adapter.createUser === 'function') {
-            await adapter.createUser({
-              email: user.email ?? '',
-              emailVerified: new Date(),
-              name: user.name ?? '',
-              id: user.id ?? profile?.sub ?? '',
-            })
-          } else {
-            console.error('Create User is not Defined')
-            return false
-          }
-        }
+      const existing = await getUserByExternalId(externalId)
+      if (existing) return true
 
-        if (account?.provider === 'cognito') {
-          if (typeof adapter.createUser === 'function') {
-            await adapter.createUser({
-              email: profile?.email ?? user.email ?? '',
-              emailVerified: new Date(),
-              name: profile?.name ?? user.name ?? '',
-              id: profile?.sub ?? user.id ?? '',
-            })
-          } else {
-            console.error('Create User is not Defined')
-            return false
-          }
-          if (typeof adapter.linkAccount === 'function') {
-            await adapter.linkAccount({
-              ...account,
-              userId: profile?.sub ?? user.id ?? '',
-              type: account.type as any,
-            })
-          } else {
-            console.error('Link Account is not Defined')
-            return false
-          }
-        }
+      const ok = await setupUser({
+        id: externalId,
+        name: user.name ?? profile?.name ?? 'Unknown',
+        email: user.email ?? profile?.email ?? '',
+        image: profile?.picture ?? user.image ?? null,
+      })
+
+      return ok
+    },
+    async jwt({ token, user, account, trigger, session }) {
+      if (account) {
+        token.sub = user?.id ?? token.sub
       }
 
-      return true
-    },
-    async jwt({ token, user, trigger, session }) {
       if (!token.sub) return token
 
-      if (user) {
+      const me = await getUserByExternalId(token.sub)
+      if (!me) return token
+
+      token.tenantId = me.tenantId
+      token.name = me.name
+      token.iss = process.env.NEXT_AUTH_ISS
+      token.aud = process.env.NEXT_AUTH_AUD
+
+      if (!me.isOnboarded) {
+        token.isOnboarded = false
+      } else {
+        delete token.isOnboarded
       }
-      const existingUser = await getUserById(token.sub)
-      if (!existingUser) return token
 
-      token.tenantId = existingUser.tenant?.id
-      token.tenantRole = existingUser.role
-      token.name = existingUser.name
+      if (trigger === 'update' && session?.isOnboarded === true) {
+        delete token.isOnboarded
+      }
 
-      token.iss = 'https://mirama.com'
-      token.aud = 'api://mirama.com'
+      if (me.organizationInfo) {
+        token.organizationId = me.organizationInfo.id
+        token.memberId = me.organizationInfo.memberId
+        token.tenantId = me.organizationInfo.tenantId
+        token.roleId = me.organizationInfo.iamRoleId
+      }
 
       if (trigger === 'update' && session?.organizationId === null) {
-        // Explicit clear — user left org context (returned to tenant portal)
         token.organizationId = undefined
         token.roleId = undefined
         token.memberId = undefined
       } else if (trigger === 'update' && session?.organizationId) {
-        const foundOrg = await tryGetOrganization(
-          token.sub as string,
+        const membership = await getOrganizationMembership(
+          token.sub,
           session.organizationId,
         )
-
-        if (foundOrg) {
-          token.organizationId = foundOrg.id
-          token.roleId = foundOrg.members[0].iamRoleId
-          token.memberId = foundOrg.members[0].id
-          token.tenantId = foundOrg.tenantId
-        }
-      } else if (token.organizationId && !token.memberId) {
-        const foundOrg = await tryGetOrganization(
-          token.sub as string,
-          token.organizationId as string,
-        )
-        if (foundOrg?.members[0]) {
-          token.roleId = foundOrg.members[0].iamRoleId
-          token.memberId = foundOrg.members[0].id
+        if (membership) {
+          token.organizationId = membership.id
+          token.roleId = membership.iamRoleId
+          token.memberId = membership.memberId
+          token.tenantId = membership.tenantId
         }
       }
 
@@ -102,12 +80,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ token, session }) {
       if (session.user) {
         session.user.id = token.sub as string
-        session.user.name = token.name as string
+        session.user.name = token.name
         session.user.tenantId = token.tenantId as string
-        session.user.organizationId = token.organizationId as string
-        session.user.roleId = token.roleId as string
-        session.user.tenantRole = token.tenantRole as TenantRole
+        session.user.organizationId = token.organizationId as string | undefined
+        session.user.roleId = token.roleId as string | undefined
         session.user.memberId = token.memberId as string | undefined
+
+        if (token.isOnboarded !== undefined) {
+          session.user.isOnboarded = token.isOnboarded as boolean
+        } else {
+          delete session.user.isOnboarded
+        }
       }
       return session
     },
@@ -119,7 +102,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signOut: '/',
     verifyRequest: '/auth/login',
   },
-  adapter: CreatePrismaAdapter(),
   session: {
     strategy: 'jwt',
   },

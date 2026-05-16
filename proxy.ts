@@ -3,6 +3,7 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
+  onboardingRoutes,
   publicRoutes,
 } from '@src/routes'
 import NextAuth from 'next-auth'
@@ -16,6 +17,7 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname)
   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
+  const isOnboardingPage = onboardingRoutes.includes(nextUrl.pathname)
 
   if (isApiAuthRoute) {
     return
@@ -42,10 +44,28 @@ export default auth((req) => {
     )
   }
 
-  // Session is guaranteed to exist after the auth check above
   const session = req.auth
   if (!session?.user) return
 
+  // Onboarding Guards -----------------
+  const isNotOnboarded = session.user.isOnboarded === false
+
+  if (isNotOnboarded && !isOnboardingPage) {
+    // Kick user to onboarding if they try accessing protected areas
+    return Response.redirect(new URL('/portal/onboarding', nextUrl.origin))
+  }
+
+  if (!isNotOnboarded && isOnboardingPage) {
+    // Prevent onboarded users from lingering on the onboarding view
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
+  }
+
+  // If they are not onboarded, stop them from hitting deeper tenant/org guards
+  if (isNotOnboarded && isOnboardingPage) {
+    return
+  }
+
+  // Tenant Guards -----------------
   const { tenantId, organizationId } = session.user
   const pathname = nextUrl.pathname
   if (pathname.startsWith('/tenant/')) {
@@ -55,36 +75,16 @@ export default auth((req) => {
     }
   }
 
-  // 6. Organization route guard
+  // Organization guards -----------------
   if (pathname.startsWith('/organization')) {
-    // No org context in session → redirect to tenant dashboard
     if (!organizationId) {
-      return Response.redirect(new URL(`/tenant/${tenantId}`, nextUrl.origin))
+      return Response.redirect(new URL(`/portal`, nextUrl.origin))
     }
 
     // Org route with a specific ID, verify it matches the session
     const urlOrgId = pathname.split('/')[2]
     if (urlOrgId && urlOrgId !== organizationId) {
-      return Response.redirect(new URL(`/tenant/${tenantId}`, nextUrl.origin))
-    }
-  }
-
-  // 7. API route guard: reject mismatched tenant/org IDs with 403
-  if (pathname.startsWith('/api/db/')) {
-    const segments = pathname.split('/')
-    // /api/db/tenant/:tenantId/...
-    if (segments[3] === 'tenant') {
-      const urlTenantId = segments[4]
-      if (urlTenantId && urlTenantId !== tenantId) {
-        return Response.json({ message: 'Forbidden' }, { status: 403 })
-      }
-    }
-    // /api/db/organization/:organizationId/...
-    if (segments[3] === 'organization') {
-      const urlOrgId = segments[4]
-      if (!organizationId || (urlOrgId && urlOrgId !== organizationId)) {
-        return Response.json({ message: 'Forbidden' }, { status: 403 })
-      }
+      return Response.redirect(new URL(`/portal`, nextUrl.origin))
     }
   }
 

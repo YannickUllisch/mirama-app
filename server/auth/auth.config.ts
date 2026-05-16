@@ -1,4 +1,3 @@
-import type { TenantRole } from '@/prisma/generated/client'
 import {
   type AttributeType,
   AuthFlowType,
@@ -102,11 +101,17 @@ export default {
     session({ token, session }) {
       if (session.user) {
         session.user.id = token.sub as string
-        session.user.name = token.name as string
+        session.user.name = token.name
         session.user.tenantId = token.tenantId as string
-        session.user.organizationId = token.organizationId as string
-        session.user.roleId = token.roleId as string
-        session.user.tenantRole = token.tenantRole as TenantRole
+        session.user.organizationId = token.organizationId as string | undefined
+        session.user.roleId = token.roleId as string | undefined
+        session.user.memberId = token.memberId as string | undefined
+
+        if (token.isOnboarded !== undefined) {
+          session.user.isOnboarded = token.isOnboarded as boolean
+        } else {
+          delete session.user.isOnboarded
+        }
       }
       return session
     },

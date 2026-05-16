@@ -1,89 +1,40 @@
-import { PrismaClient } from '@/prisma/generated/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { DateTime } from 'luxon'
+import { api } from '@src/modules/shared/api'
+import type { AuthMeResponse, AuthOrgMembershipResponse } from '../types'
 
-const adapter = new PrismaPg({
-  connectionString: process.env.POSTGRES_PRISMA_URL,
-})
-export const client = new PrismaClient({ adapter })
-
-export const getUserById = async (id: string) => {
+export const getUserByExternalId = async (
+  externalId: string,
+): Promise<AuthMeResponse | null> => {
   try {
-    const user = await client.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        role: true,
-        name: true,
-        tenant: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    })
-
-    return user
+    const { data } = await api.get(`auth/me/${externalId}`)
+    return data
   } catch {
     return null
   }
 }
 
-export const tryGetOrganization = async (userId: string, orgId: string) => {
-  // User and Member are separate models — bridge via email
-  const user = await client.user.findUnique({
-    where: { id: userId },
-    select: { email: true },
-  })
-
-  if (!user) return null
-
-  const organization = await client.organization.findFirst({
-    where: {
-      id: orgId,
-      members: { some: { email: user.email } },
-    },
-    select: {
-      id: true,
-      tenantId: true,
-      members: {
-        where: { email: user.email },
-        select: { id: true, iamRoleId: true },
-      },
-    },
-  })
-  return organization
+export const setupUser = async (payload: {
+  id: string
+  name: string
+  email: string
+  image?: string | null
+}): Promise<boolean> => {
+  try {
+    await api.post('auth/setup', payload)
+    return true
+  } catch {
+    return false
+  }
 }
 
-export const getValidCompanyInvitation = async ({
-  email,
-}: {
-  email: string
-}) => {
+export const getOrganizationMembership = async (
+  externalId: string,
+  organizationId: string,
+): Promise<AuthOrgMembershipResponse | null> => {
   try {
-    const invitation = await client.organizationInvitation.findUnique({
-      where: {
-        email,
-      },
-    })
-
-    // Validation of invitation
-    if (!invitation) {
-      return null
-    }
-    const expiresAt = DateTime.fromJSDate(invitation?.expiresAt)
-
-    if (expiresAt < DateTime.now()) {
-      // Invitation has expired, so remove it from the database
-      await client.organizationInvitation.delete({
-        where: {
-          email: invitation.email,
-        },
-      })
-      return null
-    }
-
-    return invitation
+    const { data } = await api.get(
+      `auth/me/${externalId}/organization/${organizationId}`,
+    )
+    return data
   } catch {
     return null
   }
