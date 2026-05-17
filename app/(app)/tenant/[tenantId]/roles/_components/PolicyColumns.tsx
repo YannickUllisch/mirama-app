@@ -1,6 +1,8 @@
 // app/(app)/tenant/[tenantId]/roles/components/PolicyColumns.tsx
-import type { PolicyResponse } from '@server/modules/account/policies/features/response'
+'use client'
+
 import { EffectBadge } from '@src/modules/tenant/iam/components/EffectBadge'
+import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policyTypes'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
@@ -40,7 +42,7 @@ export const usePolicyColumns = ({
                     managed
                   </Badge>
                 )}
-                {!p.tenantId && (
+                {p.isSystemPolicy && (
                   <Badge
                     variant="outline"
                     className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
@@ -68,16 +70,16 @@ export const usePolicyColumns = ({
           const groups = p.statements.reduce(
             (acc, s) => {
               const res = s.resource.replace('/*', '') || '*'
-              if (!acc[res]) acc[res] = { ALLOW: [], DENY: [] }
+              if (!acc[res]) acc[res] = { Allow: [], Deny: [] }
               const shortAction = s.action.includes(':')
                 ? (s.action.split(':').pop() ?? s.action)
                 : s.action
-              acc[res][s.effect === 'ALLOW' ? 'ALLOW' : 'DENY'].push(
+              acc[res][s.effect === 'Allow' ? 'Allow' : 'Deny'].push(
                 shortAction,
               )
               return acc
             },
-            {} as Record<string, { ALLOW: string[]; DENY: string[] }>,
+            {} as Record<string, { Allow: string[]; Deny: string[] }>,
           )
 
           return (
@@ -91,10 +93,10 @@ export const usePolicyColumns = ({
                     {resource}
                   </span>
                   <div className="flex flex-col gap-1">
-                    {effects.ALLOW.length > 0 && (
+                    {effects.Allow.length > 0 && (
                       <div className="flex items-center gap-1 flex-wrap">
-                        <EffectBadge effect="ALLOW" />
-                        {effects.ALLOW.map((action) => (
+                        <EffectBadge effect="Allow" />
+                        {effects.Allow.map((action) => (
                           <Badge
                             key={action}
                             variant="secondary"
@@ -105,10 +107,10 @@ export const usePolicyColumns = ({
                         ))}
                       </div>
                     )}
-                    {effects.DENY.length > 0 && (
+                    {effects.Deny.length > 0 && (
                       <div className="flex items-center gap-1 flex-wrap">
-                        <EffectBadge effect="DENY" />
-                        {effects.DENY.map((action) => (
+                        <EffectBadge effect="Deny" />
+                        {effects.Deny.map((action) => (
                           <Badge
                             key={action}
                             variant="secondary"
@@ -136,7 +138,7 @@ export const usePolicyColumns = ({
         enableHiding: false,
         cell: ({ row }) => {
           const p = row.original
-          const canModify = !p.isManaged && !!p.tenantId
+          const canModify = !p.isManaged && !p.isSystemPolicy
           if (!canModify) return null
           return (
             <div className="flex items-center justify-end gap-1">

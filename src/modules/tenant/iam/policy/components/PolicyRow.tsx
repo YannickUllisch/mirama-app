@@ -1,4 +1,7 @@
-import type { PolicyResponse } from '@server/modules/account/policies/features/response'
+// src/modules/tenant/iam/policy/components/PolicyRow.tsx
+'use client'
+
+import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policyTypes'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { FileText, Pencil, X } from 'lucide-react'
@@ -16,7 +19,6 @@ export const PolicyRow = ({
   canDetach: boolean
   canEdit?: boolean
 }) => {
-  // Group actions by resource
   const resourceGroups = policy.statements.reduce(
     (acc, s) => {
       const res = s.resource.replace('/*', '')
@@ -52,7 +54,7 @@ export const PolicyRow = ({
               managed
             </Badge>
           )}
-          {!policy.tenantId && (
+          {policy.isSystemPolicy && (
             <Badge
               variant="outline"
               className="text-[9px] px-1 h-3.5 uppercase tracking-tighter text-amber-500 border-amber-200 dark:border-amber-800"
@@ -90,7 +92,7 @@ export const PolicyRow = ({
       </div>
 
       <div className="flex items-center gap-1">
-        {canEdit && onEdit && !policy.isManaged && policy.tenantId && (
+        {canEdit && onEdit && !policy.isManaged && !policy.isSystemPolicy && (
           <Button
             variant="ghost"
             size="icon"

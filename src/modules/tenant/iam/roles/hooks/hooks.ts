@@ -1,10 +1,16 @@
-import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
-import type { RoleResponse } from '@/server/modules/account/roles/features/response'
-import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type {
+  AccessScope,
+  CreateRoleCommand,
+  RoleResponse,
+  UpdateRoleCommand,
+} from '../roleTypes'
 import {
   attachPolicyFn,
   createRoleFn,
@@ -12,6 +18,7 @@ import {
   detachPolicyFn,
   fetchRoleByIdFn,
   fetchRolesFn,
+  fetchRolesWithPoliciesFn,
   updateRoleFn,
 } from './api'
 
@@ -24,13 +31,22 @@ export const roleKeys = {
 }
 
 const role = {
-  fetchAll: {
-    useQuery: () => {
+  fetchAllByScope: {
+    useQuery: (scope: AccessScope) => {
       const { activeTenantId } = useTenantResource()
       return useQuery<RoleResponse[]>({
         queryKey: roleKeys.list(activeTenantId),
-        queryFn: () => fetchRolesFn(activeTenantId),
+        queryFn: () => fetchRolesFn(activeTenantId, scope),
       })
+    },
+  },
+
+  fetchByScopeWithPolicies: {
+    useQuery: (scope: AccessScope) => {
+      const { activeTenantId } = useTenantResource()
+      return usePaginatedQuery(roleKeys.list(activeTenantId), (params) =>
+        fetchRolesWithPoliciesFn(activeTenantId, scope, params),
+      )
     },
   },
 
@@ -46,12 +62,12 @@ const role = {
     },
   },
 
-  fetchAllOrganizationSpecific: {
-    useQuery: () => {
+  fetchAllByScopeForOrganization: {
+    useQuery: (scope: AccessScope) => {
       const { activeTenantId } = useOrganizationResource()
       return useQuery<RoleResponse[]>({
         queryKey: roleKeys.list(activeTenantId),
-        queryFn: () => fetchRolesFn(activeTenantId),
+        queryFn: () => fetchRolesFn(activeTenantId, scope),
       })
     },
   },
@@ -64,11 +80,11 @@ const role = {
       return useMutation<
         RoleResponse,
         Error,
-        CreateRoleRequest,
+        CreateRoleCommand,
         { previous?: RoleResponse[] }
       >({
         mutationFn: (data) => createRoleFn(activeTenantId, data),
-        ...optimisticList<RoleResponse, CreateRoleRequest>(
+        ...optimisticList<RoleResponse, CreateRoleCommand>(
           queryClient,
           roleKeys.list(activeTenantId),
           {
@@ -85,7 +101,7 @@ const role = {
       const { activeTenantId } = useTenantResource()
       const queryClient = useQueryClient()
 
-      type Vars = { id: string; data: UpdateRoleRequest }
+      type Vars = { id: string; data: UpdateRoleCommand }
 
       return useMutation<
         RoleResponse,

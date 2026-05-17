@@ -1,13 +1,23 @@
-import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
-import type { UpdatePolicyRequest } from '@/server/modules/account/policies/features/update-policy/schema'
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
-import type { PolicyResponse } from '@server/modules/account/policies/features/response'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { AccessScope } from '../../roles/roleTypes'
+import type {
+  AddPolicyStatementCommand,
+  CreatePolicyCommand,
+  PolicyResponse,
+  UpdatePolicyCommand,
+} from '../policyTypes'
 import {
+  addPolicyStatementFn,
   createPolicyFn,
   deletePolicyFn,
   fetchPoliciesFn,
+  fetchPolicyByIdFn,
+  removePolicyStatementFn,
   updatePolicyFn,
 } from './api'
 
@@ -15,16 +25,28 @@ export const policyKeys = {
   root: ['policies'] as const,
   tenant: (tenantId: string) => [...policyKeys.root, tenantId] as const,
   list: (tenantId: string) => [...policyKeys.tenant(tenantId), 'list'] as const,
+  detail: (tenantId: string, policyId: string) =>
+    [...policyKeys.tenant(tenantId), policyId] as const,
 }
 
 const policy = {
-  fetchAll: {
-    useQuery: () => {
+  fetchById: {
+    useQuery: (policyId: string) => {
       const { activeTenantId } = useTenantResource()
-      return useQuery<PolicyResponse[]>({
-        queryKey: policyKeys.list(activeTenantId),
-        queryFn: () => fetchPoliciesFn(activeTenantId),
+      return useQuery<PolicyResponse>({
+        queryKey: policyKeys.detail(activeTenantId, policyId),
+        queryFn: () => fetchPolicyByIdFn(activeTenantId, policyId),
+        enabled: !!policyId,
       })
+    },
+  },
+
+  fetchAll: {
+    useQuery: (scope: AccessScope) => {
+      const { activeTenantId } = useTenantResource()
+      return usePaginatedQuery(policyKeys.list(activeTenantId), (params) =>
+        fetchPoliciesFn(activeTenantId, scope, params),
+      )
     },
   },
 
@@ -36,11 +58,11 @@ const policy = {
       return useMutation<
         PolicyResponse,
         Error,
-        CreatePolicyRequest,
+        CreatePolicyCommand,
         { previous?: PolicyResponse[] }
       >({
         mutationFn: (data) => createPolicyFn(activeTenantId, data),
-        ...optimisticList<PolicyResponse, CreatePolicyRequest>(
+        ...optimisticList<PolicyResponse, CreatePolicyCommand>(
           queryClient,
           policyKeys.list(activeTenantId),
           {
@@ -57,7 +79,7 @@ const policy = {
       const { activeTenantId } = useTenantResource()
       const queryClient = useQueryClient()
 
-      type Vars = { id: string; data: UpdatePolicyRequest }
+      type Vars = { id: string; data: UpdatePolicyCommand }
 
       return useMutation<
         PolicyResponse,
@@ -96,6 +118,86 @@ const policy = {
             invalidateKey: policyKeys.tenant(activeTenantId),
             successMessage: 'Policy deleted',
             apply: (old, policyId) => old.filter((p) => p.id !== policyId),
+          },
+        ),
+      })
+    },
+  },
+
+  addStatement: {
+    useMutation: () => {
+      const { activeTenantId } = useTenantResource()
+      const queryClient = useQueryClient()
+
+      type Vars = {
+        policyId: string
+        data: Omit<AddPolicyStatementCommand, 'policyId'>
+      }
+
+      return useMutation<
+        PolicyResponse,
+        Error,
+        Vars,
+        { previous?: PolicyResponse[] }
+      >({
+        mutationFn: ({ policyId, data }) =>
+          addPolicyStatementFn(activeTenantId, policyId, data),
+        ...optimisticList<PolicyResponse, Vars>(
+          queryClient,
+          policyKeys.list(activeTenantId),
+          {
+            invalidateKey: policyKeys.tenant(activeTenantId),
+            successMessage: 'Statement added',
+            apply: (old, { policyId, data }) =>
+              old.map((p) =>
+                p.id === policyId
+                  ? {
+                      ...p,
+                      statements: [
+                        ...p.statements,
+                        {
+                          id: crypto.randomUUID(),
+                          action: data.action,
+                          resource: data.resource ?? '*',
+                          effect: data.effect ?? 'Allow',
+                        },
+                      ],
+                    }
+                  : p,
+              ),
+          },
+        ),
+      })
+    },
+  },
+
+  removeStatement: {
+    useMutation: () => {
+      const { activeTenantId } = useTenantResource()
+      const queryClient = useQueryClient()
+
+      type Vars = { policyId: string; statementId: string }
+
+      return useMutation<void, Error, Vars, { previous?: PolicyResponse[] }>({
+        mutationFn: ({ policyId, statementId }) =>
+          removePolicyStatementFn(activeTenantId, policyId, statementId),
+        ...optimisticList<PolicyResponse, Vars>(
+          queryClient,
+          policyKeys.list(activeTenantId),
+          {
+            invalidateKey: policyKeys.tenant(activeTenantId),
+            successMessage: 'Statement removed',
+            apply: (old, { policyId, statementId }) =>
+              old.map((p) =>
+                p.id === policyId
+                  ? {
+                      ...p,
+                      statements: p.statements.filter(
+                        (s) => s.id !== statementId,
+                      ),
+                    }
+                  : p,
+              ),
           },
         ),
       })

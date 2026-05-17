@@ -1,45 +1,63 @@
-import type { CreateRoleRequest } from '@/server/modules/account/roles/features/create-role/schema'
-import type { RoleResponse } from '@/server/modules/account/roles/features/response'
-import type { UpdateRoleRequest } from '@/server/modules/account/roles/features/update-role/schema'
+import type { PaginatedResponse, PaginationParams } from '@src/modules/APITypes'
 import { api } from '@src/modules/shared/api'
+import type {
+  AccessScope,
+  CreateRoleCommand,
+  RoleResponse,
+  RoleWithPoliciesResponse,
+  UpdateRoleCommand,
+} from '../roleTypes'
 
 export const fetchRolesFn = async (
   tenantId: string,
+  accessScope: AccessScope,
 ): Promise<RoleResponse[]> => {
-  const { data } = await api.get(`tenant/${tenantId}/role`)
-  return data.data
+  const { data } = await api.get(`tenant/${tenantId}/roles/${accessScope}`)
+  return data
+}
+
+export const fetchRolesWithPoliciesFn = async (
+  tenantId: string,
+  accessScope: AccessScope,
+  params?: PaginationParams,
+): Promise<PaginatedResponse<RoleWithPoliciesResponse>> => {
+  const { data } = await api.get(
+    `tenant/${tenantId}/roles/${accessScope}/with-policies`,
+    { params },
+  )
+  return data
 }
 
 export const fetchRoleByIdFn = async (
   tenantId: string,
   roleId: string,
 ): Promise<RoleResponse> => {
-  const { data } = await api.get(`tenant/${tenantId}/role/${roleId}`)
-  return data.data
+  const { data } = await api.get(`tenant/${tenantId}/roles/${roleId}`)
+  return data
 }
 
 export const createRoleFn = async (
   tenantId: string,
-  payload: CreateRoleRequest,
+  payload: CreateRoleCommand,
 ): Promise<RoleResponse> => {
-  const { data } = await api.post(`tenant/${tenantId}/role`, payload)
-  return data.data
+  const { data } = await api.post(`tenant/${tenantId}/roles`, payload)
+  return data
 }
 
 export const updateRoleFn = async (
   tenantId: string,
   roleId: string,
-  payload: UpdateRoleRequest,
+  payload: UpdateRoleCommand,
 ): Promise<RoleResponse> => {
-  const { data } = await api.put(`tenant/${tenantId}/role/${roleId}`, payload)
-  return data.data
+  const { data } = await api.put(`tenant/${tenantId}/roles/${roleId}`, payload)
+  return data
 }
 
 export const deleteRoleFn = async (
   tenantId: string,
   roleId: string,
 ): Promise<void> => {
-  await api.delete(`tenant/${tenantId}/role/${roleId}`)
+  await api.delete(`tenant/${tenantId}/roles/${roleId}`)
 }
 
 export const attachPolicyFn = async (
@@ -47,10 +65,10 @@ export const attachPolicyFn = async (
   roleId: string,
   policyId: string,
 ): Promise<RoleResponse> => {
-  const { data } = await api.patch(`tenant/${tenantId}/role/${roleId}`, {
-    policyId,
-  })
-  return data.data
+  const { data } = await api.post(
+    `tenant/${tenantId}/roles/${roleId}/policies/${policyId}`,
+  )
+  return data
 }
 
 export const detachPolicyFn = async (
@@ -58,10 +76,8 @@ export const detachPolicyFn = async (
   roleId: string,
   policyId: string,
 ): Promise<RoleResponse> => {
-  const { data } = await api.patch(
-    `tenant/${tenantId}/role/${roleId}`,
-    { policyId },
-    { headers: { 'x-action': 'detach' } },
+  const { data } = await api.delete(
+    `tenant/${tenantId}/role/${roleId}/policies/${policyId}`,
   )
-  return data.data
+  return data
 }

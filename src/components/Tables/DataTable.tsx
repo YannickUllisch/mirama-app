@@ -9,6 +9,7 @@ import {
 } from '@src/components/Tables/Filters/filter-fns'
 import { DataTablePagination } from '@src/components/Tables/TablePagination'
 import { Table } from '@src/components/ui/table'
+import type { ServerPaginationProps } from '@src/modules/shared/hooks/helpers'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -20,6 +21,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type RowSelectionState,
   type SortingState,
   type Updater,
@@ -54,6 +56,7 @@ interface DataTableProps<TData extends TableData<TData>> {
   onRowSelectionChange?: React.Dispatch<React.SetStateAction<RowSelectionState>>
   rowSelection?: RowSelectionState
   expandedContent?: React.ReactNode
+  serverPagination?: ServerPaginationProps
   toolbarOptions?: {
     refresh?: {
       mutate?: () => any
@@ -81,6 +84,7 @@ export const DataTable = <TData extends TableData<TData>>({
   rowSelection,
   onRowSelectionChange,
   expandedContent,
+  serverPagination,
   toolbarOptions,
   footerOptions,
 }: DataTableProps<TData>) => {
@@ -155,6 +159,20 @@ export const DataTable = <TData extends TableData<TData>>({
 
   const [expanded, setExpanded] = useState({})
 
+  const handleServerPaginationChange = serverPagination
+    ? (updater: Updater<PaginationState>) => {
+        const current: PaginationState = {
+          pageIndex: serverPagination.pageIndex,
+          pageSize: serverPagination.pageSize,
+        }
+        const next = typeof updater === 'function' ? updater(current) : updater
+        if (next.pageIndex !== current.pageIndex)
+          serverPagination.onPageChange(next.pageIndex)
+        if (next.pageSize !== current.pageSize)
+          serverPagination.onPageSizeChange(next.pageSize)
+      }
+    : undefined
+
   const table = useReactTable<TData>({
     data,
     columns,
@@ -187,6 +205,11 @@ export const DataTable = <TData extends TableData<TData>>({
     enableGlobalFilter: true,
     globalFilterFn: 'includesString',
     filterFromLeafRows: true,
+    ...(serverPagination && {
+      manualPagination: true,
+      pageCount: serverPagination.pageCount,
+      onPaginationChange: handleServerPaginationChange,
+    }),
     state: {
       sorting: sortingState ? sortingState : sorting,
       rowSelection,
@@ -195,6 +218,12 @@ export const DataTable = <TData extends TableData<TData>>({
       columnFilters,
       globalFilter,
       expanded,
+      ...(serverPagination && {
+        pagination: {
+          pageIndex: serverPagination.pageIndex,
+          pageSize: serverPagination.pageSize,
+        },
+      }),
     },
     initialState: {
       pagination: { pageSize: 10 },

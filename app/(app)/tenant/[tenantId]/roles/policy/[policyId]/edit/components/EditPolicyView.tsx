@@ -1,9 +1,9 @@
 // app/(app)/tenant/[tenantId]/roles/policy/[policyId]/edit/components/EditPolicyView.tsx
 'use client'
 
-import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
-import apiRequest from '@hooks'
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
+import policyHooks from '@src/modules/tenant/iam/policy/hooks/hooks'
+import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policyTypes'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -13,13 +13,10 @@ export const EditPolicyView = ({ policyId }: { policyId: string }) => {
   const router = useRouter()
   const { activeTenantId } = useTenantResource()
   const [isPending, startTransition] = useTransition()
-  const { data: policies = [], isLoading } =
-    apiRequest.policy.fetchAll.useQuery()
-  const { mutate: updatePolicy } = apiRequest.policy.update.useMutation()
+  const { data: policy, isLoading } = policyHooks.fetchById.useQuery(policyId)
+  const { mutate: updatePolicy } = policyHooks.update.useMutation()
 
-  const policy = policies.find((p) => p.id === policyId)
-
-  const handleSubmit = (data: CreatePolicyRequest) => {
+  const handleSubmit = (data: CreatePolicyCommand) => {
     startTransition(() => {
       updatePolicy(
         { id: policyId, data },

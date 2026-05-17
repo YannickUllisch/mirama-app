@@ -1,10 +1,10 @@
 // app/(app)/tenant/[tenantId]/roles/policy/create/components/CreatePolicyView.tsx
 'use client'
 
-import type { AccessScope } from '@/prisma/generated/client'
-import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
-import apiRequest from '@hooks'
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
+import policyHooks from '@src/modules/tenant/iam/policy/hooks/hooks'
+import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policyTypes'
+import type { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
 import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -17,9 +17,9 @@ export const CreatePolicyView = ({
   const router = useRouter()
   const { activeTenantId } = useTenantResource()
   const [isPending, startTransition] = useTransition()
-  const { mutate: createPolicy } = apiRequest.policy.create.useMutation()
+  const { mutate: createPolicy } = policyHooks.create.useMutation()
 
-  const handleSubmit = (data: CreatePolicyRequest) => {
+  const handleSubmit = (data: CreatePolicyCommand) => {
     startTransition(() => {
       createPolicy(data, {
         onSuccess: () => router.push(`/tenant/${activeTenantId}/roles`),

@@ -1,5 +1,8 @@
 // src/modules/tenant/iam/components/PermissionAccordion.tsx
-import type { AccessScope } from '@/prisma/generated/client'
+'use client'
+
+import type { PermissionGroupResponse } from '@src/modules/tenant/iam/policy/policyTypes'
+import type { StatementDraft } from '@src/modules/tenant/iam/types'
 import {
   Accordion,
   AccordionContent,
@@ -9,56 +12,67 @@ import {
 import { Badge } from '@ui/badge'
 import { Checkbox } from '@ui/checkbox'
 import { Separator } from '@ui/separator'
-import { RESOURCE_PERMISSIONS } from '../permissions'
-import type { StatementDraft } from '../types'
 
 type Props = {
+  groups: PermissionGroupResponse[]
   statements: StatementDraft[]
-  onToggle: (action: string, resource: string) => void
-  scope?: AccessScope
+  onToggle: (action: string, resourcePattern: string) => void
+  scope?: string
 }
 
-export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
-  const visibleResources = RESOURCE_PERMISSIONS.filter(
-    (rp) => !scope || rp.allowedScopes.includes(scope),
-  )
+export const PermissionAccordion = ({
+  groups,
+  statements,
+  onToggle,
+  scope,
+}: Props) => {
+  const visibleGroups = scope ? groups.filter((g) => g.scope === scope) : groups
 
-  const isChecked = (action: string, resource: string) =>
+  const isChecked = (action: string, group: PermissionGroupResponse) =>
     statements.some(
       (s) =>
-        s.resource === `${resource}/*` &&
-        (s.action === `${resource}:${action}` || s.action === `${resource}:*`),
+        s.resource === group.resourcePattern &&
+        (s.action === action || s.action === group.allActionsPattern),
     )
 
-  const isWildcard = (resource: string) =>
+  const isWildcard = (group: PermissionGroupResponse) =>
     statements.some(
-      (s) => s.resource === `${resource}/*` && s.action === `${resource}:*`,
+      (s) =>
+        s.resource === group.resourcePattern &&
+        s.action === group.allActionsPattern,
     )
+
+  if (visibleGroups.length === 0) {
+    return (
+      <p className="px-4 py-6 text-xs text-muted-foreground/60 text-center">
+        No permissions available for this scope.
+      </p>
+    )
+  }
 
   return (
     <Accordion type="multiple" className="w-full divide-y divide-border">
-      {visibleResources.map((rp) => {
-        const scopedActions =
-          (scope && rp.actionsForScope?.[scope]) ?? rp.actions
-        const activeCount = scopedActions.filter((a) =>
-          isChecked(a, rp.resource),
+      {visibleGroups.map((group) => {
+        const wild = isWildcard(group)
+        const activeCount = group.actions.filter((a) =>
+          isChecked(a.action, group),
         ).length
-        const wild = isWildcard(rp.resource)
+        const resourceLabel = group.resourcePattern.replace('/*', '')
 
         return (
           <AccordionItem
-            key={rp.resource}
-            value={rp.resource}
+            key={group.resourcePattern}
+            value={group.resourcePattern}
             className="border-0"
           >
             <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/40 data-[state=open]:bg-muted/40 transition-colors text-sm">
               <div className="flex items-center gap-2.5 flex-1 mr-2">
-                <span className="font-medium text-sm">{rp.label}</span>
+                <span className="font-medium text-sm">{group.label}</span>
                 <Badge
                   variant="secondary"
                   className="text-[10px] px-1.5 py-0 h-4 font-mono"
                 >
-                  {rp.resource}
+                  {resourceLabel}
                 </Badge>
                 {(wild || activeCount > 0) && (
                   <Badge
@@ -74,26 +88,25 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
             </AccordionTrigger>
 
             <AccordionContent className="px-4 pt-1 pb-3 space-y-0">
-              <p className="text-xs text-muted-foreground mb-3 mt-1">
-                {rp.description}
-              </p>
               <div className="space-y-1">
                 {/* Wildcard row */}
                 <label
-                  htmlFor={`${rp.resource}-wildcard`}
+                  htmlFor={`${group.resourcePattern}-wildcard`}
                   className="w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors"
                 >
                   <Checkbox
-                    id={`${rp.resource}-wildcard`}
+                    id={`${group.resourcePattern}-wildcard`}
                     checked={wild}
-                    onCheckedChange={() => onToggle('*', rp.resource)}
+                    onCheckedChange={() =>
+                      onToggle(group.allActionsPattern, group.resourcePattern)
+                    }
                   />
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-mono font-medium">
-                      {rp.resource}:*
+                      {group.allActionsPattern}
                     </span>
                     <p className="text-[11px] text-muted-foreground">
-                      Full access to all {rp.label.toLowerCase()} actions
+                      Full access to all {group.label.toLowerCase()} actions
                     </p>
                   </div>
                 </label>
@@ -101,23 +114,30 @@ export const PermissionAccordion = ({ statements, onToggle, scope }: Props) => {
                 <Separator className="my-1" />
 
                 {/* Individual actions */}
-                {scopedActions.map((action) => (
+                {group.actions.map((perm) => (
                   <label
-                    key={action}
-                    htmlFor={`${rp.resource}-${action}`}
+                    key={perm.action}
+                    htmlFor={`${group.resourcePattern}-${perm.action}`}
                     className={`w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors ${
                       wild ? 'opacity-50 pointer-events-none' : ''
                     }`}
                   >
                     <Checkbox
-                      id={`${rp.resource}-${action}`}
-                      checked={isChecked(action, rp.resource)}
+                      id={`${group.resourcePattern}-${perm.action}`}
+                      checked={isChecked(perm.action, group)}
                       disabled={wild}
-                      onCheckedChange={() => onToggle(action, rp.resource)}
+                      onCheckedChange={() =>
+                        onToggle(perm.action, group.resourcePattern)
+                      }
                     />
-                    <span className="text-xs font-mono">
-                      {rp.resource}:{action}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-mono">{perm.action}</span>
+                      {perm.label && (
+                        <p className="text-[11px] text-muted-foreground">
+                          {perm.label}
+                        </p>
+                      )}
+                    </div>
                   </label>
                 ))}
               </div>

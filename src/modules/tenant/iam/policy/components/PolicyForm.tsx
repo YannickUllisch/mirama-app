@@ -1,16 +1,19 @@
 // src/modules/tenant/iam/policy/components/PolicyForm.tsx
 'use client'
 
-import { AccessScope } from '@/prisma/generated/client'
-import {
-  CreatePolicySchema,
-  type CreatePolicyRequest,
-} from '@/server/modules/account/policies/features/create-policy/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PolicyResponse } from '@server/modules/account/policies/features/response'
 import PageHeader from '@src/components/PageHeader'
 import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import { cn } from '@src/lib/utils'
+import { PermissionAccordion } from '@src/modules/tenant/iam/components/PermissionAccordion'
+import iamHooks from '@src/modules/tenant/iam/hooks/hooks'
+import type {
+  CreatePolicyCommand,
+  PolicyResponse,
+} from '@src/modules/tenant/iam/policy/policyTypes'
+import { CreatePolicySchema } from '@src/modules/tenant/iam/policy/policyTypes'
+import { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
+import type { StatementDraft } from '@src/modules/tenant/iam/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Form,
@@ -21,64 +24,101 @@ import {
   FormMessage,
 } from '@ui/form'
 import { Input } from '@ui/input'
+import { Skeleton } from '@ui/skeleton'
 import { Textarea } from '@ui/textarea'
-import { Building2, FileText, FolderKanban, ShieldCheck } from 'lucide-react'
+import {
+  Briefcase,
+  Building2,
+  FileText,
+  FolderKanban,
+  ShieldCheck,
+} from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { PermissionAccordion } from '../../components/PermissionAccordion'
-import type { StatementDraft } from '../../types'
 
 const toggleStatement = (
   current: StatementDraft[],
   action: string,
-  resource: string,
+  resourcePattern: string,
 ): StatementDraft[] => {
-  const fullAction = action === '*' ? `${resource}:*` : `${resource}:${action}`
-  const fullResource = `${resource}/*`
+  const isWildcard = action.endsWith(':*')
 
-  if (action === '*') {
+  if (isWildcard) {
     const hasWildcard = current.some(
-      (s) => s.resource === fullResource && s.action === `${resource}:*`,
+      (s) => s.resource === resourcePattern && s.action === action,
     )
-    if (hasWildcard) {
-      return current.filter((s) => s.resource !== fullResource)
-    }
+    if (hasWildcard)
+      return current.filter((s) => s.resource !== resourcePattern)
     return [
-      ...current.filter((s) => s.resource !== fullResource),
-      { effect: 'ALLOW' as const, action: fullAction, resource: fullResource },
+      ...current.filter((s) => s.resource !== resourcePattern),
+      { effect: 'Allow' as const, action, resource: resourcePattern },
     ]
   }
 
   const hasThis = current.some(
-    (s) => s.resource === fullResource && s.action === fullAction,
+    (s) => s.resource === resourcePattern && s.action === action,
   )
-  if (hasThis) {
+  if (hasThis)
     return current.filter(
-      (s) => !(s.resource === fullResource && s.action === fullAction),
+      (s) => !(s.resource === resourcePattern && s.action === action),
     )
-  }
   return [
     ...current,
-    { effect: 'ALLOW' as const, action: fullAction, resource: fullResource },
+    { effect: 'Allow' as const, action, resource: resourcePattern },
   ]
 }
 
+const SCOPE_OPTIONS = [
+  {
+    value: AccessScope.Organization,
+    label: 'Organization',
+    description: 'Applies across all projects in the org',
+    icon: Building2,
+    activeClass:
+      'border-signature-coral/40 bg-signature-coral/5 ring-1 ring-signature-coral/20',
+    hoverClass: 'hover:border-signature-coral/30 hover:bg-muted/40',
+    iconActiveClass: 'bg-signature-coral text-white',
+  },
+  {
+    value: AccessScope.Project,
+    label: 'Project',
+    description: 'Applies to a specific project only',
+    icon: FolderKanban,
+    activeClass:
+      'border-signature-forest/40 bg-signature-forest/5 ring-1 ring-signature-forest/20',
+    hoverClass: 'hover:border-signature-forest/30 hover:bg-muted/40',
+    iconActiveClass: 'bg-signature-forest text-white',
+  },
+  {
+    value: AccessScope.Client,
+    label: 'Client',
+    description: 'Applies to client-facing access',
+    icon: Briefcase,
+    activeClass:
+      'border-signature-mustard/40 bg-signature-mustard/5 ring-1 ring-signature-mustard/20',
+    hoverClass: 'hover:border-signature-mustard/30 hover:bg-muted/40',
+    iconActiveClass: 'bg-signature-mustard text-white',
+  },
+] as const
+
 export const PolicyForm = ({
   defaultPolicy,
-  defaultScope = AccessScope.ORGANIZATION,
+  defaultScope = AccessScope.Organization,
   onSubmit,
   onCancel,
   isPending,
 }: {
   defaultPolicy?: PolicyResponse
   defaultScope?: AccessScope
-  onSubmit: (data: CreatePolicyRequest) => void
+  onSubmit: (data: CreatePolicyCommand) => void
   onCancel: () => void
   isPending?: boolean
 }) => {
   const isEdit = !!defaultPolicy
+  const { data: availablePermissions, isLoading: permissionsLoading } =
+    iamHooks.availablePermissions.useQuery()
 
-  const form = useForm<CreatePolicyRequest>({
+  const form = useForm<CreatePolicyCommand>({
     resolver: zodResolver(CreatePolicySchema),
     defaultValues: {
       name: defaultPolicy?.name ?? '',
@@ -86,10 +126,10 @@ export const PolicyForm = ({
       scope:
         (defaultPolicy?.scope as AccessScope | undefined) ??
         defaultScope ??
-        AccessScope.ORGANIZATION,
+        AccessScope.Organization,
       statements:
         defaultPolicy?.statements.map((s) => ({
-          effect: s.effect as 'ALLOW' | 'DENY',
+          effect: s.effect,
           action: s.action,
           resource: s.resource,
         })) ?? [],
@@ -103,7 +143,7 @@ export const PolicyForm = ({
         description: defaultPolicy.description ?? '',
         scope: defaultPolicy.scope as AccessScope,
         statements: defaultPolicy.statements.map((s) => ({
-          effect: s.effect as 'ALLOW' | 'DENY',
+          effect: s.effect,
           action: s.action,
           resource: s.resource,
         })),
@@ -116,28 +156,31 @@ export const PolicyForm = ({
   const isDirty = !isEdit || form.formState.isDirty
 
   const handleToggle = useCallback(
-    (action: string, resource: string) => {
+    (action: string, resourcePattern: string) => {
       const current = form.getValues('statements') as StatementDraft[]
-      form.setValue('statements', toggleStatement(current, action, resource), {
-        shouldValidate: true,
-        shouldDirty: true,
-      })
+      form.setValue(
+        'statements',
+        toggleStatement(current, action, resourcePattern),
+        { shouldValidate: true, shouldDirty: true },
+      )
     },
     [form],
   )
 
   const handleScopeChange = (newScope: AccessScope) => {
     form.setValue('scope', newScope, { shouldDirty: true })
-    if (newScope === 'PROJECT') {
-      const orgOnlyResources = ['organization', 'member', 'invitation', 'team']
+    if (availablePermissions?.groups) {
+      const allowedPatterns = new Set(
+        availablePermissions.groups
+          .filter((g) => g.scope === newScope)
+          .map((g) => g.resourcePattern),
+      )
       const current = form.getValues('statements') as StatementDraft[]
-      const filtered = current.filter((s) => {
-        const resource = s.resource.replace('/*', '')
-        if (orgOnlyResources.includes(resource)) return false
-        if (s.action === 'project:create') return false
-        return true
-      })
-      form.setValue('statements', filtered, { shouldDirty: true })
+      form.setValue(
+        'statements',
+        current.filter((s) => allowedPatterns.has(s.resource)),
+        { shouldDirty: true },
+      )
     }
   }
 
@@ -171,62 +214,47 @@ export const PolicyForm = ({
                       Organization policies grant access across the whole org.
                       Project policies are assigned per-project.
                     </p>
-                    <div className="grid grid-cols-2 gap-3 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => handleScopeChange('ORGANIZATION')}
-                        className={cn(
-                          'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-                          scope === 'ORGANIZATION'
-                            ? 'border-signature-coral/40 bg-signature-coral/5 ring-1 ring-signature-coral/20'
-                            : 'border-border hover:border-signature-coral/30 hover:bg-muted/40',
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            'shrink-0 w-8 h-8 rounded-lg flex items-center justify-center',
-                            scope === 'ORGANIZATION'
-                              ? 'bg-signature-coral text-white'
-                              : 'bg-muted text-muted-foreground',
-                          )}
-                        >
-                          <Building2 className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold">Organization</p>
-                          <p className="text-[11px] text-muted-foreground mt-0.5">
-                            Applies across all projects in the org
-                          </p>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleScopeChange('PROJECT')}
-                        className={cn(
-                          'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-                          scope === 'PROJECT'
-                            ? 'border-signature-forest/40 bg-signature-forest/5 ring-1 ring-signature-forest/20'
-                            : 'border-border hover:border-signature-forest/30 hover:bg-muted/40',
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            'shrink-0 w-8 h-8 rounded-lg flex items-center justify-center',
-                            scope === 'PROJECT'
-                              ? 'bg-signature-forest text-white'
-                              : 'bg-muted text-muted-foreground',
-                          )}
-                        >
-                          <FolderKanban className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold">Project</p>
-                          <p className="text-[11px] text-muted-foreground mt-0.5">
-                            Applies to a specific project only
-                          </p>
-                        </div>
-                      </button>
+                    <div className="grid grid-cols-3 gap-3 mt-2">
+                      {SCOPE_OPTIONS.map(
+                        ({
+                          value,
+                          label,
+                          description,
+                          icon: Icon,
+                          activeClass,
+                          hoverClass,
+                          iconActiveClass,
+                        }) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => handleScopeChange(value)}
+                            className={cn(
+                              'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
+                              scope === value
+                                ? activeClass
+                                : `border-border ${hoverClass}`,
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                'shrink-0 w-8 h-8 rounded-lg flex items-center justify-center',
+                                scope === value
+                                  ? iconActiveClass
+                                  : 'bg-muted text-muted-foreground',
+                              )}
+                            >
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold">{label}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">
+                                {description}
+                              </p>
+                            </div>
+                          </button>
+                        ),
+                      )}
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -262,6 +290,7 @@ export const PolicyForm = ({
                         placeholder="Describe what this policy grants..."
                         rows={2}
                         {...field}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -277,21 +306,30 @@ export const PolicyForm = ({
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <ShieldCheck className="w-4 h-4 text-white/70" />
                 Permissions
-                {scope === 'PROJECT' && (
+                {scope !== AccessScope.Organization && (
                   <span className="text-[10px] font-normal text-white/60 ml-1">
-                    — project-scoped only
+                    — {scope.toLowerCase()}-scoped only
                   </span>
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-border">
-                <PermissionAccordion
-                  statements={statements}
-                  onToggle={handleToggle}
-                  scope={scope}
-                />
-              </div>
+              {permissionsLoading ? (
+                <div className="space-y-2 p-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10 w-full rounded-lg" />
+                  ))}
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  <PermissionAccordion
+                    groups={availablePermissions?.groups ?? []}
+                    statements={statements}
+                    onToggle={handleToggle}
+                    scope={scope}
+                  />
+                </div>
+              )}
               {form.formState.errors.statements && (
                 <p className="text-[0.8rem] font-medium text-destructive px-4 py-2">
                   {(form.formState.errors.statements as { message?: string })

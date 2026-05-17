@@ -5,7 +5,7 @@ export const getUserByExternalId = async (
   externalId: string,
 ): Promise<AuthMeResponse | null> => {
   try {
-    const { data } = await api.get(`auth/me/${externalId}`)
+    const { data } = await api.get(`auth/user/${externalId}`)
     return data
   } catch {
     return null
@@ -32,7 +32,7 @@ export const getOrganizationMembership = async (
 ): Promise<AuthOrgMembershipResponse | null> => {
   try {
     const { data } = await api.get(
-      `auth/me/${externalId}/organization/${organizationId}`,
+      `auth/user/${externalId}/organization/${organizationId}`,
     )
     return data
   } catch {

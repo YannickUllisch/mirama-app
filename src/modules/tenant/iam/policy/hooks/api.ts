@@ -1,31 +1,47 @@
-import type { CreatePolicyRequest } from '@/server/modules/account/policies/features/create-policy/schema'
-import type { UpdatePolicyRequest } from '@/server/modules/account/policies/features/update-policy/schema'
-import type { PolicyResponse } from '@server/modules/account/policies/features/response'
-
+import type { PaginatedResponse, PaginationParams } from '@src/modules/APITypes'
 import { api } from '@src/modules/shared/api'
+import type { AccessScope } from '../../roles/roleTypes'
+import type {
+  AddPolicyStatementCommand,
+  CreatePolicyCommand,
+  PolicyResponse,
+  UpdatePolicyCommand,
+} from '../policyTypes'
+
+export const fetchPolicyByIdFn = async (
+  tenantId: string,
+  policyId: string,
+): Promise<PolicyResponse> => {
+  const { data } = await api.get(`tenant/${tenantId}/policies/${policyId}`)
+  return data.data
+}
 
 export const fetchPoliciesFn = async (
   tenantId: string,
-): Promise<PolicyResponse[]> => {
-  const { data } = await api.get(`tenant/${tenantId}/policy`)
+  scope: AccessScope,
+  params?: PaginationParams,
+): Promise<PaginatedResponse<PolicyResponse>> => {
+  const { data } = await api.get(`tenant/${tenantId}/policies/${scope}`, {
+    params,
+  })
   return data.data
 }
 
 export const createPolicyFn = async (
   tenantId: string,
-  payload: CreatePolicyRequest,
+  payload: CreatePolicyCommand,
 ): Promise<PolicyResponse> => {
-  const { data } = await api.post(`tenant/${tenantId}/policy`, payload)
+  const { data } = await api.post(`tenant/${tenantId}/policies`, payload)
   return data.data
 }
 
 export const updatePolicyFn = async (
   tenantId: string,
   policyId: string,
-  payload: UpdatePolicyRequest,
+  payload: UpdatePolicyCommand,
 ): Promise<PolicyResponse> => {
   const { data } = await api.put(
-    `tenant/${tenantId}/policy/${policyId}`,
+    `tenant/${tenantId}/policies/${policyId}`,
     payload,
   )
   return data.data
@@ -35,5 +51,27 @@ export const deletePolicyFn = async (
   tenantId: string,
   policyId: string,
 ): Promise<void> => {
-  await api.delete(`tenant/${tenantId}/policy/${policyId}`)
+  await api.delete(`tenant/${tenantId}/policies/${policyId}`)
+}
+
+export const addPolicyStatementFn = async (
+  tenantId: string,
+  policyId: string,
+  payload: AddPolicyStatementCommand,
+): Promise<PolicyResponse> => {
+  const { data } = await api.post(
+    `tenant/${tenantId}/policies/${policyId}/statements`,
+    payload,
+  )
+  return data.data
+}
+
+export const removePolicyStatementFn = async (
+  tenantId: string,
+  policyId: string,
+  statementId: string,
+): Promise<void> => {
+  await api.delete(
+    `tenant/${tenantId}/policies/${policyId}/statements/${statementId}`,
+  )
 }

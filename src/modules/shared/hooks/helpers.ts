@@ -1,6 +1,53 @@
 // src/modules/shared/hooks/helpers.ts
-import type { QueryClient, QueryKey } from '@tanstack/react-query'
+import type { PaginatedResponse, PaginationParams } from '@src/modules/APITypes'
+import {
+  keepPreviousData,
+  useQuery,
+  type QueryClient,
+  type QueryKey,
+} from '@tanstack/react-query'
+import { useState } from 'react'
 import { toast } from 'sonner'
+
+export type ServerPaginationProps = {
+  pageCount: number
+  pageIndex: number
+  pageSize: number
+  onPageChange: (pageIndex: number) => void
+  onPageSizeChange: (pageSize: number) => void
+}
+
+export function usePaginatedQuery<T>(
+  queryKey: QueryKey,
+  queryFn: (params: PaginationParams) => Promise<PaginatedResponse<T>>,
+  opts?: { initialPageSize?: number },
+) {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: opts?.initialPageSize ?? 10,
+  })
+
+  const params: PaginationParams = {
+    pageNumber: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
+  }
+
+  const query = useQuery({
+    queryKey: [...(queryKey as unknown[]), params],
+    queryFn: () => queryFn(params),
+    placeholderData: keepPreviousData,
+  })
+
+  const serverPagination: ServerPaginationProps = {
+    pageCount: query.data?.totalPages ?? 0,
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    onPageChange: (pageIndex) => setPagination((p) => ({ ...p, pageIndex })),
+    onPageSizeChange: (pageSize) => setPagination({ pageIndex: 0, pageSize }),
+  }
+
+  return { ...query, items: query.data?.items ?? [], serverPagination }
+}
 
 type OptimisticListContext<T> = { previous?: T[] }
 
