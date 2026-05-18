@@ -4,6 +4,7 @@
 import apiRequest from '@hooks'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
 import { Badge } from '@ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
@@ -21,7 +22,9 @@ const MembersContent = () => {
   const { data: members = [], isLoading: membersLoading } =
     apiRequest.members.fetchAll.useQuery()
   const { data: roles = [] } =
-    apiRequest.role.fetchAllOrganizationSpecific.useQuery()
+    apiRequest.role.fetchAllByScopeForOrganization.useQuery(
+      AccessScope.Organization,
+    )
   const { data: projects = [] } = apiRequest.project.fetchAll.useQuery()
   const { mutate: updateMember } = apiRequest.members.update.useMutation()
 
@@ -187,10 +190,10 @@ const MembersContent = () => {
                           >
                             {r.scope.toLowerCase()}
                           </Badge>
-                          <span className="text-[11px] text-muted-foreground">
+                          {/* <span className="text-[11px] text-muted-foreground">
                             {r.policies.length}{' '}
                             {r.policies.length === 1 ? 'policy' : 'policies'}
-                          </span>
+                          </span> */}
                         </div>
                       </div>
                     </div>

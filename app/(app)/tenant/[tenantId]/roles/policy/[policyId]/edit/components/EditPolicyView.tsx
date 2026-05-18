@@ -19,7 +19,10 @@ export const EditPolicyView = ({ policyId }: { policyId: string }) => {
   const handleSubmit = (data: CreatePolicyCommand) => {
     startTransition(() => {
       updatePolicy(
-        { id: policyId, data },
+        {
+          id: policyId,
+          data: { name: data.name, description: data.description, statements: data.statements },
+        },
         { onSuccess: () => router.push(`/tenant/${activeTenantId}/roles`) },
       )
     })

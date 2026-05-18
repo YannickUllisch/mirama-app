@@ -1,7 +1,5 @@
 'use client'
 
-import type React from 'react'
-
 import { cn } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Calendar } from '@ui/calendar'
@@ -17,6 +15,7 @@ import {
 } from '@ui/select'
 import { format } from 'date-fns'
 import { CalendarIcon, Check, Edit2, Loader2, RotateCcw, X } from 'lucide-react'
+import type React from 'react'
 import { useState } from 'react'
 
 export enum EditableCellType {
@@ -98,7 +97,7 @@ export const EditableCell = ({
                 <Button
                   variant="outline"
                   className={cn(
-                    'h-8 min-w-[200px] justify-start text-left font-normal',
+                    'h-8 min-w-50 justify-start text-left font-normal',
                     !editValue && 'text-muted-foreground',
                   )}
                 >
@@ -126,7 +125,6 @@ export const EditableCell = ({
                     setEditValue(utcDate)
                     setIsDatePickerOpen(false)
                   }}
-                  initialFocus
                 />
               </PopoverContent>
             </Popover>
@@ -151,7 +149,7 @@ export const EditableCell = ({
                 : setEditValue(value)
             }
           >
-            <SelectTrigger className="h-8 min-w-[120px]">
+            <SelectTrigger className="h-8 min-w-30">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -175,7 +173,7 @@ export const EditableCell = ({
             }
             onKeyDown={handleKeyDown}
             disabled={isLoading}
-            className="h-8 min-w-[100px]"
+            className="h-8 min-w-25"
             autoFocus
           />
         )}

@@ -38,7 +38,6 @@ const OrganizationSidebar = ({
 }: OrganizationSidebarProps) => {
   const { data: session } = useSession()
   const localizedMenu = injectOrgId(OrganizationSidebarMenu, organizationId)
-  const currentRole = session?.user?.orgRole
 
   return (
     <AppSidebar
@@ -49,7 +48,7 @@ const OrganizationSidebar = ({
         <SidebarNewButton organizationId={session?.user.organizationId} />
       }
     >
-      <SidebarMainNav items={localizedMenu} userRole={currentRole} />
+      <SidebarMainNav items={localizedMenu} />
       <SidebarSeparator />
       {projectsSlot}
       <SidebarSeparator />

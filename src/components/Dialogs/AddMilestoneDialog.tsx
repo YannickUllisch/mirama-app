@@ -133,7 +133,6 @@ const AddMilestoneDialog = ({
                             selected={field.value}
                             disabled={field.disabled}
                             onSelect={field.onChange}
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>

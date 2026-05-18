@@ -1,4 +1,3 @@
-import type { TenantRole } from '@/prisma/generated/client'
 import { evaluateStatements } from '@/server/shared/domain/evaluate-permissions'
 import { getScopedDb } from '@/server/shared/infrastructure/scoped-db'
 import { auth } from '@auth'
@@ -25,7 +24,7 @@ export const withAuth = (
       return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const { tenantId, organizationId, tenantRole } = session.user
+    const { tenantId, organizationId } = session.user
 
     // IDOR Protection, we validate URL path IDs match session
     if (pathPattern) {
@@ -47,19 +46,6 @@ export const withAuth = (
         pathParams.organizationId !== organizationId
       ) {
         return Response.json({ message: 'Forbidden' }, { status: 403 })
-      }
-    }
-
-    // Tenant Check
-    if (config.allowedTenantRoles && config.allowedTenantRoles !== 'ANY') {
-      if (
-        !tenantId ||
-        !config.allowedTenantRoles.includes(tenantRole as TenantRole)
-      ) {
-        return Response.json(
-          { message: 'Forbidden: Tenant Role Required' },
-          { status: 403 },
-        )
       }
     }
 

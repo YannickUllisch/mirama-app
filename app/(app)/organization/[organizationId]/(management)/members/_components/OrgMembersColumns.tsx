@@ -2,8 +2,9 @@
 'use client'
 
 import type { MemberResponse } from '@server/modules/account/members/features/response'
-import type { RoleResponse } from '@server/modules/account/roles/features/response'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import type { RoleResponse } from '@src/modules/tenant/iam/roles/roleTypes'
+import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import {
   Select,
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/select'
-import { createColumnHelper } from '@tanstack/react-table'
 import { ShieldCheck } from 'lucide-react'
 import { useMemo } from 'react'
 

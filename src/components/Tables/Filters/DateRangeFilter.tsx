@@ -91,7 +91,6 @@ export const DateRangeFilter = <TData,>({
           selected={{ from, to }}
           onSelect={onSelect}
           numberOfMonths={2}
-          initialFocus
         />
       </PopoverContent>
     </Popover>

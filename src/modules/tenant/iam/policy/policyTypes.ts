@@ -21,10 +21,11 @@ export const PolicyResponseSchema = z.object({
   statements: z.array(PolicyStatementResponseSchema),
 })
 
+// No .default() — keeps input/output types identical so useForm generics work cleanly
 export const CreatePolicyStatementSchema = z.object({
   action: z.string().min(1).max(100),
-  resource: z.string().min(1).max(200).default('*'),
-  effect: EffectSchema.default('Allow'),
+  resource: z.string().min(1).max(200),
+  effect: EffectSchema,
 })
 
 export const CreatePolicySchema = z.object({
@@ -34,12 +35,14 @@ export const CreatePolicySchema = z.object({
   statements: z.array(CreatePolicyStatementSchema),
 })
 
+// Includes statements so the edit form can replace the full policy via PUT
 export const UpdatePolicySchema = z.object({
-  id: z.uuid(),
   name: z.string().min(1),
   description: z.string().nullable().optional(),
+  statements: z.array(CreatePolicyStatementSchema),
 })
 
+// Separate schema for individual statement add (defaults are fine here — single add operation)
 export const AddPolicyStatementSchema = z.object({
   action: z.string().min(1).max(100),
   resource: z.string().min(1).max(200).default('*'),
@@ -69,25 +72,13 @@ export const AvailablePermissionsResponseSchema = z.object({
   groups: z.array(PermissionGroupResponseSchema),
 })
 
-export type PolicyStatementResponse = z.infer<
-  typeof PolicyStatementResponseSchema
->
+export type PolicyStatementResponse = z.infer<typeof PolicyStatementResponseSchema>
 export type PolicyResponse = z.infer<typeof PolicyResponseSchema>
-export type CreatePolicyStatementDto = z.infer<
-  typeof CreatePolicyStatementSchema
->
+export type CreatePolicyStatementDto = z.infer<typeof CreatePolicyStatementSchema>
 export type CreatePolicyCommand = z.infer<typeof CreatePolicySchema>
 export type UpdatePolicyCommand = z.infer<typeof UpdatePolicySchema>
 export type AddPolicyStatementCommand = z.infer<typeof AddPolicyStatementSchema>
-export type RemovePolicyStatementCommand = z.infer<
-  typeof RemovePolicyStatementSchema
->
-export type PermissionActionResponse = z.infer<
-  typeof PermissionActionResponseSchema
->
-export type PermissionGroupResponse = z.infer<
-  typeof PermissionGroupResponseSchema
->
-export type AvailablePermissionsResponse = z.infer<
-  typeof AvailablePermissionsResponseSchema
->
+export type RemovePolicyStatementCommand = z.infer<typeof RemovePolicyStatementSchema>
+export type PermissionActionResponse = z.infer<typeof PermissionActionResponseSchema>
+export type PermissionGroupResponse = z.infer<typeof PermissionGroupResponseSchema>
+export type AvailablePermissionsResponse = z.infer<typeof AvailablePermissionsResponseSchema>
