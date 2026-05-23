@@ -12,6 +12,31 @@ export const getUserByExternalId = async (
   }
 }
 
+export const getUserByEmail = async (
+  email: string,
+): Promise<AuthMeResponse | null> => {
+  try {
+    const { data } = await api.get('auth/user/by-email', {
+      params: { email },
+    })
+    return data
+  } catch {
+    return null
+  }
+}
+
+export const linkUserExternalId = async (
+  userId: string,
+  externalId: string,
+): Promise<boolean> => {
+  try {
+    await api.post(`auth/user/${userId}/link-external`, { externalId })
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const setupUser = async (payload: {
   id: string
   name: string

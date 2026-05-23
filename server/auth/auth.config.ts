@@ -38,8 +38,8 @@ export default {
       profile(profile: CognitoProfile, tokens: any) {
         return {
           id: profile.sub,
-          oauthId: profile['cognito:username'],
           email: profile.email,
+          name: profile.name,
           idToken: tokens.id_token,
           accessToken: tokens.access_token,
           refreshToken: tokens.refresh_token,

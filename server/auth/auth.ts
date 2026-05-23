@@ -2,7 +2,9 @@ import NextAuth from 'next-auth'
 import authConfig from './auth.config'
 import {
   getOrganizationMembership,
+  getUserByEmail,
   getUserByExternalId,
+  linkUserExternalId,
   setupUser,
 } from './helpers/queries'
 
@@ -10,25 +12,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, profile }) {
-      const externalId = user.id ?? ''
-      if (!externalId) return false
+    async signIn({ user, profile, account }) {
+      const externalId = account?.providerAccountId ?? user.id ?? ''
+      const email = user.email ?? profile?.email ?? ''
 
-      const existing = await getUserByExternalId(externalId)
-      if (existing) return true
+      if (!externalId || !email) return false
 
-      const ok = await setupUser({
+      const existingById = await getUserByExternalId(externalId)
+      if (existingById) return true
+
+      const existingByEmail = await getUserByEmail(email)
+      if (existingByEmail) {
+        return linkUserExternalId(existingByEmail.id, externalId)
+      }
+
+      return setupUser({
         id: externalId,
         name: user.name ?? profile?.name ?? 'Unknown',
-        email: user.email ?? profile?.email ?? '',
+        email,
         image: profile?.picture ?? user.image ?? null,
       })
-
-      return ok
     },
     async jwt({ token, user, account, trigger, session }) {
       if (account) {
-        token.sub = user?.id ?? token.sub
+        token.sub = account.providerAccountId ?? user?.id ?? token.sub
       }
 
       if (!token.sub) return token

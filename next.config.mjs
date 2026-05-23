@@ -3,7 +3,7 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'js'],
   output: 'standalone',
   serverExternalPackages: ['sequelize', 'pino', 'pino-pretty'],
-  cacheComponents: true,
+  cacheComponents: false,
   async rewrites() {
     const backend = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8080'
     return [
