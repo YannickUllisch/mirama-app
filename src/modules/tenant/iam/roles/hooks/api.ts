@@ -40,6 +40,7 @@ export const createRoleFn = async (
   tenantId: string,
   payload: CreateRoleCommand,
 ): Promise<RoleResponse> => {
+  console.info('posting here')
   const { data } = await api.post(`tenant/${tenantId}/roles`, payload)
   return data
 }

@@ -8,8 +8,8 @@ import type {
 } from '@server/modules/account/tenant/billing/features/response'
 import { Separator } from '@ui/separator'
 import { Check, Loader2, X } from 'lucide-react'
-import PlanCard from '../../_components/PlanCard'
 import { fmtPrice, isUnlimited } from '../../_components/billing-helpers'
+import PlanCard from '../../_components/PlanCard'
 
 type FeatureRow = {
   label: string
@@ -76,7 +76,7 @@ const featureRows: FeatureRow[] = [
 ]
 
 const PlansGrid = () => {
-  const { data, isLoading } = apiRequest.billing.fetchOverview.useQuery()
+  const { data, isLoading } = apiRequest.plans.fetch.useQuery()
 
   if (isLoading) {
     return (

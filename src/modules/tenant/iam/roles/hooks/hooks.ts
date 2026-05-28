@@ -26,6 +26,8 @@ export const roleKeys = {
   root: ['roles'] as const,
   tenant: (tenantId: string) => [...roleKeys.root, tenantId] as const,
   list: (tenantId: string) => [...roleKeys.tenant(tenantId), 'list'] as const,
+  scopedList: (tenantId: string, scope: AccessScope) =>
+    [...roleKeys.tenant(tenantId), 'list', scope] as const,
   detail: (tenantId: string, roleId: string) =>
     [...roleKeys.tenant(tenantId), 'detail', roleId] as const,
 }
@@ -44,8 +46,9 @@ const role = {
   fetchByScopeWithPolicies: {
     useQuery: (scope: AccessScope) => {
       const { activeTenantId } = useTenantResource()
-      return usePaginatedQuery(roleKeys.list(activeTenantId), (params) =>
-        fetchRolesWithPoliciesFn(activeTenantId, scope, params),
+      return usePaginatedQuery(
+        roleKeys.scopedList(activeTenantId, scope),
+        (params) => fetchRolesWithPoliciesFn(activeTenantId, scope, params),
       )
     },
   },

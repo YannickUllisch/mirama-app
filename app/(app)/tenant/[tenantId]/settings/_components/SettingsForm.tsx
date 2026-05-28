@@ -1,19 +1,18 @@
 // app/(app)/tenant/[tenantId]/settings/SettingsForm.tsx
 'use client'
 
-import {
-  UpdateTenantSettingsSchema,
-  type UpdateTenantSettingsRequest,
-} from '@/server/modules/account/tenant/settings/features/update-settings/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import tenantSettings from '@src/modules/tenant/settings/hooks/hooks'
+import apiRequest from '@hooks'
 import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
-import { Badge } from '@ui/badge'
+import {
+  type UpdateTenantSettingsRequest,
+  UpdateTenantSettingsSchema,
+} from '@src/modules/tenant/hooks/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ColorPicker } from '@ui/color-picker'
 import {
-  Dropzone,
   DropZoneArea,
+  Dropzone,
   DropzoneDescription,
   DropzoneFileList,
   DropzoneFileListItem,
@@ -34,7 +33,6 @@ import {
 } from '@ui/form'
 import { Input } from '@ui/input'
 import { Label } from '@ui/label'
-import { Separator } from '@ui/separator'
 import { Switch } from '@ui/switch'
 import {
   Bell,
@@ -50,8 +48,8 @@ import { useForm } from 'react-hook-form'
 import SettingsFormSkeleton from './SettingsFormSkeleton'
 
 const SettingsForm = () => {
-  const { data: settings, isLoading } = tenantSettings.fetch.useQuery()
-  const { mutate: update, isPending } = tenantSettings.update.useMutation()
+  const { data: tenant, isLoading } = apiRequest.tenant.fetch.useQuery()
+  const { mutate: update, isPending } = apiRequest.tenant.update.useMutation()
 
   const form = useForm<UpdateTenantSettingsRequest>({
     resolver: zodResolver(UpdateTenantSettingsSchema),
@@ -60,7 +58,7 @@ const SettingsForm = () => {
       timezone: '',
       brandingColor: null,
       receiveNotifications: true,
-      isActive: true,
+      logoUrl: '',
     },
   })
 
@@ -77,16 +75,16 @@ const SettingsForm = () => {
   })
 
   useEffect(() => {
-    if (settings) {
+    if (tenant) {
       form.reset({
-        name: settings.name,
-        timezone: settings.timezone,
-        brandingColor: settings.brandingColor,
-        receiveNotifications: settings.receiveNotifications,
-        isActive: settings.isActive,
+        name: tenant.settings.name,
+        timezone: tenant.settings.timezone,
+        brandingColor: tenant.settings.brandingColor,
+        receiveNotifications: tenant.settings.receiveNotifications,
+        logoUrl: tenant.settings.logoUrl,
       })
     }
-  }, [settings, form])
+  }, [tenant, form])
 
   const onSubmit = (data: UpdateTenantSettingsRequest) => {
     update(data)
@@ -146,37 +144,6 @@ const SettingsForm = () => {
                       />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Separator />
-
-              <FormField
-                control={form.control}
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <FormLabel>Active Status</FormLabel>
-                      <p className="text-xs text-muted-foreground">
-                        Disable to suspend this tenant account
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant={field.value ? 'default' : 'secondary'}
-                        className="text-[10px]"
-                      >
-                        {field.value ? 'Active' : 'Inactive'}
-                      </Badge>
-                      <FormControl>
-                        <Switch
-                          checked={field.value ?? true}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </div>
                   </FormItem>
                 )}
               />

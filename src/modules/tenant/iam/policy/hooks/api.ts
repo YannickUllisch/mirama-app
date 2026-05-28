@@ -13,7 +13,7 @@ export const fetchPolicyByIdFn = async (
   policyId: string,
 ): Promise<PolicyResponse> => {
   const { data } = await api.get(`tenant/${tenantId}/policies/${policyId}`)
-  return data.data
+  return data
 }
 
 export const fetchPoliciesFn = async (
@@ -24,7 +24,7 @@ export const fetchPoliciesFn = async (
   const { data } = await api.get(`tenant/${tenantId}/policies/${scope}`, {
     params,
   })
-  return data.data
+  return data
 }
 
 export const createPolicyFn = async (
@@ -32,7 +32,7 @@ export const createPolicyFn = async (
   payload: CreatePolicyCommand,
 ): Promise<PolicyResponse> => {
   const { data } = await api.post(`tenant/${tenantId}/policies`, payload)
-  return data.data
+  return data
 }
 
 export const updatePolicyFn = async (
@@ -44,7 +44,7 @@ export const updatePolicyFn = async (
     `tenant/${tenantId}/policies/${policyId}`,
     payload,
   )
-  return data.data
+  return data
 }
 
 export const deletePolicyFn = async (
@@ -63,7 +63,7 @@ export const addPolicyStatementFn = async (
     `tenant/${tenantId}/policies/${policyId}/statements`,
     payload,
   )
-  return data.data
+  return data
 }
 
 export const removePolicyStatementFn = async (

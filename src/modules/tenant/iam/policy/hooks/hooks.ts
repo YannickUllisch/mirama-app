@@ -25,6 +25,8 @@ export const policyKeys = {
   root: ['policies'] as const,
   tenant: (tenantId: string) => [...policyKeys.root, tenantId] as const,
   list: (tenantId: string) => [...policyKeys.tenant(tenantId), 'list'] as const,
+  scopedList: (tenantId: string, scope: AccessScope) =>
+    [...policyKeys.tenant(tenantId), 'list', scope] as const,
   detail: (tenantId: string, policyId: string) =>
     [...policyKeys.tenant(tenantId), policyId] as const,
 }
@@ -44,8 +46,9 @@ const policy = {
   fetchAll: {
     useQuery: (scope: AccessScope) => {
       const { activeTenantId } = useTenantResource()
-      return usePaginatedQuery(policyKeys.list(activeTenantId), (params) =>
-        fetchPoliciesFn(activeTenantId, scope, params),
+      return usePaginatedQuery(
+        policyKeys.scopedList(activeTenantId, scope),
+        (params) => fetchPoliciesFn(activeTenantId, scope, params),
       )
     },
   },

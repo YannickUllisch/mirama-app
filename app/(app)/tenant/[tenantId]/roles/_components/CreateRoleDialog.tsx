@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@src/lib/utils'
 import {
   AccessScope,
-  CreateRoleSchema,
   type CreateRoleCommand,
+  CreateRoleSchema,
 } from '@src/modules/tenant/iam/roles/roleTypes'
 import { Button } from '@ui/button'
 import {
@@ -59,6 +59,7 @@ export const CreateRoleDialog = ({ defaultScope, onSubmit }: Props) => {
 
   const handleSubmit = form.handleSubmit((data) => {
     startTransition(() => {
+      console.info('hre')
       onSubmit(data)
       form.reset()
       setOpen(false)
