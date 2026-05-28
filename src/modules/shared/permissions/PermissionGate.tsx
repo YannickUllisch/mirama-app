@@ -1,22 +1,12 @@
 // src/modules/shared/permissions/PermissionGate.tsx
-import { resolvePermissions } from '@/server/shared/domain/resolve-permissions'
+
 import { auth } from '@auth'
+import {
+  fetchFlatMemberScopedPermissionsServer,
+  fetchFlatProjectScopedPermissionsServer,
+} from '@src/modules/tenant/iam/hooks/server'
 import { PermissionProvider } from './PermissionContext'
 
-/**
- * Server component that resolves the current user's flattened permissions
- * and wraps children in a PermissionProvider.
- *
- * Usage in a layout:
- * ```tsx
- * <PermissionGate organizationId={orgId} projectId={projectId}>
- *   {children}
- * </PermissionGate>
- * ```
- *
- * The resolved grants are passed as a plain string[] — fully serialisable
- * and compatible with PPR streaming.
- */
 const PermissionGate = async ({
   children,
   organizationId,
@@ -27,16 +17,19 @@ const PermissionGate = async ({
   projectId?: string
 }) => {
   const session = await auth()
+  const memberId = session?.user?.memberId
 
-  if (!session?.user?.email) {
+  if (!memberId) {
     return <PermissionProvider grants={[]}>{children}</PermissionProvider>
   }
 
-  const grants = await resolvePermissions(
-    session.user.email,
-    organizationId,
-    projectId,
-  )
+  const grants = projectId
+    ? await fetchFlatProjectScopedPermissionsServer(
+        organizationId,
+        memberId,
+        projectId,
+      )
+    : await fetchFlatMemberScopedPermissionsServer(organizationId, memberId)
 
   return <PermissionProvider grants={grants}>{children}</PermissionProvider>
 }
