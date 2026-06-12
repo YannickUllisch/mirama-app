@@ -1,10 +1,13 @@
 // src/modules/shared/hooks/helpers.ts
-import type { PaginatedResponse, PaginationParams } from '@src/modules/APITypes'
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import {
   keepPreviousData,
-  useQuery,
   type QueryClient,
   type QueryKey,
+  useQuery,
 } from '@tanstack/react-query'
 import { useState } from 'react'
 import { toast } from 'sonner'

@@ -1,8 +1,8 @@
 // app/(app)/portal/_components/PortalChooser.tsx
 'use client'
-import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
 import apiRequest from '@hooks'
-import { TenantResourceProvider } from '@src/modules/tenant/tenantResourceContext'
+import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
+import { TenantResourceProvider } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
 import {

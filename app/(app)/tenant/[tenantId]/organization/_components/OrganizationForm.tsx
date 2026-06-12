@@ -8,7 +8,7 @@ import {
   CreateOrganizationSchema,
 } from '@server/modules/account/organizations/features/create-organization/schema'
 import type { OrganizationResponse } from '@server/modules/account/organizations/features/response'
-import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
+import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import {
   Form,

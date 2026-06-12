@@ -2,8 +2,8 @@
 'use client'
 
 import { DataTable } from '@src/components/Tables/DataTable'
-import roleHooks from '@src/modules/tenant/iam/roles/hooks/hooks'
-import type { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
+import roleHooks from '@src/modules/tenant/iam/roles/hooks/role.hooks'
+import type { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { CreateRoleDialog } from './CreateRoleDialog'
 import { type RoleTableData, useRoleColumns } from './RoleColumns'
 

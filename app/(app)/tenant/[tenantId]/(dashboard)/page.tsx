@@ -21,7 +21,7 @@ const TenantPage = async ({
         description="Overview & organizations"
       />
 
-      <div className="flex-1 px-4 py-5 space-y-4">
+      <div className="flex-1 px-6 py-6 space-y-5">
         <DashboardStats />
         <InvitationPanel />
         <Suspense>

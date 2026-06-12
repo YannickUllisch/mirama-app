@@ -1,5 +1,5 @@
 // app/(app)/tenant/[tenantId]/roles/policy/create/page.tsx
-import type { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
+import type { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { Suspense } from 'react'
 import { CreatePolicyView } from './components/CreatePolicyView'
 import CreatePolicyViewSkeleton from './components/CreatePolicyViewSkeleton'

@@ -1,7 +1,7 @@
 // src/components/Sidebar/SidebarProjectsList.tsx
 'use client'
 
-import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -14,8 +14,8 @@ import { ChevronDown, FolderOpen, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import type { SidebarProject } from './SidebarProjectsServer'
 import HoverLink from '../HoverLink'
+import type { SidebarProject } from './SidebarProjectsServer'
 
 const PAGE_SIZE = 10
 

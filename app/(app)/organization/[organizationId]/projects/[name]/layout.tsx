@@ -1,7 +1,7 @@
 import { auth } from '@auth'
 import db from '@db'
 import { ProjectViewContext } from '@src/components/(application)/project/Contexts/ProjectDataContext'
-import PermissionGate from '@src/modules/shared/permissions/PermissionGate'
+import PermissionGate from '@src/modules/tenant/iam/PermissionGate'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 

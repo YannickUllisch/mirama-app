@@ -1,8 +1,8 @@
 // src/modules/tenant/iam/components/PermissionAccordion.tsx
 'use client'
 
-import type { PermissionGroupResponse } from '@src/modules/tenant/iam/policy/policyTypes'
-import type { StatementDraft } from '@src/modules/tenant/iam/types'
+import type { StatementDraft } from '@src/modules/tenant/iam/iam.types'
+import type { PermissionGroupResponse } from '@src/modules/tenant/iam/policy/policy.types'
 import {
   Accordion,
   AccordionContent,

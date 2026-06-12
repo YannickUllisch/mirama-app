@@ -4,6 +4,9 @@ const nextConfig = {
   output: 'standalone',
   serverExternalPackages: ['sequelize', 'pino', 'pino-pretty'],
   cacheComponents: false,
+  experimental: {
+    instrumentationHook: true,
+  },
   async rewrites() {
     const backend = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8080'
     return [

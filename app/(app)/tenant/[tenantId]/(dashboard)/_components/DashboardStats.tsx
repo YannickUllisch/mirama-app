@@ -3,7 +3,7 @@
 
 import apiRequest from '@hooks'
 import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
-import { Card, CardContent, CardHeader } from '@ui/card'
+import { Card } from '@ui/card'
 import { Progress } from '@ui/progress'
 import { Skeleton } from '@ui/skeleton'
 import { Building2, CreditCard, FolderOpen, Users } from 'lucide-react'
@@ -15,35 +15,29 @@ const fmtPrice = (cents: number) =>
     ? 'Free tier'
     : `€${(cents / 100).toLocaleString('de-DE', { minimumFractionDigits: cents % 100 !== 0 ? 2 : 0 })}/mo`
 
-const STAT_COLORS = [
-  { header: 'bg-signature-coral', sub: 'text-white/70', icon: 'text-white/60' },
-  { header: 'bg-signature-mustard', sub: 'text-ink/65', icon: 'text-ink/50' },
-  { header: 'bg-signature-mint', sub: 'text-ink/65', icon: 'text-ink/50' },
-  {
-    header: 'bg-signature-forest',
-    sub: 'text-white/70',
-    icon: 'text-white/60',
-  },
-]
+const progressColor = (p: number | null) => {
+  if (p === null) return ''
+  if (p >= 100) return '[&>div]:bg-lava'
+  if (p >= 80) return '[&>div]:bg-[#FFAB00]'
+  return '[&>div]:bg-success'
+}
 
 const DashboardStatsSkeleton = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-    {STAT_COLORS.map((c, i) => (
-      <div
-        key={`stat-skel-${i}`}
-        className="rounded-xl border border-border overflow-hidden"
-      >
-        <div className={`px-4 py-2.5 ${c.header} opacity-20`}>
+  <Card className="overflow-hidden rounded-xl">
+    <div className="px-5 py-3.5 bg-surface-dark">
+      <Skeleton className="h-4 w-44 bg-white/15" />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="px-5 py-4 space-y-2">
           <Skeleton className="h-3 w-20" />
-        </div>
-        <div className="px-4 py-3 space-y-2">
-          <Skeleton className="h-7 w-16" />
+          <Skeleton className="h-7 w-12" />
           <Skeleton className="h-3 w-24" />
           <Skeleton className="h-1 w-full rounded-full" />
         </div>
-      </div>
-    ))}
-  </div>
+      ))}
+    </div>
+  </Card>
 )
 
 const DashboardStats = () => {
@@ -75,21 +69,7 @@ const DashboardStats = () => {
     return Math.min(100, Math.round((current / max) * 100))
   }
 
-  const progressColor = (p: number | null) => {
-    if (p === null) return ''
-    if (p >= 100) return '[&>div]:bg-signature-coral'
-    if (p >= 80) return '[&>div]:bg-signature-mustard'
-    return '[&>div]:bg-signature-mint'
-  }
-
   const stats = [
-    {
-      label: 'Current Plan',
-      value: planName,
-      sub: fmtPrice(planPrice),
-      Icon: CreditCard,
-      pct: null,
-    },
     {
       label: 'Organizations',
       value: String(orgs.length),
@@ -120,20 +100,25 @@ const DashboardStats = () => {
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      {stats.map((stat, i) => {
-        const c = STAT_COLORS[i]
-        const p = stat.pct
-
-        return (
-          <Card key={stat.label} className="overflow-hidden">
-            <CardHeader className={`px-4 py-2.5 ${c.header}`}>
+    <Card className="overflow-hidden rounded-xl">
+      <div className="px-5 py-3.5 bg-surface-dark flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <CreditCard className="w-3.5 h-3.5 text-white/50" />
+          <span className="text-sm font-medium text-white">{planName}</span>
+        </div>
+        <span className="text-xs text-white/50">{fmtPrice(planPrice)}</span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+        {stats.map((stat) => {
+          const p = stat.pct
+          return (
+            <div key={stat.label} className="px-5 py-4 space-y-1.5">
               <div className="flex items-center justify-between">
-                <p className={`text-xs font-medium ${c.sub}`}>{stat.label}</p>
-                <stat.Icon className={`w-3.5 h-3.5 ${c.icon}`} />
+                <span className="text-xs text-muted-foreground">
+                  {stat.label}
+                </span>
+                <stat.Icon className="w-3.5 h-3.5 text-muted-foreground/50" />
               </div>
-            </CardHeader>
-            <CardContent className="px-4 py-3 space-y-1.5">
               <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
               <p className="text-[11px] text-muted-foreground">{stat.sub}</p>
               {p !== null && (
@@ -142,11 +127,11 @@ const DashboardStats = () => {
                   className={`h-1 mt-1 ${progressColor(p)}`}
                 />
               )}
-            </CardContent>
-          </Card>
-        )
-      })}
-    </div>
+            </div>
+          )
+        })}
+      </div>
+    </Card>
   )
 }
 

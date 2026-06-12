@@ -1,13 +1,13 @@
 // app/(app)/tenant/[tenantId]/roles/_components/AttachPolicyDialog.tsx
 'use client'
 
-import policyHooks from '@src/modules/tenant/iam/policy/hooks/hooks'
-import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policyTypes'
-import roleHooks from '@src/modules/tenant/iam/roles/hooks/hooks'
+import policyHooks from '@src/modules/tenant/iam/policy/hooks/policy.hooks'
+import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policy.types'
+import roleHooks from '@src/modules/tenant/iam/roles/hooks/role.hooks'
 import type {
   AccessScope,
   RoleWithPoliciesResponse,
-} from '@src/modules/tenant/iam/roles/roleTypes'
+} from '@src/modules/tenant/iam/roles/role.types'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import {

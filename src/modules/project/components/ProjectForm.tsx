@@ -43,8 +43,7 @@ import {
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
-
-import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Badge } from '@ui/badge'
 import Centering from '@ui/centering'

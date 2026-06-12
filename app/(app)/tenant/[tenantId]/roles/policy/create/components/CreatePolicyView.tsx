@@ -2,10 +2,10 @@
 'use client'
 
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
-import policyHooks from '@src/modules/tenant/iam/policy/hooks/hooks'
-import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policyTypes'
-import type { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
-import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
+import policyHooks from '@src/modules/tenant/iam/policy/hooks/policy.hooks'
+import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policy.types'
+import type { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
+import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 

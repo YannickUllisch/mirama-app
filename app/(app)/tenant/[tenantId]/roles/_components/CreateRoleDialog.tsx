@@ -7,7 +7,7 @@ import {
   AccessScope,
   type CreateRoleCommand,
   CreateRoleSchema,
-} from '@src/modules/tenant/iam/roles/roleTypes'
+} from '@src/modules/tenant/iam/roles/role.types'
 import { Button } from '@ui/button'
 import {
   Dialog,

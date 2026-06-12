@@ -1,7 +1,7 @@
 // src/modules/tenant/iam/policy/components/PolicyRow.tsx
 'use client'
 
-import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policyTypes'
+import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policy.types'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { FileText, Pencil, X } from 'lucide-react'

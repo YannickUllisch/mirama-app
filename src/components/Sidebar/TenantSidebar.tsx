@@ -1,7 +1,7 @@
 // src/components/Sidebar/TenantSidebar.tsx
 'use client'
 import { cn } from '@src/lib/utils'
-import { TenantSidebarMenu } from '@src/modules/tenant/tenantSidebarMenu'
+import { TenantSidebarMenu } from '@src/modules/tenant/tenant/tenantSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import AppSidebar from './AppSidebar'
 import SidebarMainNav from './MainNav'

@@ -6,14 +6,14 @@ import PageHeader from '@src/components/PageHeader'
 import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import { cn } from '@src/lib/utils'
 import { PermissionAccordion } from '@src/modules/tenant/iam/components/PermissionAccordion'
-import iamHooks from '@src/modules/tenant/iam/hooks/hooks'
+import iamHooks from '@src/modules/tenant/iam/hooks/iam.hooks'
+import type { StatementDraft } from '@src/modules/tenant/iam/iam.types'
 import type {
   CreatePolicyCommand,
   PolicyResponse,
-} from '@src/modules/tenant/iam/policy/policyTypes'
-import { CreatePolicySchema } from '@src/modules/tenant/iam/policy/policyTypes'
-import { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
-import type { StatementDraft } from '@src/modules/tenant/iam/types'
+} from '@src/modules/tenant/iam/policy/policy.types'
+import { CreatePolicySchema } from '@src/modules/tenant/iam/policy/policy.types'
+import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Form,

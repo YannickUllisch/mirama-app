@@ -2,7 +2,7 @@
 'use client'
 import apiRequest from '@hooks'
 import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
-import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
+import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Building2, Plus } from 'lucide-react'
 import { useSession } from 'next-auth/react'
@@ -35,13 +35,12 @@ const OrganizationGrid = () => {
 
   return (
     <div className="rounded-xl border border-border/50 overflow-hidden">
-      {/* Section header */}
-      <div className="px-5 py-4 bg-signature-coral flex items-center justify-between">
+      <div className="px-5 py-4 bg-surface-dark flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-white/70" />
+          <Building2 className="w-4 h-4 text-white/50" />
           <span className="text-sm font-medium text-white">Organizations</span>
           {!isLoading && organizations && (
-            <span className="text-xs text-white/50 ml-0.5">
+            <span className="text-xs text-white/40 ml-0.5">
               ({organizations.length})
             </span>
           )}
@@ -49,7 +48,7 @@ const OrganizationGrid = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 text-white/80 hover:text-white hover:bg-white/15 gap-1.5"
+          className="h-7 text-white/70 hover:text-white hover:bg-white/10 gap-1.5"
           asChild
         >
           <Link href={`/tenant/${activeTenantId}/organization/create`}>
@@ -59,7 +58,6 @@ const OrganizationGrid = () => {
         </Button>
       </div>
 
-      {/* Content */}
       <div className="p-4">
         {isLoading ? (
           <OrganizationGridSkeleton />
@@ -74,7 +72,7 @@ const OrganizationGrid = () => {
             <p className="text-xs text-muted-foreground mt-1 mb-5">
               Create your first organization to get started.
             </p>
-            <Button variant="tertiary" size="sm" asChild>
+            <Button variant="primary" size="sm" asChild>
               <Link href={`/tenant/${activeTenantId}/organization/create`}>
                 <Plus className="w-3.5 h-3.5" />
                 New Organization
@@ -83,11 +81,10 @@ const OrganizationGrid = () => {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {organizations.map((org, i) => (
+            {organizations.map((org) => (
               <OrganizationCard
                 key={org.id}
                 org={org}
-                colorIndex={i}
                 onEnter={handleEnterOrg}
                 onEdit={handleEditOrg}
               />

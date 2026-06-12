@@ -3,7 +3,7 @@
 
 import type { MemberResponse } from '@server/modules/account/members/features/response'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import type { RoleResponse } from '@src/modules/tenant/iam/roles/roleTypes'
+import type { RoleResponse } from '@src/modules/tenant/iam/roles/role.types'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import {

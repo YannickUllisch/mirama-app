@@ -2,7 +2,7 @@
 'use client'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
-import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
+import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
 import { Button } from '@ui/button'
 import { Plus, Users2 } from 'lucide-react'
 import { useState } from 'react'

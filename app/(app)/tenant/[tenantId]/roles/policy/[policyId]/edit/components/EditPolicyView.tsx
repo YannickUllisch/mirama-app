@@ -2,9 +2,9 @@
 'use client'
 
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
-import policyHooks from '@src/modules/tenant/iam/policy/hooks/hooks'
-import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policyTypes'
-import { useTenantResource } from '@src/modules/tenant/tenantResourceContext'
+import policyHooks from '@src/modules/tenant/iam/policy/hooks/policy.hooks'
+import type { CreatePolicyCommand } from '@src/modules/tenant/iam/policy/policy.types'
+import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -21,7 +21,11 @@ export const EditPolicyView = ({ policyId }: { policyId: string }) => {
       updatePolicy(
         {
           id: policyId,
-          data: { name: data.name, description: data.description, statements: data.statements },
+          data: {
+            name: data.name,
+            description: data.description,
+            statements: data.statements,
+          },
         },
         { onSuccess: () => router.push(`/tenant/${activeTenantId}/roles`) },
       )

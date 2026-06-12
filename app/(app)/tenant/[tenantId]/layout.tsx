@@ -4,7 +4,7 @@ import TenantSidebar from '@src/components/Sidebar/TenantSidebar'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'
 import { ThemeProvider } from '@src/components/Wrappers/ThemeProvider'
-import { TenantResourceProvider } from '@src/modules/tenant/tenantResourceContext'
+import { TenantResourceProvider } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { SidebarInset, SidebarProvider } from '@ui/sidebar'
 import type { Metadata } from 'next'
 

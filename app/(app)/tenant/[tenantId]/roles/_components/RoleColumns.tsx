@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/roles/_components/RoleColumns.tsx
 'use client'
 
-import type { RoleWithPoliciesResponse } from '@src/modules/tenant/iam/roles/roleTypes'
+import type { RoleWithPoliciesResponse } from '@src/modules/tenant/iam/roles/role.types'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'

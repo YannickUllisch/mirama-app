@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/roles/_components/RolesManager.tsx
 'use client'
 
-import { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
+import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Briefcase, Building2, FolderKanban } from 'lucide-react'
 import { RolesScopeTab } from './RolesScopeTab'

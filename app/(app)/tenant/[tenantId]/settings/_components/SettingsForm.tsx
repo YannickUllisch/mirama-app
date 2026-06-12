@@ -7,7 +7,7 @@ import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import {
   type UpdateTenantSettingsRequest,
   UpdateTenantSettingsSchema,
-} from '@src/modules/tenant/hooks/types'
+} from '@src/modules/tenant/tenant/tenant.types'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ColorPicker } from '@ui/color-picker'
 import {

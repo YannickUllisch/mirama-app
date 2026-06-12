@@ -2,11 +2,7 @@
 'use client'
 
 import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
-import {
-  useAcceptInvitation,
-  useDeclineInvitation,
-  useMyInvitations,
-} from '@src/modules/tenant/invitations/hooks/hooks'
+import { invitation as invitationHooks } from '@src/modules/tenant/organization/invitations/hooks/invitations.hooks'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
 import {
@@ -18,8 +14,6 @@ import {
   XCircle,
 } from 'lucide-react'
 import { DateTime } from 'luxon'
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 const InvitationPanelSkeleton = () => (
   <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -50,11 +44,9 @@ const InvitationPanelSkeleton = () => (
   </div>
 )
 
-// ─── Single invitation row ─────────────────────────────────────────────────────
-
 const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
-  const accept = useAcceptInvitation()
-  const decline = useDeclineInvitation()
+  const accept = invitationHooks.accept.useMutation()
+  const decline = invitationHooks.decline.useMutation()
 
   const isPending = accept.isPending || decline.isPending
 
@@ -66,7 +58,6 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
   return (
     <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
       <div className="flex items-center gap-3 min-w-0">
-        {/* Org icon */}
         <div className="h-9 w-9 rounded-lg border border-border bg-muted/40 flex items-center justify-center shrink-0">
           <Building2 className="h-4 w-4 text-muted-foreground" />
         </div>
@@ -137,14 +128,15 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
   )
 }
 
-// ─── Panel ─────────────────────────────────────────────────────────────────────
-
 const InvitationPanel = () => {
-  const { data: invitations, isLoading, isError } = useMyInvitations()
+  const {
+    data: invitations,
+    isLoading,
+    isError,
+  } = invitationHooks.fetchMine.useQuery()
 
   if (isLoading) return <InvitationPanelSkeleton />
 
-  // No invitations or error fetching (endpoint may not be live yet) — render nothing
   if (isError || !invitations || invitations.length === 0) return null
 
   const activeInvitations = invitations.filter(
@@ -155,19 +147,17 @@ const InvitationPanel = () => {
   if (activeInvitations.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-signature-peach/40 bg-card overflow-hidden">
-      {/* Header */}
-      <div className="px-5 py-3.5 border-b border-signature-coral/20 bg-signature-coral/5 flex items-center justify-between">
+    <div className="rounded-xl border border-lava/20 bg-card overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-lava/15 bg-lava/5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          {/* Pulsing dot */}
           <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signature-coral opacity-60" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-signature-coral" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lava opacity-60" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-lava" />
           </span>
           <h2 className="text-sm font-semibold text-foreground">
             Pending Invitations
           </h2>
-          <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-signature-coral text-white text-[10px] font-semibold tabular-nums">
+          <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-lava text-white text-[10px] font-semibold tabular-nums">
             {activeInvitations.length}
           </span>
         </div>
@@ -178,7 +168,6 @@ const InvitationPanel = () => {
         </p>
       </div>
 
-      {/* Invitation rows */}
       <div className="divide-y divide-border">
         {activeInvitations.map((inv) => (
           <InvitationRow key={inv.id} invitation={inv} />

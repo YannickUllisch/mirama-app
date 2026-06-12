@@ -3,8 +3,8 @@
 
 import apiRequest from '@hooks'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { usePermissions } from '@src/modules/shared/permissions/PermissionContext'
-import { AccessScope } from '@src/modules/tenant/iam/roles/roleTypes'
+import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
+import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { Badge } from '@ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'

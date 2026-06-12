@@ -2,7 +2,7 @@
 'use client'
 
 import { EffectBadge } from '@src/modules/tenant/iam/components/EffectBadge'
-import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policyTypes'
+import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policy.types'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
