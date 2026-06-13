@@ -6,7 +6,7 @@ import role from '@src/modules/tenant/iam/roles/hooks/role.hooks'
 import invitation from '@src/modules/tenant/organization/invitations/invitations.hooks'
 import members from '@src/modules/tenant/organization/members/members.hooks'
 import organization from '@src/modules/tenant/organization/organization.hooks'
-import tag from '@src/modules/tenant/organization/tags/tags.hooks'
+import tags from '@src/modules/tenant/organization/tags/tags.hooks'
 import team from '@src/modules/tenant/organization/teams/teams.hooks'
 import billing from '@src/modules/tenant/tenant/billing/billing.hooks'
 import tenant from '@src/modules/tenant/tenant/tenant.hooks'
@@ -14,7 +14,7 @@ import tenant from '@src/modules/tenant/tenant/tenant.hooks'
 const apiRequest = {
   project,
   team,
-  tag,
+  tags,
   invitation,
   task,
   comment,

@@ -12,7 +12,7 @@ const EditPolicyViewSkeleton = () => (
     <div className="space-y-4 px-4 pt-5 pb-6">
       {/* Policy Details card */}
       <div className="rounded-xl border border-border overflow-hidden">
-        <div className="h-12 bg-signature-coral/20 px-6 flex items-center gap-2">
+        <div className="h-12 bg-surface-dark px-6 flex items-center gap-2">
           <Skeleton className="h-4 w-4 rounded" />
           <Skeleton className="h-4 w-28" />
         </div>
@@ -38,7 +38,7 @@ const EditPolicyViewSkeleton = () => (
 
       {/* Permissions card */}
       <div className="rounded-xl border border-border overflow-hidden">
-        <div className="h-12 bg-signature-forest/20 px-6 flex items-center gap-2">
+        <div className="h-12 bg-surface-dark px-6 flex items-center gap-2">
           <Skeleton className="h-4 w-4 rounded" />
           <Skeleton className="h-4 w-24" />
         </div>

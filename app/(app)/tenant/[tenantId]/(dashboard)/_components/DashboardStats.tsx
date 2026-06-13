@@ -3,7 +3,6 @@
 
 import apiRequest from '@hooks'
 import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
-import { Card } from '@ui/card'
 import { Progress } from '@ui/progress'
 import { Skeleton } from '@ui/skeleton'
 import { Building2, CreditCard, FolderOpen, Users } from 'lucide-react'
@@ -23,28 +22,25 @@ const progressColor = (p: number | null) => {
 }
 
 const DashboardStatsSkeleton = () => (
-  <Card className="overflow-hidden rounded-xl">
-    <div className="px-5 py-3.5 bg-surface-dark">
-      <Skeleton className="h-4 w-44 bg-white/15" />
-    </div>
-    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+  <div className="space-y-4">
+    <Skeleton className="h-7 w-40 rounded-full bg-white/10" />
+    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10 rounded-xl border border-white/10 overflow-hidden">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="px-5 py-4 space-y-2">
-          <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-7 w-12" />
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="h-1 w-full rounded-full" />
+        <div key={i} className="px-5 py-5 space-y-2.5">
+          <Skeleton className="h-2.5 w-24 bg-white/10" />
+          <Skeleton className="h-9 w-10 bg-white/10" />
+          <Skeleton className="h-2 w-28 bg-white/10" />
         </div>
       ))}
     </div>
-  </Card>
+  </div>
 )
 
 const DashboardStats = () => {
   const { data: orgs = [], isLoading: orgsLoading } =
     apiRequest.organization.fetchAll.useQuery()
   const { data: billingData, isLoading: billingLoading } =
-    apiRequest.billing.fetchOverview.useQuery()
+    apiRequest.billing.fetchUsage.useQuery()
 
   if (orgsLoading || billingLoading) return <DashboardStatsSkeleton />
 
@@ -80,7 +76,7 @@ const DashboardStats = () => {
       pct: pct(orgs.length, orgMax),
     },
     {
-      label: 'Total Members',
+      label: 'Total members',
       value: String(totalMembers),
       sub: isUnlimited(memberMax)
         ? 'Unlimited'
@@ -89,7 +85,7 @@ const DashboardStats = () => {
       pct: pct(totalMembers, memberMax),
     },
     {
-      label: 'Total Projects',
+      label: 'Total projects',
       value: String(totalProjects),
       sub: isUnlimited(projectMax)
         ? 'Unlimited'
@@ -100,38 +96,37 @@ const DashboardStats = () => {
   ]
 
   return (
-    <Card className="overflow-hidden rounded-xl">
-      <div className="px-5 py-3.5 bg-surface-dark flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <CreditCard className="w-3.5 h-3.5 text-white/50" />
-          <span className="text-sm font-medium text-white">{planName}</span>
-        </div>
-        <span className="text-xs text-white/50">{fmtPrice(planPrice)}</span>
+    <div className="space-y-4">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10">
+        <CreditCard className="w-3 h-3 text-white/50" />
+        <span className="text-xs font-medium text-white/70">{planName}</span>
+        <span className="w-px h-3 bg-white/20" />
+        <span className="text-xs text-white/40">{fmtPrice(planPrice)}</span>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
-        {stats.map((stat) => {
-          const p = stat.pct
-          return (
-            <div key={stat.label} className="px-5 py-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
-                  {stat.label}
-                </span>
-                <stat.Icon className="w-3.5 h-3.5 text-muted-foreground/50" />
-              </div>
-              <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
-              <p className="text-[11px] text-muted-foreground">{stat.sub}</p>
-              {p !== null && (
-                <Progress
-                  value={p}
-                  className={`h-1 mt-1 ${progressColor(p)}`}
-                />
-              )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10 rounded-xl border border-white/10 overflow-hidden">
+        {stats.map((stat) => (
+          <div key={stat.label} className="px-5 py-5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-medium uppercase tracking-[0.5px] text-white/40">
+                {stat.label}
+              </span>
+              <stat.Icon className="w-3.5 h-3.5 text-white/20" />
             </div>
-          )
-        })}
+            <p className="text-3xl font-medium text-white tabular-nums">
+              {stat.value}
+            </p>
+            <p className="text-[11px] text-white/35">{stat.sub}</p>
+            {stat.pct !== null && (
+              <Progress
+                value={stat.pct}
+                className={`h-0.5 mt-2 bg-white/10 ${progressColor(stat.pct)}`}
+              />
+            )}
+          </div>
+        ))}
       </div>
-    </Card>
+    </div>
   )
 }
 

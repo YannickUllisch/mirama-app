@@ -59,7 +59,7 @@ export const AttachPolicyDialog = ({
         <div className="space-y-4">
           {/* Attached policies */}
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+            <p className="text-xs font-medium text-muted-foreground">
               Attached ({role.policies.length})
             </p>
             {role.policies.length === 0 ? (
@@ -83,7 +83,7 @@ export const AttachPolicyDialog = ({
 
           {/* Available policies */}
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+            <p className="text-xs font-medium text-muted-foreground">
               Available
             </p>
             {isLoading ? (
@@ -125,7 +125,7 @@ const PolicyRow = ({
   disabled: boolean
   onAction: () => void
 }) => (
-  <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors">
+  <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-hairline bg-card hover:bg-surface-soft transition-colors">
     <div className="flex items-center gap-2 min-w-0">
       <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
       <span className="text-xs font-mono font-medium truncate">

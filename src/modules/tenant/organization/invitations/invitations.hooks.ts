@@ -1,13 +1,8 @@
-// src/modules/organization/invitations/hooks/invitations.hooks.ts
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
-import { useOrganizationResource } from '../../organizationResourceContext'
-import type {
-  InvitationResponse,
-  SendInvitationCommand,
-} from '../invitations.types'
+import { useOrganizationResource } from '../organizationResourceContext'
 import {
   acceptInvitationFn,
   createInviteFn,
@@ -17,6 +12,10 @@ import {
   fetchMyInvitationsFn,
   revokeInvitationFn,
 } from './invitations.api'
+import type {
+  InvitationResponse,
+  SendInvitationCommand,
+} from './invitations.types'
 
 export const invitationKeys = {
   root: ['invitations'] as const,

@@ -1,25 +1,49 @@
-import type { CreateTagRequest } from '@/server/modules/account/tags/features/create-tag/schema'
-import type { TagResponse } from '@/server/modules/account/tags/features/response'
-import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganizationResource } from '../organizationResourceContext'
-import { createTagFn, deleteTagFn, fetchTagsFn, updateTagFn } from './tags.api'
+import {
+  createTagFn,
+  deleteTagFn,
+  fetchTagByIdFn,
+  fetchTagsFn,
+  updateTagFn,
+} from './tags.api'
+import type {
+  CreateTagCommand,
+  TagResponse,
+  UpdateTagCommand,
+} from './tags.types'
 
 export const tagKeys = {
   root: ['tags'] as const,
   org: (orgId: string) => [...tagKeys.root, orgId] as const,
-  list: (orgId: string) => [...tagKeys.org(orgId), 'list'] as const,
+  list: (orgId: string, scope?: number) =>
+    scope != null
+      ? ([...tagKeys.org(orgId), 'list', scope] as const)
+      : ([...tagKeys.org(orgId), 'list'] as const),
+  detail: (orgId: string, tagId: string) =>
+    [...tagKeys.org(orgId), tagId] as const,
 }
 
-const tag = {
+const tags = {
   fetchAll: {
-    useQuery: () => {
+    useQuery: (scope?: number) => {
       const { activeOrganizationId } = useOrganizationResource()
       return useQuery<TagResponse[]>({
-        queryKey: tagKeys.list(activeOrganizationId),
-        queryFn: () => fetchTagsFn(activeOrganizationId),
+        queryKey: tagKeys.list(activeOrganizationId, scope),
+        queryFn: () => fetchTagsFn(activeOrganizationId, scope),
         enabled: !!activeOrganizationId,
+      })
+    },
+  },
+
+  fetchById: {
+    useQuery: (tagId: string) => {
+      const { activeOrganizationId } = useOrganizationResource()
+      return useQuery<TagResponse>({
+        queryKey: tagKeys.detail(activeOrganizationId, tagId),
+        queryFn: () => fetchTagByIdFn(activeOrganizationId, tagId),
+        enabled: !!activeOrganizationId && !!tagId,
       })
     },
   },
@@ -28,14 +52,15 @@ const tag = {
     useMutation: () => {
       const { activeOrganizationId } = useOrganizationResource()
       const qc = useQueryClient()
+
       return useMutation<
         TagResponse,
         Error,
-        CreateTagRequest,
+        CreateTagCommand,
         { previous?: TagResponse[] }
       >({
         mutationFn: (payload) => createTagFn(activeOrganizationId, payload),
-        ...optimisticList<TagResponse, CreateTagRequest>(
+        ...optimisticList<TagResponse, CreateTagCommand>(
           qc,
           tagKeys.list(activeOrganizationId),
           {
@@ -43,7 +68,17 @@ const tag = {
             successMessage: 'Tag created',
             apply: (old, vars) => [
               ...old,
-              { id: `temp-${Date.now()}`, title: vars.title ?? '' },
+              {
+                id: `temp-${Date.now()}`,
+                name: vars.name,
+                slug: vars.name.toLowerCase().replace(/\s+/g, '-'),
+                color: vars.color ?? null,
+                description: vars.description ?? null,
+                scope: String(vars.scope),
+                scopeValue: vars.scope,
+                organizationId: activeOrganizationId,
+                dateCreated: new Date(),
+              } satisfies TagResponse,
             ],
           },
         ),
@@ -55,47 +90,53 @@ const tag = {
     useMutation: () => {
       const { activeOrganizationId } = useOrganizationResource()
       const qc = useQueryClient()
-      type Vars = { id: string; data: UpdateTagRequest }
+      type Vars = { tagId: string; data: UpdateTagCommand }
+
       return useMutation<
         TagResponse,
         Error,
         Vars,
         { previous?: TagResponse[] }
       >({
-        mutationFn: ({ id, data }) =>
-          updateTagFn(activeOrganizationId, id, data),
+        mutationFn: ({ tagId, data }) =>
+          updateTagFn(activeOrganizationId, tagId, data),
         ...optimisticList<TagResponse, Vars>(
           qc,
           tagKeys.list(activeOrganizationId),
           {
             invalidateKey: tagKeys.org(activeOrganizationId),
             successMessage: 'Tag updated',
-            apply: (old, { id, data }) =>
-              old.map((t) => (t.id === id ? { ...t, ...data } : t)),
+            apply: (old, { tagId, data }) =>
+              old.map((t) =>
+                t.id === tagId
+                  ? {
+                      ...t,
+                      ...data,
+                      scope: String(data.scope),
+                      scopeValue: data.scope,
+                    }
+                  : t,
+              ),
           },
         ),
       })
     },
   },
 
-  delete: {
+  remove: {
     useMutation: () => {
       const { activeOrganizationId } = useOrganizationResource()
       const qc = useQueryClient()
-      return useMutation<
-        { success: boolean },
-        Error,
-        string,
-        { previous?: TagResponse[] }
-      >({
-        mutationFn: (id) => deleteTagFn(activeOrganizationId, id),
+
+      return useMutation<void, Error, string, { previous?: TagResponse[] }>({
+        mutationFn: (tagId) => deleteTagFn(activeOrganizationId, tagId),
         ...optimisticList<TagResponse, string>(
           qc,
           tagKeys.list(activeOrganizationId),
           {
             invalidateKey: tagKeys.org(activeOrganizationId),
             successMessage: 'Tag deleted',
-            apply: (old, id) => old.filter((t) => t.id !== id),
+            apply: (old, tagId) => old.filter((t) => t.id !== tagId),
           },
         ),
       })
@@ -103,4 +144,4 @@ const tag = {
   },
 }
 
-export default tag
+export default tags

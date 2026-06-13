@@ -8,15 +8,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // App variants — editorial near-black system
         default:
           'rounded-lg justify-center cursor-pointer border border-border bg-card text-foreground hover:bg-hover',
 
         primary:
-          'rounded-lg cursor-pointer bg-primary text-primary-foreground hover:opacity-90 active:bg-primary-dark',
+          'rounded-lg cursor-pointer bg-lava text-white hover:bg-lava-hover active:bg-lava-active',
 
         secondary:
           'rounded-lg cursor-pointer bg-secondary text-secondary-foreground border border-border hover:bg-hover',
+
+        mirama:
+          'rounded-lg cursor-pointer bg-mirama text-white hover:opacity-90 active:bg-mirama-active',
 
         tertiary:
           'rounded-lg cursor-pointer bg-tertiary text-white hover:opacity-90',
@@ -27,7 +29,7 @@ const buttonVariants = cva(
         destructive:
           'rounded-lg cursor-pointer bg-destructive text-destructive-foreground hover:opacity-90',
 
-        link: 'cursor-pointer h-auto p-0 text-[11px] font-medium text-[var(--color-link)] underline-offset-4 hover:underline',
+        link: 'cursor-pointer h-auto p-0 text-[11px] font-medium text-mirama underline-offset-4 hover:underline',
 
         ghost:
           'rounded-lg justify-center cursor-pointer hover:bg-hover text-text-secondary hover:text-foreground',
@@ -35,16 +37,16 @@ const buttonVariants = cva(
         // Semantic color variants
         info: 'rounded-lg cursor-pointer bg-tertiary text-white hover:opacity-90 active:opacity-80',
 
-        coral:
-          'rounded-lg cursor-pointer bg-[var(--color-signature-coral)] text-white hover:opacity-90 active:opacity-80',
-
         success:
-          'rounded-lg cursor-pointer bg-[var(--color-success)] text-white hover:opacity-90 active:opacity-80',
+          'rounded-lg cursor-pointer bg-success text-white hover:opacity-90 active:opacity-80',
 
         warning:
-          'rounded-lg cursor-pointer bg-[var(--color-signature-mustard)] text-[var(--color-ink)] hover:opacity-90 active:opacity-80',
+          'rounded-lg cursor-pointer bg-warning text-ink hover:opacity-90 active:opacity-80',
 
-        // Marketing surface variants — Airtable editorial system
+        coral:
+          'rounded-lg cursor-pointer bg-lava text-white hover:bg-lava-hover active:bg-lava-active',
+
+        // Marketing surface variants
         'mkt-primary':
           'rounded-lg cursor-pointer bg-[var(--color-ink)] text-white hover:opacity-90 active:opacity-80',
 

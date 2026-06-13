@@ -3,16 +3,12 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
   SidebarRail,
   useSidebar,
 } from '@ui/sidebar'
-import { CircleHelp, TextAlignEndIcon, TextAlignStart } from 'lucide-react'
+import { TextAlignEndIcon, TextAlignStart } from 'lucide-react'
 import Link from 'next/link'
-import HoverLink from '../HoverLink'
 
 interface AppSidebarProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Sidebar>, 'children'> {
@@ -77,7 +73,7 @@ const AppSidebar = ({
       <SidebarContent className="flex flex-col h-full">
         {children}
       </SidebarContent>
-      <SidebarFooter className="p-2">
+      {/* <SidebarFooter className="p-2">
         <SidebarMenu>
           <HoverLink
             href={
@@ -92,7 +88,7 @@ const AppSidebar = ({
             </SidebarMenuButton>
           </HoverLink>
         </SidebarMenu>
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   )

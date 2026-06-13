@@ -1,6 +1,7 @@
 // app/(app)/tenant/[tenantId]/billing/page.tsx
 import PageHeader from '@src/components/PageHeader'
-import { ArrowRight, CreditCard } from 'lucide-react'
+import { Button } from '@ui/button'
+import { ArrowRight, CreditCard, LayoutGrid } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import SubscriptionSection from './_components/SubscriptionSection'
@@ -14,9 +15,10 @@ const BillingPage = () => {
       <PageHeader
         title="Billing"
         icon={CreditCard}
-        description="Subscription & Usage"
+        description="Subscription & usage"
       />
-      <div className="flex-1 px-4 py-5 space-y-4">
+
+      <div className="flex-1 px-6 md:px-10 py-8 space-y-4">
         <Suspense fallback={<SubscriptionSectionSkeleton />}>
           <SubscriptionSection />
         </Suspense>
@@ -26,22 +28,24 @@ const BillingPage = () => {
         </Suspense>
 
         {/* Plans CTA */}
-        <div className="rounded-xl overflow-hidden bg-signature-mustard">
-          <div className="px-6 py-5 flex items-center justify-between gap-4">
+        <div className="rounded-lg border border-hairline bg-surface-soft p-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-dark">
+              <LayoutGrid className="w-4 h-4 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-semibold text-ink">Plans & Pricing</p>
-              <p className="text-xs text-ink/60 mt-0.5">
+              <p className="text-sm font-medium text-ink">Plans & pricing</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Compare all available plans and features
               </p>
             </div>
-            <Link
-              href="billing/plans"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-ink/70 transition-colors shrink-0"
-            >
-              View Plans
+          </div>
+          <Button asChild variant="mirama" size="sm" className="shrink-0">
+            <Link href="billing/plans">
+              View plans
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-          </div>
+          </Button>
         </div>
       </div>
     </div>

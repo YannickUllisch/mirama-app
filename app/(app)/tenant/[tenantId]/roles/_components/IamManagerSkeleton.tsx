@@ -25,7 +25,7 @@ const IamManagerSkeleton = () => (
     {/* Table */}
     <div className="rounded-lg border border-border overflow-hidden">
       {/* Header row */}
-      <div className="flex items-center gap-4 px-4 py-2.5 border-b border-border bg-muted/40">
+      <div className="flex items-center gap-4 px-4 py-2.5 border-b border-hairline bg-surface-soft">
         <Skeleton className="h-3 w-32" />
         <Skeleton className="h-3 w-48" />
         <Skeleton className="h-3 w-40 ml-auto" />

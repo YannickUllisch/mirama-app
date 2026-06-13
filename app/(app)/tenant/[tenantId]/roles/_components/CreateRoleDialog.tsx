@@ -72,30 +72,27 @@ export const CreateRoleDialog = ({ defaultScope, onSubmit }: Props) => {
       label: 'Organization',
       description: 'Applies across all projects',
       icon: Building2,
-      activeClass:
-        'border-signature-coral/40 bg-signature-coral/5 ring-1 ring-signature-coral/20',
-      hoverClass: 'hover:border-signature-coral/30',
-      iconActiveClass: 'bg-signature-coral text-white',
+      activeClass: 'border-lava/30 bg-lava/5 ring-1 ring-lava/20',
+      hoverClass: 'hover:border-lava/20 hover:bg-surface-soft',
+      iconActiveClass: 'bg-lava text-white',
     },
     {
       value: AccessScope.Project,
       label: 'Project',
       description: 'Applies to a specific project only',
       icon: FolderKanban,
-      activeClass:
-        'border-signature-forest/40 bg-signature-forest/5 ring-1 ring-signature-forest/20',
-      hoverClass: 'hover:border-signature-forest/30',
-      iconActiveClass: 'bg-signature-forest text-white',
+      activeClass: 'border-mirama/30 bg-mirama/5 ring-1 ring-mirama/20',
+      hoverClass: 'hover:border-mirama/20 hover:bg-surface-soft',
+      iconActiveClass: 'bg-mirama text-white',
     },
     {
       value: AccessScope.Client,
       label: 'Client',
       description: 'Applies to client-facing access',
       icon: Briefcase,
-      activeClass:
-        'border-signature-mustard/40 bg-signature-mustard/5 ring-1 ring-signature-mustard/20',
-      hoverClass: 'hover:border-signature-mustard/30',
-      iconActiveClass: 'bg-signature-mustard text-white',
+      activeClass: 'border-warning/30 bg-warning/5 ring-1 ring-warning/20',
+      hoverClass: 'hover:border-warning/20 hover:bg-surface-soft',
+      iconActiveClass: 'bg-warning text-ink',
     },
   ] as const
 
@@ -153,13 +150,13 @@ export const CreateRoleDialog = ({ defaultScope, onSubmit }: Props) => {
                               'shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5',
                               scope === value
                                 ? iconActiveClass
-                                : 'bg-muted text-muted-foreground',
+                                : 'bg-surface-soft border border-hairline text-body-text',
                             )}
                           >
                             <Icon className="w-3.5 h-3.5" />
                           </div>
                           <div>
-                            <p className="text-xs font-semibold">{label}</p>
+                            <p className="text-xs font-medium text-ink">{label}</p>
                             <p className="text-[11px] text-muted-foreground mt-0.5">
                               {description}
                             </p>

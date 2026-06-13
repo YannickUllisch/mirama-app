@@ -10,6 +10,7 @@ import {
 } from './organization.api'
 import type {
   CreateOrganizationCommand,
+  OrganizationListResponse,
   OrganizationResponse,
   UpdateOrganizationCommand,
 } from './organization.types'
@@ -28,7 +29,7 @@ const organization = {
   fetchAll: {
     useQuery: () => {
       const { activeTenantId } = useTenantResource()
-      return useQuery<OrganizationResponse[]>({
+      return useQuery<OrganizationListResponse[]>({
         queryKey: organizationKeys.list(activeTenantId),
         queryFn: () => fetchOrganizationsFn(activeTenantId),
       })

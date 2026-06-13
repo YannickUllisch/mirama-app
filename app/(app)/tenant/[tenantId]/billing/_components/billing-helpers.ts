@@ -1,34 +1,26 @@
 // app/(app)/tenant/[tenantId]/billing/_components/billing-helpers.ts
 import { DateTime } from 'luxon'
 
-export const statusStyles: Record<
-  string,
-  { label: string; className: string }
-> = {
+export const statusStyles: Record<string, { label: string; className: string }> = {
   ACTIVE: {
     label: 'Active',
-    className:
-      'text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-400',
+    className: 'text-success border-success/20 bg-success/10',
   },
   TRIALING: {
     label: 'Trial',
-    className:
-      'text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-400',
+    className: 'text-mirama border-mirama/20 bg-mirama/10',
   },
   PAST_DUE: {
-    label: 'Past Due',
-    className:
-      'text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-400',
+    label: 'Past due',
+    className: 'text-warning border-warning/30 bg-warning/10',
   },
   CANCELED: {
     label: 'Canceled',
-    className:
-      'text-neutral-500 border-neutral-200 bg-neutral-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400',
+    className: 'text-body-text border-hairline bg-surface-soft',
   },
   UNPAID: {
     label: 'Unpaid',
-    className:
-      'text-rose-600 border-rose-200 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-400',
+    className: 'text-destructive border-destructive/20 bg-destructive/10',
   },
 }
 

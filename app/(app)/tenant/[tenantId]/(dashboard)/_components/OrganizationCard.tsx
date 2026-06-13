@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/_components/OrganizationCard.tsx
 'use client'
-import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
 import { cn } from '@src/lib/utils'
+import type { OrganizationListResponse } from '@src/modules/tenant/organization/organization.types'
 import { Button } from '@ui/button'
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
 import {
-  ArrowRight,
+  ArrowUpRight,
   ExternalLink,
   FolderOpen,
   MoreHorizontal,
@@ -42,9 +42,9 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
         aria-label={`Open ${org.name}`}
       />
 
-      <div className="relative z-10 p-5 flex flex-col gap-4">
+      <div className="relative z-10 p-5 flex flex-col gap-5">
         <div className="flex items-start justify-between gap-2">
-          <div className="w-10 h-10 rounded-lg bg-lava flex items-center justify-center text-base font-bold text-white shrink-0">
+          <div className="w-11 h-11 rounded-xl bg-lava flex items-center justify-center text-sm font-bold text-white shrink-0">
             {initial}
           </div>
 
@@ -83,20 +83,20 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <ArrowRight className="w-4 h-4 mt-0.5 shrink-0 text-white/30 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-white/60" />
+            <ArrowUpRight className="w-4 h-4 shrink-0 text-white/20 transition-all duration-200 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
         </div>
 
         <div className="flex-1">
-          <p className="text-base font-medium text-white leading-tight truncate">
+          <p className="text-sm font-medium text-white leading-snug truncate">
             {org.name}
           </p>
-          <p className="text-xs font-mono mt-0.5 truncate text-white/50">
+          <p className="text-xs font-mono mt-0.5 text-white/40 truncate">
             {org.slug}
           </p>
         </div>
 
-        <div className="flex items-center gap-4 pt-3 border-t border-white/10 text-xs text-white/40">
+        <div className="flex items-center gap-4 pt-4 border-t border-white/10 text-xs text-white/35">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
             {org._count.members}{' '}

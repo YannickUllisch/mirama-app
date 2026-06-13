@@ -6,17 +6,17 @@ const OrganizationGridSkeleton = () => (
     {Array.from({ length: 3 }).map((_, i) => (
       <div
         key={`org-skel-${i}`}
-        className="rounded-xl bg-surface-dark/10 p-5 space-y-4"
+        className="rounded-xl bg-surface-dark/10 p-5 space-y-5"
       >
         <div className="flex items-start justify-between">
-          <Skeleton className="h-10 w-10 rounded-lg" />
+          <Skeleton className="h-11 w-11 rounded-xl" />
           <Skeleton className="h-4 w-4 rounded" />
         </div>
         <div className="space-y-1.5">
-          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-28" />
           <Skeleton className="h-3 w-20" />
         </div>
-        <div className="flex gap-4 pt-3 border-t border-border">
+        <div className="flex gap-4 pt-4 border-t border-border">
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-3 w-20" />
         </div>

@@ -15,6 +15,18 @@ export const OrganizationResponseSchema = z.object({
 })
 export type OrganizationResponse = z.infer<typeof OrganizationResponseSchema>
 
+export const OrganizationListResponseSchema = OrganizationResponseSchema.extend(
+  {
+    _count: z.object({
+      members: z.number(),
+      projects: z.number(),
+    }),
+  },
+)
+export type OrganizationListResponse = z.infer<
+  typeof OrganizationListResponseSchema
+>
+
 export const CreateOrganizationSchema = z.object({
   name: z.string().min(2).max(100),
   street: z.string().min(1).max(200),

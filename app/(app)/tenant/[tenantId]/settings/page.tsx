@@ -1,24 +1,13 @@
 // app/(app)/tenant/[tenantId]/settings/page.tsx
-import PageHeader from '@src/components/PageHeader'
-import { Settings } from 'lucide-react'
-import { Suspense } from 'react'
-import SettingsForm from './_components/SettingsForm'
-import SettingsFormSkeleton from './_components/SettingsFormSkeleton'
+import { redirect } from 'next/navigation'
 
-const SettingsPage = () => {
-  return (
-    <>
-      <PageHeader
-        icon={Settings}
-        title="Settings"
-        description="Tenant configuration"
-      />
+type Props = {
+  params: Promise<{ tenantId: string }>
+}
 
-      <Suspense fallback={<SettingsFormSkeleton />}>
-        <SettingsForm />
-      </Suspense>
-    </>
-  )
+const SettingsPage = async ({ params }: Props) => {
+  const { tenantId } = await params
+  redirect(`/tenant/${tenantId}/settings/general`)
 }
 
 export default SettingsPage

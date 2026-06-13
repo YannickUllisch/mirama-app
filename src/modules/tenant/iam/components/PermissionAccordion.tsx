@@ -65,7 +65,7 @@ export const PermissionAccordion = ({
             value={group.resourcePattern}
             className="border-0"
           >
-            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/40 data-[state=open]:bg-muted/40 transition-colors text-sm">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-surface-soft data-[state=open]:bg-surface-soft transition-colors text-sm">
               <div className="flex items-center gap-2.5 flex-1 mr-2">
                 <span className="font-medium text-sm">{group.label}</span>
                 <Badge
@@ -77,7 +77,7 @@ export const PermissionAccordion = ({
                 {(wild || activeCount > 0) && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 h-4 text-signature-coral border-signature-coral/30 bg-signature-coral/5"
+                    className="text-[10px] px-1.5 py-0 h-4 text-lava border-lava/30 bg-lava/5"
                   >
                     {wild
                       ? 'full access'
@@ -92,7 +92,7 @@ export const PermissionAccordion = ({
                 {/* Wildcard row */}
                 <label
                   htmlFor={`${group.resourcePattern}-wildcard`}
-                  className="w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors"
+                  className="w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-surface-soft transition-colors"
                 >
                   <Checkbox
                     id={`${group.resourcePattern}-wildcard`}
@@ -118,7 +118,7 @@ export const PermissionAccordion = ({
                   <label
                     key={perm.action}
                     htmlFor={`${group.resourcePattern}-${perm.action}`}
-                    className={`w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/40 transition-colors ${
+                    className={`w-full flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-1.5 hover:bg-surface-soft transition-colors ${
                       wild ? 'opacity-50 pointer-events-none' : ''
                     }`}
                   >

@@ -2,7 +2,7 @@
 'use client'
 
 import { Button } from '@ui/button'
-import { CheckCircle2, CircleDot, Loader2, Save, X } from 'lucide-react'
+import { CheckCircle2, Loader2, Save, X } from 'lucide-react'
 
 interface SaveChangesOverlayProps {
   isDirty: boolean
@@ -17,22 +17,23 @@ const SaveChangesOverlay = ({
   isPending,
   onSubmit,
   onCancel,
-  submitLabel = 'Save Changes',
+  submitLabel = 'Save changes',
 }: SaveChangesOverlayProps) => {
   return (
-    <div className="sticky bottom-0 -mx-5 -mb-5 bg-card border-t border-border px-10 py-4 flex items-center justify-between gap-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border px-10 py-3 flex items-center justify-between gap-4" style={{ left: 'var(--sidebar-width, 0px)' }}>
       <div className="flex items-center gap-2.5">
-        {isDirty ? (
-          <>
-            <CircleDot className="w-3.5 h-3.5 text-signature-peach shrink-0" />
-            <span className="text-sm text-text">Unsaved changes</span>
-          </>
-        ) : (
-          <>
-            <CheckCircle2 className="w-3.5 h-3.5 text-success-border shrink-0" />
-            <span className="text-sm text-text">All changes saved</span>
-          </>
-        )}
+        <div
+          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-all duration-300 ${
+            isDirty ? 'bg-lava/15 text-text' : 'bg-white/8 text-text/70'
+          }`}
+        >
+          {isDirty ? (
+            <span className="w-1.5 h-1.5 rounded-full bg-lava animate-pulse shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+          )}
+          <span>{isDirty ? 'Unsaved changes' : 'All changes saved'}</span>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
@@ -42,7 +43,7 @@ const SaveChangesOverlay = ({
             size="sm"
             variant="ghost"
             onClick={onCancel}
-            className="text-muted-foreground"
+            className="text-white/60 hover:text-white hover:bg-white/10"
           >
             <X className="w-3.5 h-3.5" />
             Cancel
@@ -54,6 +55,7 @@ const SaveChangesOverlay = ({
           variant="secondary"
           disabled={!isDirty || isPending}
           onClick={onSubmit}
+          className="min-w-28"
         >
           {isPending ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />

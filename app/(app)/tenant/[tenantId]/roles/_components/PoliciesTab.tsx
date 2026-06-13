@@ -66,7 +66,7 @@ export const PoliciesTab = () => {
           icon={Building2}
           title="Organization Policies"
           description="Grant access across the entire organization. Can include org-level actions like managing members, teams, and invitations."
-          color="coral"
+          color="lava"
           onNew={() => handleNewPolicy(AccessScope.Organization)}
         />
         {orgPolicies.length > 0 ? (
@@ -91,7 +91,7 @@ export const PoliciesTab = () => {
           icon={FolderKanban}
           title="Project Policies"
           description="Grant access within a specific project. Focused on project, task, milestone, and tag permissions. Union'd with org policies for effective access."
-          color="forest"
+          color="mirama"
           onNew={() => handleNewPolicy(AccessScope.Project)}
         />
         {projectPolicies.length > 0 ? (

@@ -3,7 +3,6 @@ import type {
   PlanFeatures,
   PlanResponse,
 } from '@server/modules/account/tenant/billing/features/response'
-import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { ArrowUpRight, Check, X } from 'lucide-react'
 import { fmtPrice, isUnlimited } from './billing-helpers'
@@ -11,19 +10,31 @@ import { fmtPrice, isUnlimited } from './billing-helpers'
 const FeatureLine = ({
   text,
   included,
+  dark = false,
 }: {
   text: string
   included: boolean
+  dark?: boolean
 }) => (
   <li className="flex items-center gap-2 text-[13px]">
     {included ? (
-      <Check className="w-3.5 h-3.5 text-success-border shrink-0" />
+      <Check
+        className={`w-3.5 h-3.5 shrink-0 ${dark ? 'text-success-border' : 'text-success'}`}
+      />
     ) : (
-      <X className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0" />
+      <X
+        className={`w-3.5 h-3.5 shrink-0 ${dark ? 'text-white/20' : 'text-muted-foreground/30'}`}
+      />
     )}
     <span
       className={
-        included ? 'text-foreground' : 'text-muted-foreground/50 line-through'
+        included
+          ? dark
+            ? 'text-white/80'
+            : 'text-ink'
+          : dark
+            ? 'text-white/25 line-through'
+            : 'text-muted-foreground/40 line-through'
       }
     >
       {text}
@@ -40,36 +51,82 @@ const PlanCard = ({
 }) => {
   const f: PlanFeatures = plan.features
 
+  const features = [
+    {
+      text: `${isUnlimited(f.maxOrganizations) ? 'Unlimited' : f.maxOrganizations} organization${f.maxOrganizations !== 1 ? 's' : ''}`,
+      included: true,
+    },
+    {
+      text: `${isUnlimited(f.maxMembersPerOrg) ? 'Unlimited' : f.maxMembersPerOrg} members / org`,
+      included: true,
+    },
+    {
+      text: `${isUnlimited(f.maxProjectsPerOrg) ? 'Unlimited' : f.maxProjectsPerOrg} projects / org`,
+      included: true,
+    },
+    {
+      text: `${f.storageGb >= 1000 ? `${f.storageGb / 1000} TB` : `${f.storageGb} GB`} storage`,
+      included: f.storageGb > 0,
+    },
+    { text: 'Approval flows', included: f.hasApprovalFlows },
+    { text: 'Custom branding', included: f.canCustomBrand },
+  ]
+
+  if (isCurrent) {
+    return (
+      <div className="relative flex flex-col rounded-xl overflow-hidden bg-surface-dark">
+        <div className="h-1 w-full bg-lava" />
+        <div className="p-5 flex flex-col flex-1">
+          <div className="flex items-start justify-between gap-2 mb-4">
+            <div className="min-w-0">
+              <h3 className="text-sm font-medium text-white">{plan.name}</h3>
+              {plan.description && (
+                <p className="text-xs text-white/50 mt-0.5">{plan.description}</p>
+              )}
+            </div>
+            <span className="inline-flex shrink-0 items-center rounded-full bg-lava px-2 py-0.5 text-[10px] font-medium text-white">
+              Current
+            </span>
+          </div>
+
+          <p className="text-2xl font-medium text-white mb-1">
+            {fmtPrice(plan.price)}
+            {plan.price > 0 && (
+              <span className="text-xs font-normal text-white/50 ml-1">
+                /{plan.interval === 'year' ? 'yr' : 'mo'}
+              </span>
+            )}
+          </p>
+
+          <ul className="mt-4 space-y-2.5 flex-1">
+            {features.map((feat) => (
+              <FeatureLine
+                key={feat.text}
+                text={feat.text}
+                included={feat.included}
+                dark
+              />
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div
-      className={`relative flex flex-col rounded-xl border overflow-hidden transition-colors ${
-        isCurrent
-          ? 'border-signature-coral/50 ring-1 ring-signature-coral/20'
-          : 'border-border hover:border-border/80'
-      }`}
-    >
-      {/* Top stripe */}
-      <div
-        className={`h-1 w-full ${isCurrent ? 'bg-signature-coral' : 'bg-border/60'}`}
-      />
-
+    <div className="relative flex flex-col rounded-xl border border-hairline bg-surface-soft overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="h-1 w-full bg-surface-medium" />
       <div className="p-5 flex flex-col flex-1">
-        {isCurrent && (
-          <Badge className="absolute top-3.5 right-3.5 text-[10px] px-2 py-0.5 bg-signature-coral text-white border-0">
-            Current
-          </Badge>
-        )}
-
         <div className="mb-4">
-          <h3 className="text-sm font-semibold">{plan.name}</h3>
+          <h3 className="text-sm font-medium text-ink">{plan.name}</h3>
           {plan.description && (
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {plan.description}
             </p>
           )}
         </div>
 
-        <p className="text-2xl font-bold tracking-tight mb-1">
+        <p className="text-2xl font-medium text-ink mb-1">
           {fmtPrice(plan.price)}
           {plan.price > 0 && (
             <span className="text-xs font-normal text-muted-foreground ml-1">
@@ -78,38 +135,25 @@ const PlanCard = ({
           )}
         </p>
 
-        <ul className="mt-4 space-y-2 flex-1">
-          <FeatureLine
-            text={`${isUnlimited(f.maxOrganizations) ? 'Unlimited' : f.maxOrganizations} organization${f.maxOrganizations !== 1 ? 's' : ''}`}
-            included
-          />
-          <FeatureLine
-            text={`${isUnlimited(f.maxMembersPerOrg) ? 'Unlimited' : f.maxMembersPerOrg} members / org`}
-            included
-          />
-          <FeatureLine
-            text={`${isUnlimited(f.maxProjectsPerOrg) ? 'Unlimited' : f.maxProjectsPerOrg} projects / org`}
-            included
-          />
-          <FeatureLine
-            text={`${f.storageGb >= 1000 ? `${f.storageGb / 1000} TB` : `${f.storageGb} GB`} storage`}
-            included={f.storageGb > 0}
-          />
-          <FeatureLine text="Approval flows" included={f.hasApprovalFlows} />
-          <FeatureLine text="Custom branding" included={f.canCustomBrand} />
+        <ul className="mt-4 space-y-2.5 flex-1">
+          {features.map((feat) => (
+            <FeatureLine
+              key={feat.text}
+              text={feat.text}
+              included={feat.included}
+            />
+          ))}
         </ul>
 
-        {!isCurrent && (
-          <Button
-            variant={plan.price === 0 ? 'outline' : 'default'}
-            size="sm"
-            className="w-full mt-5"
-            disabled
-          >
-            {plan.price === 0 ? 'Downgrade' : 'Upgrade'}
-            <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-          </Button>
-        )}
+        <Button
+          variant={plan.price === 0 ? 'outline' : 'mirama'}
+          size="sm"
+          className="w-full mt-5"
+          disabled
+        >
+          {plan.price === 0 ? 'Downgrade' : 'Upgrade'}
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </Button>
       </div>
     </div>
   )

@@ -25,18 +25,18 @@ const UsageRow = ({
   const isFull = pct >= 100
 
   return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between text-sm">
-        <span className="flex items-center gap-2 text-muted-foreground font-medium">
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-2 text-sm text-body-text font-medium">
           {icon}
           {label}
         </span>
         <span
           className={`text-xs font-mono tabular-nums ${
             isFull
-              ? 'text-signature-coral'
+              ? 'text-destructive'
               : isWarn
-                ? 'text-signature-mustard'
+                ? 'text-warning'
                 : 'text-muted-foreground'
           }`}
         >
@@ -49,10 +49,10 @@ const UsageRow = ({
         value={unlimited ? 0 : pct}
         className={`h-1.5 ${
           isFull
-            ? '[&>div]:bg-signature-coral'
+            ? '[&>div]:bg-lava'
             : isWarn
-              ? '[&>div]:bg-signature-mustard'
-              : '[&>div]:bg-signature-mint'
+              ? '[&>div]:bg-warning'
+              : '[&>div]:bg-success'
         }`}
       />
     </div>
@@ -60,7 +60,7 @@ const UsageRow = ({
 }
 
 const UsageSection = () => {
-  const { data, isLoading } = apiRequest.billing.fetchOverview.useQuery()
+  const { data, isLoading } = apiRequest.billing.fetchUsage.useQuery()
 
   if (isLoading) return null
 
@@ -70,13 +70,13 @@ const UsageSection = () => {
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="px-6 py-4 bg-signature-mint">
-        <CardTitle className="text-sm font-medium flex items-center gap-2 text-ink">
-          <BarChart2 className="w-4 h-4 text-ink/60" />
-          Current Usage
+      <CardHeader className="px-6 py-4 bg-surface-dark">
+        <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+          <BarChart2 className="w-4 h-4 text-white/70" />
+          Current usage
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-5 space-y-5">
+      <CardContent className="p-6 space-y-5">
         <UsageRow
           label="Organizations"
           icon={<Building2 className="w-3.5 h-3.5" />}

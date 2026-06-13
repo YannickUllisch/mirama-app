@@ -33,7 +33,7 @@ const featureRows: FeatureRow[] = [
   {
     label: 'Price',
     getValue: (p) => (
-      <span className="text-sm font-semibold">
+      <span className="text-sm font-medium">
         {fmtPrice(p.price)}
         {p.price > 0 && (
           <span className="text-xs font-normal text-muted-foreground">
@@ -76,7 +76,7 @@ const featureRows: FeatureRow[] = [
 ]
 
 const PlansGrid = () => {
-  const { data, isLoading } = apiRequest.plans.fetch.useQuery()
+  const { data, isLoading } = apiRequest.billing.plans.fetchAll.useQuery()
 
   if (isLoading) {
     return (
@@ -91,7 +91,7 @@ const PlansGrid = () => {
   const currentPlanId = billing?.subscription?.plan.id ?? null
 
   return (
-    <div className="flex-1 px-4 py-5 space-y-8">
+    <div className="flex-1 px-6 md:px-10 py-8 space-y-8">
       {plans.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {plans.map((plan) => (
@@ -113,22 +113,19 @@ const PlansGrid = () => {
           <Separator />
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold tracking-tight">
-              Feature Comparison
-            </p>
+            <p className="text-sm font-medium text-ink">Feature Comparison</p>
 
-            <div className="rounded-xl border border-border overflow-hidden">
-              {/* Header row */}
-              <div className="flex items-center bg-muted/40 px-4 py-3 border-b border-border">
+            <div className="rounded-xl border border-hairline overflow-hidden">
+              <div className="flex items-center bg-surface-soft px-4 py-3 border-b border-hairline">
                 <span className="text-xs font-medium text-muted-foreground w-40 shrink-0">
                   Feature
                 </span>
                 {plans.map((plan) => (
                   <span
                     key={plan.id}
-                    className={`flex-1 text-center text-xs font-semibold ${
+                    className={`flex-1 text-center text-xs font-medium ${
                       plan.id === currentPlanId
-                        ? 'text-signature-coral'
+                        ? 'text-lava'
                         : 'text-muted-foreground'
                     }`}
                   >
@@ -137,11 +134,10 @@ const PlansGrid = () => {
                 ))}
               </div>
 
-              {/* Feature rows */}
               {featureRows.map((row) => (
                 <div
                   key={row.label}
-                  className="flex items-center px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors"
+                  className="flex items-center px-4 py-3 border-b border-hairline last:border-b-0 hover:bg-surface-soft/60 transition-colors"
                 >
                   <span className="text-sm text-muted-foreground w-40 shrink-0">
                     {row.label}

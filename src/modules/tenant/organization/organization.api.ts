@@ -1,6 +1,7 @@
 import { api } from '@src/modules/shared/api'
 import type {
   CreateOrganizationCommand,
+  OrganizationListResponse,
   OrganizationResponse,
   UpdateOrganizationCommand,
 } from './organization.types'
@@ -9,7 +10,7 @@ export type OrgProjectSummary = { id: string; name: string }
 
 export const fetchOrganizationsFn = async (
   tenantId: string,
-): Promise<OrganizationResponse[]> => {
+): Promise<OrganizationListResponse[]> => {
   const { data } = await api.get(`tenant/${tenantId}/organizations`)
   return data
 }

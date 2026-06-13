@@ -1,8 +1,8 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/_components/InvitationPanel.tsx
 'use client'
 
-import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
-import { invitation as invitationHooks } from '@src/modules/tenant/organization/invitations/hooks/invitations.hooks'
+import apiRequest from '@hooks'
+import type { InvitationResponse } from '@src/modules/tenant/organization/invitations/invitations.types'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
 import {
@@ -17,9 +17,9 @@ import { DateTime } from 'luxon'
 
 const InvitationPanelSkeleton = () => (
   <div className="rounded-xl border border-border bg-card overflow-hidden">
-    <div className="px-5 py-4 border-b border-border flex items-center gap-3">
-      <Skeleton className="h-4 w-4 rounded-full" />
-      <Skeleton className="h-4 w-40" />
+    <div className="px-5 py-3.5 border-b border-border flex items-center gap-2.5">
+      <Skeleton className="h-2.5 w-2.5 rounded-full" />
+      <Skeleton className="h-4 w-36" />
     </div>
     <div className="divide-y divide-border">
       {[1, 2].map((i) => (
@@ -30,13 +30,13 @@ const InvitationPanelSkeleton = () => (
           <div className="flex items-center gap-3">
             <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
             <div className="space-y-1.5">
-              <Skeleton className="h-3.5 w-32" />
-              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3.5 w-36" />
+              <Skeleton className="h-3 w-28" />
             </div>
           </div>
           <div className="flex gap-2">
-            <Skeleton className="h-8 w-20 rounded-full" />
-            <Skeleton className="h-8 w-20 rounded-full" />
+            <Skeleton className="h-8 w-20 rounded-md" />
+            <Skeleton className="h-8 w-20 rounded-md" />
           </div>
         </div>
       ))}
@@ -45,9 +45,8 @@ const InvitationPanelSkeleton = () => (
 )
 
 const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
-  const accept = invitationHooks.accept.useMutation()
-  const decline = invitationHooks.decline.useMutation()
-
+  const accept = apiRequest.invitation.accept.useMutation()
+  const decline = apiRequest.invitation.decline.useMutation()
   const isPending = accept.isPending || decline.isPending
 
   const expiresAt = DateTime.fromJSDate(new Date(invitation.expiresAt))
@@ -56,12 +55,11 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
   const isExpired = hoursLeft <= 0
 
   return (
-    <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+    <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div className="flex items-center gap-3 min-w-0">
-        <div className="h-9 w-9 rounded-lg border border-border bg-muted/40 flex items-center justify-center shrink-0">
+        <div className="h-9 w-9 rounded-lg bg-muted/60 border border-border flex items-center justify-center shrink-0">
           <Building2 className="h-4 w-4 text-muted-foreground" />
         </div>
-
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground truncate">
             {invitation.organizationName}
@@ -82,7 +80,7 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
                 isExpired
                   ? 'text-destructive'
                   : isExpiringSoon
-                    ? 'text-warning-foreground'
+                    ? 'text-[#FFAB00]'
                     : 'text-muted-foreground'
               }`}
             >
@@ -104,7 +102,7 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
             size="sm"
             disabled={isPending}
             onClick={() => decline.mutate(invitation.id)}
-            className="text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
           >
             <XCircle className="h-3.5 w-3.5" />
             Decline
@@ -122,7 +120,9 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
       )}
 
       {isExpired && (
-        <span className="text-xs text-muted-foreground shrink-0">Expired</span>
+        <span className="text-xs text-muted-foreground/60 shrink-0">
+          Expired
+        </span>
       )}
     </div>
   )
@@ -133,10 +133,9 @@ const InvitationPanel = () => {
     data: invitations,
     isLoading,
     isError,
-  } = invitationHooks.fetchMine.useQuery()
+  } = apiRequest.invitation.fetchMine.useQuery()
 
   if (isLoading) return <InvitationPanelSkeleton />
-
   if (isError || !invitations || invitations.length === 0) return null
 
   const activeInvitations = invitations.filter(
@@ -148,26 +147,26 @@ const InvitationPanel = () => {
 
   return (
     <div className="rounded-xl border border-lava/20 bg-card overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-lava/15 bg-lava/5 flex items-center justify-between">
+      <div className="px-5 py-3 border-b border-lava/15 bg-lava/5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="relative flex h-2.5 w-2.5 shrink-0">
+          <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lava opacity-60" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-lava" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-lava" />
           </span>
-          <h2 className="text-sm font-semibold text-foreground">
-            Pending Invitations
+          <h2 className="text-sm font-medium text-foreground">
+            Pending invitations
           </h2>
           <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-lava text-white text-[10px] font-semibold tabular-nums">
             {activeInvitations.length}
           </span>
         </div>
         <p className="text-xs text-muted-foreground hidden sm:block">
-          You've been invited to join{' '}
-          {activeInvitations.length === 1 ? 'an organization' : 'organizations'}
-          . Review and respond below.
+          You've been invited to{' '}
+          {activeInvitations.length === 1
+            ? 'an organization'
+            : `${activeInvitations.length} organizations`}
         </p>
       </div>
-
       <div className="divide-y divide-border">
         {activeInvitations.map((inv) => (
           <InvitationRow key={inv.id} invitation={inv} />

@@ -1,47 +1,54 @@
 // src/modules/organization/tags/hooks/api.ts
-import type { CreateTagRequest } from '@/server/modules/account/tags/features/create-tag/schema'
-import type { TagResponse } from '@/server/modules/account/tags/features/response'
-import type { UpdateTagRequest } from '@/server/modules/account/tags/features/update-tag/schema'
 import { api } from '@src/modules/shared/api'
+import type {
+  CreateTagCommand,
+  TagResponse,
+  UpdateTagCommand,
+} from './tags.types'
 
 export const fetchTagsFn = async (
   organizationId: string,
+  scope?: number,
 ): Promise<TagResponse[]> => {
-  const { data } = await api.get(`organization/${organizationId}/tag`)
+  const params = scope != null ? { params: { scope } } : undefined
+  const { data } = await api.get(`organization/${organizationId}/tags`, params)
+  return data.data
+}
+
+export const fetchTagByIdFn = async (
+  organizationId: string,
+  tagId: string,
+): Promise<TagResponse> => {
+  const { data } = await api.get(`organization/${organizationId}/tags/${tagId}`)
   return data.data
 }
 
 export const createTagFn = async (
   organizationId: string,
-  payload: CreateTagRequest,
-) => {
-  const { data } = await api.post(`organization/${organizationId}/tag`, payload)
-  return data.data
-}
-
-export const updateTagFn = async (
-  organizationId: string,
-  id: string,
-  payload: UpdateTagRequest,
-) => {
-  const { data } = await api.put(
-    `organization/${organizationId}/tag/${id}`,
+  payload: CreateTagCommand,
+): Promise<TagResponse> => {
+  const { data } = await api.post(
+    `organization/${organizationId}/tags`,
     payload,
   )
   return data.data
 }
 
-export const deleteTagFn = async (organizationId: string, id: string) => {
-  const { data } = await api.delete(`organization/${organizationId}/tag/${id}`)
+export const updateTagFn = async (
+  organizationId: string,
+  tagId: string,
+  payload: UpdateTagCommand,
+): Promise<TagResponse> => {
+  const { data } = await api.put(
+    `organization/${organizationId}/tags/${tagId}`,
+    payload,
+  )
   return data.data
 }
 
-export const deleteMultipleTagsFn = async (
+export const deleteTagFn = async (
   organizationId: string,
-  ids: string[],
-) => {
-  const { data } = await api.delete(
-    `organization/${organizationId}/tag?ids=${ids}`,
-  )
-  return data.data
+  tagId: string,
+): Promise<void> => {
+  await api.delete(`organization/${organizationId}/tags/${tagId}`)
 }

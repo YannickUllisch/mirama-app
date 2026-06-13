@@ -3,14 +3,14 @@ import { cn } from '@src/lib/utils'
 import { Button } from '@ui/button'
 import { Plus } from 'lucide-react'
 
-type SectionColor = 'coral' | 'forest' | 'mint' | 'mustard'
+type SectionColor = 'lava' | 'mirama' | 'warning' | 'neutral'
 
 const COLOR_STYLES: Record<SectionColor, { iconBg: string; iconText: string }> =
   {
-    coral: { iconBg: 'bg-signature-coral', iconText: 'text-white' },
-    forest: { iconBg: 'bg-signature-forest', iconText: 'text-white' },
-    mint: { iconBg: 'bg-signature-mint', iconText: 'text-ink' },
-    mustard: { iconBg: 'bg-signature-mustard', iconText: 'text-ink' },
+    lava: { iconBg: 'bg-lava', iconText: 'text-white' },
+    mirama: { iconBg: 'bg-mirama', iconText: 'text-white' },
+    warning: { iconBg: 'bg-warning', iconText: 'text-ink' },
+    neutral: { iconBg: 'bg-surface-medium border border-hairline', iconText: 'text-body-text' },
   }
 
 export const SectionHeader = ({
@@ -26,7 +26,7 @@ export const SectionHeader = ({
   onNew?: () => void
   color?: SectionColor
 }) => {
-  const style = color ? COLOR_STYLES[color] : null
+  const style = color ? COLOR_STYLES[color] : COLOR_STYLES.neutral
 
   return (
     <div className="flex items-start justify-between gap-4">
@@ -34,15 +34,13 @@ export const SectionHeader = ({
         <div
           className={cn(
             'shrink-0 w-8 h-8 rounded-xl flex items-center justify-center',
-            style
-              ? `${style.iconBg} ${style.iconText}`
-              : 'border border-border bg-muted/50 text-muted-foreground',
+            `${style.iconBg} ${style.iconText}`,
           )}
         >
           <Icon className="w-4 h-4" />
         </div>
         <div>
-          <p className="text-sm font-semibold">{title}</p>
+          <p className="text-sm font-medium text-ink">{title}</p>
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>

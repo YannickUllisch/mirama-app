@@ -66,7 +66,7 @@ const ColorPicker = forwardRef<
         <HexColorPicker color={parsedValue} onChange={onChange} />
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+          <span className="text-[10px] font-semibold text-muted-foreground shrink-0">
             HEX
           </span>
           <Input

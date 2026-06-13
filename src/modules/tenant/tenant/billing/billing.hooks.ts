@@ -1,13 +1,19 @@
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useQuery } from '@tanstack/react-query'
-import { fetchBillingUsageFn, fetchPlanByIdFn, fetchPlansFn } from './billing.api'
+import {
+  fetchBillingUsageFn,
+  fetchPlanByIdFn,
+  fetchPlansFn,
+} from './billing.api'
 import type { BillingUsageResponse, PlanResponse } from './billing.types'
 
 export const billingKeys = {
   root: ['billing'] as const,
   tenant: (tenantId: string) => [...billingKeys.root, tenantId] as const,
-  usage: (tenantId: string) => [...billingKeys.tenant(tenantId), 'usage'] as const,
-  plans: (tenantId: string) => [...billingKeys.tenant(tenantId), 'plans'] as const,
+  usage: (tenantId: string) =>
+    [...billingKeys.tenant(tenantId), 'usage'] as const,
+  plans: (tenantId: string) =>
+    [...billingKeys.tenant(tenantId), 'plans'] as const,
   plan: (tenantId: string, planId: string) =>
     [...billingKeys.plans(tenantId), planId] as const,
 }

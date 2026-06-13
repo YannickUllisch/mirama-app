@@ -4,10 +4,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks'
 import {
-  type CreateOrganizationRequest,
+  type CreateOrganizationCommand,
   CreateOrganizationSchema,
-} from '@server/modules/account/organizations/features/create-organization/schema'
-import type { OrganizationResponse } from '@server/modules/account/organizations/features/response'
+  type OrganizationResponse,
+} from '@src/modules/tenant/organization/organization.types'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import {
@@ -45,7 +45,7 @@ const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
     ? organizations.find((o: OrganizationResponse) => o.id === orgId)
     : undefined
 
-  const form = useForm<CreateOrganizationRequest>({
+  const form = useForm<CreateOrganizationCommand>({
     resolver: zodResolver(CreateOrganizationSchema),
     defaultValues: {
       name: '',

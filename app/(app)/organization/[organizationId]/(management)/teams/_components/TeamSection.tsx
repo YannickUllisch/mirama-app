@@ -1,10 +1,10 @@
 // app/(app)/organization/[organizationId]/(management)/teams/_components/TeamSection.tsx
 'use client'
-import type { MemberResponse } from '@/server/modules/account/members/features/response'
-import type { TeamResponse } from '@/server/modules/account/teams/features/response'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import { DataTable } from '@src/components/Tables/DataTable'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
+import type { TeamResponse } from '@src/modules/tenant/organization/teams/teams.types'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
@@ -87,7 +87,7 @@ const TeamSection = ({
   const color = TEAM_COLORS[colorIndex % TEAM_COLORS.length]
 
   const { data: members = [], isLoading: membersLoading } =
-    apiRequest.team.members.fetch.useQuery(team.id)
+    apiRequest.team.members.fetchAll.useQuery(team.id)
 
   const { mutate: addMember, isPending: isAdding } =
     apiRequest.team.members.add.useMutation(team.id)
@@ -97,7 +97,7 @@ const TeamSection = ({
   )
 
   const availableMembers = orgMembers.filter(
-    (om) => !members.some((tm) => tm.memberId === om.id),
+    (om) => !members.some((tm) => tm.id === om.id),
   )
 
   const handleRemove = useCallback(

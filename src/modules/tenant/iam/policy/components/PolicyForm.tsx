@@ -74,30 +74,27 @@ const SCOPE_OPTIONS = [
     label: 'Organization',
     description: 'Applies across all projects in the org',
     icon: Building2,
-    activeClass:
-      'border-signature-coral/40 bg-signature-coral/5 ring-1 ring-signature-coral/20',
-    hoverClass: 'hover:border-signature-coral/30 hover:bg-muted/40',
-    iconActiveClass: 'bg-signature-coral text-white',
+    activeClass: 'border-lava/30 bg-lava/5 ring-1 ring-lava/20',
+    hoverClass: 'hover:border-lava/20 hover:bg-surface-soft',
+    iconActiveClass: 'bg-lava text-white',
   },
   {
     value: AccessScope.Project,
     label: 'Project',
     description: 'Applies to a specific project only',
     icon: FolderKanban,
-    activeClass:
-      'border-signature-forest/40 bg-signature-forest/5 ring-1 ring-signature-forest/20',
-    hoverClass: 'hover:border-signature-forest/30 hover:bg-muted/40',
-    iconActiveClass: 'bg-signature-forest text-white',
+    activeClass: 'border-mirama/30 bg-mirama/5 ring-1 ring-mirama/20',
+    hoverClass: 'hover:border-mirama/20 hover:bg-surface-soft',
+    iconActiveClass: 'bg-mirama text-white',
   },
   {
     value: AccessScope.Client,
     label: 'Client',
     description: 'Applies to client-facing access',
     icon: Briefcase,
-    activeClass:
-      'border-signature-mustard/40 bg-signature-mustard/5 ring-1 ring-signature-mustard/20',
-    hoverClass: 'hover:border-signature-mustard/30 hover:bg-muted/40',
-    iconActiveClass: 'bg-signature-mustard text-white',
+    activeClass: 'border-warning/30 bg-warning/5 ring-1 ring-warning/20',
+    hoverClass: 'hover:border-warning/20 hover:bg-surface-soft',
+    iconActiveClass: 'bg-warning text-ink',
   },
 ] as const
 
@@ -193,10 +190,10 @@ export const PolicyForm = ({
           description="Define permissions to attach to roles"
         />
 
-        <div className="space-y-4 pb-6 px-4 pt-5">
+        <div className="space-y-4 pb-20 px-6 md:px-10 pt-8">
           {/* Policy Details */}
           <Card className="overflow-hidden">
-            <CardHeader className="px-6 py-4 bg-signature-coral">
+            <CardHeader className="px-6 py-4 bg-surface-dark">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <FileText className="w-4 h-4 text-white/70" />
                 Policy Details
@@ -241,13 +238,13 @@ export const PolicyForm = ({
                                 'shrink-0 w-8 h-8 rounded-lg flex items-center justify-center',
                                 scope === value
                                   ? iconActiveClass
-                                  : 'bg-muted text-muted-foreground',
+                                  : 'bg-surface-soft border border-hairline text-body-text',
                               )}
                             >
                               <Icon className="w-4 h-4" />
                             </div>
                             <div>
-                              <p className="text-sm font-semibold">{label}</p>
+                              <p className="text-sm font-medium text-ink">{label}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">
                                 {description}
                               </p>
@@ -302,7 +299,7 @@ export const PolicyForm = ({
 
           {/* Permissions */}
           <Card className="overflow-hidden">
-            <CardHeader className="px-6 py-4 bg-signature-forest">
+            <CardHeader className="px-6 py-4 bg-surface-dark">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <ShieldCheck className="w-4 h-4 text-white/70" />
                 Permissions

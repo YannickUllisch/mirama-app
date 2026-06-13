@@ -3,11 +3,13 @@
 import { optimisticList } from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganizationResource } from '../organizationResourceContext'
+import type { MemberResponse } from '../members/members.types'
 import {
   addTeamMemberFn,
   createTeamFn,
   deleteTeamFn,
   fetchTeamByIdFn,
+  fetchTeamMembersFn,
   fetchTeamsFn,
   removeTeamMemberFn,
   updateTeamFn,
@@ -25,6 +27,8 @@ export const teamKeys = {
   list: (orgId: string) => [...teamKeys.org(orgId), 'list'] as const,
   detail: (orgId: string, teamId: string) =>
     [...teamKeys.org(orgId), teamId] as const,
+  members: (orgId: string, teamId: string) =>
+    [...teamKeys.detail(orgId, teamId), 'members'] as const,
 }
 
 const team = {
@@ -134,6 +138,17 @@ const team = {
   },
 
   members: {
+    fetchAll: {
+      useQuery: (teamId: string) => {
+        const { activeOrganizationId } = useOrganizationResource()
+        return useQuery<MemberResponse[]>({
+          queryKey: teamKeys.members(activeOrganizationId, teamId),
+          queryFn: () => fetchTeamMembersFn(activeOrganizationId, teamId),
+          enabled: !!activeOrganizationId && !!teamId,
+        })
+      },
+    },
+
     add: {
       useMutation: (teamId: string) => {
         const { activeOrganizationId } = useOrganizationResource()
@@ -170,21 +185,21 @@ const team = {
         const { activeOrganizationId } = useOrganizationResource()
         const qc = useQueryClient()
 
-        return useMutation<void, Error, string, { previous?: TeamResponse[] }>({
+        return useMutation<
+          void,
+          Error,
+          string,
+          { previous?: MemberResponse[] }
+        >({
           mutationFn: (memberId) =>
             removeTeamMemberFn(activeOrganizationId, teamId, memberId),
-          ...optimisticList<TeamResponse, string>(
+          ...optimisticList<MemberResponse, string>(
             qc,
-            teamKeys.list(activeOrganizationId),
+            teamKeys.members(activeOrganizationId, teamId),
             {
               invalidateKey: teamKeys.org(activeOrganizationId),
               successMessage: 'Member removed from team',
-              apply: (old, memberId) =>
-                old.map((t) =>
-                  t.id === teamId
-                    ? { ...t, memberIds: t.memberIds.filter((id) => id !== memberId) }
-                    : t,
-                ),
+              apply: (old, memberId) => old.filter((m) => m.id !== memberId),
             },
           ),
         })

@@ -36,13 +36,13 @@ export const useRoleColumns = ({
           const r = row.original
           return (
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold font-mono tracking-tight">
+              <span className="text-sm font-medium font-mono">
                 {r.name}
               </span>
               {r.isSystemRole && (
                 <Badge
                   variant="secondary"
-                  className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                  className="text-[9px] px-1 h-3.5"
                 >
                   system
                 </Badge>

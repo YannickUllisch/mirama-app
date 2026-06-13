@@ -37,7 +37,7 @@ export const usePolicyColumns = ({
                 {p.isManaged && (
                   <Badge
                     variant="secondary"
-                    className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                    className="text-[9px] px-1 h-3.5"
                   >
                     managed
                   </Badge>
@@ -45,7 +45,7 @@ export const usePolicyColumns = ({
                 {p.isSystemPolicy && (
                   <Badge
                     variant="outline"
-                    className="text-[9px] px-1 h-3.5 uppercase tracking-tighter"
+                    className="text-[9px] px-1 h-3.5"
                   >
                     system
                   </Badge>
@@ -87,9 +87,9 @@ export const usePolicyColumns = ({
               {Object.entries(groups).map(([resource, effects]) => (
                 <div
                   key={resource}
-                  className="flex items-start gap-2 rounded-lg bg-neutral-50/80 dark:bg-neutral-800/30 px-2.5 py-1.5 border border-border/50"
+                  className="flex items-start gap-2 rounded-lg bg-surface-soft px-2.5 py-1.5 border border-hairline"
                 >
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight pt-0.5 shrink-0 min-w-14">
+                  <span className="text-[10px] font-medium text-muted-foreground pt-0.5 shrink-0 min-w-14">
                     {resource}
                   </span>
                   <div className="flex flex-col gap-1">
@@ -145,7 +145,7 @@ export const usePolicyColumns = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                className="h-7 w-7 text-muted-foreground hover:bg-surface-soft"
                 onClick={(e) => {
                   e.stopPropagation()
                   onEditPolicy(p)
