@@ -1,4 +1,8 @@
 // src/modules/organization/teams/hooks/api.ts
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import { api } from '@src/modules/shared/api'
 import type { MemberResponse } from '../members/members.types'
 import type {
@@ -10,9 +14,12 @@ import type {
 
 export const fetchTeamsFn = async (
   organizationId: string,
-): Promise<TeamResponse[]> => {
-  const { data } = await api.get(`organization/${organizationId}/teams`)
-  return data.data
+  params?: PaginationParams,
+): Promise<PaginatedResponse<TeamResponse>> => {
+  const { data } = await api.get(`organization/${organizationId}/teams`, {
+    params,
+  })
+  return data
 }
 
 export const fetchTeamByIdFn = async (

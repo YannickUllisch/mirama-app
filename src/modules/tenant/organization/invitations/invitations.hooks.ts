@@ -1,6 +1,9 @@
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
 import { useOrganizationResource } from '../organizationResourceContext'
 import {
@@ -30,12 +33,13 @@ export const invitationKeys = {
 
 const invitation = {
   fetchAll: {
-    useQuery: () => {
+    useQuery: (opts?: { initialPageSize?: number }) => {
       const { activeOrganizationId } = useOrganizationResource()
-      return useQuery<InvitationResponse[]>({
-        queryKey: invitationKeys.list(activeOrganizationId),
-        queryFn: () => fetchInvitationsFn(activeOrganizationId),
-      })
+      return usePaginatedQuery<InvitationResponse>(
+        invitationKeys.list(activeOrganizationId),
+        (params) => fetchInvitationsFn(activeOrganizationId, params),
+        opts,
+      )
     },
   },
 
@@ -131,12 +135,10 @@ const invitation = {
   fetchMine: {
     useQuery: () => {
       const { activeTenantId } = useTenantResource()
-      return useQuery<InvitationResponse[]>({
-        queryKey: invitationKeys.my.list(),
-        queryFn: () => fetchMyInvitationsFn(activeTenantId),
-        refetchOnWindowFocus: false,
-        retry: false,
-      })
+      return usePaginatedQuery<InvitationResponse>(
+        invitationKeys.my.list(),
+        (params) => fetchMyInvitationsFn(activeTenantId, params),
+      )
     },
   },
 

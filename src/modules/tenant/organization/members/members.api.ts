@@ -1,11 +1,18 @@
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import { api } from '@src/modules/shared/api'
 import type { MemberResponse, UpdateMemberCommand } from './members.types'
 
 export const fetchOrgMembersFn = async (
   organizationId: string,
-): Promise<MemberResponse[]> => {
-  const { data } = await api.get(`organization/${organizationId}/members`)
-  return data.data
+  params?: PaginationParams,
+): Promise<PaginatedResponse<MemberResponse>> => {
+  const { data } = await api.get(`organization/${organizationId}/members`, {
+    params,
+  })
+  return data
 }
 
 export const updateOrgMemberFn = async (

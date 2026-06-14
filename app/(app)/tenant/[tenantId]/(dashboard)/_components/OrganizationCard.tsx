@@ -1,7 +1,7 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/_components/OrganizationCard.tsx
 'use client'
 import { cn } from '@src/lib/utils'
-import type { OrganizationListResponse } from '@src/modules/tenant/organization/organization.types'
+import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { Button } from '@ui/button'
 import {
   DropdownMenu,
@@ -20,9 +20,9 @@ import {
 } from 'lucide-react'
 
 interface OrganizationCardProps {
-  org: OrganizationListResponse
-  onEnter: (org: OrganizationListResponse) => void
-  onEdit: (org: OrganizationListResponse) => void
+  org: OrganizationResponse
+  onEnter: (org: OrganizationResponse) => void
+  onEdit: (org: OrganizationResponse) => void
 }
 
 const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
@@ -99,13 +99,13 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
         <div className="flex items-center gap-4 pt-4 border-t border-white/10 text-xs text-white/35">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
-            {org._count.members}{' '}
-            {org._count.members === 1 ? 'member' : 'members'}
+            {org.memberCount}{' '}
+            {org.memberCount === 1 ? 'member' : 'members'}
           </span>
           <span className="flex items-center gap-1.5">
             <FolderOpen className="w-3.5 h-3.5" />
-            {org._count.projects}{' '}
-            {org._count.projects === 1 ? 'project' : 'projects'}
+            {org.projectCount}{' '}
+            {org.projectCount === 1 ? 'project' : 'projects'}
           </span>
         </div>
       </div>

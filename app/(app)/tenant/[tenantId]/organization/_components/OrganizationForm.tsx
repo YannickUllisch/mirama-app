@@ -34,7 +34,7 @@ const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
   const [isPending, startTransition] = useTransition()
   const isEditing = !!orgId
 
-  const { data: organizations = [], isLoading } =
+  const { items: organizations, isLoading } =
     apiRequest.organization.fetchAll.useQuery()
   const { mutate: createOrganization } =
     apiRequest.organization.create.useMutation()

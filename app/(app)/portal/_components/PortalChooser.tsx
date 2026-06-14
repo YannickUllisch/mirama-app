@@ -1,7 +1,7 @@
 // app/(app)/portal/_components/PortalChooser.tsx
 'use client'
 import apiRequest from '@hooks'
-import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
+import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { TenantResourceProvider } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
@@ -38,10 +38,10 @@ const PortalChooserInner = ({
 }: PortalChooserInnerProps) => {
   const router = useRouter()
   const { update: updateSession } = useSession()
-  const { data: organizations, isLoading } =
+  const { items: organizations, isLoading } =
     apiRequest.organization.fetchAll.useQuery()
 
-  const handleEnterOrg = async (org: OrganizationListResponse) => {
+  const handleEnterOrg = async (org: OrganizationResponse) => {
     const updated = await updateSession({ organizationId: org.id })
     if (updated?.user?.organizationId === org.id) {
       router.push(`/organization/${org.id}`)

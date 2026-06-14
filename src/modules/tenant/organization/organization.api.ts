@@ -1,7 +1,10 @@
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import { api } from '@src/modules/shared/api'
 import type {
   CreateOrganizationCommand,
-  OrganizationListResponse,
   OrganizationResponse,
   UpdateOrganizationCommand,
 } from './organization.types'
@@ -10,8 +13,9 @@ export type OrgProjectSummary = { id: string; name: string }
 
 export const fetchOrganizationsFn = async (
   tenantId: string,
-): Promise<OrganizationListResponse[]> => {
-  const { data } = await api.get(`tenant/${tenantId}/organizations`)
+  params?: PaginationParams,
+): Promise<PaginatedResponse<OrganizationResponse>> => {
+  const { data } = await api.get(`tenant/${tenantId}/organizations`, { params })
   return data
 }
 

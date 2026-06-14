@@ -1,4 +1,7 @@
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganizationResource } from '../organizationResourceContext'
 import {
@@ -27,13 +30,13 @@ export const tagKeys = {
 
 const tags = {
   fetchAll: {
-    useQuery: (scope?: number) => {
+    useQuery: (scope?: number, opts?: { initialPageSize?: number }) => {
       const { activeOrganizationId } = useOrganizationResource()
-      return useQuery<TagResponse[]>({
-        queryKey: tagKeys.list(activeOrganizationId, scope),
-        queryFn: () => fetchTagsFn(activeOrganizationId, scope),
-        enabled: !!activeOrganizationId,
-      })
+      return usePaginatedQuery<TagResponse>(
+        tagKeys.list(activeOrganizationId, scope),
+        (params) => fetchTagsFn(activeOrganizationId, scope, params),
+        opts,
+      )
     },
   },
 

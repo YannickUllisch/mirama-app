@@ -23,7 +23,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       const existingByEmail = await getUserByEmail(email)
       if (existingByEmail) {
-        return linkUserExternalId(existingByEmail.id, externalId)
+        return linkUserExternalId(existingByEmail.userId, externalId)
       }
 
       return setupUser({
@@ -43,6 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const me = await getUserByExternalId(token.sub)
       if (!me) return token
 
+      token.userId = me.userId
       token.tenantId = me.tenantId
       token.name = me.name
       token.iss = process.env.NEXT_AUTH_ISS
@@ -59,7 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       if (me.organizationInfo) {
-        token.organizationId = me.organizationInfo.id
+        token.organizationId = me.organizationInfo.organizationId
         token.memberId = me.organizationInfo.memberId
         token.tenantId = me.organizationInfo.tenantId
         token.roleId = me.organizationInfo.iamRoleId
@@ -69,16 +70,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.organizationId = undefined
         token.roleId = undefined
         token.memberId = undefined
+        token.userId = undefined
       } else if (trigger === 'update' && session?.organizationId) {
         const membership = await getOrganizationMembership(
           token.sub,
           session.organizationId,
         )
         if (membership) {
-          token.organizationId = membership.id
+          token.organizationId = membership.organizationId
           token.roleId = membership.iamRoleId
           token.memberId = membership.memberId
           token.tenantId = membership.tenantId
+          token.userId = membership.userId
         }
       }
 

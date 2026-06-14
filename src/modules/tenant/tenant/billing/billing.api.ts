@@ -5,14 +5,14 @@ export const fetchBillingUsageFn = async (
   tenantId: string,
 ): Promise<BillingUsageResponse> => {
   const { data } = await api.get(`tenant/${tenantId}/billing/usage`)
-  return data.data
+  return data
 }
 
 export const fetchPlansFn = async (
   tenantId: string,
 ): Promise<PlanResponse[]> => {
   const { data } = await api.get(`tenant/${tenantId}/plans`)
-  return data.data
+  return data
 }
 
 export const fetchPlanByIdFn = async (
@@ -20,5 +20,5 @@ export const fetchPlanByIdFn = async (
   planId: string,
 ): Promise<PlanResponse> => {
   const { data } = await api.get(`tenant/${tenantId}/plans/${planId}`)
-  return data.data
+  return data
 }

@@ -1,4 +1,8 @@
 // src/modules/organization/tags/hooks/api.ts
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import { api } from '@src/modules/shared/api'
 import type {
   CreateTagCommand,
@@ -9,10 +13,12 @@ import type {
 export const fetchTagsFn = async (
   organizationId: string,
   scope?: number,
-): Promise<TagResponse[]> => {
-  const params = scope != null ? { params: { scope } } : undefined
-  const { data } = await api.get(`organization/${organizationId}/tags`, params)
-  return data.data
+  paginationParams?: PaginationParams,
+): Promise<PaginatedResponse<TagResponse>> => {
+  const { data } = await api.get(`organization/${organizationId}/tags`, {
+    params: { ...paginationParams, ...(scope != null ? { scope } : {}) },
+  })
+  return data
 }
 
 export const fetchTagByIdFn = async (

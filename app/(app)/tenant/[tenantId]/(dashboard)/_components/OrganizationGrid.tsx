@@ -1,13 +1,13 @@
 // app/(app)/tenant/[tenantId]/(dashboard)/_components/OrganizationGrid.tsx
 'use client'
 import apiRequest from '@hooks'
-import type { OrganizationListResponse } from '@src/modules/tenant/organization/organization.types'
+import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Building2, Plus } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import OrganizationCard from './OrganizationCard'
 import OrganizationGridSkeleton from './OrganizationGridSkeleton'
@@ -17,10 +17,10 @@ const OrganizationGrid = () => {
   const { update: updateSession } = useSession()
   const { activeTenantId } = useTenantResource()
 
-  const { data: organizations, isLoading } =
+  const { items: organizations, isLoading } =
     apiRequest.organization.fetchAll.useQuery()
 
-  const handleEnterOrg = async (org: OrganizationListResponse) => {
+  const handleEnterOrg = async (org: OrganizationResponse) => {
     const updated = await updateSession({ organizationId: org.id })
     if (updated?.user?.organizationId === org.id) {
       router.push(`/organization/${org.id}`)
@@ -29,7 +29,7 @@ const OrganizationGrid = () => {
     }
   }
 
-  const handleEditOrg = (org: OrganizationListResponse) => {
+  const handleEditOrg = (org: OrganizationResponse) => {
     router.push(`/tenant/${activeTenantId}/organization/${org.id}/edit`)
   }
 

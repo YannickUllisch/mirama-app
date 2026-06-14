@@ -37,8 +37,8 @@ const DashboardStatsSkeleton = () => (
 )
 
 const DashboardStats = () => {
-  const { data: orgs = [], isLoading: orgsLoading } =
-    apiRequest.organization.fetchAll.useQuery()
+  const { items: orgs, isLoading: orgsLoading } =
+    apiRequest.organization.fetchAll.useQuery({ initialPageSize: 100 })
   const { data: billingData, isLoading: billingLoading } =
     apiRequest.billing.fetchUsage.useQuery()
 
@@ -57,8 +57,8 @@ const DashboardStats = () => {
     ? (f.maxOrganizations ?? 1) * (f.maxProjectsPerOrg ?? -1)
     : -1
 
-  const totalMembers = orgs.reduce((s, o) => s + o._count.members, 0)
-  const totalProjects = orgs.reduce((s, o) => s + o._count.projects, 0)
+  const totalMembers = orgs.reduce((s, o) => s + o.memberCount, 0)
+  const totalProjects = orgs.reduce((s, o) => s + o.projectCount, 0)
 
   const pct = (current: number, max: number): number | null => {
     if (isUnlimited(max)) return null

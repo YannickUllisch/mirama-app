@@ -1,4 +1,7 @@
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -10,7 +13,6 @@ import {
 } from './organization.api'
 import type {
   CreateOrganizationCommand,
-  OrganizationListResponse,
   OrganizationResponse,
   UpdateOrganizationCommand,
 } from './organization.types'
@@ -27,12 +29,13 @@ export const organizationKeys = {
 
 const organization = {
   fetchAll: {
-    useQuery: () => {
+    useQuery: (opts?: { initialPageSize?: number }) => {
       const { activeTenantId } = useTenantResource()
-      return useQuery<OrganizationListResponse[]>({
-        queryKey: organizationKeys.list(activeTenantId),
-        queryFn: () => fetchOrganizationsFn(activeTenantId),
-      })
+      return usePaginatedQuery<OrganizationResponse>(
+        organizationKeys.list(activeTenantId),
+        (params) => fetchOrganizationsFn(activeTenantId, params),
+        opts,
+      )
     },
   },
 

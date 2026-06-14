@@ -1,3 +1,7 @@
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from '@src/modules/api.types'
 import { api } from '@src/modules/shared/api'
 import type {
   InvitationResponse,
@@ -6,9 +10,12 @@ import type {
 
 export const fetchInvitationsFn = async (
   orgId: string,
-): Promise<InvitationResponse[]> => {
-  const { data } = await api.get(`organization/${orgId}/invitations`)
-  return data.data
+  params?: PaginationParams,
+): Promise<PaginatedResponse<InvitationResponse>> => {
+  const { data } = await api.get(`organization/${orgId}/invitations`, {
+    params,
+  })
+  return data
 }
 
 export const createInviteFn = async (
@@ -38,9 +45,10 @@ export const revokeInvitationFn = async (
 
 export const fetchMyInvitationsFn = async (
   tenantId: string,
-): Promise<InvitationResponse[]> => {
-  const { data } = await api.get(`tenant/${tenantId}/invitations`)
-  return data.data
+  params?: PaginationParams,
+): Promise<PaginatedResponse<InvitationResponse>> => {
+  const { data } = await api.get(`tenant/${tenantId}/invitations`, { params })
+  return data
 }
 
 export const acceptInvitationFn = async (

@@ -1,7 +1,7 @@
 export type TenantRole = 'OWNER' | 'ASSUMED'
 
 export type AuthMeResponse = {
-  id: string
+  userId: string
   tenantId: string
   name: string
   email: string
@@ -11,7 +11,8 @@ export type AuthMeResponse = {
 }
 
 export type AuthOrgMembershipResponse = {
-  id: string
+  organizationId: string
+  userId: string
   tenantId: string
   memberId: string
   iamRoleId: string

@@ -14,13 +14,14 @@ export const InvitationResponseSchema = z.object({
   id: z.string(),
   email: z.string(),
   name: z.string(),
-  inviterId: z.string().uuid(),
-  iamRoleId: z.string().uuid(),
+  inviterId: z.string(),
+  iamRoleId: z.string(),
   status: InvitationStatusSchema,
   expiresAt: z.coerce.date(),
   organizationId: z.string().uuid(),
   organizationName: z.string(),
 })
+
 export type InvitationResponse = z.infer<typeof InvitationResponseSchema>
 
 export const SendInvitationSchema = z.object({

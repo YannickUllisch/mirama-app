@@ -1,6 +1,6 @@
 // app/(app)/portal/_components/OrgPortalCard.tsx
 'use client'
-import type { OrganizationListResponse } from '@server/modules/account/organizations/features/response'
+import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { cn } from '@src/lib/utils'
 import { ArrowRight, FolderOpen, Users } from 'lucide-react'
 
@@ -65,9 +65,9 @@ const PALETTE: ColorScheme[] = [
 ]
 
 interface OrgPortalCardProps {
-  org: OrganizationListResponse
+  org: OrganizationResponse
   colorIndex: number
-  onEnter: (org: OrganizationListResponse) => void
+  onEnter: (org: OrganizationResponse) => void
 }
 
 const OrgPortalCard = ({ org, colorIndex, onEnter }: OrgPortalCardProps) => {
@@ -126,12 +126,12 @@ const OrgPortalCard = ({ org, colorIndex, onEnter }: OrgPortalCardProps) => {
       >
         <span className="flex items-center gap-1.5">
           <Users className="w-3.5 h-3.5" />
-          {org._count.members} {org._count.members === 1 ? 'member' : 'members'}
+          {org.memberCount} {org.memberCount === 1 ? 'member' : 'members'}
         </span>
         <span className="flex items-center gap-1.5">
           <FolderOpen className="w-3.5 h-3.5" />
-          {org._count.projects}{' '}
-          {org._count.projects === 1 ? 'project' : 'projects'}
+          {org.projectCount}{' '}
+          {org.projectCount === 1 ? 'project' : 'projects'}
         </span>
       </div>
     </button>

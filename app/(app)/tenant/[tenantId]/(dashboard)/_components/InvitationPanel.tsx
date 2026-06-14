@@ -130,13 +130,13 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
 
 const InvitationPanel = () => {
   const {
-    data: invitations,
+    items: invitations,
     isLoading,
     isError,
   } = apiRequest.invitation.fetchMine.useQuery()
 
   if (isLoading) return <InvitationPanelSkeleton />
-  if (isError || !invitations || invitations.length === 0) return null
+  if (isError || invitations.length === 0) return null
 
   const activeInvitations = invitations.filter(
     (inv) =>

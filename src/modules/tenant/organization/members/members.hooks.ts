@@ -1,5 +1,8 @@
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useOrganizationResource } from '../organizationResourceContext'
 import {
   fetchOrgMembersFn,
@@ -16,13 +19,13 @@ export const memberKeys = {
 
 const members = {
   fetchAll: {
-    useQuery: () => {
+    useQuery: (opts?: { initialPageSize?: number }) => {
       const { activeOrganizationId } = useOrganizationResource()
-      return useQuery<MemberResponse[]>({
-        queryKey: memberKeys.list(activeOrganizationId),
-        queryFn: () => fetchOrgMembersFn(activeOrganizationId),
-        enabled: !!activeOrganizationId,
-      })
+      return usePaginatedQuery<MemberResponse>(
+        memberKeys.list(activeOrganizationId),
+        (params) => fetchOrgMembersFn(activeOrganizationId, params),
+        opts,
+      )
     },
   },
 

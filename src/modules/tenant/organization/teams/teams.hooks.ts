@@ -1,9 +1,12 @@
 // src/modules/organization/teams/hooks/hooks.ts
 
-import { optimisticList } from '@src/modules/shared/hooks/helpers'
+import {
+  optimisticList,
+  usePaginatedQuery,
+} from '@src/modules/shared/hooks/helpers'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useOrganizationResource } from '../organizationResourceContext'
 import type { MemberResponse } from '../members/members.types'
+import { useOrganizationResource } from '../organizationResourceContext'
 import {
   addTeamMemberFn,
   createTeamFn,
@@ -33,13 +36,13 @@ export const teamKeys = {
 
 const team = {
   fetchAll: {
-    useQuery: () => {
+    useQuery: (opts?: { initialPageSize?: number }) => {
       const { activeOrganizationId } = useOrganizationResource()
-      return useQuery<TeamResponse[]>({
-        queryKey: teamKeys.list(activeOrganizationId),
-        queryFn: () => fetchTeamsFn(activeOrganizationId),
-        enabled: !!activeOrganizationId,
-      })
+      return usePaginatedQuery<TeamResponse>(
+        teamKeys.list(activeOrganizationId),
+        (params) => fetchTeamsFn(activeOrganizationId, params),
+        opts,
+      )
     },
   },
 
