@@ -1,9 +1,9 @@
 // app/(app)/organization/[organizationId]/(management)/members/_components/OrgMembersColumns.tsx
 'use client'
 
-import type { MemberResponse } from '@server/modules/account/members/features/response'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import type { RoleResponse } from '@src/modules/tenant/iam/roles/role.types'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import {
@@ -77,11 +77,13 @@ export const useOrgMemberColumns = ({
           <DataTableColumnHeader column={column} title="Role" />
         ),
         cell: ({ row }) => {
-          const currentRole = roles.find((r) => r.id === row.original.iamRoleId)
+          const currentRole = roles.find(
+            (r) => r.id === row.original.iamRoleIds[0],
+          )
           if (canUpdate) {
             return (
               <Select
-                value={row.original.iamRoleId ?? ''}
+                value={row.original.iamRoleIds[0] ?? ''}
                 onValueChange={(roleId) =>
                   onRoleChange(row.original.id, roleId)
                 }

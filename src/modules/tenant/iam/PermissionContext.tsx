@@ -3,7 +3,7 @@
 import type {
   ActionFor,
   ResourceName,
-} from '@/server/shared/domain/permissions'
+} from '@server/auth/permissions/permissions'
 import { createContext, useContext, useMemo } from 'react'
 
 type PermissionContextType = {
