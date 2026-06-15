@@ -15,6 +15,7 @@ export const SettingsContext = createContext<SettingsContextValue | null>(null)
 
 export const useSettingsContext = () => {
   const ctx = useContext(SettingsContext)
-  if (!ctx) throw new Error('useSettingsContext must be used inside SettingsShell')
+  if (!ctx)
+    throw new Error('useSettingsContext must be used inside SettingsShell')
   return ctx
 }

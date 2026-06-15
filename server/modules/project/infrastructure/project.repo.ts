@@ -102,7 +102,7 @@ export const ProjectRepository = (db: ScopedDb) => ({
     })
   },
 
-  // Members: no organizationId field — scoped through project
+  // Members: no organizationId field - scoped through project
   async addMembers(projectId: string, rows: MemberRow[]) {
     if (rows.length === 0) return
     await db.projectMember.createMany({
@@ -119,7 +119,7 @@ export const ProjectRepository = (db: ScopedDb) => ({
     })
   },
 
-  // Milestones: no organizationId field — scoped through project
+  // Milestones: no organizationId field - scoped through project
   // Created concurrently so each goes through ScopedDb individually
   async addMilestones(
     projectId: string,
@@ -142,7 +142,7 @@ export const ProjectRepository = (db: ScopedDb) => ({
     })
   },
 
-  // Delete-then-recreate pattern — safe because the outer withTransaction
+  // Delete-then-recreate pattern - safe because the outer withTransaction
   // rolls back everything if any step fails
   async replaceMembers(projectId: string, rows: MemberRow[]) {
     await db.projectMember.deleteMany({ where: { projectId } })
@@ -167,7 +167,7 @@ export const ProjectRepository = (db: ScopedDb) => ({
   },
 
   // Diffs existing milestones: deletes removed ones, updates existing ones,
-  // and creates new ones (those without an id) — all concurrently
+  // and creates new ones (those without an id) - all concurrently
   async syncMilestones(projectId: string, milestones: MilestoneInput[]) {
     const existing = await db.milestone.findMany({
       where: { projectId },

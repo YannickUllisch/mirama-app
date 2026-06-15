@@ -10,7 +10,10 @@ const COLOR_STYLES: Record<SectionColor, { iconBg: string; iconText: string }> =
     lava: { iconBg: 'bg-lava', iconText: 'text-white' },
     mirama: { iconBg: 'bg-mirama', iconText: 'text-white' },
     warning: { iconBg: 'bg-warning', iconText: 'text-ink' },
-    neutral: { iconBg: 'bg-surface-medium border border-hairline', iconText: 'text-body-text' },
+    neutral: {
+      iconBg: 'bg-surface-medium border border-hairline',
+      iconText: 'text-body-text',
+    },
   }
 
 export const SectionHeader = ({

@@ -11,11 +11,23 @@ export const TenantSidebarMenu: AppMenuItem[] = [
     roles: Object.values(TenantRole) as TenantRole[],
   },
   {
-    title: 'Roles & Policies',
+    title: 'IAM',
     icon: ShieldCheck,
-    href: '/tenant/[tenantId]/roles',
-    isCollapsible: false,
+    isCollapsible: true,
+    isActive: true,
     roles: Object.values(TenantRole) as TenantRole[],
+    items: [
+      {
+        title: 'Roles',
+        href: '/tenant/[tenantId]/roles',
+        roles: Object.values(TenantRole) as TenantRole[],
+      },
+      {
+        title: 'Policies',
+        href: '/tenant/[tenantId]/policies',
+        roles: Object.values(TenantRole) as TenantRole[],
+      },
+    ],
   },
   {
     title: 'Billing',

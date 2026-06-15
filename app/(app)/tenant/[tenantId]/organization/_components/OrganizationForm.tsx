@@ -3,13 +3,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks'
+import ReturnLink from '@src/modules/shared/components/ReturnLink'
 import {
   type CreateOrganizationCommand,
   CreateOrganizationSchema,
   type OrganizationResponse,
 } from '@src/modules/tenant/organization/organization.types'
-import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
-import { Button } from '@ui/button'
+import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import {
   Form,
   FormControl,
@@ -25,12 +25,12 @@ import { useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 type OrganizationFormProps = {
+  tenantId: string
   orgId?: string
 }
 
-const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
+const OrganizationForm = ({ orgId, tenantId }: OrganizationFormProps) => {
   const router = useRouter()
-  const { activeTenantId } = useTenantResource()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!orgId
 
@@ -68,7 +68,9 @@ const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
     }
   }, [org, form])
 
-  const goBack = () => router.push(`/tenant/${activeTenantId}`)
+  const isDirty = !isEditing || form.formState.isDirty
+
+  const goBack = () => router.push(`/tenant/${tenantId}`)
 
   const handleSubmit = form.handleSubmit((data) => {
     startTransition(() => {
@@ -99,7 +101,12 @@ const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
   return (
     <div className="flex flex-col min-h-0">
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="px-6 md:px-10 py-6 space-y-5">
+        <form onSubmit={handleSubmit} className="px-6 md:px-10 py-6 pb-20 space-y-5">
+          <ReturnLink
+            href={`/tenant/${tenantId}`}
+            text="Back to organizations"
+          />
+
           <FormField
             control={form.control}
             name="name"
@@ -172,15 +179,13 @@ const OrganizationForm = ({ orgId }: OrganizationFormProps) => {
             )}
           />
 
-          <div className="flex items-center gap-3 pt-2 justify-end">
-            <Button type="button" variant="link" onClick={goBack}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" disabled={isPending}>
-              {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isEditing ? 'Save Changes' : 'Create Organization'}
-            </Button>
-          </div>
+          <SaveChangesOverlay
+            isDirty={isDirty}
+            isPending={isPending}
+            onSubmit={handleSubmit}
+            onCancel={goBack}
+            submitLabel={isEditing ? 'Save Changes' : 'Create Organization'}
+          />
         </form>
       </Form>
     </div>

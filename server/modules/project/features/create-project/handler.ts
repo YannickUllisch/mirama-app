@@ -33,7 +33,7 @@ export const CreateProjectCommand =
       resolveProjectRoster(db, { members, teams }),
       Promise.all(
         newTags.map((t) =>
-          // organizationId is omitted here — ScopedDb injects it at runtime
+          // organizationId is omitted here - ScopedDb injects it at runtime
           db.tag.create({
             data: { title: t.title } as {
               title: string
@@ -60,7 +60,7 @@ export const CreateProjectCommand =
     const allTagIds = [...tags, ...createdTags.map((t) => t.id)]
 
     // ── Step 2: Create the project core ──────────────────────────────────────
-    // Tags are connected by ID only — no nested creates. Milestones, members,
+    // Tags are connected by ID only - no nested creates. Milestones, members,
     // and teams are written separately so ScopedDb handles each model correctly.
     const { id: projectId } = await repo.create({
       ...proj,

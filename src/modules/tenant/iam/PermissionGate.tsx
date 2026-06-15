@@ -2,7 +2,7 @@ import { auth } from '@auth'
 import {
   fetchFlatMemberScopedPermissionsServer,
   fetchFlatProjectScopedPermissionsServer,
-} from '@src/modules/tenant/iam/hooks/iam.server'
+} from '@src/modules/tenant/iam/iam.server'
 import { PermissionProvider } from './PermissionContext'
 
 const PermissionGate = async ({

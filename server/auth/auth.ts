@@ -46,6 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.userId = me.userId
       token.tenantId = me.tenantId
       token.name = me.name
+      token.tenantRole = me.tenantRole
       token.iss = process.env.NEXT_AUTH_ISS
       token.aud = process.env.NEXT_AUTH_AUD
 
@@ -63,7 +64,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.organizationId = me.organizationInfo.organizationId
         token.memberId = me.organizationInfo.memberId
         token.tenantId = me.organizationInfo.tenantId
-        token.roleId = me.organizationInfo.iamRoleId
+        token.roleId = me.organizationInfo.iamRoleIds[0]
       }
 
       if (trigger === 'update' && session?.organizationId === null) {
@@ -71,6 +72,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.roleId = undefined
         token.memberId = undefined
         token.userId = undefined
+        token.tenantRole = undefined
       } else if (trigger === 'update' && session?.organizationId) {
         const membership = await getOrganizationMembership(
           token.sub,
@@ -78,10 +80,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         )
         if (membership) {
           token.organizationId = membership.organizationId
-          token.roleId = membership.iamRoleId
+          token.roleId = membership.iamRoleIds[0]
           token.memberId = membership.memberId
           token.tenantId = membership.tenantId
           token.userId = membership.userId
+          token.tenantRole = membership.tenantRole
         }
       }
 

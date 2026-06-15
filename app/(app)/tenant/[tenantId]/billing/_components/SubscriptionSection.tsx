@@ -2,19 +2,17 @@
 'use client'
 
 import apiRequest from '@hooks'
-import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
 import { Badge } from '@ui/badge'
 import { Card, CardContent, CardHeader } from '@ui/card'
 import { AlertTriangle } from 'lucide-react'
 import { fmtDate, fmtPrice, statusStyles } from './billing-helpers'
 
 const SubscriptionSection = () => {
-  const { data, isLoading } = apiRequest.billing.fetchUsage.useQuery()
+  const { data: tenant, isLoading } = apiRequest.tenant.fetch.useQuery()
 
   if (isLoading) return null
 
-  const billing = data as BillingResponse | undefined
-  const sub = billing?.subscription ?? null
+  const sub = tenant?.subscription ?? null
 
   if (!sub) {
     return (

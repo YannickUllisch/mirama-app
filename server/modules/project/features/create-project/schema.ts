@@ -22,7 +22,7 @@ export const CreateProjectSchema = z
     newTags: z.array(NewTagSchema),
     members: z.array(ProjectMemberLinkSchema),
     teams: z.array(ProjectTeamLinkSchema).default([]),
-    // Milestones on create never have ids — strip with omit so the type is clear
+    // Milestones on create never have ids - strip with omit so the type is clear
     newMilestones: z.array(MilestoneSchema.omit({ id: true })),
   })
   .refine((data) => data.startDate <= data.endDate, {

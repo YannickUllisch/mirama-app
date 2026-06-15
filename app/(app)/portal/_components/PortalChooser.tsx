@@ -5,15 +5,7 @@ import type { OrganizationResponse } from '@src/modules/tenant/organization/orga
 import { TenantResourceProvider } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
-import {
-  Building2,
-  LogOut,
-  Plus,
-  Settings2,
-  TrendingUp,
-  UserCheck,
-  Users,
-} from 'lucide-react'
+import { Building2, LogOut, Plus, Settings2 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -59,14 +51,11 @@ const PortalChooserInner = ({
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header — dark surface bookend */}
+      {/* Header */}
       <header className="bg-surface-dark px-6 md:px-10 h-14 flex items-center justify-between shrink-0">
-        <div>
-          <span className="text-xl font-black tracking-tight text-white">
-            MIRAMA
-            <span className="text-white/40">.</span>
-          </span>
-        </div>
+        <span className="text-xl font-black tracking-tight text-white">
+          MIRAMA<span className="text-white/40">.</span>
+        </span>
         <div className="flex items-center gap-3">
           <span className="text-sm text-white/50 hidden sm:block">
             {userName}
@@ -91,14 +80,14 @@ const PortalChooserInner = ({
           </p>
           <h1 className="text-3xl font-medium text-foreground">{firstName}.</h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Select a portal to continue.
+            Select an organization to continue.
           </p>
         </div>
 
-        {/* Organization Portals */}
-        <section className="mb-10">
+        {/* Organization portals - primary focus */}
+        <section className="mb-14">
           <p className="text-xs font-medium text-muted-foreground mb-4">
-            Organization portals
+            Your organizations
           </p>
 
           {isLoading ? (
@@ -128,11 +117,10 @@ const PortalChooserInner = ({
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {organizations.map((org, i) => (
+              {organizations.map((org) => (
                 <OrgPortalCard
                   key={org.id}
                   org={org}
-                  colorIndex={i}
                   onEnter={handleEnterOrg}
                 />
               ))}
@@ -140,45 +128,23 @@ const PortalChooserInner = ({
           )}
         </section>
 
-        {/* Secondary Portals */}
+        {/* Tenant portal - secondary, de-emphasized */}
         <section>
           <p className="text-xs font-medium text-muted-foreground mb-4">
-            More portals
+            Workspace settings
           </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="max-w-xs">
             <SecondaryPortalCard
               icon={Settings2}
-              label="Tenant Admin"
-              description="Manage your workspace, billing, roles and settings."
-              variant="dark"
+              label="Tenant portal"
+              description="Manage billing, members, roles, and workspace settings."
               onClick={handleEnterTenant}
-            />
-            <SecondaryPortalCard
-              icon={Users}
-              label="Client Portal"
-              description="External client access and collaboration."
-              variant="cream"
-              comingSoon
-            />
-            <SecondaryPortalCard
-              icon={TrendingUp}
-              label="Finance Portal"
-              description="Financial reporting, invoices and expenses."
-              variant="mint"
-              comingSoon
-            />
-            <SecondaryPortalCard
-              icon={UserCheck}
-              label="HR Portal"
-              description="People management, payroll and onboarding."
-              variant="mustard"
-              comingSoon
             />
           </div>
         </section>
       </main>
 
-      {/* Footer — dark surface bookend */}
+      {/* Footer */}
       <footer className="bg-surface-dark px-6 md:px-10 py-5 flex items-center justify-between">
         <p className="text-xs text-white/40">Mirama Management Platform</p>
         <p className="text-xs text-white/25">© {new Date().getFullYear()}</p>

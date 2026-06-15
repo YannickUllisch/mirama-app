@@ -37,7 +37,8 @@ export const CreatePolicySchema = z.object({
 export const UpdatePolicySchema = z.object({
   name: z.string().min(1),
   description: z.string().nullable().optional(),
-  statements: z.array(CreatePolicyStatementSchema),
+  addStatements: z.array(CreatePolicyStatementSchema).default([]),
+  removeStatementIds: z.array(z.uuid()).default([]),
 })
 
 export const AddPolicyStatementSchema = z.object({

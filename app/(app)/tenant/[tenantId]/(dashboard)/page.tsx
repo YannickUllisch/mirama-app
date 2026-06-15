@@ -33,10 +33,10 @@ const TenantPage = async ({
 
       <div className="flex-1 px-6 md:px-10 py-8">
         <div className="max-w-5xl mx-auto space-y-7">
-          <InvitationPanel />
           <Suspense>
             <OrganizationGrid />
           </Suspense>
+          <InvitationPanel />
         </div>
       </div>
     </div>

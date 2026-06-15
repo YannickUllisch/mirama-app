@@ -2,24 +2,13 @@
 'use client'
 
 import apiRequest from '@hooks'
-import type { BillingResponse } from '@server/modules/account/tenant/billing/features/response'
-import { Progress } from '@ui/progress'
 import { Skeleton } from '@ui/skeleton'
 import { Building2, CreditCard, FolderOpen, Users } from 'lucide-react'
-
-const isUnlimited = (n: number) => n <= 0 || n >= 999
 
 const fmtPrice = (cents: number) =>
   cents === 0
     ? 'Free tier'
     : `€${(cents / 100).toLocaleString('de-DE', { minimumFractionDigits: cents % 100 !== 0 ? 2 : 0 })}/mo`
-
-const progressColor = (p: number | null) => {
-  if (p === null) return ''
-  if (p >= 100) return '[&>div]:bg-lava'
-  if (p >= 80) return '[&>div]:bg-[#FFAB00]'
-  return '[&>div]:bg-success'
-}
 
 const DashboardStatsSkeleton = () => (
   <div className="space-y-4">
@@ -39,59 +28,32 @@ const DashboardStatsSkeleton = () => (
 const DashboardStats = () => {
   const { items: orgs, isLoading: orgsLoading } =
     apiRequest.organization.fetchAll.useQuery({ initialPageSize: 100 })
-  const { data: billingData, isLoading: billingLoading } =
-    apiRequest.billing.fetchUsage.useQuery()
+  const { data: tenant, isLoading: tenantLoading } =
+    apiRequest.tenant.fetch.useQuery()
 
-  if (orgsLoading || billingLoading) return <DashboardStatsSkeleton />
+  if (orgsLoading || tenantLoading) return <DashboardStatsSkeleton />
 
-  const billing = billingData as BillingResponse | undefined
-  const f = billing?.subscription?.plan.features
-  const planName = billing?.subscription?.plan.name ?? 'Free'
-  const planPrice = billing?.subscription?.plan.price ?? 0
-
-  const orgMax = f?.maxOrganizations ?? -1
-  const memberMax = f
-    ? (f.maxOrganizations ?? 1) * (f.maxMembersPerOrg ?? -1)
-    : -1
-  const projectMax = f
-    ? (f.maxOrganizations ?? 1) * (f.maxProjectsPerOrg ?? -1)
-    : -1
+  const planName = tenant?.subscription.plan.name ?? 'Free'
+  const planPrice = tenant?.subscription.plan.price ?? 0
 
   const totalMembers = orgs.reduce((s, o) => s + o.memberCount, 0)
   const totalProjects = orgs.reduce((s, o) => s + o.projectCount, 0)
-
-  const pct = (current: number, max: number): number | null => {
-    if (isUnlimited(max)) return null
-    return Math.min(100, Math.round((current / max) * 100))
-  }
 
   const stats = [
     {
       label: 'Organizations',
       value: String(orgs.length),
-      sub: isUnlimited(orgMax)
-        ? 'Unlimited'
-        : `${orgs.length} / ${orgMax} used`,
       Icon: Building2,
-      pct: pct(orgs.length, orgMax),
     },
     {
       label: 'Total members',
       value: String(totalMembers),
-      sub: isUnlimited(memberMax)
-        ? 'Unlimited'
-        : `${totalMembers} / ${memberMax} used`,
       Icon: Users,
-      pct: pct(totalMembers, memberMax),
     },
     {
       label: 'Total projects',
       value: String(totalProjects),
-      sub: isUnlimited(projectMax)
-        ? 'Unlimited'
-        : `${totalProjects} / ${projectMax} used`,
       Icon: FolderOpen,
-      pct: pct(totalProjects, projectMax),
     },
   ]
 
@@ -116,13 +78,6 @@ const DashboardStats = () => {
             <p className="text-3xl font-medium text-white tabular-nums">
               {stat.value}
             </p>
-            <p className="text-[11px] text-white/35">{stat.sub}</p>
-            {stat.pct !== null && (
-              <Progress
-                value={stat.pct}
-                className={`h-0.5 mt-2 bg-white/10 ${progressColor(stat.pct)}`}
-              />
-            )}
           </div>
         ))}
       </div>

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 
-const InvitationPanelSkeleton = () => (
+const _InvitationPanelSkeleton = () => (
   <div className="rounded-xl border border-border bg-card overflow-hidden">
     <div className="px-5 py-3.5 border-b border-border flex items-center gap-2.5">
       <Skeleton className="h-2.5 w-2.5 rounded-full" />
@@ -129,13 +129,9 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
 }
 
 const InvitationPanel = () => {
-  const {
-    items: invitations,
-    isLoading,
-    isError,
-  } = apiRequest.invitation.fetchMine.useQuery()
+  const { items: invitations, isError } =
+    apiRequest.invitation.fetchMine.useQuery()
 
-  if (isLoading) return <InvitationPanelSkeleton />
   if (isError || invitations.length === 0) return null
 
   const activeInvitations = invitations.filter(

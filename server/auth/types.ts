@@ -1,8 +1,9 @@
-export type TenantRole = 'OWNER' | 'ASSUMED'
+export type TenantRole = 'Owner' | 'Assumed'
 
 export type AuthMeResponse = {
   userId: string
   tenantId: string
+  tenantRole: TenantRole
   name: string
   email: string
   isOnboarded: boolean
@@ -13,7 +14,8 @@ export type AuthMeResponse = {
 export type AuthOrgMembershipResponse = {
   organizationId: string
   userId: string
+  tenantRole: TenantRole
   tenantId: string
   memberId: string
-  iamRoleId: string
+  iamRoleIds: string[]
 }

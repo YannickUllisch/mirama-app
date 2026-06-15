@@ -5,7 +5,7 @@ export const MemberResponseSchema = z.object({
   name: z.string(),
   email: z.string(),
   userId: z.string().nullable().optional(),
-  iamRoleId: z.string(),
+  iamRoleIds: z.array(z.string()),
   organizationId: z.string(),
 })
 export type MemberResponse = z.infer<typeof MemberResponseSchema>

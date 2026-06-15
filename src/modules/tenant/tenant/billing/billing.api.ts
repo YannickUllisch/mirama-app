@@ -1,9 +1,10 @@
 import { api } from '@src/modules/shared/api'
-import type { BillingUsageResponse, PlanResponse } from './billing.types'
+import type { PlanResponse } from '@src/modules/tenant/tenant/tenant.types'
+import type { BillingUsage } from './billing.types'
 
 export const fetchBillingUsageFn = async (
   tenantId: string,
-): Promise<BillingUsageResponse> => {
+): Promise<BillingUsage> => {
   const { data } = await api.get(`tenant/${tenantId}/billing/usage`)
   return data
 }

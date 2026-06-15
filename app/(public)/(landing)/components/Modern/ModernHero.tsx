@@ -46,7 +46,7 @@ const ModernHero = () => {
               </h1>
               <p className="text-lg text-slate-500 font-light leading-relaxed border-l-2 border-blue-100 pl-4">
                 The streamlined workspace for modern studios. From task tracking
-                to financial overviews—modeled for clarity, built for speed.
+                to financial overviews-modeled for clarity, built for speed.
               </p>
             </div>
 
@@ -166,7 +166,7 @@ const ModernHero = () => {
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                              <Calendar className="w-3 h-3" /> Oct 1 — Jan 23,
+                              <Calendar className="w-3 h-3" /> Oct 1 - Jan 23,
                               2026
                             </div>
                             <div className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full w-fit italic">

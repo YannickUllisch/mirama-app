@@ -623,7 +623,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                   </div>
                 </div>
 
-                {/* Milestones — gated on milestone:create */}
+                {/* Milestones - gated on milestone:create */}
                 {canCreateMilestone && (
                   <div>
                     <h3 className="text-lg font-medium flex items-center gap-2 mb-4">
@@ -744,7 +744,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                   </div>
                 )}
 
-                {/* Tags — gated on tag:read (select) and tag:create (add new) */}
+                {/* Tags - gated on tag:read (select) and tag:create (add new) */}
                 {canReadTag && (
                   <div>
                     <h3 className="text-lg font-medium flex items-center gap-2 mb-4">

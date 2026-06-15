@@ -11,7 +11,9 @@ const PlansGridSkeleton = () => (
             key={`plan-skel-${i}`}
             className={`rounded-xl overflow-hidden ${isFeatured ? 'bg-surface-dark' : 'border border-hairline bg-surface-soft'}`}
           >
-            <div className={`h-1 w-full ${isFeatured ? 'bg-lava' : 'bg-surface-medium'}`} />
+            <div
+              className={`h-1 w-full ${isFeatured ? 'bg-lava' : 'bg-surface-medium'}`}
+            />
             <div className="p-5 space-y-4">
               <div className="space-y-1">
                 {isFeatured ? (
@@ -34,10 +36,13 @@ const PlansGridSkeleton = () => (
               <div className="space-y-2">
                 {Array.from({ length: 6 }).map((_, j) =>
                   isFeatured ? (
-                    <div key={`feat-skel-${j}`} className="h-3.5 w-full rounded bg-white/10 animate-pulse" />
+                    <div
+                      key={`feat-skel-${j}`}
+                      className="h-3.5 w-full rounded bg-white/10 animate-pulse"
+                    />
                   ) : (
                     <Skeleton key={`feat-skel-${j}`} className="h-3.5 w-full" />
-                  )
+                  ),
                 )}
               </div>
               {isFeatured ? (

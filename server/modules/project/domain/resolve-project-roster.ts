@@ -62,7 +62,7 @@ export const resolveProjectRoster = async (
     })),
   )
 
-  // ── 3. Resolve direct members — skip those already covered by a team ──────
+  // ── 3. Resolve direct members - skip those already covered by a team ──────
   const directCandidates = members.filter((m) => !teamMemberSet.has(m.memberId))
   const directIds = [...new Set(directCandidates.map((m) => m.memberId))]
 

@@ -3,21 +3,7 @@
 import { cn } from '@src/lib/utils'
 import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { Button } from '@ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/dropdown-menu'
-import {
-  ArrowUpRight,
-  ExternalLink,
-  FolderOpen,
-  MoreHorizontal,
-  Pencil,
-  Users,
-} from 'lucide-react'
+import { ArrowUpRight, FolderOpen, Pencil, Users } from 'lucide-react'
 
 interface OrganizationCardProps {
   org: OrganizationResponse
@@ -49,39 +35,18 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
           </div>
 
           <div className="flex items-center gap-1 pointer-events-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-white hover:bg-white/10 data-[state=open]:opacity-100 data-[state=open]:bg-white/10 data-[state=open]:text-white"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onEnter(org)
-                  }}
-                >
-                  <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                  Open portal
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onEdit(org)
-                  }}
-                >
-                  <Pencil className="mr-2 h-3.5 w-3.5" />
-                  Edit details
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-white hover:bg-white/10"
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit(org)
+              }}
+              aria-label={`Edit ${org.name}`}
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </Button>
 
             <ArrowUpRight className="w-4 h-4 shrink-0 text-white/20 transition-all duration-200 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
@@ -99,13 +64,11 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
         <div className="flex items-center gap-4 pt-4 border-t border-white/10 text-xs text-white/35">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
-            {org.memberCount}{' '}
-            {org.memberCount === 1 ? 'member' : 'members'}
+            {org.memberCount} {org.memberCount === 1 ? 'member' : 'members'}
           </span>
           <span className="flex items-center gap-1.5">
             <FolderOpen className="w-3.5 h-3.5" />
-            {org.projectCount}{' '}
-            {org.projectCount === 1 ? 'project' : 'projects'}
+            {org.projectCount} {org.projectCount === 1 ? 'project' : 'projects'}
           </span>
         </div>
       </div>

@@ -27,7 +27,7 @@ export const UpdateProjectCommand =
         resolveProjectRoster(db, { members, teams }),
         Promise.all(
           newTags.map((t) =>
-            // organizationId is omitted here — ScopedDb injects it at runtime
+            // organizationId is omitted here - ScopedDb injects it at runtime
             db.tag.create({
               data: { title: t.title } as {
                 title: string

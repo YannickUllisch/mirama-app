@@ -17,7 +17,7 @@ inEnumSetFilterFn.autoRemove = (val: unknown) =>
   !val || (val as string[]).length === 0
 
 // ─── inDateRange ──────────────────────────────────────────────────────────────
-// Filter value shape: [Date | null, Date | null] — from and to, both inclusive.
+// Filter value shape: [Date | null, Date | null] - from and to, both inclusive.
 // The cell value may be a Date object or an ISO string.
 
 export const inDateRangeFilterFn: FilterFn<unknown> = (

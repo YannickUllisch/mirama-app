@@ -1,7 +1,10 @@
 // app/(app)/tenant/[tenantId]/billing/_components/billing-helpers.ts
 import { DateTime } from 'luxon'
 
-export const statusStyles: Record<string, { label: string; className: string }> = {
+export const statusStyles: Record<
+  string,
+  { label: string; className: string }
+> = {
   ACTIVE: {
     label: 'Active',
     className: 'text-success border-success/20 bg-success/10',
@@ -31,5 +34,3 @@ export const fmtPrice = (cents: number) =>
 
 export const fmtDate = (d: Date | string) =>
   DateTime.fromJSDate(new Date(d)).toFormat('d MMM yyyy')
-
-export const isUnlimited = (n: number) => n <= 0 || n >= 999

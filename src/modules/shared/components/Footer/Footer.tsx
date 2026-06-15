@@ -1,4 +1,8 @@
-import { BehanceIcon, GithubIcon, LinkedinIcon } from '@src/lib/CompanyIcons'
+import {
+  BehanceIcon,
+  GithubIcon,
+  LinkedinIcon,
+} from '@src/components/CompanyIcons'
 import { ArrowUpRight, Box } from 'lucide-react'
 import Link from 'next/link'
 import GridDecoration from '../Background/GridDecoration'

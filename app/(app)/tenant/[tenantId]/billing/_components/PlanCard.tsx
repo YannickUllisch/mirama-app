@@ -1,46 +1,8 @@
 // app/(app)/tenant/[tenantId]/billing/_components/PlanCard.tsx
-import type {
-  PlanFeatures,
-  PlanResponse,
-} from '@server/modules/account/tenant/billing/features/response'
+import type { PlanResponse } from '@src/modules/tenant/tenant/tenant.types'
 import { Button } from '@ui/button'
-import { ArrowUpRight, Check, X } from 'lucide-react'
-import { fmtPrice, isUnlimited } from './billing-helpers'
-
-const FeatureLine = ({
-  text,
-  included,
-  dark = false,
-}: {
-  text: string
-  included: boolean
-  dark?: boolean
-}) => (
-  <li className="flex items-center gap-2 text-[13px]">
-    {included ? (
-      <Check
-        className={`w-3.5 h-3.5 shrink-0 ${dark ? 'text-success-border' : 'text-success'}`}
-      />
-    ) : (
-      <X
-        className={`w-3.5 h-3.5 shrink-0 ${dark ? 'text-white/20' : 'text-muted-foreground/30'}`}
-      />
-    )}
-    <span
-      className={
-        included
-          ? dark
-            ? 'text-white/80'
-            : 'text-ink'
-          : dark
-            ? 'text-white/25 line-through'
-            : 'text-muted-foreground/40 line-through'
-      }
-    >
-      {text}
-    </span>
-  </li>
-)
+import { ArrowUpRight, Check } from 'lucide-react'
+import { fmtPrice } from './billing-helpers'
 
 const PlanCard = ({
   plan,
@@ -49,29 +11,6 @@ const PlanCard = ({
   plan: PlanResponse
   isCurrent: boolean
 }) => {
-  const f: PlanFeatures = plan.features
-
-  const features = [
-    {
-      text: `${isUnlimited(f.maxOrganizations) ? 'Unlimited' : f.maxOrganizations} organization${f.maxOrganizations !== 1 ? 's' : ''}`,
-      included: true,
-    },
-    {
-      text: `${isUnlimited(f.maxMembersPerOrg) ? 'Unlimited' : f.maxMembersPerOrg} members / org`,
-      included: true,
-    },
-    {
-      text: `${isUnlimited(f.maxProjectsPerOrg) ? 'Unlimited' : f.maxProjectsPerOrg} projects / org`,
-      included: true,
-    },
-    {
-      text: `${f.storageGb >= 1000 ? `${f.storageGb / 1000} TB` : `${f.storageGb} GB`} storage`,
-      included: f.storageGb > 0,
-    },
-    { text: 'Approval flows', included: f.hasApprovalFlows },
-    { text: 'Custom branding', included: f.canCustomBrand },
-  ]
-
   if (isCurrent) {
     return (
       <div className="relative flex flex-col rounded-xl overflow-hidden bg-surface-dark">
@@ -81,7 +20,9 @@ const PlanCard = ({
             <div className="min-w-0">
               <h3 className="text-sm font-medium text-white">{plan.name}</h3>
               {plan.description && (
-                <p className="text-xs text-white/50 mt-0.5">{plan.description}</p>
+                <p className="text-xs text-white/50 mt-0.5">
+                  {plan.description}
+                </p>
               )}
             </div>
             <span className="inline-flex shrink-0 items-center rounded-full bg-lava px-2 py-0.5 text-[10px] font-medium text-white">
@@ -99,13 +40,11 @@ const PlanCard = ({
           </p>
 
           <ul className="mt-4 space-y-2.5 flex-1">
-            {features.map((feat) => (
-              <FeatureLine
-                key={feat.text}
-                text={feat.text}
-                included={feat.included}
-                dark
-              />
+            {plan.features.map((feat) => (
+              <li key={feat} className="flex items-center gap-2 text-[13px]">
+                <Check className="w-3.5 h-3.5 shrink-0 text-success-border" />
+                <span className="text-white/80">{feat}</span>
+              </li>
             ))}
           </ul>
         </div>
@@ -136,12 +75,11 @@ const PlanCard = ({
         </p>
 
         <ul className="mt-4 space-y-2.5 flex-1">
-          {features.map((feat) => (
-            <FeatureLine
-              key={feat.text}
-              text={feat.text}
-              included={feat.included}
-            />
+          {plan.features.map((feat) => (
+            <li key={feat} className="flex items-center gap-2 text-[13px]">
+              <Check className="w-3.5 h-3.5 shrink-0 text-success" />
+              <span className="text-ink">{feat}</span>
+            </li>
           ))}
         </ul>
 

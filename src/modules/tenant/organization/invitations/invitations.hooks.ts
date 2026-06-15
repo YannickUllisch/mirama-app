@@ -159,7 +159,7 @@ const invitation = {
           invitationKeys.my.list(),
           {
             invalidateKey: invitationKeys.my.root,
-            successMessage: 'Invitation accepted — welcome aboard!',
+            successMessage: 'Invitation accepted - welcome aboard!',
             apply: (old, invId) => old.filter((inv) => inv.id !== invId),
           },
         ),

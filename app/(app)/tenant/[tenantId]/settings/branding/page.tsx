@@ -99,10 +99,13 @@ const BrandingPage = () => {
                   <DropzoneTrigger className="font-medium text-mirama">
                     Click to upload
                   </DropzoneTrigger>
-                  <span className="text-muted-foreground"> or drag and drop</span>
+                  <span className="text-muted-foreground">
+                    {' '}
+                    or drag and drop
+                  </span>
                 </p>
                 <DropzoneDescription className="text-xs text-muted-foreground">
-                  PNG, JPG, SVG or WebP — max 2 MB
+                  PNG, JPG, SVG or WebP - max 2 MB
                 </DropzoneDescription>
               </div>
             </DropZoneArea>

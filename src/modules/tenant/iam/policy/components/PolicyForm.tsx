@@ -5,15 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import PageHeader from '@src/components/PageHeader'
 import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import { cn } from '@src/lib/utils'
+import ReturnLink from '@src/modules/shared/components/ReturnLink'
 import { PermissionAccordion } from '@src/modules/tenant/iam/components/PermissionAccordion'
-import iamHooks from '@src/modules/tenant/iam/hooks/iam.hooks'
+import iamHooks from '@src/modules/tenant/iam/iam.hooks'
 import type { StatementDraft } from '@src/modules/tenant/iam/iam.types'
+import policyHooks from '@src/modules/tenant/iam/policy/policy.hooks'
 import type {
   CreatePolicyCommand,
+  Effect,
   PolicyResponse,
 } from '@src/modules/tenant/iam/policy/policy.types'
 import { CreatePolicySchema } from '@src/modules/tenant/iam/policy/policy.types'
 import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
+import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Form,
@@ -31,9 +35,11 @@ import {
   Building2,
   FileText,
   FolderKanban,
+  Lock,
   ShieldCheck,
 } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 const toggleStatement = (
@@ -68,6 +74,18 @@ const toggleStatement = (
   ]
 }
 
+const changeStatementEffect = (
+  current: StatementDraft[],
+  action: string,
+  resourcePattern: string,
+  effect: Effect,
+): StatementDraft[] =>
+  current.map((s) =>
+    s.resource === resourcePattern && s.action === action
+      ? { ...s, effect }
+      : s,
+  )
+
 const SCOPE_OPTIONS = [
   {
     value: AccessScope.Organization,
@@ -101,19 +119,21 @@ const SCOPE_OPTIONS = [
 export const PolicyForm = ({
   defaultPolicy,
   defaultScope = AccessScope.Organization,
-  onSubmit,
-  onCancel,
-  isPending,
 }: {
   defaultPolicy?: PolicyResponse
   defaultScope?: AccessScope
-  onSubmit: (data: CreatePolicyCommand) => void
-  onCancel: () => void
-  isPending?: boolean
 }) => {
   const isEdit = !!defaultPolicy
+  const router = useRouter()
+  const { activeTenantId } = useTenantResource()
+  const [isPending, startTransition] = useTransition()
+
+  const { mutate: createPolicy } = policyHooks.create.useMutation()
+  const { mutate: updatePolicy } = policyHooks.update.useMutation()
   const { data: availablePermissions, isLoading: permissionsLoading } =
     iamHooks.availablePermissions.useQuery()
+
+  const policiesHref = `/tenant/${activeTenantId}/policies`
 
   const form = useForm<CreatePolicyCommand>({
     resolver: zodResolver(CreatePolicySchema),
@@ -164,7 +184,20 @@ export const PolicyForm = ({
     [form],
   )
 
+  const handleEffectChange = useCallback(
+    (action: string, resourcePattern: string, effect: Effect) => {
+      const current = form.getValues('statements') as StatementDraft[]
+      form.setValue(
+        'statements',
+        changeStatementEffect(current, action, resourcePattern, effect),
+        { shouldValidate: true, shouldDirty: true },
+      )
+    },
+    [form],
+  )
+
   const handleScopeChange = (newScope: AccessScope) => {
+    if (isEdit) return
     form.setValue('scope', newScope, { shouldDirty: true })
     if (availablePermissions?.groups) {
       const allowedPatterns = new Set(
@@ -181,16 +214,65 @@ export const PolicyForm = ({
     }
   }
 
+  const handleSubmit = (data: CreatePolicyCommand) => {
+    if (isEdit) {
+      const originalStatements = defaultPolicy.statements
+      const newStatements = data.statements
+
+      const addStatements = newStatements.filter(
+        (ns) =>
+          !originalStatements.some(
+            (os) =>
+              os.action === ns.action &&
+              os.resource === ns.resource &&
+              os.effect === ns.effect,
+          ),
+      )
+      const removeStatementIds = originalStatements
+        .filter(
+          (os) =>
+            !newStatements.some(
+              (ns) =>
+                ns.action === os.action &&
+                ns.resource === os.resource &&
+                ns.effect === os.effect,
+            ),
+        )
+        .map((os) => os.id)
+
+      startTransition(() => {
+        updatePolicy(
+          {
+            id: defaultPolicy.id,
+            data: {
+              name: data.name,
+              description: data.description,
+              addStatements,
+              removeStatementIds,
+            },
+          },
+          { onSuccess: () => router.push(policiesHref) },
+        )
+      })
+    } else {
+      startTransition(() => {
+        createPolicy(data, { onSuccess: () => router.push(policiesHref) })
+      })
+    }
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <PageHeader
-          title={isEdit ? `Edit — ${defaultPolicy.name}` : 'Create Policy'}
+          title={isEdit ? `Edit - ${defaultPolicy.name}` : 'Create Policy'}
           icon={FileText}
           description="Define permissions to attach to roles"
         />
 
-        <div className="space-y-4 pb-20 px-6 md:px-10 pt-8">
+        <div className="space-y-4 pb-20 px-6 md:px-10 pt-6">
+          <ReturnLink href={policiesHref} text="Back to policies" />
+
           {/* Policy Details */}
           <Card className="overflow-hidden">
             <CardHeader className="px-6 py-4 bg-surface-dark">
@@ -200,7 +282,6 @@ export const PolicyForm = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-5 pt-5">
-              {/* Scope selector */}
               <FormField
                 control={form.control}
                 name="scope"
@@ -226,11 +307,16 @@ export const PolicyForm = ({
                             key={value}
                             type="button"
                             onClick={() => handleScopeChange(value)}
+                            disabled={isEdit}
                             className={cn(
                               'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-                              scope === value
-                                ? activeClass
-                                : `border-border ${hoverClass}`,
+                              isEdit
+                                ? scope === value
+                                  ? cn(activeClass, 'cursor-default')
+                                  : 'border-border opacity-40 cursor-not-allowed'
+                                : scope === value
+                                  ? activeClass
+                                  : `border-border ${hoverClass}`,
                             )}
                           >
                             <div
@@ -244,7 +330,9 @@ export const PolicyForm = ({
                               <Icon className="w-4 h-4" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-ink">{label}</p>
+                              <p className="text-sm font-medium text-ink">
+                                {label}
+                              </p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">
                                 {description}
                               </p>
@@ -253,6 +341,12 @@ export const PolicyForm = ({
                         ),
                       )}
                     </div>
+                    {isEdit && (
+                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                        <Lock className="w-3 h-3 shrink-0" />
+                        Scope cannot be changed after creation.
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -305,7 +399,7 @@ export const PolicyForm = ({
                 Permissions
                 {scope !== AccessScope.Organization && (
                   <span className="text-[10px] font-normal text-white/60 ml-1">
-                    — {scope.toLowerCase()}-scoped only
+                    - {scope.toLowerCase()}-scoped only
                   </span>
                 )}
               </CardTitle>
@@ -323,6 +417,7 @@ export const PolicyForm = ({
                     groups={availablePermissions?.groups ?? []}
                     statements={statements}
                     onToggle={handleToggle}
+                    onEffectChange={handleEffectChange}
                     scope={scope}
                   />
                 </div>
@@ -339,9 +434,9 @@ export const PolicyForm = ({
 
         <SaveChangesOverlay
           isDirty={isDirty}
-          isPending={isPending ?? false}
-          onSubmit={form.handleSubmit(onSubmit)}
-          onCancel={onCancel}
+          isPending={isPending}
+          onSubmit={form.handleSubmit(handleSubmit)}
+          onCancel={() => router.push(policiesHref)}
           submitLabel={isEdit ? 'Save Changes' : 'Create Policy'}
         />
       </form>

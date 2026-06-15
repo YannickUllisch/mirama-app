@@ -58,8 +58,8 @@ type OptimisticListContext<T> = { previous?: T[] }
  * Creates standard optimistic mutation callbacks for a list query:
  * cancel, snapshot, (optional apply), rollback on error, invalidate on settle.
  *
- * `queryKey`      — the specific list cache to snapshot & roll back.
- * `invalidateKey` — a broader prefix to invalidate on settle (e.g. the entity
+ * `queryKey`      - the specific list cache to snapshot & roll back.
+ * `invalidateKey` - a broader prefix to invalidate on settle (e.g. the entity
  *                   root key so both list + detail caches are refreshed).
  *                   Falls back to `queryKey` when omitted.
  *

@@ -3,7 +3,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks'
-import InnerSidebar, { type InnerSidebarItem } from '@src/components/InnerSidebar'
+import InnerSidebar, {
+  type InnerSidebarItem,
+} from '@src/components/InnerSidebar'
 import SaveChangesOverlay from '@src/components/SaveChangesOverlay'
 import {
   type UpdateTenantSettingsRequest,

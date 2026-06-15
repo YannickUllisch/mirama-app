@@ -3,12 +3,7 @@
 
 import { useSettingsContext } from '../_components/SettingsContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@ui/form'
+import { FormControl, FormField, FormItem, FormLabel } from '@ui/form'
 import { Skeleton } from '@ui/skeleton'
 import { Switch } from '@ui/switch'
 import { Bell, Mail } from 'lucide-react'

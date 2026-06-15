@@ -1,4 +1,3 @@
-// app/(app)/tenant/[tenantId]/roles/components/IamManagerSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const IamManagerSkeleton = () => (

@@ -1,3 +1,4 @@
+import type { PlanResponse } from '@src/modules/tenant/tenant/tenant.types'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -5,7 +6,7 @@ import {
   fetchPlanByIdFn,
   fetchPlansFn,
 } from './billing.api'
-import type { BillingUsageResponse, PlanResponse } from './billing.types'
+import type { BillingUsage } from './billing.types'
 
 export const billingKeys = {
   root: ['billing'] as const,
@@ -22,7 +23,7 @@ const billing = {
   fetchUsage: {
     useQuery: () => {
       const { activeTenantId } = useTenantResource()
-      return useQuery<BillingUsageResponse>({
+      return useQuery<BillingUsage>({
         queryKey: billingKeys.usage(activeTenantId),
         queryFn: () => fetchBillingUsageFn(activeTenantId),
         enabled: !!activeTenantId,
