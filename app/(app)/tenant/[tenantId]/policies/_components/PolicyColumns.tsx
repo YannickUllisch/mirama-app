@@ -68,25 +68,25 @@ export const usePolicyColumns = ({
               const shortAction = s.action.includes(':')
                 ? (s.action.split(':').pop() ?? s.action)
                 : s.action
-              acc[res][s.effect === 'Allow' ? 'Allow' : 'Deny'].push(
-                shortAction,
-              )
+              acc[res][s.effect === 'Allow' ? 'Allow' : 'Deny'].push(shortAction)
               return acc
             },
             {} as Record<string, { Allow: string[]; Deny: string[] }>,
           )
 
           return (
-            <div className="flex flex-col gap-2 py-1">
+            <div className="flex flex-col gap-1.5 py-1">
               {Object.entries(groups).map(([resource, effects]) => (
                 <div
                   key={resource}
-                  className="flex items-start gap-2 rounded-lg bg-surface-soft px-2.5 py-1.5 border border-hairline"
+                  className="flex items-stretch rounded-md border border-hairline overflow-hidden"
                 >
-                  <span className="text-[10px] font-medium text-muted-foreground pt-0.5 shrink-0 min-w-14">
-                    {resource}
-                  </span>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex items-center px-2.5 py-1.5 bg-surface-soft border-r border-hairline shrink-0">
+                    <span className="text-[10px] font-mono font-medium text-muted-foreground w-20 truncate">
+                      {resource}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1 px-2.5 py-1.5">
                     {effects.Allow.length > 0 && (
                       <div className="flex items-center gap-1 flex-wrap">
                         <EffectBadge effect="Allow" />
