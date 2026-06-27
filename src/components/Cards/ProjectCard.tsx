@@ -1,6 +1,6 @@
 import type { ProjectResponse } from '@server/modules/project/features/response'
 import { getColorByName } from '@src/lib/utils'
-import { getDaysRemaining } from '@src/modules/project/_helpers'
+import { getDaysRemaining } from '@src/modules/pm/projects/projects.helpers'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@ui/card'
 import Centering from '@ui/centering'

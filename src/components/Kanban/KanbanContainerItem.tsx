@@ -1,6 +1,6 @@
 import type { TaskType } from '@/prisma/generated/client'
 import { cn } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import { Card, CardContent } from '@ui/card'
 import { CircleOff } from 'lucide-react'
 import { type FC, useState } from 'react'

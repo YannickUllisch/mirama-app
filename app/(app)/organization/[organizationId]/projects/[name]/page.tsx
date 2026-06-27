@@ -14,7 +14,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@src/components/ui/tabs'
-import { addProjectIdToLocalStorage } from '@src/modules/project/_helpers'
+import { addProjectIdToLocalStorage } from '@src/modules/pm/projects/projects.helpers'
 import useLocalStorage from '@src/modules/shared/hooks/utils/useLocalStorage'
 import {
   ClipboardList,

@@ -30,7 +30,7 @@ import {
 } from '@src/components/ui/context-menu'
 import { Label } from '@src/components/ui/label'
 import { capitalize } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import get from 'lodash.get'
 import groupBy from 'lodash.groupby'
 import dynamic from 'next/dynamic'

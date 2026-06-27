@@ -40,8 +40,8 @@ import {
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
 import { capitalize } from '@src/lib/utils'
-import { isTaskTypeContainer } from '@src/modules/project/task/components/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { isTaskTypeContainer } from '@src/modules/pm/tasks/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import {
   BookOpenCheck,
   CirclePlus,

@@ -8,7 +8,7 @@ import {
   Tree,
 } from '@src/components/Tree/TreeViewAPI'
 import { createTree } from '@src/lib/createTree'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import { Badge } from '@ui/badge'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import Link from 'next/link'

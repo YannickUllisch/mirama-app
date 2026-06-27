@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { capitalize, cn } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import type { KanbanItemType } from '@src/types/types'
 import { SelectItem } from '@ui/select'
 import {

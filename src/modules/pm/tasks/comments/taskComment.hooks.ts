@@ -11,7 +11,7 @@ import {
   deleteTaskCommentFn,
   fetchCommentsByTaskIdFn,
   updateTaskCommentFn,
-} from './api'
+} from './taskComment.api'
 
 export const commentKeys = {
   root: ['taskComments'] as const,

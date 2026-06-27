@@ -2,7 +2,7 @@
 
 import { type Task, TaskStatusType } from '@/prisma/generated/client'
 import { capitalize, getColorByPriority } from '@src/lib/utils'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@ui/card'

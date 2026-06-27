@@ -1,4 +1,5 @@
 // src/modules/project/task/hooks/hooks.ts
+
 import type { CreateTaskRequest } from '@/server/modules/task/features/create-task/schema'
 import type { DeleteTasksBulkRequest } from '@/server/modules/task/features/delete-task/schema'
 import type { TaskResponse } from '@/server/modules/task/features/response'
@@ -13,7 +14,7 @@ import {
   fetchTaskById,
   fetchTasksByProjectFn,
   updateTaskFn,
-} from './api'
+} from './tasks.api'
 
 type ListContext = {
   previousTasks?: TaskResponse[]

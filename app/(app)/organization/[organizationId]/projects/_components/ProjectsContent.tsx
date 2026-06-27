@@ -9,7 +9,7 @@ import {
 } from '@server/modules/project/features/update-project/schema'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import { DataTable } from '@src/components/Tables/DataTable'
-import { getDaysRemaining } from '@src/modules/project/_helpers'
+import { getDaysRemaining } from '@src/modules/pm/projects/projects.helpers'
 import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import type { LucideIcon } from 'lucide-react'

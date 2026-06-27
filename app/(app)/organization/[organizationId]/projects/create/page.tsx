@@ -1,6 +1,6 @@
 // app/(app)/organization/[organizationId]/projects/create/page.tsx
 import { Skeleton } from '@src/components/ui/skeleton'
-import ProjectForm from '@src/modules/project/components/ProjectForm'
+import ProjectForm from '@src/modules/pm/projects/components/ProjectForm'
 import { Suspense } from 'react'
 
 const CreateProjectFormSkeleton = () => (

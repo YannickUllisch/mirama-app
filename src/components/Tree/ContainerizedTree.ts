@@ -1,5 +1,5 @@
 import type { Task, TaskStatusType, TaskType } from '@/prisma/generated/client'
-import { isTaskTypeContainer } from '@src/modules/project/task/components/TaskTypeHelpers'
+import { isTaskTypeContainer } from '@src/modules/pm/tasks/components/TaskTypeHelpers'
 
 type ContainerizedTask = {
   id: string

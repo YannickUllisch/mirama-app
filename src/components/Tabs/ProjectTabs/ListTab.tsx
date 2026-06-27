@@ -18,8 +18,8 @@ import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import {
   individualTaskTypes,
   isTaskTypeContainer,
-} from '@src/modules/project/task/components/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+} from '@src/modules/pm/tasks/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import { Checkbox } from '@ui/checkbox'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import {

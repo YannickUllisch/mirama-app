@@ -12,8 +12,8 @@ import { capitalize } from '@src/lib/utils'
 import {
   containerTaskTypes,
   individualTaskTypes,
-} from '@src/modules/project/task/components/TaskTypeHelpers'
-import { getTaskTypeIcon } from '@src/modules/project/task/components/TaskTypeIcons'
+} from '@src/modules/pm/tasks/components/TaskTypeHelpers'
+import { getTaskTypeIcon } from '@src/modules/pm/tasks/components/TaskTypeIcons'
 import { ChevronDown, Plus } from 'lucide-react'
 import Link from 'next/link'
 import type { FC } from 'react'
