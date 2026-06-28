@@ -354,3 +354,10 @@
   width: max-content;
   animation: marquee-reverse 30s linear infinite;
 }
+
+@utility scrollbar-none {
+    scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

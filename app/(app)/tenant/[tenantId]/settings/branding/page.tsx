@@ -1,7 +1,6 @@
 // app/(app)/tenant/[tenantId]/settings/branding/page.tsx
 'use client'
 
-import { useSettingsContext } from '../_components/SettingsContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ColorPicker } from '@ui/color-picker'
 import {
@@ -28,6 +27,7 @@ import {
 import { Label } from '@ui/label'
 import { Skeleton } from '@ui/skeleton'
 import { CloudUpload, ImageIcon, Palette, Trash2 } from 'lucide-react'
+import { useSettingsContext } from '../_components/SettingsContext'
 
 const BrandingPage = () => {
   const { form, isLoading } = useSettingsContext()

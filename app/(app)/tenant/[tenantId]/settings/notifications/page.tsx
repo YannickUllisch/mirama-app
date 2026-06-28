@@ -1,12 +1,12 @@
 // app/(app)/tenant/[tenantId]/settings/notifications/page.tsx
 'use client'
 
-import { useSettingsContext } from '../_components/SettingsContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { FormControl, FormField, FormItem, FormLabel } from '@ui/form'
 import { Skeleton } from '@ui/skeleton'
 import { Switch } from '@ui/switch'
 import { Bell, Mail } from 'lucide-react'
+import { useSettingsContext } from '../_components/SettingsContext'
 
 const NotificationsPage = () => {
   const { form, isLoading } = useSettingsContext()
