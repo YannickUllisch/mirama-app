@@ -2,40 +2,46 @@
 'use client'
 
 import apiRequest from '@hooks'
-import type { ProjectResponse } from '@server/modules/project/features/response'
-import {
-  type UpdateProjectRequest,
-  UpdateProjectSchema,
-} from '@server/modules/project/features/update-project/schema'
 import { DataTable } from '@src/components/Tables/DataTable'
+import {
+  type UpdateProjectCommand,
+  UpdateProjectCommandSchema,
+} from '@src/modules/pm/projects/projects.types'
 import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { toast } from 'sonner'
-import { useProjectColumns } from '../columns'
+import { type ProjectTableRow, useProjectColumns } from '../columns'
 
 const ProjectsTable = () => {
-  const { data: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
-  const { data: users } = apiRequest.members.fetchAll.useQuery()
+  const { items: projects, isLoading } = apiRequest.project.fetchAll.useQuery()
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
   const { mutate: archiveMutation } = apiRequest.project.archive.useMutation()
 
+  const toRow = (p: (typeof projects)[number]): ProjectTableRow => ({
+    ...p,
+    id: p.projectId,
+  })
+
+  const rows = projects.filter((p) => !p.isArchived).map(toRow)
+
   const { handleFieldUpdate } = useEditableColumns<
-    ProjectResponse,
-    UpdateProjectRequest
+    ProjectTableRow,
+    UpdateProjectCommand,
+    { id: string; data: UpdateProjectCommand }
   >({
     mutate: projectMutation,
-    updateSchema: UpdateProjectSchema,
+    updateSchema: UpdateProjectCommandSchema,
+    getKey: (data) => data.projectId,
     mapToUpdateInput: (data) => ({
-      ...data,
-      tags: data.tags.map((t) => t.id),
-      newTags: [],
-      members: data.members.map((u) => ({
-        memberId: u.id,
-      })),
+      name: data.name,
+      description: data.description ?? null,
+      startDate: data.startDate,
+      endDate: data.endDate ?? null,
+      statusId: data.statusId,
+      priorityId: data.priorityId,
+      budget: data.budget,
+      tagIds: data.tagIds,
     }),
-    prepareMutation: (id, data) => ({
-      id,
-      data,
-    }),
+    prepareMutation: (id, data) => ({ id, data }),
     onValidationError: (err) => {
       const firstMessage = err.issues?.[0]?.message || 'Input Error'
       toast.error(`Input Error: ${firstMessage}`)
@@ -45,19 +51,11 @@ const ProjectsTable = () => {
   return (
     <DataTable
       tableIdentifier="projectPageTable"
-      columns={useProjectColumns({
-        users: users ?? [],
-        handleFieldUpdate,
-        archiveMutation,
-      })}
-      data={projects ?? []}
+      columns={useProjectColumns({ handleFieldUpdate, archiveMutation })}
+      data={rows}
       dataLoading={isLoading}
-      toolbarOptions={{
-        showFilterOption: true,
-      }}
-      footerOptions={{
-        showPagination: true,
-      }}
+      toolbarOptions={{ showFilterOption: true }}
+      footerOptions={{ showPagination: true }}
     />
   )
 }

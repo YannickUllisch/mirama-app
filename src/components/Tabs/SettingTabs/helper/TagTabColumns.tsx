@@ -1,12 +1,12 @@
 'use client'
 
-import type { TagResponse } from '@server/modules/account/tags/features/response'
 import {
   EditableCell,
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import type { TagResponse } from '@src/modules/tenant/organization/tags/tags.types'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -40,7 +40,7 @@ export const useTagColumns = ({
 
   return useMemo(
     () => [
-      columnHelper.accessor('title', {
+      columnHelper.accessor('name', {
         id: 'title',
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Title" />
@@ -49,7 +49,7 @@ export const useTagColumns = ({
           <EditableCell
             value={getValue()}
             onSave={(value) =>
-              handleFieldUpdate(row.original, 'title', value as string)
+              handleFieldUpdate(row.original, 'name', value as string)
             }
             type={EditableCellType.TEXT}
           />

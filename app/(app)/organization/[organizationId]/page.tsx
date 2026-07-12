@@ -21,8 +21,11 @@ import { useEffect } from 'react'
 import { toast } from 'sonner'
 
 const Dashboard = () => {
-  const { data: projects, isLoading: isProjectsLoading } =
-    apiRequest.project.fetchAll.useQuery()
+  const {
+    items: projects,
+    data: projectsData,
+    isLoading: isProjectsLoading,
+  } = apiRequest.project.fetchAll.useQuery()
   const { data: tasks, isLoading: isTasksLoading } =
     apiRequest.task.fetchPersonal.useQuery()
 
@@ -79,7 +82,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <MetricCard
                 label="Active Projects"
-                value={projects?.length || 0}
+                value={projectsData?.totalCount || 0}
                 icon={Kanban}
                 trend="+2 this month"
               />
@@ -110,19 +113,13 @@ const Dashboard = () => {
                   </Button>
                 </HoverLink>
               </div>
-              <ProjectGrid
-                projects={projects || []}
-                loading={isProjectsLoading}
-              />
+              <ProjectGrid projects={projects} loading={isProjectsLoading} />
             </section>
 
             {/* Timeline Section */}
             <section className="space-y-4">
               <h2 className="text-lg font-semibold tracking-tight">Schedule</h2>
-              <TimelineCard
-                projects={projects || []}
-                loading={isProjectsLoading}
-              />
+              <TimelineCard projects={projects} loading={isProjectsLoading} />
             </section>
           </div>
 

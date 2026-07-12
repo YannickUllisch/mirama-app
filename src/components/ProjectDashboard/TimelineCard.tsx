@@ -1,6 +1,6 @@
 'use client'
 
-import type { ProjectResponse } from '@server/modules/project/features/response'
+import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import {
   Tooltip,
   TooltipContent,
@@ -86,7 +86,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
         </div>
 
         <div className="overflow-x-auto">
-          <div className="min-w-[1000px] p-6">
+          <div className="min-w-250 p-6">
             {/* Day Headers */}
             <div className="grid grid-cols-[240px_1fr] mb-4">
               <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest px-2">
@@ -109,7 +109,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
             {/* Tracks */}
             <div className="space-y-4 relative">
               {/* Today Line */}
-              <div className="absolute top-0 bottom-0 left-[240px] right-0 pointer-events-none z-10">
+              <div className="absolute top-0 bottom-0 left-60 right-0 pointer-events-none z-10">
                 {days.map(
                   (day, i) =>
                     isToday(day) && (
@@ -118,7 +118,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
                         className="absolute h-full w-px bg-red-500/40"
                         style={{ left: `${(i / daysToShow) * 100}%` }}
                       >
-                        <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 mt-[-4px]" />
+                        <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 -mt-1" />
                       </div>
                     ),
                 )}
@@ -126,7 +126,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
 
               {projects.map((project) => {
                 const pStart = new Date(project.startDate)
-                const pEnd = new Date(project.endDate)
+                const pEnd = new Date(project.endDate ?? project.startDate)
 
                 // Calculate display constraints
                 const startClamp = isBefore(pStart, timelineStart)
@@ -149,7 +149,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
 
                 return (
                   <div
-                    key={project.id}
+                    key={project.projectId}
                     className="grid grid-cols-[240px_1fr] items-center group/row"
                   >
                     <div className="pr-6">
@@ -162,10 +162,6 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
                         </div>
                       </HoverLink>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[9px] font-bold text-neutral-400 uppercase">
-                          {project.priority}
-                        </span>
-                        <span className="text-[9px] text-neutral-300">•</span>
                         <span className="text-[9px] text-neutral-400 font-bold uppercase">
                           {project.milestones.length} Pips
                         </span>
@@ -185,13 +181,13 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
                         }}
                       >
                         <span className="text-[8px] font-black text-white/80 uppercase truncate">
-                          {widthPercent > 10 ? project.status : ''}
+                          {widthPercent > 10 ? project.name : ''}
                         </span>
                       </div>
 
                       {/* Milestones as absolute pins */}
-                      {project.milestones.map((m: any, idx: number) => {
-                        const mDate = new Date(m.date)
+                      {project.milestones.map((m, idx) => {
+                        const mDate = new Date(m.dueDate)
                         if (
                           isBefore(mDate, timelineStart) ||
                           isAfter(mDate, timelineEnd)
@@ -217,7 +213,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
                                 <div
                                   className="w-2.5 h-2.5 rounded-full border-2 border-white dark:border-neutral-950 shadow-xs"
                                   style={{
-                                    backgroundColor: m.colors || '#3b82f6',
+                                    backgroundColor: m.color || '#3b82f6',
                                   }}
                                 />
                               </div>

@@ -1,7 +1,6 @@
 'use client'
 
-import type { ProjectResponse } from '@server/modules/project/features/response'
-import { cn } from '@src/lib/utils'
+import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,16 +37,11 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {projects.slice(0, 4).map((project) => {
-        const totalTasks = project.tasks?.length || 0
-        const completedTasks =
-          project.tasks?.filter((t) => t.status === 'DONE').length || 0
-        const progressPercent =
-          totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
-        const isHighPriority = project.priority === 'HIGH'
+        const progressPercent = 0
 
         return (
           <div
-            key={project.id}
+            key={project.projectId}
             className="group relative flex flex-col justify-between p-5 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-tertiary/40 transition-all duration-300 shadow-xs"
           >
             {/* Top Row: Context & Action */}
@@ -64,15 +58,8 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                     </h3>
                   </HoverLink>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span
-                      className={cn(
-                        'text-[8px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded-md border',
-                        isHighPriority
-                          ? 'text-red-500 border-red-500/20 bg-red-500/5'
-                          : 'text-neutral-400 border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50',
-                      )}
-                    >
-                      {project.priority}
+                    <span className="text-[8px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded-md border text-neutral-400 border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+                      {project.slug}
                     </span>
                   </div>
                 </div>
@@ -184,12 +171,12 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
 
                 {/* Refined Avatar Stack */}
                 <div className="flex -space-x-1.5">
-                  {project.members.slice(0, 3).map((user) => (
+                  {project.members.slice(0, 3).map((member) => (
                     <div
-                      key={user.id}
+                      key={member.projectMemberId}
                       className="w-5 h-5 rounded-full border-[1.5px] border-white dark:border-[#0a0a0a] bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[7px] font-black text-neutral-500"
                     >
-                      {user.name[0]}
+                      {member.memberId.slice(0, 1).toUpperCase()}
                     </div>
                   ))}
                   {project.members.length > 3 && (

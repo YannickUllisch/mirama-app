@@ -32,7 +32,15 @@ export const UpdateProjectMilestoneCommandSchema = z.object({
   color: z.string().nullable().optional(),
 })
 
-export type ProjectMilestoneResponse = z.infer<typeof ProjectMilestoneResponseSchema>
-export type CreateProjectMilestoneInput = z.infer<typeof CreateProjectMilestoneInputSchema>
-export type CreateProjectMilestoneCommand = z.infer<typeof CreateProjectMilestoneCommandSchema>
-export type UpdateProjectMilestoneCommand = z.infer<typeof UpdateProjectMilestoneCommandSchema>
+export type ProjectMilestoneResponse = z.infer<
+  typeof ProjectMilestoneResponseSchema
+>
+export type CreateProjectMilestoneInput = z.infer<
+  typeof CreateProjectMilestoneInputSchema
+>
+export type CreateProjectMilestoneCommand = z.infer<
+  typeof CreateProjectMilestoneCommandSchema
+>
+export type UpdateProjectMilestoneCommand = z.infer<
+  typeof UpdateProjectMilestoneCommandSchema
+>

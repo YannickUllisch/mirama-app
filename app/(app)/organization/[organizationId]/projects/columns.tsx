@@ -1,9 +1,6 @@
 // app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
-import { PriorityType, StatusType } from '@/prisma/generated/client'
-import type { MemberResponse } from '@server/modules/account/members/features/response'
-import type { ProjectResponse } from '@server/modules/project/features/response'
 import HoverLink from '@src/components/HoverLink'
 import {
   EditableCell,
@@ -11,8 +8,10 @@ import {
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import '@src/components/Tables/Filters/column-filter-meta'
-import { capitalize } from '@src/lib/utils'
+import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
+
+export type ProjectTableRow = ProjectResponse & { id: string }
 import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
@@ -34,11 +33,11 @@ const ActionsCell = ({
   organizationId,
   archiveMutation,
 }: {
-  row: ProjectResponse
+  row: ProjectTableRow
   canUpdate: boolean
   canDelete: boolean
   organizationId: string
-  archiveMutation: (args: { id: string; archive: boolean }) => void
+  archiveMutation: (id: string) => void
 }) => {
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -50,7 +49,7 @@ const ActionsCell = ({
       <DropdownMenuContent>
         {canUpdate && (
           <HoverLink
-            href={`/organization/${organizationId}/projects/edit/${row.id}`}
+            href={`/organization/${organizationId}/projects/edit/${row.projectId}`}
           >
             <DropdownMenuItem className="gap-2">
               <PenSquareIcon className="w-3.5 h-3.5" />
@@ -58,18 +57,13 @@ const ActionsCell = ({
             </DropdownMenuItem>
           </HoverLink>
         )}
-        {canDelete && (
+        {canDelete && !row.isArchived && (
           <DropdownMenuItem
-            onClick={() =>
-              archiveMutation({
-                id: row.id,
-                archive: !row.archived,
-              })
-            }
+            onClick={() => archiveMutation(row.projectId)}
             className="gap-2"
           >
             <Archive className="w-3.5 h-3.5" />
-            {row.archived ? 'Unarchive' : 'Archive'}
+            Archive
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
@@ -77,21 +71,14 @@ const ActionsCell = ({
   )
 }
 
-const columnHelper = createColumnHelper<ProjectResponse>()
+const columnHelper = createColumnHelper<ProjectTableRow>()
 
 export const useProjectColumns = ({
-  users,
   handleFieldUpdate,
   archiveMutation,
 }: {
-  users: MemberResponse[]
-  handleFieldUpdate: HandleFieldUpdate<ProjectResponse>
-  archiveMutation: UseMutateFunction<
-    { success: boolean },
-    Error,
-    { id: string; archive: boolean },
-    unknown
-  >
+  handleFieldUpdate: HandleFieldUpdate<ProjectTableRow>
+  archiveMutation: UseMutateFunction<void, Error, string, unknown>
 }) => {
   const { can } = usePermissions()
   const { activeOrganizationId } = useOrganizationResource()
@@ -148,14 +135,14 @@ export const useProjectColumns = ({
           if (canUpdate) {
             return (
               <EditableCell
-                displayValue={
-                  getValue()
-                    ? DateTime.fromJSDate(date).toFormat('dd.MM.yyyy')
-                    : null
-                }
+                displayValue={DateTime.fromJSDate(date).toFormat('dd.MM.yyyy')}
                 value={date}
                 onSave={(value) =>
-                  handleFieldUpdate(row.original, 'startDate', value as Date)
+                  handleFieldUpdate(
+                    row.original,
+                    'startDate',
+                    (value as Date).toISOString(),
+                  )
                 }
                 type={EditableCellType.DATE}
               />
@@ -178,18 +165,20 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="End Date" />
         ),
         cell: ({ row, getValue }) => {
-          const date = new Date(getValue())
+          const raw = getValue()
+          if (!raw) return <span className="text-muted-foreground">—</span>
+          const date = new Date(raw)
           if (canUpdate) {
             return (
               <EditableCell
-                displayValue={
-                  getValue()
-                    ? DateTime.fromJSDate(date).toFormat('dd.MM.yyyy')
-                    : null
-                }
+                displayValue={DateTime.fromJSDate(date).toFormat('dd.MM.yyyy')}
                 value={date}
                 onSave={(value) =>
-                  handleFieldUpdate(row.original, 'endDate', value as Date)
+                  handleFieldUpdate(
+                    row.original,
+                    'endDate',
+                    (value as Date).toISOString(),
+                  )
                 }
                 type={EditableCellType.DATE}
               />
@@ -210,11 +199,11 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Days Remaining" />
         ),
         cell: ({ row }) => {
-          const endDate = row.original.endDate.toString()
+          const endDate = row.original.endDate
+          if (!endDate) return <span className="text-muted-foreground">—</span>
           const daysRemaining = -Math.floor(
             DateTime.utc().diff(DateTime.fromISO(endDate), 'days').days,
           )
-
           return (
             <div
               className={`flex justify-center ${
@@ -228,82 +217,6 @@ export const useProjectColumns = ({
               {daysRemaining > 0 ? daysRemaining : 0}
             </div>
           )
-        },
-      }),
-
-      columnHelper.accessor('priority', {
-        id: 'priority',
-        filterFn: 'inEnumSet',
-        meta: {
-          filter: {
-            type: 'enum',
-            title: 'Priority',
-            options: Object.values(PriorityType).map((p) => ({
-              label: String(capitalize(p.replace('_', ' '))),
-              value: p,
-            })),
-          },
-        },
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Priority" />
-        ),
-        cell: ({ row, getValue }) => {
-          if (canUpdate) {
-            return (
-              <EditableCell
-                value={getValue()}
-                onSave={(value) =>
-                  handleFieldUpdate(
-                    row.original,
-                    'priority',
-                    value as PriorityType,
-                  )
-                }
-                options={Object.values(PriorityType).map((p) => ({
-                  value: p,
-                  label: p,
-                }))}
-                type={EditableCellType.SELECT}
-              />
-            )
-          }
-          return capitalize((getValue() as string).replace('_', ' '))
-        },
-      }),
-
-      columnHelper.accessor('status', {
-        id: 'status',
-        filterFn: 'inEnumSet',
-        meta: {
-          filter: {
-            type: 'enum',
-            title: 'Status',
-            options: Object.values(StatusType).map((s) => ({
-              label: String(capitalize(s.replace('_', ' '))),
-              value: s,
-            })),
-          },
-        },
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Status" />
-        ),
-        cell: ({ row, getValue }) => {
-          if (canUpdate) {
-            return (
-              <EditableCell
-                value={getValue()}
-                onSave={(value) =>
-                  handleFieldUpdate(row.original, 'status', value as StatusType)
-                }
-                options={Object.values(StatusType).map((p) => ({
-                  value: p,
-                  label: p,
-                }))}
-                type={EditableCellType.SELECT}
-              />
-            )
-          }
-          return capitalize((getValue() as string).replace('_', ' '))
         },
       }),
 
@@ -350,6 +263,6 @@ export const useProjectColumns = ({
           ]
         : []),
     ],
-    [users, canUpdate, canDelete, activeOrganizationId],
+    [canUpdate, canDelete, activeOrganizationId],
   )
 }

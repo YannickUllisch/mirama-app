@@ -1,11 +1,11 @@
 // app/(app)/organization/[organizationId]/projects/edit/[id]/page.tsx
 'use client'
-import ProjectForm from '@src/modules/pm/projects/components/ProjectForm'
+import EditProjectForm from '@src/modules/pm/projects/components/EditProjectForm'
 import { use } from 'react'
 
 const EditProjectPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params)
-  return <ProjectForm mode="edit" projectId={id} />
+  return <EditProjectForm projectId={id} />
 }
 
 export default EditProjectPage

@@ -1,7 +1,4 @@
-import '@src/components/Tables/Filters/column-filter-meta'
 import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
-import type { MemberResponse } from '@server/modules/account/members/features/response'
-import type { TagResponse } from '@server/modules/account/tags/features/response'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import HoverLink from '@src/components/HoverLink'
@@ -10,6 +7,7 @@ import {
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
+import '@src/components/Tables/Filters/column-filter-meta'
 import { Badge } from '@src/components/ui/badge'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
@@ -25,6 +23,7 @@ import {
 } from '@src/components/ui/hover-card'
 import { capitalize, getColorByTaskStatusType } from '@src/lib/utils'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@ui/button'
@@ -282,7 +281,7 @@ export const useTaskColumns = ({
           />
         ),
         cell: ({ row, getValue }) => {
-          const tags = getValue() as TagResponse[]
+          const tags = getValue()
           const tagCount = tags.length
 
           // If there are more than 2 tasks, we will show the "X tasks left" badge

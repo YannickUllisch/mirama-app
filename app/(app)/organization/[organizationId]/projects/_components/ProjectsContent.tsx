@@ -2,21 +2,18 @@
 'use client'
 
 import apiRequest from '@hooks'
-import type { ProjectResponse } from '@server/modules/project/features/response'
-import {
-  type UpdateProjectRequest,
-  UpdateProjectSchema,
-} from '@server/modules/project/features/update-project/schema'
-import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { getDaysRemaining } from '@src/modules/pm/projects/projects.helpers'
+import {
+  type UpdateProjectCommand,
+  UpdateProjectCommandSchema,
+} from '@src/modules/pm/projects/projects.types'
 import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import type { LucideIcon } from 'lucide-react'
 import { Archive, Clock, Euro, Folders } from 'lucide-react'
-import { useState } from 'react'
 import { toast } from 'sonner'
-import { useProjectColumns } from '../columns'
+import { type ProjectTableRow, useProjectColumns } from '../columns'
 import { useArchivedProjectsColumns } from './ArchivedProjectsColumns'
 
 const StatCard = ({
@@ -30,7 +27,7 @@ const StatCard = ({
   icon: LucideIcon
   accent?: boolean
 }) => (
-  <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3 min-w-[148px]">
+  <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3 min-w-37">
     <div
       className={`p-1.5 rounded-lg shrink-0 ${accent ? 'bg-primary/10' : 'bg-muted'}`}
     >
@@ -52,28 +49,36 @@ const StatCard = ({
 )
 
 const ProjectsContent = () => {
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const { data: projects, isLoading: loadingActive } =
+  const { items: projects, isLoading: loadingActive } =
     apiRequest.project.fetchAll.useQuery()
-  const { data: archivedProjects, isLoading: loadingArchived } =
-    apiRequest.project.fetchArchived.useQuery()
-  const { data: users } = apiRequest.members.fetchAll.useQuery()
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
   const { mutate: archiveMutation } = apiRequest.project.archive.useMutation()
-  const { mutate: deleteMutation } = apiRequest.project.delete.useMutation()
+
+  const toRow = (p: (typeof projects)[number]): ProjectTableRow => ({
+    ...p,
+    id: p.projectId,
+  })
+
+  const activeList = projects.filter((p) => !p.isArchived).map(toRow)
+  const archivedList = projects.filter((p) => p.isArchived).map(toRow)
 
   const { handleFieldUpdate } = useEditableColumns<
-    ProjectResponse,
-    UpdateProjectRequest
+    ProjectTableRow,
+    UpdateProjectCommand,
+    { id: string; data: UpdateProjectCommand }
   >({
     mutate: projectMutation,
-    updateSchema: UpdateProjectSchema,
+    updateSchema: UpdateProjectCommandSchema,
+    getKey: (data) => data.projectId,
     mapToUpdateInput: (data) => ({
-      ...data,
-      tags: data.tags.map((t) => t.id),
-      newTags: [],
-      members: data.members.map((u) => ({ memberId: u.id })),
+      name: data.name,
+      description: data.description ?? null,
+      startDate: data.startDate,
+      endDate: data.endDate ?? null,
+      statusId: data.statusId,
+      priorityId: data.priorityId,
+      budget: data.budget,
+      tagIds: data.tagIds,
     }),
     prepareMutation: (id, data) => ({ id, data }),
     onValidationError: (err) => {
@@ -82,25 +87,17 @@ const ProjectsContent = () => {
     },
   })
 
-  const activeList = projects ?? []
-  const archivedList = archivedProjects ?? []
-
   const totalBudget = activeList.reduce((sum, p) => sum + (p.budget ?? 0), 0)
   const dueSoon = activeList.filter(
-    (p) => getDaysRemaining(new Date(p.endDate)) <= 5,
+    (p) => p.endDate && getDaysRemaining(new Date(p.endDate)) <= 5,
   ).length
 
   const activeColumns = useProjectColumns({
-    users: users ?? [],
     handleFieldUpdate,
     archiveMutation,
   })
 
-  const archivedColumns = useArchivedProjectsColumns({
-    archiveMutation,
-    users: users ?? [],
-    setSelectedId,
-  })
+  const archivedColumns = useArchivedProjectsColumns({ archiveMutation })
 
   return (
     <>
@@ -164,27 +161,11 @@ const ProjectsContent = () => {
               expandedContent
               columns={archivedColumns}
               data={archivedList}
-              dataLoading={loadingArchived}
+              dataLoading={loadingActive}
             />
           </TabsContent>
         </Tabs>
       </div>
-
-      <ConfirmationDialogWithOpenState
-        isOpen={!!selectedId}
-        key="confirmation-dialog-deletion"
-        title="Are you sure?"
-        description="Deleting a project cannot be undone. All associated data will be lost."
-        onCancel={() => setSelectedId(null)}
-        onSubmit={() => {
-          if (selectedId) {
-            deleteMutation(selectedId)
-            setSelectedId(null)
-          } else {
-            toast.error('Error on Delete..')
-          }
-        }}
-      />
     </>
   )
 }

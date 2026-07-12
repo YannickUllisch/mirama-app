@@ -1,11 +1,11 @@
 'use client'
-import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
 import {
   EditableCell,
   EditableCellType,
 } from '@src/components/Tables/Cell/EditableCell'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import type { InvitationResponse } from '@src/modules/tenant/organization/invitations/invitations.types'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@ui/button'
@@ -25,7 +25,6 @@ import { useMemo, useState } from 'react'
 const columnHelper = createColumnHelper<InvitationResponse & { id: string }>()
 
 export const useInvitationColumns = ({
-  session,
   handleFieldUpdate,
   deleteMutation,
 }: {

@@ -1,11 +1,9 @@
 // app/(app)/organization/[organizationId]/projects/_components/ArchivedProjectsColumns.tsx
 'use client'
 
-import type { MemberResponse } from '@server/modules/account/members/features/response'
-import type { ProjectResponse } from '@server/modules/project/features/response'
 import HoverLink from '@src/components/HoverLink'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { capitalize } from '@src/lib/utils'
+import type { ProjectTableRow } from '../columns'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -15,26 +13,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
-import { ArchiveRestore, Ellipsis, PenSquareIcon, Trash } from 'lucide-react'
+import { Ellipsis, PenSquareIcon } from 'lucide-react'
 import { DateTime } from 'luxon'
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<ProjectResponse>()
+const columnHelper = createColumnHelper<ProjectTableRow>()
 
 const ArchivedActionsCell = ({
   row,
-  archiveMutation,
-  setSelectedId,
   organizationId,
 }: {
-  row: ProjectResponse
-  archiveMutation: UseMutateFunction<
-    { success: boolean },
-    Error,
-    { id: string; archive: boolean },
-    unknown
-  >
-  setSelectedId: Dispatch<SetStateAction<string | null>>
+  row: ProjectTableRow
   organizationId: string
 }) => {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -46,45 +35,20 @@ const ArchivedActionsCell = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <HoverLink
-          href={`/organization/${organizationId}/projects/edit/${row.id}`}
+          href={`/organization/${organizationId}/projects/edit/${row.projectId}`}
         >
           <DropdownMenuItem className="gap-2">
             <PenSquareIcon className="w-3.5 h-3.5" />
             Edit
           </DropdownMenuItem>
         </HoverLink>
-        <DropdownMenuItem
-          onClick={() => archiveMutation({ id: row.id, archive: false })}
-          className="gap-2"
-        >
-          <ArchiveRestore className="w-3.5 h-3.5" />
-          Unarchive
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="gap-2 text-destructive focus:text-destructive"
-          onClick={() => setSelectedId(row.id)}
-        >
-          <Trash className="h-3.5 w-3.5" />
-          Delete
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export const useArchivedProjectsColumns = ({
-  users: _users,
-  archiveMutation,
-  setSelectedId,
-}: {
-  users: MemberResponse[]
-  setSelectedId: Dispatch<SetStateAction<string | null>>
-  archiveMutation: UseMutateFunction<
-    { success: boolean },
-    Error,
-    { id: string; archive: boolean },
-    unknown
-  >
+export const useArchivedProjectsColumns = (_props: {
+  archiveMutation: UseMutateFunction<void, Error, string, unknown>
 }) => {
   const { activeOrganizationId } = useOrganizationResource()
 
@@ -117,24 +81,11 @@ export const useArchivedProjectsColumns = ({
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="End Date" />
         ),
-        cell: ({ getValue }) =>
-          DateTime.fromJSDate(new Date(getValue())).toFormat('dd.MM.yyyy'),
-      }),
-      columnHelper.accessor('priority', {
-        id: 'priority',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Priority" />
-        ),
-        cell: ({ getValue }) =>
-          capitalize((getValue() as string).replace('_', ' ')),
-      }),
-      columnHelper.accessor('status', {
-        id: 'status',
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Status" />
-        ),
-        cell: ({ getValue }) =>
-          capitalize((getValue() as string).replace('_', ' ')),
+        cell: ({ getValue }) => {
+          const raw = getValue()
+          if (!raw) return <span className="text-muted-foreground">—</span>
+          return DateTime.fromJSDate(new Date(raw)).toFormat('dd.MM.yyyy')
+        },
       }),
       columnHelper.accessor('budget', {
         id: 'budget',
@@ -150,13 +101,11 @@ export const useArchivedProjectsColumns = ({
         cell: ({ row }) => (
           <ArchivedActionsCell
             row={row.original}
-            archiveMutation={archiveMutation}
-            setSelectedId={setSelectedId}
             organizationId={activeOrganizationId}
           />
         ),
       }),
     ],
-    [archiveMutation, setSelectedId, activeOrganizationId],
+    [activeOrganizationId],
   )
 }

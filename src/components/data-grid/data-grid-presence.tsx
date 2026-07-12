@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import * as React from "react";
+import * as React from 'react'
 
 interface DataGridCellPresence {
-  color: string;
-  name: string;
+  color: string
+  name: string
 }
 
 const DataGridCellPresenceContext = React.createContext<Map<
   string,
   DataGridCellPresence
-> | null>(null);
+> | null>(null)
 
 interface DataGridPresenceProviderProps {
-  value: Map<string, DataGridCellPresence>;
-  children: React.ReactNode;
+  value: Map<string, DataGridCellPresence>
+  children: React.ReactNode
 }
 
 function DataGridPresenceProvider({
@@ -25,16 +25,16 @@ function DataGridPresenceProvider({
     <DataGridCellPresenceContext.Provider value={value}>
       {children}
     </DataGridCellPresenceContext.Provider>
-  );
+  )
 }
 
 function useDataGridPresence(cellKey: string): DataGridCellPresence | null {
-  const map = React.useContext(DataGridCellPresenceContext);
-  return map?.get(cellKey) ?? null;
+  const map = React.useContext(DataGridCellPresenceContext)
+  return map?.get(cellKey) ?? null
 }
 
 export {
   type DataGridCellPresence,
   DataGridPresenceProvider,
   useDataGridPresence,
-};
+}

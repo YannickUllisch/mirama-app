@@ -101,7 +101,10 @@ const OrganizationForm = ({ orgId, tenantId }: OrganizationFormProps) => {
   return (
     <div className="flex flex-col min-h-0">
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="px-6 md:px-10 py-6 pb-20 space-y-5">
+        <form
+          onSubmit={handleSubmit}
+          className="px-6 md:px-10 py-6 pb-20 space-y-5"
+        >
           <ReturnLink
             href={`/tenant/${tenantId}`}
             text="Back to organizations"

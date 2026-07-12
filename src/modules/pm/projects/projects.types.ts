@@ -8,6 +8,7 @@ import {
   CreateProjectMilestoneInputSchema,
   ProjectMilestoneResponseSchema,
 } from './milestones/milestones.types'
+
 export const ProjectResponseSchema = z.object({
   projectId: z.uuid(),
   name: z.string(),

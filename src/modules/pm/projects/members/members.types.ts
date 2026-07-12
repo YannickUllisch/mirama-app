@@ -23,6 +23,12 @@ export const UpdateProjectMemberCommandSchema = z.object({
 })
 
 export type ProjectMemberResponse = z.infer<typeof ProjectMemberResponseSchema>
-export type CreateProjectMemberInput = z.infer<typeof CreateProjectMemberInputSchema>
-export type AddProjectMemberCommand = z.infer<typeof AddProjectMemberCommandSchema>
-export type UpdateProjectMemberCommand = z.infer<typeof UpdateProjectMemberCommandSchema>
+export type CreateProjectMemberInput = z.infer<
+  typeof CreateProjectMemberInputSchema
+>
+export type AddProjectMemberCommand = z.infer<
+  typeof AddProjectMemberCommandSchema
+>
+export type UpdateProjectMemberCommand = z.infer<
+  typeof UpdateProjectMemberCommandSchema
+>

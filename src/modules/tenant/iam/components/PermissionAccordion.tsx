@@ -2,7 +2,10 @@
 'use client'
 
 import type { StatementDraft } from '@src/modules/tenant/iam/iam.types'
-import type { Effect, PermissionGroupResponse } from '@src/modules/tenant/iam/policy/policy.types'
+import type {
+  Effect,
+  PermissionGroupResponse,
+} from '@src/modules/tenant/iam/policy/policy.types'
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +20,11 @@ type Props = {
   groups: PermissionGroupResponse[]
   statements: StatementDraft[]
   onToggle: (action: string, resourcePattern: string) => void
-  onEffectChange: (action: string, resourcePattern: string, effect: Effect) => void
+  onEffectChange: (
+    action: string,
+    resourcePattern: string,
+    effect: Effect,
+  ) => void
   scope?: string
 }
 
@@ -142,7 +149,10 @@ export const PermissionAccordion = ({
                         id={`${group.resourcePattern}-wildcard`}
                         checked={wild}
                         onCheckedChange={() =>
-                          onToggle(group.allActionsPattern, group.resourcePattern)
+                          onToggle(
+                            group.allActionsPattern,
+                            group.resourcePattern,
+                          )
                         }
                       />
                       <label
@@ -159,8 +169,20 @@ export const PermissionAccordion = ({
                       {wildcardStmt && (
                         <EffectToggle
                           effect={wildcardStmt.effect}
-                          onAllow={() => onEffectChange(group.allActionsPattern, group.resourcePattern, 'Allow')}
-                          onDeny={() => onEffectChange(group.allActionsPattern, group.resourcePattern, 'Deny')}
+                          onAllow={() =>
+                            onEffectChange(
+                              group.allActionsPattern,
+                              group.resourcePattern,
+                              'Allow',
+                            )
+                          }
+                          onDeny={() =>
+                            onEffectChange(
+                              group.allActionsPattern,
+                              group.resourcePattern,
+                              'Deny',
+                            )
+                          }
                         />
                       )}
                     </div>
@@ -202,8 +224,20 @@ export const PermissionAccordion = ({
                       {checked && stmt && (
                         <EffectToggle
                           effect={stmt.effect}
-                          onAllow={() => onEffectChange(perm.action, group.resourcePattern, 'Allow')}
-                          onDeny={() => onEffectChange(perm.action, group.resourcePattern, 'Deny')}
+                          onAllow={() =>
+                            onEffectChange(
+                              perm.action,
+                              group.resourcePattern,
+                              'Allow',
+                            )
+                          }
+                          onDeny={() =>
+                            onEffectChange(
+                              perm.action,
+                              group.resourcePattern,
+                              'Deny',
+                            )
+                          }
                         />
                       )}
                     </div>
