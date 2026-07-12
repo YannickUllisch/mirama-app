@@ -7,39 +7,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { PolicyScopeTab } from './PolicyScopeTab'
 import { SCOPE_VISUALS } from './scopeConfig'
 
-const SCOPE_TABS = [
+const SCOPES = [
   AccessScope.Organization,
   AccessScope.Project,
   AccessScope.Client,
 ] as const
 
-export const PoliciesManager = () => (
-  <Tabs defaultValue={AccessScope.Organization} className="space-y-4">
-    <TabsList className="h-9">
-      {SCOPE_TABS.map((scope) => {
-        const {
-          label,
-          icon: Icon,
-          iconClass,
-          tabActiveClass,
-        } = SCOPE_VISUALS[scope]
-        return (
-          <TabsTrigger
-            key={scope}
-            value={scope}
-            className={cn('text-xs gap-1.5', tabActiveClass)}
-          >
-            <Icon className={cn('w-3.5 h-3.5', iconClass)} />
-            {label}
-          </TabsTrigger>
-        )
-      })}
-    </TabsList>
+export const PoliciesManager = () => {
+  return (
+    <Tabs defaultValue={AccessScope.Organization}>
+      <TabsList className="h-9 bg-muted p-1">
+        {SCOPES.map((scope) => {
+          const {
+            label,
+            icon: Icon,
+            tabActiveClass,
+            iconClass,
+          } = SCOPE_VISUALS[scope]
+          return (
+            <TabsTrigger
+              key={scope}
+              value={scope}
+              className={cn('gap-1.5 text-xs', tabActiveClass)}
+            >
+              <Icon className={cn('h-3.5 w-3.5', iconClass)} />
+              {label}
+            </TabsTrigger>
+          )
+        })}
+      </TabsList>
 
-    {SCOPE_TABS.map((scope) => (
-      <TabsContent key={scope} value={scope} className="mt-0">
-        <PolicyScopeTab scope={scope} />
-      </TabsContent>
-    ))}
-  </Tabs>
-)
+      {SCOPES.map((scope) => (
+        <TabsContent key={scope} value={scope} className="mt-4">
+          <PolicyScopeTab scope={scope} />
+        </TabsContent>
+      ))}
+    </Tabs>
+  )
+}

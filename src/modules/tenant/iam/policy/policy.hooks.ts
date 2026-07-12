@@ -1,15 +1,18 @@
+import { useServerTable } from '@src/hooks/use-server-table'
 import {
   optimisticList,
   usePaginatedQuery,
 } from '@src/modules/shared/hooks/helpers'
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { ColumnDef } from '@tanstack/react-table'
 import type { AccessScope } from '../roles/role.types'
 import {
   addPolicyStatementFn,
   createPolicyFn,
   deletePolicyFn,
   fetchPoliciesFn,
+  fetchPoliciesServerTableFn,
   fetchPolicyByIdFn,
   removePolicyStatementFn,
   updatePolicyFn,
@@ -70,6 +73,29 @@ const policy = {
         policyKeys.scopedList(activeTenantId, scope),
         (params) => fetchPoliciesFn(activeTenantId, scope, params),
       )
+    },
+  },
+
+  fetchServerTable: {
+    useQuery: (scope: AccessScope, columns: ColumnDef<PolicyResponse>[]) => {
+      const { activeTenantId } = useTenantResource()
+      const scopePrefix = scope.toLowerCase()
+      return useServerTable<PolicyResponse>({
+        queryKey: policyKeys.scopedList(activeTenantId, scope),
+        columns,
+        enableAdvancedFilter: true,
+        enableRowSelection: false,
+        initialColumnPinning: { right: ['delete'] },
+        fetchFn: (params) =>
+          fetchPoliciesServerTableFn(activeTenantId, scope, params),
+        queryKeys: {
+          page: `${scopePrefix}_page`,
+          perPage: `${scopePrefix}_perPage`,
+          sort: `${scopePrefix}_sort`,
+          filters: `${scopePrefix}_filters`,
+          joinOperator: `${scopePrefix}_joinOperator`,
+        },
+      })
     },
   },
 
