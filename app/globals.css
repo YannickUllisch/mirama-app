@@ -303,6 +303,7 @@
 }
 
 @layer base {
+  @import "@xyflow/react/dist/style.css";
   * {
     @apply border-border;
   }
@@ -360,4 +361,15 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.dark .react-flow__controls-button {
+  background: hsl(var(--card));
+  border-bottom-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark .react-flow__controls-button:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
