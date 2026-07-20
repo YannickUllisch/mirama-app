@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(management)/members/_components/MembersContent.tsx
 'use client'
 
 import apiRequest from '@hooks'
@@ -10,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Building2, FolderKanban, ShieldCheck } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
-import type { OrgMemberRow } from './OrgMembersColumns'
 import { useOrgMemberColumns } from './OrgMembersColumns'
 import type { ProjectMemberRow } from './ProjectMembersColumns'
 import { useProjectMemberColumns } from './ProjectMembersColumns'
@@ -19,27 +17,22 @@ const MembersContent = () => {
   const { can } = usePermissions()
   const canUpdateMember = can('member', 'update')
 
-  const { data: members = [], isLoading: membersLoading } =
+  const { items: members, isLoading: membersLoading } =
     apiRequest.members.fetchAll.useQuery()
   const { data: roles = [] } =
     apiRequest.role.fetchAllByScopeForOrganization.useQuery(
       AccessScope.Organization,
     )
-  const { data: projects = [] } = apiRequest.project.fetchAll.useQuery()
+  const { items: projects } = apiRequest.project.fetchAll.useQuery()
   const { mutate: updateMember } = apiRequest.members.update.useMutation()
 
-  const orgRoles = roles.filter((r) => r.scope === 'ORGANIZATION')
+  const orgRoles = roles
 
   const handleOrgRoleChange = useCallback(
     (memberId: string, iamRoleId: string) => {
       updateMember({ memberId, data: { iamRoleId } })
     },
     [updateMember],
-  )
-
-  const orgRows: OrgMemberRow[] = useMemo(
-    () => members.map((m) => ({ ...m })),
-    [members],
   )
 
   const projectsWithMembers = useMemo(
@@ -50,12 +43,12 @@ const MembersContent = () => {
           id: p.id,
           name: p.name,
           members: p.members.map((pm) => {
-            const orgMember = members.find((m) => m.id === pm.id)
+            const orgMember = members.find((m) => m.id === pm.memberId)
             return {
-              id: pm.id,
+              id: pm.memberId,
               member: {
-                name: orgMember?.name ?? pm.name,
-                email: orgMember?.email ?? pm.email,
+                name: orgMember?.name,
+                email: orgMember?.email,
               },
             }
           }),
@@ -68,8 +61,8 @@ const MembersContent = () => {
       projectsWithMembers.flatMap((p, projectIdx) =>
         p.members.map((pm) => ({
           id: `${p.id}::${pm.id}`,
-          memberName: pm.member.name,
-          memberEmail: pm.member.email,
+          memberName: pm.member.name ?? '',
+          memberEmail: pm.member.email ?? '',
           projectName: p.name,
           projectId: p.id,
           projectColorIndex: projectIdx,
@@ -94,7 +87,6 @@ const MembersContent = () => {
   return (
     <div className="px-6 md:px-10 py-10">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-8 items-start">
-        {/* Left: tabbed member tables */}
         <div className="min-w-0">
           <Tabs defaultValue="organization">
             <TabsList className="mb-5">
@@ -134,7 +126,7 @@ const MembersContent = () => {
               <DataTable
                 tableIdentifier="members-org"
                 columns={orgColumns}
-                data={orgRows}
+                data={members}
                 dataLoading={membersLoading}
                 ignoreSubrows
                 footerOptions={{ showPagination: true }}

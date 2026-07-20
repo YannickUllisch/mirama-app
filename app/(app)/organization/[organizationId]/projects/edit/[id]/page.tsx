@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/projects/edit/[id]/page.tsx
 'use client'
 import EditProjectForm from '@src/modules/pm/projects/components/EditProjectForm'
 import { use } from 'react'

@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(management)/teams/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Users2 } from 'lucide-react'
 import { Suspense } from 'react'

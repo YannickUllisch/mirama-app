@@ -1,8 +1,9 @@
-// app/(app)/organization/[organizationId]/(management)/teams/_components/CreateTeamDialog.tsx
 'use client'
-import { CreateTeamSchema } from '@/server/modules/account/teams/features/create-team/schema'
-import type { CreateTeamRequest } from '@/server/modules/account/teams/features/create-team/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  type CreateTeamCommand,
+  CreateTeamSchema,
+} from '@src/modules/tenant/organization/teams/teams.types'
 import { Button } from '@ui/button'
 import {
   Dialog,
@@ -25,7 +26,7 @@ import { useForm } from 'react-hook-form'
 type CreateTeamDialogProps = {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: CreateTeamRequest) => void
+  onSubmit: (data: CreateTeamCommand) => void
   isPending: boolean
 }
 
@@ -35,7 +36,7 @@ const CreateTeamDialog = ({
   onSubmit,
   isPending,
 }: CreateTeamDialogProps) => {
-  const form = useForm<CreateTeamRequest>({
+  const form = useForm<CreateTeamCommand>({
     resolver: zodResolver(CreateTeamSchema),
     defaultValues: { name: '' },
   })

@@ -1,40 +1,35 @@
-// app/(app)/organization/[organizationId]/(management)/members/_components/MembersPageSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const MembersPageSkeleton = () => (
   <div className="px-6 md:px-10 py-10">
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-8 items-start">
-      {/* Left: tabs + table */}
       <div className="space-y-5">
-        {/* Tab switcher */}
         <div className="flex gap-1">
           <Skeleton className="h-9 w-36 rounded-md" />
           <Skeleton className="h-9 w-32 rounded-md" />
         </div>
 
-        {/* DataTable shell */}
         <div className="rounded-xl border border-border/50 overflow-hidden">
-          {/* Brand stripe */}
           <div className="flex h-0.5 w-full">
             <div className="flex-1 bg-signature-coral/40" />
             <div className="flex-1 bg-signature-forest/40" />
             <div className="flex-1 bg-signature-mint/40" />
             <div className="flex-1 bg-signature-mustard/40" />
           </div>
-          {/* Toolbar */}
+
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50">
             <Skeleton className="h-8 w-56 rounded-md" />
             <Skeleton className="h-8 w-8 rounded-md ml-auto" />
             <Skeleton className="h-8 w-8 rounded-md" />
           </div>
-          {/* Header row */}
+
           <div className="flex items-center gap-4 px-4 py-2.5 border-b border-border/60 bg-muted/40">
             <Skeleton className="h-3 w-2 rounded-full" />
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-3 w-32 ml-8" />
             <Skeleton className="h-3 w-16 ml-auto" />
           </div>
-          {/* Data rows */}
+
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -59,7 +54,7 @@ const MembersPageSkeleton = () => (
               <Skeleton className="h-7 w-40 rounded-md" />
             </div>
           ))}
-          {/* Pagination */}
+
           <div className="flex items-center justify-between px-4 py-3 border-t border-border/50">
             <Skeleton className="h-4 w-24" />
             <div className="flex gap-1">
@@ -71,7 +66,6 @@ const MembersPageSkeleton = () => (
         </div>
       </div>
 
-      {/* Right: roles panel */}
       <div className="rounded-lg overflow-hidden border border-border">
         <div className="h-12 bg-surface-dark/20" />
         {Array.from({ length: 4 }).map((_, i) => (

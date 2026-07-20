@@ -1,15 +1,12 @@
-// app/(app)/organization/[organizationId]/projects/_components/ProjectsTableSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const ProjectsTableSkeleton = () => (
   <div className="space-y-4">
-    {/* Toolbar */}
     <div className="flex items-center justify-between">
       <Skeleton className="h-9 w-64 rounded-md" />
       <Skeleton className="h-9 w-24 rounded-md" />
     </div>
 
-    {/* Table header */}
     <div className="rounded-xl border border-border overflow-hidden">
       <div className="flex items-center gap-4 bg-muted/40 px-4 py-3 border-b border-border">
         {Array.from({ length: 8 }).map((_, i) => (
@@ -17,7 +14,6 @@ const ProjectsTableSkeleton = () => (
         ))}
       </div>
 
-      {/* Table rows */}
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
@@ -30,7 +26,6 @@ const ProjectsTableSkeleton = () => (
       ))}
     </div>
 
-    {/* Pagination */}
     <div className="flex items-center justify-between">
       <Skeleton className="h-4 w-32" />
       <div className="flex gap-2">

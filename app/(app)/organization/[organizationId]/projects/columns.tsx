@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/projects/columns.tsx
 'use client'
 
 import HoverLink from '@src/components/HoverLink'
@@ -10,8 +9,6 @@ import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import '@src/components/Tables/Filters/column-filter-meta'
 import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
-
-export type ProjectTableRow = ProjectResponse & { id: string }
 import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
@@ -33,7 +30,7 @@ const ActionsCell = ({
   organizationId,
   archiveMutation,
 }: {
-  row: ProjectTableRow
+  row: ProjectResponse
   canUpdate: boolean
   canDelete: boolean
   organizationId: string
@@ -49,7 +46,7 @@ const ActionsCell = ({
       <DropdownMenuContent>
         {canUpdate && (
           <HoverLink
-            href={`/organization/${organizationId}/projects/edit/${row.projectId}`}
+            href={`/organization/${organizationId}/projects/edit/${row.id}`}
           >
             <DropdownMenuItem className="gap-2">
               <PenSquareIcon className="w-3.5 h-3.5" />
@@ -59,7 +56,7 @@ const ActionsCell = ({
         )}
         {canDelete && !row.isArchived && (
           <DropdownMenuItem
-            onClick={() => archiveMutation(row.projectId)}
+            onClick={() => archiveMutation(row.id)}
             className="gap-2"
           >
             <Archive className="w-3.5 h-3.5" />
@@ -71,13 +68,13 @@ const ActionsCell = ({
   )
 }
 
-const columnHelper = createColumnHelper<ProjectTableRow>()
+const columnHelper = createColumnHelper<ProjectResponse>()
 
 export const useProjectColumns = ({
   handleFieldUpdate,
   archiveMutation,
 }: {
-  handleFieldUpdate: HandleFieldUpdate<ProjectTableRow>
+  handleFieldUpdate: HandleFieldUpdate<ProjectResponse>
   archiveMutation: UseMutateFunction<void, Error, string, unknown>
 }) => {
   const { can } = usePermissions()

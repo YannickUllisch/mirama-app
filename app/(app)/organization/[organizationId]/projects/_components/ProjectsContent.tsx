@@ -5,6 +5,7 @@ import apiRequest from '@hooks'
 import { DataTable } from '@src/components/Tables/DataTable'
 import { getDaysRemaining } from '@src/modules/pm/projects/projects.helpers'
 import {
+  type ProjectResponse,
   type UpdateProjectCommand,
   UpdateProjectCommandSchema,
 } from '@src/modules/pm/projects/projects.types'
@@ -13,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import type { LucideIcon } from 'lucide-react'
 import { Archive, Clock, Euro, Folders } from 'lucide-react'
 import { toast } from 'sonner'
-import { type ProjectTableRow, useProjectColumns } from '../columns'
+import { useProjectColumns } from '../columns'
 import { useArchivedProjectsColumns } from './ArchivedProjectsColumns'
 
 const StatCard = ({
@@ -54,22 +55,16 @@ const ProjectsContent = () => {
   const { mutate: projectMutation } = apiRequest.project.update.useMutation()
   const { mutate: archiveMutation } = apiRequest.project.archive.useMutation()
 
-  const toRow = (p: (typeof projects)[number]): ProjectTableRow => ({
-    ...p,
-    id: p.projectId,
-  })
-
-  const activeList = projects.filter((p) => !p.isArchived).map(toRow)
-  const archivedList = projects.filter((p) => p.isArchived).map(toRow)
+  const activeList = projects.filter((p) => !p.isArchived)
+  const archivedList = projects.filter((p) => p.isArchived)
 
   const { handleFieldUpdate } = useEditableColumns<
-    ProjectTableRow,
+    ProjectResponse,
     UpdateProjectCommand,
     { id: string; data: UpdateProjectCommand }
   >({
     mutate: projectMutation,
     updateSchema: UpdateProjectCommandSchema,
-    getKey: (data) => data.projectId,
     mapToUpdateInput: (data) => ({
       name: data.name,
       description: data.description ?? null,

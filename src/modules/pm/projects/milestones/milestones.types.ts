@@ -2,7 +2,7 @@
 import { z } from 'zod'
 
 export const ProjectMilestoneResponseSchema = z.object({
-  milestoneId: z.uuid(),
+  id: z.uuid(),
   title: z.string(),
   description: z.string().nullable().optional(),
   dueDate: z.string(),

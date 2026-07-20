@@ -1,7 +1,7 @@
-// app/(app)/organization/[organizationId]/(management)/teams/_components/AddTeamMemberDialog.tsx
 'use client'
-import type { MemberResponse } from '@/server/modules/account/members/features/response'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import { Button } from '@ui/button'
 import {
   Dialog,

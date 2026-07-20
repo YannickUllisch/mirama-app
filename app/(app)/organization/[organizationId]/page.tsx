@@ -76,9 +76,7 @@ const Dashboard = () => {
 
       <main className="flex-1 px-8 py-6 overflow-y-auto">
         <div className="grid grid-cols-12 gap-8 max-w-400 mx-auto">
-          {/* Left Content: Stats & Projects */}
           <div className="col-span-12 lg:col-span-8 space-y-10">
-            {/* Quick Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <MetricCard
                 label="Active Projects"
@@ -99,7 +97,6 @@ const Dashboard = () => {
               />
             </div>
 
-            {/* Project Section */}
             <section className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold tracking-tight">
@@ -116,14 +113,12 @@ const Dashboard = () => {
               <ProjectGrid projects={projects} loading={isProjectsLoading} />
             </section>
 
-            {/* Timeline Section */}
             <section className="space-y-4">
               <h2 className="text-lg font-semibold tracking-tight">Schedule</h2>
               <TimelineCard projects={projects} loading={isProjectsLoading} />
             </section>
           </div>
 
-          {/* Right Content: Tasks Sidebar */}
           <div className="col-span-12 lg:col-span-4">
             <MinimalistTasksWidget
               tasks={tasks || []}

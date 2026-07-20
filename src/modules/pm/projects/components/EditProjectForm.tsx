@@ -1,4 +1,3 @@
-// src/modules/pm/projects/components/EditProjectForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -35,12 +34,8 @@ import {
   SelectValue,
 } from '@src/components/ui/select'
 import { Textarea } from '@src/components/ui/textarea'
-import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
-import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
-import { UpdateProjectCommandSchema } from '../projects.types'
-import type { UpdateProjectCommand } from '../projects.types'
-import { Badge } from '@ui/badge'
+import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import Centering from '@ui/centering'
 import { ColorPicker } from '@ui/color-picker'
 import {
@@ -67,6 +62,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { FormProvider, type Resolver, useForm } from 'react-hook-form'
 import type { z } from 'zod'
+import type { UpdateProjectCommand } from '../projects.types'
+import { UpdateProjectCommandSchema } from '../projects.types'
 
 type EditFormValues = z.infer<typeof UpdateProjectCommandSchema>
 
@@ -76,7 +73,7 @@ interface EditProjectFormProps {
 
 const EditProjectForm = ({ projectId }: EditProjectFormProps) => {
   const router = useRouter()
-  const { activeOrganizationId } = useOrganizationResource()
+
   const { can } = usePermissions()
 
   const canUpdate = can('project', 'update')
@@ -486,7 +483,7 @@ const EditProjectForm = ({ projectId }: EditProjectFormProps) => {
                           <div className="space-y-3">
                             {currentMilestones.map((m) => (
                               <div
-                                key={m.milestoneId}
+                                key={m.id}
                                 className="flex items-center justify-between p-3 bg-accent text-accent-foreground rounded-md"
                               >
                                 <div className="flex items-center gap-3">
@@ -508,7 +505,7 @@ const EditProjectForm = ({ projectId }: EditProjectFormProps) => {
                                   onClick={() =>
                                     deleteMilestoneMutation({
                                       projectId,
-                                      milestoneId: m.milestoneId,
+                                      milestoneId: m.id,
                                     })
                                   }
                                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
@@ -796,7 +793,7 @@ const EditProjectForm = ({ projectId }: EditProjectFormProps) => {
                           )
                           return (
                             <div
-                              key={pm.projectMemberId}
+                              key={pm.id}
                               className="flex items-center justify-between p-2.5 bg-accent rounded-md"
                             >
                               <div className="flex items-center gap-2.5 flex-1 text-accent-foreground">

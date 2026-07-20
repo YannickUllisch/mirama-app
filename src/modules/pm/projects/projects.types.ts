@@ -10,7 +10,7 @@ import {
 } from './milestones/milestones.types'
 
 export const ProjectResponseSchema = z.object({
-  projectId: z.uuid(),
+  id: z.uuid(),
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),

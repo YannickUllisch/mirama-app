@@ -1,19 +1,11 @@
-// app/(app)/organization/[organizationId]/(management)/teams/_components/TeamMemberColumns.tsx
 'use client'
 
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import { Button } from '@ui/button'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import { createColumnHelper } from '@tanstack/react-table'
+import { Button } from '@ui/button'
 import { X } from 'lucide-react'
 import { useMemo } from 'react'
-
-export type TeamMemberRow = {
-  id: string
-  memberId: string
-  name: string
-  email: string
-  subtasks?: TeamMemberRow[]
-}
 
 const ROW_COLORS = [
   'bg-signature-coral',
@@ -24,7 +16,7 @@ const ROW_COLORS = [
   'bg-signature-mustard',
 ] as const
 
-const columnHelper = createColumnHelper<TeamMemberRow>()
+const columnHelper = createColumnHelper<MemberResponse>()
 
 export const useTeamMemberColumns = ({
   canUpdate,
@@ -78,7 +70,7 @@ export const useTeamMemberColumns = ({
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                  onClick={() => onRemove(row.original.memberId)}
+                  onClick={() => onRemove(row.original.id)}
                 >
                   <X className="w-3.5 h-3.5" />
                 </Button>

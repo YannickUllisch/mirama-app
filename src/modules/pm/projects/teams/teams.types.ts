@@ -2,7 +2,7 @@
 import { z } from 'zod'
 
 export const ProjectTeamResponseSchema = z.object({
-  projectTeamId: z.uuid(),
+  id: z.uuid(),
   teamId: z.uuid(),
   name: z.string(),
   slug: z.string(),

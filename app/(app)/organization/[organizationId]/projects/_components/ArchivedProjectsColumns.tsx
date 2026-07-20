@@ -3,7 +3,7 @@
 
 import HoverLink from '@src/components/HoverLink'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
-import type { ProjectTableRow } from '../columns'
+import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -17,13 +17,13 @@ import { Ellipsis, PenSquareIcon } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useMemo, useState } from 'react'
 
-const columnHelper = createColumnHelper<ProjectTableRow>()
+const columnHelper = createColumnHelper<ProjectResponse>()
 
 const ArchivedActionsCell = ({
   row,
   organizationId,
 }: {
-  row: ProjectTableRow
+  row: ProjectResponse
   organizationId: string
 }) => {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -35,7 +35,7 @@ const ArchivedActionsCell = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <HoverLink
-          href={`/organization/${organizationId}/projects/edit/${row.projectId}`}
+          href={`/organization/${organizationId}/projects/edit/${row.id}`}
         >
           <DropdownMenuItem className="gap-2">
             <PenSquareIcon className="w-3.5 h-3.5" />

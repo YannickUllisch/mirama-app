@@ -69,8 +69,8 @@ import {
   useForm,
 } from 'react-hook-form'
 import {
-  CreateProjectCommandSchema,
   type CreateProjectCommand,
+  CreateProjectCommandSchema,
 } from '../projects.types'
 
 const CreateProjectForm = () => {
@@ -168,7 +168,7 @@ const CreateProjectForm = () => {
     createProject(values, {
       onSuccess: (data) => {
         router.push(
-          `/organization/${activeOrganizationId}/projects/edit/${data.projectId}`,
+          `/organization/${activeOrganizationId}/projects/edit/${data.id}`,
         )
       },
     })

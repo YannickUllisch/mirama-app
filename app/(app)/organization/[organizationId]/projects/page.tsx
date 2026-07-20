@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/projects/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Folders } from 'lucide-react'
 import { Suspense } from 'react'

@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(management)/members/_components/ProjectMembersColumns.tsx
 'use client'
 
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
@@ -14,7 +13,6 @@ export type ProjectMemberRow = {
   projectName: string
   projectId: string
   projectColorIndex: number
-  subtasks?: ProjectMemberRow[]
 }
 
 const PROJECT_COLORS = [

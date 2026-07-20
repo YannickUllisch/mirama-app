@@ -50,14 +50,9 @@ export const usePermissions = () => {
       action: ActionFor<R>,
     ): boolean => {
       const target = `${resource}:${action}`
-      const targetResource = `${resource}/*`
 
       for (const grant of grantSet) {
-        const [gAction, gResource] = grant.split('::')
-        if (
-          matchPattern(gAction, target) &&
-          matchPattern(gResource, targetResource)
-        ) {
+        if (matchPattern(grant, target)) {
           return true
         }
       }

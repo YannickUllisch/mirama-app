@@ -2,7 +2,7 @@
 import { z } from 'zod'
 
 export const ProjectMemberResponseSchema = z.object({
-  projectMemberId: z.uuid(),
+  id: z.uuid(),
   memberId: z.uuid(),
   roleId: z.uuid(),
   isInherited: z.boolean(),

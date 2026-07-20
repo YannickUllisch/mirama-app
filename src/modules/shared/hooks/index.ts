@@ -1,4 +1,5 @@
 import projectMembers from '@src/modules/pm/projects/members/members.hooks'
+import projectWorkflow from '@src/modules/pm/projects/workflow/workflow.hooks'
 import projectMilestones from '@src/modules/pm/projects/milestones/milestones.hooks'
 import project from '@src/modules/pm/projects/projects.hooks'
 import projectTeams from '@src/modules/pm/projects/teams/teams.hooks'
@@ -17,6 +18,7 @@ import tenant from '@src/modules/tenant/tenant/tenant.hooks'
 const apiRequest = {
   project,
   projectMembers,
+  projectWorkflow,
   projectTeams,
   projectMilestones,
   team,

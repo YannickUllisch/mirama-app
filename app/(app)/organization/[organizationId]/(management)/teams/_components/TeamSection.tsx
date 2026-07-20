@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(management)/teams/_components/TeamSection.tsx
 'use client'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
@@ -14,9 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
 import { Ellipsis, Trash2, UserPlus, Users2 } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import AddTeamMemberDialog from './AddTeamMemberDialog'
-import type { TeamMemberRow } from './TeamMemberColumns'
 import { useTeamMemberColumns } from './TeamMemberColumns'
 
 const TEAM_COLORS = [
@@ -104,12 +102,6 @@ const TeamSection = ({
     (memberId: string) => setMemberToRemove(memberId),
     [],
   )
-
-  const memberRows: TeamMemberRow[] = useMemo(
-    () => members.map((m) => ({ ...m })),
-    [members],
-  )
-
   const columns = useTeamMemberColumns({
     canUpdate,
     onRemove: handleRemove,
@@ -124,8 +116,8 @@ const TeamSection = ({
           <Users2 className={`w-4 h-4 ${color.muted} shrink-0`} />
           <span className="truncate">{team.name}</span>
           <span className={`text-xs font-normal ${color.muted} ml-1`}>
-            {membersLoading ? team.memberCount : members.length}{' '}
-            {(membersLoading ? team.memberCount : members.length) === 1
+            {membersLoading ? team.memberIds.length : members.length}{' '}
+            {(membersLoading ? team.memberIds.length : members.length) === 1
               ? 'member'
               : 'members'}
           </span>
@@ -173,7 +165,7 @@ const TeamSection = ({
         <DataTable
           tableIdentifier={`team-members-${team.id}`}
           columns={columns}
-          data={memberRows}
+          data={members}
           dataLoading={membersLoading}
           ignoreSubrows
           footerOptions={{ showPagination: false }}

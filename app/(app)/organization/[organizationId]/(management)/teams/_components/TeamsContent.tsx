@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(management)/teams/_components/TeamsContent.tsx
 'use client'
 import apiRequest from '@hooks'
 import { ConfirmationDialogWithOpenState } from '@src/components/Dialogs/ConfirmationDialogWithOpenState'
@@ -19,8 +18,8 @@ const TeamsContent = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [teamToDelete, setTeamToDelete] = useState<string | null>(null)
 
-  const { data: teams = [], isLoading } = apiRequest.team.fetchAll.useQuery()
-  const { data: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
+  const { items: teams = [], isLoading } = apiRequest.team.fetchAll.useQuery()
+  const { items: orgMembers = [] } = apiRequest.members.fetchAll.useQuery()
 
   const { mutate: createTeam, isPending: isCreating } =
     apiRequest.team.create.useMutation()

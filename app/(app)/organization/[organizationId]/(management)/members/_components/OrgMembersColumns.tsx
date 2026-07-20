@@ -16,8 +16,6 @@ import {
 import { ShieldCheck } from 'lucide-react'
 import { useMemo } from 'react'
 
-export type OrgMemberRow = MemberResponse & { subtasks?: OrgMemberRow[] }
-
 const ROW_COLORS = [
   'bg-signature-coral',
   'bg-signature-forest',
@@ -27,7 +25,7 @@ const ROW_COLORS = [
   'bg-signature-mustard',
 ] as const
 
-const columnHelper = createColumnHelper<OrgMemberRow>()
+const columnHelper = createColumnHelper<MemberResponse>()
 
 export const useOrgMemberColumns = ({
   roles,

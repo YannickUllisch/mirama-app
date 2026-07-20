@@ -286,7 +286,7 @@ const ProjectForm = (props: ProjectFormProps) => {
         {
           onSuccess: (data) => {
             router.push(
-              `/organization/${activeOrganizationId}/projects/edit/${data.projectId}`,
+              `/organization/${activeOrganizationId}/projects/edit/${data.id}`,
             )
           },
         },
@@ -621,7 +621,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                             {isEdit
                               ? displayMilestones?.map((m) => (
                                   <div
-                                    key={m.milestoneId}
+                                    key={m.id}
                                     className="flex items-center justify-between p-3 bg-accent text-accent-foreground rounded-md"
                                   >
                                     <div className="flex items-center gap-3">
@@ -646,7 +646,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                                         projectId &&
                                         deleteMilestoneMutation({
                                           projectId,
-                                          milestoneId: m.milestoneId,
+                                          milestoneId: m.id,
                                         })
                                       }
                                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
@@ -1022,7 +1022,7 @@ const ProjectForm = (props: ProjectFormProps) => {
                             if (!member) return null
                             return (
                               <div
-                                key={pm.projectMemberId}
+                                key={pm.id}
                                 className="flex items-center justify-between p-2.5 bg-accent rounded-md"
                               >
                                 <div className="flex items-center gap-2.5 flex-1 text-accent-foreground">

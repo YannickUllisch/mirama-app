@@ -15,8 +15,10 @@ export const fetchRolesFn = async (
   tenantId: string,
   accessScope: AccessScope,
 ): Promise<RoleResponse[]> => {
-  const { data } = await api.get(`tenant/${tenantId}/roles/${accessScope}`)
-  return data
+  const { data } = await api.get<PaginatedResponse<RoleResponse>>(
+    `tenant/${tenantId}/roles/${accessScope}`,
+  )
+  return data.items
 }
 
 export const fetchRolesWithPoliciesFn = async (
