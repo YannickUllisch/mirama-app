@@ -11,7 +11,7 @@ const PoliciesPage = () => (
       icon={FileText}
       description="Manage access policies by scope"
     />
-    <div className="flex-1 px-6 md:px-10 py-6 space-y-5">
+    <div className="flex-1 px-10 md:px-16 pb-10 space-y-5">
       <IamPageNav />
       <PoliciesManager />
     </div>

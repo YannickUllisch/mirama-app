@@ -17,8 +17,10 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
   return (
     <div
       className={cn(
-        'group relative rounded-xl overflow-hidden bg-surface-dark',
-        'transition-all duration-200 hover:-translate-y-1 hover:shadow-xl',
+        'group relative rounded-xl overflow-hidden',
+        'border border-hairline bg-canvas flex flex-col',
+        'transition-all duration-200',
+        'hover:-translate-y-0.5 hover:border-ink/20 hover:shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)]',
       )}
     >
       <button
@@ -28,40 +30,39 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
         aria-label={`Open ${org.name}`}
       />
 
-      <div className="relative z-10 p-5 flex flex-col gap-5">
-        <div className="flex items-start justify-between gap-2">
-          <div className="w-11 h-11 rounded-xl bg-lava flex items-center justify-center text-sm font-bold text-white shrink-0">
-            {initial}
-          </div>
-
-          <div className="flex items-center gap-1 pointer-events-auto">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-white hover:bg-white/10"
-              onClick={(e) => {
-                e.stopPropagation()
-                onEdit(org)
-              }}
-              aria-label={`Edit ${org.name}`}
-            >
-              <Pencil className="w-3.5 h-3.5" />
-            </Button>
-
-            <ArrowUpRight className="w-4 h-4 shrink-0 text-white/20 transition-all duration-200 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </div>
+      {/* Visual zone */}
+      <div className="relative bg-surface-soft border-b border-hairline px-6 py-8 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-medium bg-lava text-white">
+          {initial}
         </div>
+        <div className="absolute top-2.5 right-2.5 z-10 pointer-events-auto">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-body-text hover:text-ink hover:bg-surface-medium"
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit(org)
+            }}
+            aria-label={`Edit ${org.name}`}
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </div>
 
-        <div className="flex-1">
-          <p className="text-sm font-medium text-white leading-snug truncate">
+      {/* Content zone */}
+      <div className="relative z-10 px-5 py-4 flex flex-col gap-3 flex-1">
+        <div>
+          <p className="text-[15px] font-medium text-ink leading-tight truncate">
             {org.name}
           </p>
-          <p className="text-xs font-mono mt-0.5 text-white/40 truncate">
+          <p className="text-xs font-mono mt-0.5 text-body-text truncate">
             {org.slug}
           </p>
         </div>
 
-        <div className="flex items-center gap-4 pt-4 border-t border-white/10 text-xs text-white/35">
+        <div className="flex items-center gap-4 text-xs text-body-text">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" />
             {org.memberCount} {org.memberCount === 1 ? 'member' : 'members'}
@@ -70,6 +71,11 @@ const OrganizationCard = ({ org, onEnter, onEdit }: OrganizationCardProps) => {
             <FolderOpen className="w-3.5 h-3.5" />
             {org.projectCount} {org.projectCount === 1 ? 'project' : 'projects'}
           </span>
+        </div>
+
+        <div className="pt-3 border-t border-hairline flex items-center justify-between">
+          <span className="text-sm font-medium text-ink">Enter workspace</span>
+          <ArrowUpRight className="w-4 h-4 text-ink/25 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ink" />
         </div>
       </div>
     </div>

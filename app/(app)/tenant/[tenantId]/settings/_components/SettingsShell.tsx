@@ -63,7 +63,7 @@ const SettingsShell = ({ children }: { children: React.ReactNode }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col flex-1"
         >
-          <div className="flex gap-8 px-6 md:px-10 py-8 pb-20">
+          <div className="flex gap-8 px-10 md:px-16 pb-20 pt-2">
             <InnerSidebar items={navItems} />
             <div className="flex-1 min-w-0 space-y-4">{children}</div>
           </div>

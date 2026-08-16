@@ -67,16 +67,16 @@
   --radius-pill: 9999px;
   --radius-full: 9999px;
 
-  --color-canvas: #ffffff;
-  --color-ink: #1b3139;
-  --color-body-text: #303f47;
-  --color-hairline: #dce0e2;
-  --color-border-strong: #5a6f77;
-  --color-surface-soft: #f9f7f4;
-  --color-surface-medium: #eeede9;
-  --color-surface-strong: #eeede9;
-  --color-surface-dark: #1b3139;
-  --color-surface-dark-elevated: #143d4a;
+  --color-canvas: hsl(var(--canvas));
+  --color-ink: hsl(var(--ink));
+  --color-body-text: hsl(var(--body-text));
+  --color-hairline: hsl(var(--hairline));
+  --color-border-strong: hsl(var(--border-strong));
+  --color-surface-soft: hsl(var(--surface-soft));
+  --color-surface-medium: hsl(var(--surface-medium));
+  --color-surface-strong: hsl(var(--surface-strong));
+  --color-surface-dark: hsl(var(--surface-dark));
+  --color-surface-dark-elevated: hsl(var(--surface-dark-elevated));
   --color-on-primary: #ffffff;
   --color-on-dark: #ffffff;
   --color-lava: #ff3621;
@@ -217,55 +217,80 @@
     --sidebar-accent-foreground: 196 36% 16%;
     --sidebar-border: 200 3% 87%;
     --sidebar-ring: 6 100% 56%;
+    --sidebar-width: 17.5rem;
+
+    /* Design system tokens (light) */
+    --canvas: 0 0% 100%;
+    --ink: 196 36% 16%;
+    --body-text: 201 17% 23%;
+    --hairline: 200 3% 87%;
+    --border-strong: 201 17% 46%;
+    --surface-soft: 36 30% 97%;
+    --surface-medium: 45 10% 92%;
+    --surface-strong: 45 10% 92%;
+    --surface-dark: 196 36% 16%;
+    --surface-dark-elevated: 196 40% 18%;
 
     --chart-1: 6 100% 56%;
     --chart-2: 207 68% 42%;
   }
 
   .dark {
-    --background: 193 55% 10%;
-    --foreground: 36 30% 97%;
-    --card: 196 36% 16%;
-    --card-foreground: 36 30% 97%;
-    --popover: 194 34% 18%;
-    --popover-foreground: 36 30% 97%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 97%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 97%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 97%;
 
     --primary: 6 100% 56%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 8 100% 64%;
     --primary-dark: 2 67% 45%;
 
-    --secondary: 194 34% 18%;
-    --secondary-foreground: 36 30% 97%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 97%;
 
     --tertiary: 207 72% 57%;
 
-    --muted: 196 36% 16%;
-    --muted-foreground: 202 18% 63%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 63%;
 
-    --accent: 194 34% 18%;
-    --accent-foreground: 36 30% 97%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 97%;
 
     --destructive: 349 81% 33%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 196 30% 22%;
-    --input: 196 30% 22%;
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
     --ring: 6 100% 56%;
 
-    --text: 36 30% 97%;
-    --text-inverted: 196 36% 16%;
-    --text-secondary: 202 18% 63%;
-    --hover: 194 34% 20%;
+    --text: 0 0% 97%;
+    --text-inverted: 0 0% 10%;
+    --text-secondary: 0 0% 63%;
+    --hover: 0 0% 16%;
 
-    --sidebar-background: 194 34% 18%;
-    --sidebar-foreground: 36 30% 97%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 97%;
     --sidebar-primary: 6 100% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 196 36% 16%;
-    --sidebar-accent-foreground: 36 30% 97%;
-    --sidebar-border: 196 30% 22%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 0 0% 20%;
     --sidebar-ring: 6 100% 56%;
+
+    /* Design system tokens (dark) */
+    --canvas: 0 0% 10%;
+    --ink: 0 0% 97%;
+    --body-text: 0 0% 68%;
+    --hairline: 0 0% 20%;
+    --border-strong: 0 0% 40%;
+    --surface-soft: 0 0% 8%;
+    --surface-medium: 0 0% 14%;
+    --surface-strong: 0 0% 18%;
+    --surface-dark: 0 0% 6%;
+    --surface-dark-elevated: 0 0% 9%;
 
     --chart-1: 6 100% 56%;
     --chart-2: 207 72% 57%;

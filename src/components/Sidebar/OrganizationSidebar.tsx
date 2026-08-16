@@ -41,13 +41,13 @@ const OrganizationSidebar = ({
 
   return (
     <AppSidebar
-      className={cn('portal-accent-forest', className)}
+      className={cn(className)}
       tenantId={tenantId}
       organizationId={organizationId}
-      headerSlot={
-        <SidebarNewButton organizationId={session?.user.organizationId} />
-      }
     >
+      <div className="px-3 pt-2 pb-1 group-data-[state=collapsed]:hidden">
+        <SidebarNewButton organizationId={session?.user.organizationId} />
+      </div>
       <SidebarMainNav items={localizedMenu} />
       <SidebarSeparator />
       {projectsSlot}

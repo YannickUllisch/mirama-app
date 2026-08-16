@@ -50,20 +50,20 @@ const PortalChooserInner = ({
   const firstName = userName.split(' ')[0]
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="bg-surface-dark px-6 md:px-10 h-14 flex items-center justify-between shrink-0">
-        <span className="text-xl font-black tracking-tight text-white">
-          MIRAMA<span className="text-white/40">.</span>
+    <div className="min-h-screen bg-canvas flex flex-col">
+      {/* Header — white canvas, hairline border */}
+      <header className="bg-canvas border-b border-hairline h-12 px-8 flex items-center justify-between shrink-0">
+        <span className="text-[15px] font-black tracking-tight text-ink">
+          MIRAMA<span className="text-ink/20">.</span>
         </span>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-white/50 hidden sm:block">
+          <span className="text-sm text-body-text hidden sm:block">
             {userName}
           </span>
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
-            className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors px-2 py-1.5 rounded-md hover:bg-white/10"
+            className="inline-flex items-center gap-1.5 text-sm text-body-text hover:text-ink transition-colors px-2 py-1.5 rounded-md hover:bg-surface-soft"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign out
@@ -71,22 +71,24 @@ const PortalChooserInner = ({
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-6 md:px-10 py-14">
-        {/* Greeting */}
-        <div className="mb-12">
-          <p className="text-xs font-medium text-muted-foreground mb-1.5">
+      {/* Main canvas */}
+      <main className="flex-1 w-full max-w-5xl mx-auto px-6 md:px-10 py-16">
+        {/* Hero */}
+        <div className="mb-14 text-center">
+          <p className="text-[11px] font-medium tracking-[0.6px] uppercase text-body-text mb-2">
             {getGreeting()}
           </p>
-          <h1 className="text-3xl font-medium text-foreground">{firstName}.</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <h1 className="text-[32px] font-[450] text-ink leading-tight">
+            {firstName}.
+          </h1>
+          <p className="text-sm text-body-text mt-2">
             Select an organization to continue.
           </p>
         </div>
 
-        {/* Organization portals - primary focus */}
-        <section className="mb-14">
-          <p className="text-xs font-medium text-muted-foreground mb-4">
+        {/* Organizations */}
+        <section className="mb-12">
+          <p className="text-[11px] font-medium tracking-[0.6px] uppercase text-body-text mb-4">
             Your organizations
           </p>
 
@@ -95,19 +97,19 @@ const PortalChooserInner = ({
               {Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton
                   key={`portal-skel-${i}`}
-                  className="h-42 rounded-xl"
+                  className="h-52 rounded-xl"
                 />
               ))}
             </div>
           ) : !organizations?.length ? (
-            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-border/50 rounded-xl text-center">
-              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mb-3">
-                <Building2 className="w-5 h-5 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center py-14 border border-dashed border-hairline rounded-xl text-center bg-surface-soft">
+              <div className="w-10 h-10 rounded-lg bg-surface-medium flex items-center justify-center mb-3">
+                <Building2 className="w-5 h-5 text-body-text" />
               </div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-sm font-medium text-ink">
                 No organizations yet
               </p>
-              <p className="text-xs text-muted-foreground mt-1 mb-4">
+              <p className="text-xs text-body-text mt-1 mb-4">
                 Create your first organization in the tenant portal.
               </p>
               <Button variant="outline" size="sm" onClick={handleEnterTenant}>
@@ -128,9 +130,9 @@ const PortalChooserInner = ({
           )}
         </section>
 
-        {/* Tenant portal - secondary, de-emphasized */}
+        {/* Workspace settings */}
         <section>
-          <p className="text-xs font-medium text-muted-foreground mb-4">
+          <p className="text-[11px] font-medium tracking-[0.6px] uppercase text-body-text mb-4">
             Workspace settings
           </p>
           <div className="max-w-xs">
@@ -144,10 +146,12 @@ const PortalChooserInner = ({
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-surface-dark px-6 md:px-10 py-5 flex items-center justify-between">
-        <p className="text-xs text-white/40">Mirama Management Platform</p>
-        <p className="text-xs text-white/25">© {new Date().getFullYear()}</p>
+      {/* Footer — minimal, white canvas, hairline top */}
+      <footer className="bg-canvas border-t border-hairline px-8 py-4 flex items-center justify-between">
+        <p className="text-xs text-body-text">Mirama Management Platform</p>
+        <p className="text-xs text-body-text/50">
+          © {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   )

@@ -18,7 +18,7 @@ const BillingPage = () => {
         description="Subscription & usage"
       />
 
-      <div className="flex-1 px-6 md:px-10 py-8 space-y-4">
+      <div className="flex-1 px-10 md:px-16 pb-10 space-y-6">
         <Suspense fallback={<SubscriptionSectionSkeleton />}>
           <SubscriptionSection />
         </Suspense>
@@ -28,14 +28,14 @@ const BillingPage = () => {
         </Suspense>
 
         {/* Plans CTA */}
-        <div className="rounded-lg border border-hairline bg-surface-soft p-5 flex items-center justify-between gap-4">
+        <div className="rounded-xl border border-hairline bg-canvas p-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-dark">
               <LayoutGrid className="w-4 h-4 text-white" />
             </div>
             <div>
               <p className="text-sm font-medium text-ink">Plans & pricing</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-body-text mt-0.5">
                 Compare all available plans and features
               </p>
             </div>

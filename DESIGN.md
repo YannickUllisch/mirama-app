@@ -195,17 +195,20 @@ components:
     padding: "{spacing.xs} {spacing.sm}"
     height: 40px
   org-portal-card:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.on-secondary}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.xl}"
-    hover: "-translate-y-1 shadow-xl"
-  secondary-portal-card:
-    backgroundColor: "{colors.canvas-medium}"
+    backgroundColor: "{colors.canvas}"
+    borderColor: "{colors.hairline}"
     textColor: "{colors.ink}"
     rounded: "{rounded.xl}"
-    padding: "{spacing.xl}"
-    hover: "-translate-y-1 shadow-xl"
+    visualZoneBackground: "{colors.canvas-soft}"
+    initialChipBackground: "{colors.primary}"
+    hover: "-translate-y-0.5 border-ink/20 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)]"
+  secondary-portal-card:
+    backgroundColor: "{colors.canvas}"
+    borderColor: "{colors.hairline}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.xl}"
+    iconChipBackground: "{colors.secondary}"
+    hover: "-translate-y-0.5 border-ink/20 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)]"
   settings-card:
     backgroundColor: "{colors.canvas}"
     headerBackgroundColor: "{colors.secondary}"
@@ -239,11 +242,14 @@ components:
     typography: "{typography.display-md}"
     padding: "{spacing.section} {spacing.xl}"
   portal-page:
-    headerBackgroundColor: "{colors.secondary}"
-    headerTextColor: "{colors.on-secondary}"
+    headerBackgroundColor: "{colors.canvas}"
+    headerBorderColor: "{colors.hairline}"
+    headerHeight: 48px
+    headerTextColor: "{colors.ink}"
     canvasBackgroundColor: "{colors.canvas}"
-    footerBackgroundColor: "{colors.secondary}"
-    footerTextColor: "{colors.canvas-soft}"
+    footerBackgroundColor: "{colors.canvas}"
+    footerBorderColor: "{colors.hairline}"
+    footerTextColor: "{colors.body}"
   sticky-save-bar:
     backgroundColor: "{colors.secondary}"
     textColor: "{colors.on-secondary}"
@@ -422,7 +428,7 @@ The system runs **DM Sans** for all UI text - display, body, buttons, labels, ey
 ### Principles
 - Weight 400 for display sizes - a 40px heading is intentionally not bold. Emphasis comes from size, color contrast, and surface depth.
 - Weight 500 for sub-titles, buttons, card titles, and page header labels. The minimum "assertive" weight in the system.
-- Weight 600 only on legal and system surfaces. Never use 700+ anywhere in the app.
+- Weight 600 for app page display titles (`h1` on dashboard and content pages). Never use 700+ anywhere in the app.
 - DM Sans for everything a user reads. Inter only for data values in tables and numeric readouts.
 - Sentence-case for all labels, headings, and buttons. Never uppercase at display or title size.
 - Eyebrow labels (`{typography.eyebrow}`) use 0.6px tracking - the system's only positive-tracked style.
@@ -432,12 +438,14 @@ The system runs **DM Sans** for all UI text - display, body, buttons, labels, ey
 ### Spacing System
 - **Base unit:** 4px. All spacing snaps to 4px multiples.
 - **Tokens:** `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.2xl}` 48px · `{spacing.3xl}` 64px · `{spacing.section}` 96px.
-- **App pages:** `px-6 md:px-10` horizontal, `py-14` vertical for main content areas.
+- **App pages (with sidebar):** `px-10 md:px-16` horizontal, `py-10` vertical. Generous breathing room — ~64px side padding at desktop. No max-width centering; content stretches within the sidebar inset.
+- **Portal / standalone full-page:** `px-6 md:px-10` horizontal, `py-16` vertical, `max-w-5xl mx-auto` centered.
 - **Card internal padding:** `p-6` standard; `px-6 py-4` for Navy header bands inside settings cards.
-- **Section rhythm:** Navy bookend → White canvas content → card clusters → White canvas → Navy bookend. The dark→light→dark alternation is the page's structural heartbeat.
+- **App page background:** `bg-surface-soft` (Oat Light `#F9F7F4`). White canvas cards float on the oat surface — color contrast replaces shadow as depth signal.
+- **Section rhythm (app pages):** Oat Light page bg → white canvas cards/panels. No dark bookends inside the app shell.
 
 ### Grid and Container
-- **Max content width:** `max-w-5xl` (80rem) centered for portal, settings, and form pages. `max-w-7xl` for full-width data tables and asset galleries.
+- **Max content width:** `max-w-5xl` (80rem) centered for portal chooser, settings, and form pages. `max-w-7xl` for full-width data tables and asset galleries. App dashboard pages use no max-width — padding alone governs the side margins.
 - **Card grids:** `grid-cols-3` at desktop for org portal cards; `grid-cols-4` for secondary portal cards. Collapses to `grid-cols-2` at tablet, `grid-cols-1` at mobile.
 - **Settings sections:** single-column, full-width cards stacked with `space-y-4`.
 - **Task boards:** horizontal scroll at `grid-cols-[repeat(auto-fill,minmax(280px,1fr))]`.
@@ -452,7 +460,7 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 | Flat | No shadow, no border | Navy surface bands - color provides depth |
 | Hairline | 1px `{colors.hairline}` border | Inputs, table dividers, secondary button outlines |
 | Soft card | `shadow-sm` + `border border-border/50` | White cards on a white page |
-| Hover card | `shadow-lg` + `-translate-y-1` | Org portal cards, secondary portal cards on hover |
+| Hover card | `-translate-y-0.5` + `shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)]` + `border-ink/20` | Org portal cards, secondary portal cards on hover — diffuse, not heavy |
 | Sticky bar | Navy 800, no shadow | Fixed save bars - Navy surface provides contrast against White canvas above |
 
 **Depth philosophy:** Color-block first, shadow second. Navy surface cards carry depth through color contrast alone - add no shadow to Navy cards. White-on-white cards use `shadow-sm` + `border`. On hover, white cards lift with `-translate-y-1 shadow-lg`. Navy cards lift with `-translate-y-1 shadow-xl`.
@@ -475,9 +483,9 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 
 ### Page Structure
 
-**`page-header`** - 64px bar pinned to the top of every app page (inside the sidebar inset). Icon + title + optional description. Uses `border-b border-border/50`. Title is `{typography.label-md}` - no uppercase, no heavy weight. Children slot on the right for action buttons.
+**`page-header`** - Display title block at the top of every app page (inside the sidebar inset). Padding `px-10 md:px-16 pt-8 pb-5`. Icon (18×18, `text-body-text`) + title (`text-[22px] font-semibold text-ink`) in a row; description (`text-sm text-body-text`) on the line below, indented `ml-7` to align with title text. Children slot on the right for action buttons. No bottom border — oat-soft page background provides separation.
 
-**`portal-page`** - Full-page chooser layout. Navy 800 header (64px) with white Mirama wordmark + sign-out. White canvas content area with `max-w-5xl` centered. Navy 800 footer. This dark→white→dark bookend rhythm is mandatory for all standalone full-page surfaces: auth, org portal, client portal, onboarding.
+**`portal-page`** - Full-page chooser layout. White canvas header (48px) with hairline bottom border, ink Mirama wordmark, ghost sign-out. White canvas content area with `max-w-5xl` centered. White canvas footer with hairline top border. No colored bookends — full white surface with hairline structure, consistent with professional SaaS dashboards (Cloudflare, Linear, Vercel). Auth and onboarding pages may use Navy bookends; the portal chooser does not.
 
 **`sticky-save-bar`** - Fixed Navy 800 bar at the bottom of all multi-field form pages. `sticky bottom-0`, escapes parent padding with negative margin. Left: status indicator (pulsing dot + message) - Lava 600 dot when dirty, Green 600 dot when saved. Right: white bg / Navy text secondary action. Never put a save button floating inside a form's scroll content.
 
@@ -495,9 +503,9 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 
 ### Cards and Containers
 
-**`org-portal-card`** - Navy 800 full-surface card in the org portal chooser. `{rounded.xl}` (16px). No border, no shadow - color provides depth. Hover: `-translate-y-1 shadow-xl`. Contains: initial letter chip (Lava 600 bg, white text), org name (`{typography.label-md}` white), slug (mono, Oat Light/60), footer divider with member and project counts. All org cards use Navy 800 - consistency over cycling.
+**`org-portal-card`** - White canvas card with hairline border in the org portal chooser. `{rounded.xl}` (16px). Split into two zones: top visual zone (`canvas-soft` bg, centered Lava 600 initial chip) and bottom content zone (org name, slug, member/project counts, "Enter workspace →" divider row). Hover: `-translate-y-0.5`, border shifts to `ink/20`, diffuse shadow `0 2px 12px -2px rgba(0,0,0,0.06)` — no harsh lift. All org cards use this consistent white treatment.
 
-**`secondary-portal-card`** - Oat Medium full-surface card for non-org portals (client portal, billing, settings shortcuts). `{rounded.xl}`. Same hover behavior. Contains: icon chip (Navy 800 bg, white icon), label (Navy 800 text), description (Gray Text), arrow (available) or lock + Soon badge (coming soon). Differentiated from Navy org cards by Oat Medium surface.
+**`secondary-portal-card`** - White canvas card with hairline border for non-org portals (tenant portal, billing, settings shortcuts). `{rounded.xl}`. Horizontal layout: Navy 800 icon chip + label/description + arrow. Same hover behavior as org-portal-card. No accent color on the card surface.
 
 **`settings-card`** - White canvas card with Navy 800 full-bleed header band. Parent card: `overflow-hidden {rounded.lg}`. `CardHeader`: Navy 800 bg, Oat Light text, `px-6 py-4`, `{typography.title-sm}`. `CardContent`: white, `pt-5`. All settings section cards use Navy 800 header - consistent structural identity across the platform.
 
@@ -571,29 +579,29 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 ## Do's and Don'ts
 
 ### Do
-- **Use Navy 800 as the structural anchor** for all dark surfaces - bookend headers and footers, app sidebar dark mode, sticky save bars, settings card headers. Consistent, never varied.
+- **Use Navy 800 as the structural anchor** for auth/onboarding bookends, sticky save bars, icon chips, and `settings-card` header bands. Never as a full app-page surface.
 - **Use Lava 600 as the single vivid pop** - primary CTAs, active indicators, focus rings, notification dots, and accent chips. One per viewport maximum for primary CTAs.
 - **Use Mirama Blue for all structural interactive affordances** - inline links, active tab indicators, annotation markers on asset proofing surfaces, and `button-mirama` constructive secondary actions.
-- Use Oat Light and Oat Medium for soft surfaces - sidebar bg, section bands, hover states, secondary card surfaces.
-- Use Navy 800 bookend header and footer on all standalone full-page surfaces (portal, auth, onboarding). The dark→white→dark rhythm is mandatory.
+- **App pages use `bg-surface-soft`** (Oat Light) as the page canvas. White canvas cards (`bg-canvas` + `border-hairline`) float on top — color contrast provides depth without shadows.
+- **Portal chooser uses white canvas** header and footer with hairline borders. No Navy bookends on the portal chooser page.
+- Use Navy 800 bookend header and footer on **auth and onboarding surfaces only**.
 - Use `sticky-save-bar` on all multi-field form pages. Never leave a floating save button inside the form scroll area.
 - Keep `button-primary` Lava 600. Mirama's primary CTA is Lava - not Navy, not Mirama Blue.
-- Trust whitespace between Navy surface moments. White canvas resets between dark bands are as important as the content itself.
 - Use `overflow-hidden` on any card that has a colored `CardHeader` band so the color clips to the card's border radius.
-- Keep `{rounded.xl}` (16px) for full-surface portal cards. `{rounded.lg}` (12px) for mixed cards (Navy header + white body) and all CTA buttons.
-- Hover on Navy portal cards: `-translate-y-1 shadow-xl`. Hover on white canvas cards: `-translate-y-1 shadow-lg`.
+- Keep `{rounded.xl}` (16px) for portal and content cards. `{rounded.lg}` (12px) for mixed cards (Navy header + white body) and all CTA buttons.
+- Hover on white canvas cards: `-translate-y-0.5 border-ink/20 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)]` — diffuse, not heavy.
 
 ### Don't
 - Don't use Lava as a large background surface. It is a pop color - the CTA, the dot, the chip, the active bar. Never a full card or section band.
 - Don't cycle multiple colors across repeated items. All org portal cards use Navy 800 - no coral, forest, peach, or mint.
 - Don't make Mirama Blue the primary CTA color. It is the structural interactive accent. The primary CTA is always Lava 600.
-- Don't add gradients, mesh backgrounds, or aurora effects to page heroes. White canvas is intentional.
+- Don't add gradients, mesh backgrounds, or aurora effects to page surfaces. Oat-soft and white canvas are intentional.
 - Don't bold display-weight type. `display-xl` and `display-lg` are intentionally 400–500 weight. Emphasis comes from size.
 - Don't add a save button floating inside a form's scroll content. It belongs in the `sticky-save-bar`.
 - Don't use `uppercase` or `tracking-widest` on UI labels, column headers, or card titles. Reserve tracking for `{typography.eyebrow}` only.
 - Don't shadow Navy cards. The Navy surface provides all needed depth. `shadow-sm` only on white-bg cards within a white page.
 - Don't introduce accent colors beyond Lava 600, Navy 800, and Mirama Blue for branding surfaces. The extended palette is for semantic states only.
-- Don't use pure black (`#000000`) anywhere. Navy 800 (`#1B3139`) is the darkest surface and text color in the system.
+- Don't use pure black (`#000000`) anywhere in light mode. Navy 800 (`#1B3139`) is the darkest surface and text color in the light palette.
 
 ## Responsive Behavior
 
@@ -618,11 +626,38 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 - Sticky save bar always spans the full content area width (sidebar excluded) using negative margin to escape parent padding.
 - Asset proof cards collapse to single-column with full-width annotation panel below the preview.
 
+## Dark Mode
+
+Dark mode uses a **pure gray/black palette** — no blue or teal tint. All functional tokens flip via CSS custom properties; brand accent colors (Lava, Mirama Blue) stay unchanged.
+
+### Dark Palette
+
+| Token | Light | Dark | Notes |
+|---|---|---|---|
+| `bg-background` | `#ffffff` | `#121212` (0 0% 7%) | Page background |
+| `bg-canvas` | `#ffffff` | `#1a1a1a` (0 0% 10%) | Card surface |
+| `bg-surface-soft` | `#f9f7f4` | `#141414` (0 0% 8%) | Page canvas, sidebar bg |
+| `bg-surface-medium` | `#eeede9` | `#242424` (0 0% 14%) | Hover surface, chips |
+| `bg-surface-strong` | `#eeede9` | `#2e2e2e` (0 0% 18%) | Elevated surfaces |
+| `bg-surface-dark` | `#1b3139` (navy) | `#0f0f0f` (0 0% 6%) | Darkest surface |
+| `text-ink` | `#1b3139` | `#f7f7f7` (0 0% 97%) | Primary text |
+| `text-body-text` | `#303f47` | `#adadad` (0 0% 68%) | Secondary text |
+| `border-hairline` | `#dce0e2` | `#333` (0 0% 20%) | Borders, dividers |
+| `sidebar-background` | oat light | `#171717` (0 0% 9%) | Sidebar bg |
+| `sidebar-accent` | oat medium | `#242424` (0 0% 14%) | Sidebar hover/active |
+
+### Rules for Dark Mode
+- All grays are **neutral** (saturation 0). No blue, teal, or warm tints.
+- Lava 600 (`#ff3621`) and Mirama Blue (`#0075de`) are unchanged — they read well on dark surfaces.
+- `bg-canvas` in dark is `#1a1a1a` — white cards become dark cards automatically since all cards use `bg-canvas`.
+- Navy-surface components (`settings-card` header bands, `sticky-save-bar`, `surface-dark`) collapse to the darkest gray tier (`0 0% 6%`) rather than staying teal-navy.
+- Hairline borders shift from `#dce0e2` to `#333` — same visual weight, dark-adapted.
+
 ## Iteration Guide
 
 1. Focus on one component at a time. Reference its token key (`org-portal-card`, `settings-card`, `sticky-save-bar`).
-2. Every new page needs a color plan before implementation: identify which sections are Navy bookends, which are White canvas, and where Lava pops appear.
-3. New portal or settings cards use Navy 800 header - no new colors introduced.
+2. Every new page color plan: page bg is `bg-surface-soft`, content cards are `bg-canvas`, Lava pops on CTAs and active indicators only.
+3. New content cards use white canvas + hairline border. Navy 800 card headers only on `settings-card` pattern (explicitly opted in).
 4. New form pages must include `sticky-save-bar`. Never ship a form without it.
 5. New section cards follow the `settings-card` pattern: `overflow-hidden` card, Navy 800 header band, white body.
 6. Mirama Blue (`{colors.mirama}`) is the correct color for any interactive affordance that is not the primary CTA. Links, active tabs, annotation pins, focus outlines.
@@ -635,5 +670,5 @@ Whitespace is the dominant atmospheric tool. Let sections breathe - `{spacing.se
 - The `sticky-save-bar` pattern is implemented for settings pages. Multi-step forms (onboarding, org creation, client intake wizard) should adopt it when built.
 - Asset proofing annotation layer (`ex-asset-proof-card`, Mirama Blue annotation indicators) is designed but not yet implemented - component spec is in place.
 - Components previously using a multi-color cycling pattern (coral, forest, peach, mint, yellow, mustard per org card) need migration to the Navy 800 consistent pattern.
-- Dark mode surface tokens (`secondary-elevated`, `secondary-deep`) are defined but not yet wired into a Tailwind dark-mode variant configuration.
+- Dark mode is implemented. See the **Dark Mode** section above for the palette. The `.dark` class on `<html>` activates it.
 - Logo upload in org settings is currently a placeholder (S3 integration pending). The Dropzone component is in place but the upload handler returns a stub.

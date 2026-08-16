@@ -1,6 +1,6 @@
-import { TenantRole } from '@/prisma/generated/client'
 import type { AppMenuItem } from '@src/types/types'
 import { CreditCardIcon, Home, SettingsIcon, ShieldCheck } from 'lucide-react'
+import { TenantRole } from '@/prisma/generated/client'
 
 export const TenantSidebarMenu: AppMenuItem[] = [
   {
@@ -15,6 +15,7 @@ export const TenantSidebarMenu: AppMenuItem[] = [
     icon: ShieldCheck,
     isCollapsible: true,
     isActive: true,
+    group: 'Access',
     roles: Object.values(TenantRole) as TenantRole[],
     items: [
       {
@@ -34,6 +35,7 @@ export const TenantSidebarMenu: AppMenuItem[] = [
     icon: CreditCardIcon,
     isCollapsible: true,
     isActive: true,
+    group: 'Account',
     roles: Object.values(TenantRole) as TenantRole[],
     items: [
       {
@@ -53,6 +55,7 @@ export const TenantSidebarMenu: AppMenuItem[] = [
     icon: SettingsIcon,
     href: '/tenant/[tenantId]/settings',
     isCollapsible: false,
+    group: 'Account',
     roles: Object.values(TenantRole) as TenantRole[],
   },
 ]

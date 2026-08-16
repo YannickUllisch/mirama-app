@@ -1,8 +1,8 @@
-import type { TaskType } from '@/prisma/generated/client'
 import type { UniqueIdentifier } from '@dnd-kit/core'
 import type { TaskResponse } from '@server/modules/task/features/response'
 import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import type { LucideIcon } from 'lucide-react'
+import type { TaskType } from '@/prisma/generated/client'
 
 // Sidebar Interfaces
 export interface AppMenuItem {
@@ -11,6 +11,7 @@ export interface AppMenuItem {
   isCollapsible: boolean
   isActive?: boolean
   icon: LucideIcon
+  group?: string
   items?: {
     title: string
     href: string

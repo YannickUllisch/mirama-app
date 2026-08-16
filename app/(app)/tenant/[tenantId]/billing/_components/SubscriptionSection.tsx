@@ -3,7 +3,6 @@
 
 import apiRequest from '@hooks'
 import { Badge } from '@ui/badge'
-import { Card, CardContent, CardHeader } from '@ui/card'
 import { AlertTriangle } from 'lucide-react'
 import { fmtDate, fmtPrice, statusStyles } from './billing-helpers'
 
@@ -16,11 +15,11 @@ const SubscriptionSection = () => {
 
   if (!sub) {
     return (
-      <div className="flex items-start gap-3 p-4 rounded-lg border border-warning/30 bg-warning/8">
+      <div className="flex items-start gap-3 p-4 rounded-xl border border-warning/30 bg-warning/5">
         <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-medium text-ink">No active subscription</p>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm text-body-text mt-0.5">
             Your tenant is running on default limits. Choose a plan to get
             started.
           </p>
@@ -56,30 +55,26 @@ const SubscriptionSection = () => {
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-hairline rounded-xl border border-hairline overflow-hidden bg-canvas">
       {stats.map((stat) => (
-        <Card key={stat.label} className="overflow-hidden">
-          <CardHeader className="px-4 py-2.5 bg-surface-dark">
-            <p className="text-xs font-medium text-white/60">{stat.label}</p>
-          </CardHeader>
-          <CardContent className="px-4 py-3.5">
-            {stat.badge ? (
-              <Badge
-                variant="outline"
-                className={`gap-1 text-[11px] ${stat.badge.className}`}
-              >
-                {stat.badge.label}
-              </Badge>
-            ) : (
-              <p className="text-xl font-medium text-ink">{stat.value}</p>
-            )}
-            {stat.sub && (
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                {stat.sub}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <div key={stat.label} className="px-5 py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.5px] text-body-text mb-2">
+            {stat.label}
+          </p>
+          {stat.badge ? (
+            <Badge
+              variant="outline"
+              className={`gap-1 text-[11px] ${stat.badge.className}`}
+            >
+              {stat.badge.label}
+            </Badge>
+          ) : (
+            <p className="text-xl font-medium text-ink">{stat.value}</p>
+          )}
+          {stat.sub && (
+            <p className="text-[11px] text-body-text mt-0.5">{stat.sub}</p>
+          )}
+        </div>
       ))}
     </div>
   )

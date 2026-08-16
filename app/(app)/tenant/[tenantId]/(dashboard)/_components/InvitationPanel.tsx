@@ -16,12 +16,12 @@ import {
 import { DateTime } from 'luxon'
 
 const _InvitationPanelSkeleton = () => (
-  <div className="rounded-xl border border-border bg-card overflow-hidden">
-    <div className="px-5 py-3.5 border-b border-border flex items-center gap-2.5">
+  <div className="rounded-xl border border-hairline bg-canvas overflow-hidden">
+    <div className="px-5 py-3.5 border-b border-hairline flex items-center gap-2.5">
       <Skeleton className="h-2.5 w-2.5 rounded-full" />
       <Skeleton className="h-4 w-36" />
     </div>
-    <div className="divide-y divide-border">
+    <div className="divide-y divide-hairline">
       {[1, 2].map((i) => (
         <div
           key={i}
@@ -57,20 +57,20 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
   return (
     <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div className="flex items-center gap-3 min-w-0">
-        <div className="h-9 w-9 rounded-lg bg-muted/60 border border-border flex items-center justify-center shrink-0">
-          <Building2 className="h-4 w-4 text-muted-foreground" />
+        <div className="h-9 w-9 rounded-lg bg-surface-soft border border-hairline flex items-center justify-center shrink-0">
+          <Building2 className="h-4 w-4 text-body-text" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium text-foreground truncate">
+          <p className="text-sm font-medium text-ink truncate">
             {invitation.organizationName}
           </p>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1 text-xs text-body-text">
               <Mail className="h-3 w-3 shrink-0" />
               {invitation.email}
             </span>
             {invitation.iamRoleId && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1 text-xs text-body-text">
                 <ShieldCheck className="h-3 w-3 shrink-0" />
                 {invitation.iamRoleId}
               </span>
@@ -80,8 +80,8 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
                 isExpired
                   ? 'text-destructive'
                   : isExpiringSoon
-                    ? 'text-[#FFAB00]'
-                    : 'text-muted-foreground'
+                    ? 'text-warning'
+                    : 'text-body-text'
               }`}
             >
               <Clock className="h-3 w-3 shrink-0" />
@@ -102,7 +102,7 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
             size="sm"
             disabled={isPending}
             onClick={() => decline.mutate(invitation.id)}
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+            className="text-body-text hover:text-destructive hover:bg-destructive/5"
           >
             <XCircle className="h-3.5 w-3.5" />
             Decline
@@ -120,9 +120,7 @@ const InvitationRow = ({ invitation }: { invitation: InvitationResponse }) => {
       )}
 
       {isExpired && (
-        <span className="text-xs text-muted-foreground/60 shrink-0">
-          Expired
-        </span>
+        <span className="text-xs text-body-text/50 shrink-0">Expired</span>
       )}
     </div>
   )
@@ -142,28 +140,26 @@ const InvitationPanel = () => {
   if (activeInvitations.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-lava/20 bg-card overflow-hidden">
-      <div className="px-5 py-3 border-b border-lava/15 bg-lava/5 flex items-center justify-between">
+    <div className="rounded-xl border border-hairline bg-canvas overflow-hidden">
+      <div className="px-5 py-3 border-b border-hairline bg-surface-soft flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lava opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-lava" />
           </span>
-          <h2 className="text-sm font-medium text-foreground">
-            Pending invitations
-          </h2>
+          <h2 className="text-sm font-medium text-ink">Pending invitations</h2>
           <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-lava text-white text-[10px] font-semibold tabular-nums">
             {activeInvitations.length}
           </span>
         </div>
-        <p className="text-xs text-muted-foreground hidden sm:block">
+        <p className="text-xs text-body-text hidden sm:block">
           You've been invited to{' '}
           {activeInvitations.length === 1
             ? 'an organization'
             : `${activeInvitations.length} organizations`}
         </p>
       </div>
-      <div className="divide-y divide-border">
+      <div className="divide-y divide-hairline">
         {activeInvitations.map((inv) => (
           <InvitationRow key={inv.id} invitation={inv} />
         ))}

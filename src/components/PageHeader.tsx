@@ -1,3 +1,4 @@
+// src/components/PageHeader.tsx
 import { cn } from '@src/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 import type React from 'react'
@@ -18,25 +19,26 @@ const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   return (
-    <header className={cn('border-b border-border/50', className)}>
-      <div className="flex items-center justify-between px-6 h-16 w-full">
-        <div className="flex items-center gap-3 min-w-0 overflow-hidden">
-          <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
-          <h1 className="text-base font-medium text-foreground truncate">
-            {title}
-          </h1>
+    <div className={cn('px-10 md:px-16 pt-8 pb-5', className)}>
+      <div className="flex items-start justify-between gap-6">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <Icon className="w-[18px] h-[18px] text-body-text shrink-0" />
+            <h1 className="text-[22px] font-semibold text-ink leading-tight">
+              {title}
+            </h1>
+          </div>
           {description && (
-            <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <span className="h-3.5 w-px bg-border" />
-              <span className="text-sm text-muted-foreground">
-                {description}
-              </span>
-            </div>
+            <p className="text-sm text-body-text mt-1 ml-7">{description}</p>
           )}
         </div>
-        <div className="flex items-center gap-3 shrink-0">{children}</div>
+        {children && (
+          <div className="flex items-center gap-3 shrink-0 mt-0.5">
+            {children}
+          </div>
+        )}
       </div>
-    </header>
+    </div>
   )
 }
 

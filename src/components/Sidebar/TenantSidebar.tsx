@@ -1,6 +1,5 @@
 // src/components/Sidebar/TenantSidebar.tsx
 'use client'
-import { cn } from '@src/lib/utils'
 import { TenantSidebarMenu } from '@src/modules/tenant/tenant/tenantSidebarMenu'
 import type { AppMenuItem } from '@src/types/types'
 import AppSidebar from './AppSidebar'
@@ -28,10 +27,7 @@ const TenantSidebar = ({ tenantId, className }: TenantSidebarProps) => {
   const localizedMenu = buildTenantMenu(tenantId)
 
   return (
-    <AppSidebar
-      tenantId={tenantId}
-      className={cn('portal-accent-coral', className)}
-    >
+    <AppSidebar tenantId={tenantId} className={className}>
       <SidebarMainNav items={localizedMenu} />
     </AppSidebar>
   )
