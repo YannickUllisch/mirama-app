@@ -1,12 +1,14 @@
 // app/(app)/organization/[organizationId]/(pm)/layout.tsx
 import { auth } from '@auth'
-import AppHeader from '@src/components/Header/AppHeader'
-import OrganizationSidebar from '@src/components/Sidebar/OrganizationSidebar'
-import SidebarProjectsServer from '@src/components/Sidebar/SidebarProjectsServer'
+import { SidebarInset } from '@src/components/animate-ui/components/radix/sidebar'
 import SidebarProjectsSkeleton from '@src/components/Skeletons/SidebarProjectsSkeleton'
-import { SidebarInset, SidebarProvider } from '@src/components/ui/sidebar'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
+import PmClientsServer from './_components/PmClientsServer'
+import PmCollapsedHeader from './_components/PmCollapsedHeader'
+import PmMobileHeader from './_components/PmMobileHeader'
+import PmSidebar from './_components/PmSidebar'
+import PmSidebarProvider from './_components/PmSidebarProvider'
 
 const ShellLayout = async ({
   children,
@@ -23,27 +25,23 @@ const ShellLayout = async ({
   }
 
   return (
-    <SidebarProvider className="h-screen overflow-hidden">
-      <OrganizationSidebar
-        tenantId={session.user.tenantId}
+    <PmSidebarProvider>
+      <PmSidebar
         organizationId={organizationId}
-        className="shrink-0"
-        projectsSlot={
+        clientsSlot={
           <Suspense fallback={<SidebarProjectsSkeleton />}>
-            <SidebarProjectsServer
-              organizationId={organizationId}
-              tenantId={session.user.tenantId}
-            />
+            <PmClientsServer organizationId={organizationId} />
           </Suspense>
         }
       />
       <SidebarInset className="overflow-hidden">
-        <AppHeader />
+        <PmMobileHeader />
+        <PmCollapsedHeader />
         <main className="flex-1 overflow-y-auto bg-card rounded-l-lg">
           <div className="p-5 min-h-full">{children}</div>
         </main>
       </SidebarInset>
-    </SidebarProvider>
+    </PmSidebarProvider>
   )
 }
 

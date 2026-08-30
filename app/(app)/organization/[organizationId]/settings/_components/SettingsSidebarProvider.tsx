@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MIN_WIDTH = 220
 const MAX_WIDTH = 420
-const DEFAULT_WIDTH = 256
+const DEFAULT_WIDTH = 224
 
 interface SettingsSidebarProviderProps {
   children: React.ReactNode
@@ -68,7 +68,7 @@ const SettingsSidebarProvider = ({
         aria-label="Resize settings navigation"
         onMouseDown={startResizing}
         style={{ left: 'var(--sidebar-width)' }}
-        className="fixed inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none md:block"
+        className="fixed inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none lg:block"
       >
         <span
           className={cn(

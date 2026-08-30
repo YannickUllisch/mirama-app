@@ -25,7 +25,7 @@ import { useIsMobile } from '@src/hooks/use-mobile'
 import { getStrictContext } from '@src/lib/get-strict-context'
 import { cn } from '@src/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { PanelLeftIcon } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import type { Transition } from 'motion/react'
 import { Slot } from 'radix-ui'
 import * as React from 'react'
@@ -157,6 +157,11 @@ type SidebarProps = React.ComponentProps<'div'> & {
   containerClassName?: string
   animateOnHover?: boolean
   transition?: Transition
+  // CSS length reserved at the top of the collapsed-state hover-peek
+  // overlay (and its hover strip), so a fixed header living above the
+  // sidebar - e.g. a reopen trigger - stays visible and clickable
+  // instead of being covered by the floating panel.
+  peekTopOffset?: string
 }
 
 function Sidebar({
@@ -168,9 +173,52 @@ function Sidebar({
   animateOnHover = true,
   containerClassName,
   transition = { type: 'spring', stiffness: 350, damping: 35 },
+  peekTopOffset,
   ...props
 }: SidebarProps) {
   const { state, openMobile, setOpenMobile } = useSidebar()
+
+  // Lets a fully-collapsed (offcanvas) sidebar peek open as a floating
+  // overlay on hover, without touching the persisted open/collapsed state.
+  const [peek, setPeek] = React.useState(false)
+  const peekCloseTimeoutRef = React.useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null)
+  // The mouse commonly ends up right at the left edge right when the
+  // sidebar is dragged shut, so hover-peek is muted for a moment after
+  // any transition into the collapsed state - otherwise the overlay pops
+  // open immediately and, since the cursor never re-enters, never closes.
+  const suppressPeekUntilRef = React.useRef(0)
+  const canPeek = collapsible === 'offcanvas' && state === 'collapsed'
+
+  const clearPeekCloseTimeout = React.useCallback(() => {
+    if (peekCloseTimeoutRef.current) {
+      clearTimeout(peekCloseTimeoutRef.current)
+      peekCloseTimeoutRef.current = null
+    }
+  }, [])
+
+  const openPeek = React.useCallback(() => {
+    if (!canPeek) return
+    if (Date.now() < suppressPeekUntilRef.current) return
+    clearPeekCloseTimeout()
+    setPeek(true)
+  }, [canPeek, clearPeekCloseTimeout])
+
+  const scheduleClosePeek = React.useCallback(() => {
+    clearPeekCloseTimeout()
+    peekCloseTimeoutRef.current = setTimeout(() => setPeek(false), 150)
+  }, [clearPeekCloseTimeout])
+
+  React.useEffect(() => {
+    if (!canPeek) {
+      setPeek(false)
+      return
+    }
+    suppressPeekUntilRef.current = Date.now() + 500
+  }, [canPeek])
+
+  React.useEffect(() => clearPeekCloseTimeout, [clearPeekCloseTimeout])
 
   if (collapsible === 'none') {
     return (
@@ -231,6 +279,16 @@ function Sidebar({
         </SheetContent>
       </Sheet>
 
+      {canPeek && (
+        <div
+          aria-hidden
+          onMouseEnter={openPeek}
+          onMouseLeave={scheduleClosePeek}
+          style={peekTopOffset ? { top: peekTopOffset } : undefined}
+          className="fixed inset-y-0 left-0 z-30 hidden w-2.5 lg:block"
+        />
+      )}
+
       <div
         className="group peer text-sidebar-foreground block"
         data-state={state}
@@ -246,26 +304,47 @@ function Sidebar({
           data-slot="sidebar-gap"
           className={cn(
             'relative w-0 bg-transparent transition-[width] duration-400 ease-[cubic-bezier(0.7,-0.15,0.25,1.15)]',
-            'md:w-(--sidebar-width)',
-            'md:group-data-[collapsible=offcanvas]:w-0',
+            'lg:w-(--sidebar-width)',
+            'lg:group-data-[collapsible=offcanvas]:w-0',
             'group-data-[side=right]:rotate-180',
             variant === 'floating' || variant === 'inset'
-              ? 'md:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
-              : 'md:group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
+              ? 'lg:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
+              : 'lg:group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
           )}
         />
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: hover affordance for the collapsed-sidebar peek preview; all real controls inside remain independently keyboard-reachable */}
         <div
           data-slot="sidebar-container"
+          data-peek={peek ? 'true' : undefined}
+          onMouseEnter={canPeek ? openPeek : undefined}
+          onMouseLeave={canPeek ? scheduleClosePeek : undefined}
+          style={
+            // Keyed on canPeek (the collapsed state), not on peek (the
+            // hover flag): this way the vertical offset is already
+            // settled before/after any hover-driven slide, so opening
+            // and closing the peek preview only ever moves left/opacity
+            // - no diagonal y-axis motion mixed into the fade.
+            canPeek && peekTopOffset
+              ? {
+                  top: peekTopOffset,
+                  height: `calc(100svh - ${peekTopOffset})`,
+                }
+              : undefined
+          }
           className={cn(
-            'fixed inset-y-0 z-10 flex h-svh w-(--sidebar-width) opacity-0 transition-[left,right,width,opacity] duration-400 ease-[cubic-bezier(0.75,0,0.25,1)]',
-            'md:opacity-100 md:group-data-[collapsible=offcanvas]:opacity-0',
+            'fixed inset-y-0 z-10 flex h-svh w-(--sidebar-width) opacity-0 transition-[left,right,top,height,width,opacity] duration-400 ease-[cubic-bezier(0.75,0,0.25,1)]',
+            'lg:opacity-100 lg:group-data-[collapsible=offcanvas]:opacity-0',
             side === 'left'
-              ? '-left-(--sidebar-width) md:left-0 md:group-data-[collapsible=offcanvas]:-left-(--sidebar-width)'
-              : '-right-(--sidebar-width) md:right-0 md:group-data-[collapsible=offcanvas]:-right-(--sidebar-width)',
+              ? '-left-(--sidebar-width) lg:left-0 lg:group-data-[collapsible=offcanvas]:-left-(--sidebar-width)'
+              : '-right-(--sidebar-width) lg:right-0 lg:group-data-[collapsible=offcanvas]:-right-(--sidebar-width)',
             // Adjust the padding for floating and inset variants.
             variant === 'floating' || variant === 'inset'
-              ? 'p-2 md:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-              : 'md:group-data-[collapsible=icon]:w-(--sidebar-width-icon) md:group-data-[side=left]:border-r md:group-data-[side=right]:border-l',
+              ? 'p-2 lg:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
+              : 'lg:group-data-[collapsible=icon]:w-(--sidebar-width-icon) lg:group-data-[side=left]:border-r lg:group-data-[side=right]:border-l',
+            peek &&
+              (side === 'left'
+                ? 'shadow-2xl lg:left-0! lg:opacity-100! z-30!'
+                : 'shadow-2xl lg:right-0! lg:opacity-100! z-30!'),
             className,
           )}
           {...props}
@@ -296,7 +375,7 @@ function Sidebar({
 type SidebarTriggerProps = React.ComponentProps<typeof Button>
 
 function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
 
   return (
     <Button
@@ -311,7 +390,12 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps) {
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <Menu
+        className={cn(
+          'size-3.75 transition-transform',
+          state === 'collapsed' && 'rotate-180',
+        )}
+      />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -352,7 +436,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps) {
       data-slot="sidebar-inset"
       className={cn(
         'bg-background relative flex w-full flex-1 flex-col',
-        'md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        'lg:peer-data-[variant=inset]:m-2 lg:peer-data-[variant=inset]:ml-0 lg:peer-data-[variant=inset]:rounded-xl lg:peer-data-[variant=inset]:shadow-sm lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className,
       )}
       {...props}
@@ -484,7 +568,7 @@ function SidebarGroupAction({
       className={cn(
         'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
         // Increases the hit area of the button on mobile.
-        'after:absolute after:-inset-2 md:after:hidden',
+        'after:absolute after:-inset-2 lg:after:hidden',
         'group-data-[collapsible=icon]:hidden',
         className,
       )}
@@ -645,13 +729,13 @@ function SidebarMenuAction({
       className={cn(
         // Increases the hit area of the button on mobile.
         'z-[1] text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
-        'after:absolute after:-inset-2 md:after:hidden',
+        'after:absolute after:-inset-2 lg:after:hidden',
         'peer-data-[size=sm]/menu-button:top-1',
         'peer-data-[size=default]/menu-button:top-1.5',
         'peer-data-[size=lg]/menu-button:top-2.5',
         'group-data-[collapsible=icon]:hidden',
         showOnHover &&
-          'peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0',
+          'peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 lg:opacity-0',
         className,
       )}
       {...props}

@@ -26,7 +26,7 @@ const SettingsLayout = async ({
         <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <SettingsMobileHeader />
           <div className="flex-1 overflow-y-auto bg-surface-soft">
-            <div className="mx-auto px-6 sm:px-10 md:px-16 py-8 md:py-10 max-w-2xl">
+            <div className="mx-auto px-6 sm:px-10 md:px-16 py-8 md:py-10 max-w-4xl">
               {children}
             </div>
           </div>

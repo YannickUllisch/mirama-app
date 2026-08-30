@@ -3,11 +3,18 @@ import type { AppMenuItem } from '@src/types/types'
 import {
   ChartNoAxesColumnIcon,
   Home,
+  Inbox,
   Layers2Icon,
   SquareCheckBigIcon,
 } from 'lucide-react'
 
 export const OrganizationSidebarMenu: AppMenuItem[] = [
+  {
+    title: 'Inbox',
+    icon: Inbox,
+    href: '/organization/[organizationId]/inbox',
+    isCollapsible: false,
+  },
   {
     title: 'Home',
     icon: Home,
