@@ -59,7 +59,7 @@ const SettingsSidebarProvider = ({
 
   return (
     <SidebarProvider
-      className="flex h-screen overflow-hidden"
+      className="flex h-screen overflow-hidden bg-sidebar"
       style={{ '--sidebar-width': `${width}px` } as React.CSSProperties}
     >
       {children}
