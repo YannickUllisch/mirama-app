@@ -1,6 +1,19 @@
 // src/modules/tenant/organization/organization.types.ts
 import { z } from 'zod'
 
+export enum OrganizationRegion {
+  EuropeanUnion = 0,
+  UnitedStates = 1,
+  RestOfWorld = 2,
+}
+
+const hexColorSchema = z
+  .string()
+  .regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)
+  .max(7)
+  .nullable()
+  .optional()
+
 export const OrganizationResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -10,6 +23,10 @@ export const OrganizationResponseSchema = z.object({
   city: z.string(),
   country: z.string(),
   zipCode: z.string(),
+  region: z.string(),
+  regionValue: z.number().int(),
+  primaryColor: z.string().nullable().optional(),
+  accentColor: z.string().nullable().optional(),
   dateCreated: z.coerce.date(),
   tenantId: z.string(),
   memberCount: z.number().int(),
@@ -23,7 +40,10 @@ export const CreateOrganizationSchema = z.object({
   city: z.string().min(1).max(100),
   country: z.string().min(1).max(100),
   zipCode: z.string().min(1).max(20),
+  region: z.nativeEnum(OrganizationRegion),
   logo: z.string().max(500).nullable().optional(),
+  primaryColor: hexColorSchema,
+  accentColor: hexColorSchema,
 })
 export type CreateOrganizationCommand = z.infer<typeof CreateOrganizationSchema>
 
@@ -33,6 +53,9 @@ export const UpdateOrganizationSchema = z.object({
   city: z.string().min(1).max(100),
   country: z.string().min(1).max(100),
   zipCode: z.string().min(1).max(20),
+  region: z.nativeEnum(OrganizationRegion),
   logo: z.string().max(500).nullable().optional(),
+  primaryColor: hexColorSchema,
+  accentColor: hexColorSchema,
 })
 export type UpdateOrganizationCommand = z.infer<typeof UpdateOrganizationSchema>

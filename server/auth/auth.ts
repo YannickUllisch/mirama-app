@@ -7,6 +7,7 @@ import {
   linkUserExternalId,
   setupUser,
 } from './helpers/queries'
+import type { TenantRole } from './types'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -85,6 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub as string
         session.user.name = token.name
         session.user.tenantId = token.tenantId as string
+        session.user.tenantRole = token.tenantRole as TenantRole | undefined
         session.user.organizationId = token.organizationId as string | undefined
         session.user.roleId = token.roleId as string | undefined
         session.user.memberId = token.memberId as string | undefined

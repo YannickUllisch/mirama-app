@@ -1,8 +1,7 @@
-// app/(app)/setup/_components/SetupSlider.tsx
 'use client'
 
-import { Children } from 'react'
 import { motion, type Transition } from 'motion/react'
+import { Children } from 'react'
 
 // Premium, pure x-axis pane transition. Panes are stacked in the same grid
 // cell (not measured/height-animated like animate-ui's TabsContents), so

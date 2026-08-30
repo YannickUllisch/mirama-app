@@ -1,15 +1,17 @@
-// app/(app)/setup/_components/steps/OrganizationStepForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks'
 import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { createInviteFn } from '@src/modules/tenant/organization/invitations/invitations.api'
-import type { CreateOrganizationCommand } from '@src/modules/tenant/organization/organization.types'
+import {
+  type CreateOrganizationCommand,
+  OrganizationRegion,
+} from '@src/modules/tenant/organization/organization.types'
 import {
   type OrganizationSetupCommand,
   OrganizationSetupSchema,
-} from '@src/modules/tenant/setup/setup.types'
+} from '../setup.types'
 import { Button } from '@ui/button'
 import {
   ColorPicker,
@@ -30,13 +32,26 @@ import {
   FormMessage,
 } from '@ui/form'
 import { Input } from '@ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ui/select'
 import { ImageIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { type Control, useForm } from 'react-hook-form'
 import { useSetup } from '../SetupProvider'
 import SetupShell from '../SetupShell'
+
+const REGION_LABELS: Record<OrganizationRegion, string> = {
+  [OrganizationRegion.EuropeanUnion]: 'European Union',
+  [OrganizationRegion.UnitedStates]: 'United States',
+  [OrganizationRegion.RestOfWorld]: 'Rest of world',
+}
 
 const ColorSwatchField = ({
   control,
@@ -88,9 +103,7 @@ const OrganizationStepForm = () => {
 
   const { mutate: createOrganization } =
     apiRequest.organization.create.useMutation()
-  const { mutate: updateTenantSettings } =
-    apiRequest.tenant.update.useMutation()
-  const { data: tenantSettings } = apiRequest.tenant.fetch.useQuery()
+
   const { data: roles } = apiRequest.role.fetchAllByScope.useQuery(
     AccessScope.Organization,
   )
@@ -118,29 +131,18 @@ const OrganizationStepForm = () => {
 
     const orgPayload: CreateOrganizationCommand = {
       name: data.name,
-      // Address isn't collected during setup anymore - filled in later via org settings.
       street: '-',
       city: '-',
       country: '-',
       zipCode: '-',
+      region: data.region,
       logo: data.logo,
+      primaryColor: data.primaryColor,
+      accentColor: data.secondaryColor,
     }
 
     createOrganization(orgPayload, {
       onSuccess: async (org) => {
-        if (tenantSettings) {
-          updateTenantSettings({
-            name: tenantSettings.settings.name,
-            timezone: tenantSettings.settings.timezone,
-            receiveNotifications: tenantSettings.settings.receiveNotifications,
-            logoUrl: tenantSettings.settings.logoUrl,
-            brandingColor: data.primaryColor ?? null,
-          })
-        }
-
-        // secondaryColor has no backend home yet - kept in local draft only,
-        // ready to send once the API grows a field for it.
-
         const memberRole =
           roles?.find((role) => role.name.toLowerCase().includes('member')) ??
           roles?.[0]
@@ -181,6 +183,36 @@ const OrganizationStepForm = () => {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="Acme Inc." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="region"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Region</FormLabel>
+              <FormControl>
+                <Select
+                  value={String(field.value)}
+                  onValueChange={(value) =>
+                    field.onChange(Number(value) as OrganizationRegion)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a region..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(REGION_LABELS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

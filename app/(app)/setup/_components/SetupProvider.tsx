@@ -1,11 +1,12 @@
 // app/(app)/setup/_components/SetupProvider.tsx
 'use client'
 
+import { OrganizationRegion } from '@src/modules/tenant/organization/organization.types'
 import type {
   InviteSetupCommand,
   OrganizationSetupCommand,
   ProfileSetupCommand,
-} from '@src/modules/tenant/setup/setup.types'
+} from './setup.types'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { SETUP_STEPS } from './steps'
 
@@ -53,6 +54,7 @@ const SetupProvider = ({
     organization: {
       name: '',
       logo: null,
+      region: OrganizationRegion.EuropeanUnion,
       primaryColor: '#000000',
       secondaryColor: '#6b7280',
     },
@@ -68,7 +70,7 @@ const SetupProvider = ({
         : d,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [avatars])
 
   const goToStep = (index: number) =>
     setStepIndex(Math.min(Math.max(index, 0), SETUP_STEPS.length - 1))

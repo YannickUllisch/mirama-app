@@ -1,4 +1,3 @@
-// app/(app)/setup/_components/SetupStepDots.tsx
 'use client'
 
 import { cn } from '@src/lib/utils'

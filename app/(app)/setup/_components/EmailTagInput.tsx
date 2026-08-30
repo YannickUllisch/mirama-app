@@ -1,4 +1,3 @@
-// app/(app)/setup/_components/EmailTagInput.tsx
 'use client'
 
 import { Badge } from '@ui/badge'
@@ -73,7 +72,7 @@ const EmailTagInput = ({ value, onChange }: EmailTagInputProps) => {
         placeholder={
           value.length === 0 ? 'email@gmail.com, email2@gmail.com' : ''
         }
-        className="flex-1 min-w-[160px] bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        className="flex-1 min-w-40 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
       />
     </div>
   )

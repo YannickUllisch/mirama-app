@@ -9,6 +9,7 @@ import {
   type CreateOrganizationCommand,
   CreateOrganizationSchema,
   type OrganizationResponse,
+  OrganizationRegion,
 } from '@src/modules/tenant/organization/organization.types'
 import {
   Form,
@@ -19,6 +20,13 @@ import {
   FormMessage,
 } from '@ui/form'
 import { Input } from '@ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ui/select'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useTransition } from 'react'
@@ -53,6 +61,7 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
       city: '',
       country: '',
       zipCode: '',
+      region: OrganizationRegion.RestOfWorld,
     },
   })
 
@@ -64,6 +73,10 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
         city: org.city,
         country: org.country,
         zipCode: org.zipCode,
+        region: org.regionValue,
+        logo: org.logo,
+        primaryColor: org.primaryColor,
+        accentColor: org.accentColor,
       })
     }
   }, [org, form])
@@ -174,6 +187,40 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
                 <FormControl>
                   <Input placeholder="94103" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="region"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Region</FormLabel>
+                <Select
+                  value={String(field.value)}
+                  onValueChange={(value) => field.onChange(Number(value))}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Region" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem
+                      value={String(OrganizationRegion.EuropeanUnion)}
+                    >
+                      European Union
+                    </SelectItem>
+                    <SelectItem value={String(OrganizationRegion.UnitedStates)}>
+                      United States
+                    </SelectItem>
+                    <SelectItem value={String(OrganizationRegion.RestOfWorld)}>
+                      Rest of World
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

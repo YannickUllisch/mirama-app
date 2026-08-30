@@ -1,12 +1,8 @@
-// app/(app)/setup/_components/steps/ProfileStepForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useUpdateProfileSetup } from '@src/modules/tenant/setup/setup.hooks'
-import {
-  type ProfileSetupCommand,
-  ProfileSetupSchema,
-} from '@src/modules/tenant/setup/setup.types'
+import apiRequest from '@hooks'
+import { type ProfileSetupCommand, ProfileSetupSchema } from '../setup.types'
 import {
   Form,
   FormControl,
@@ -16,6 +12,7 @@ import {
   FormMessage,
 } from '@ui/form'
 import { Input } from '@ui/input'
+import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import AvatarPicker from '../AvatarPicker'
@@ -24,7 +21,8 @@ import SetupShell from '../SetupShell'
 
 const ProfileStepForm = () => {
   const { avatars, draft, setProfile, nextStep } = useSetup()
-  const { mutate: updateProfile, isPending } = useUpdateProfileSetup()
+  const { data: session, update } = useSession()
+  const { mutate: updateUser, isPending } = apiRequest.user.update.useMutation()
 
   const form = useForm<ProfileSetupCommand>({
     resolver: zodResolver(ProfileSetupSchema),
@@ -36,14 +34,35 @@ const ProfileStepForm = () => {
       form.setValue('avatar', draft.profile.avatar)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draft.profile.avatar])
+  }, [draft.profile.avatar, form.getValues, form.setValue])
 
   const onContinue = form.handleSubmit((data) => {
     setProfile(data)
-    updateProfile(data, {
-      onSuccess: nextStep,
-      onError: nextStep,
-    })
+
+    if (!session?.user.id || !session.user.email || !session.user.tenantRole) {
+      nextStep()
+      return
+    }
+
+    updateUser(
+      {
+        id: session.user.id,
+        data: {
+          name: data.name,
+          email: session.user.email,
+          image: data.avatar,
+          title: data.title,
+          role: session.user.tenantRole,
+        },
+      },
+      {
+        onSuccess: async () => {
+          await update({ name: data.name })
+          nextStep()
+        },
+        onError: nextStep,
+      },
+    )
   })
 
   return (

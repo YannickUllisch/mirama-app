@@ -52,6 +52,8 @@ src/              # Client-side code
 - **Data fetching**: Maximize Server Components. Use Server Actions for mutations. Access auth IDs server-side.
 - **Functional style**: Always use arrow functions for components and logic.
 
+Do NOT add the route of the component at the top or first line of a files, if you see this remove them for me.
+
 ## Partial Prerendering (PPR)
 - Wrap dynamic components in `<Suspense>` with a meaningful fallback.
 - Push dynamic data fetching (`auth()`, Prisma calls) as deep into the component tree as possible - never `await` at page level if it can be scoped to a child component.

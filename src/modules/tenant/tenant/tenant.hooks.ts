@@ -1,4 +1,3 @@
-// src/modules/tenant/settings/hooks/hooks.ts
 import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { useQuery } from '@tanstack/react-query'
 import { fetchTenantSettingsFn } from './tenant.api'

@@ -1,7 +1,6 @@
-// app/(app)/setup/_components/steps/InviteStepForm.tsx
 'use client'
 
-import { InviteSetupSchema } from '@src/modules/tenant/setup/setup.types'
+import { InviteSetupSchema } from '../setup.types'
 import { useState } from 'react'
 import EmailTagInput from '../EmailTagInput'
 import { useSetup } from '../SetupProvider'

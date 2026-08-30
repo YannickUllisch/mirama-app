@@ -1,9 +1,8 @@
-// app/(app)/setup/_components/SetupTabs.tsx
 'use client'
 
+import { useSetup } from './SetupProvider'
 import SetupSlider from './SetupSlider'
 import SetupStepDots from './SetupStepDots'
-import { useSetup } from './SetupProvider'
 import InviteStepForm from './steps/InviteStepForm'
 import OrganizationStepForm from './steps/OrganizationStepForm'
 import ProfileStepForm from './steps/ProfileStepForm'

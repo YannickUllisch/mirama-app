@@ -1,4 +1,3 @@
-// src/modules/tenant/settings/hooks/types.ts
 import { z } from 'zod'
 
 export const PlanResponseSchema = z.object({

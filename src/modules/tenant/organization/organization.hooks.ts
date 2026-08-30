@@ -11,10 +11,11 @@ import {
   fetchOrganizationsFn,
   updateOrganizationFn,
 } from './organization.api'
-import type {
-  CreateOrganizationCommand,
-  OrganizationResponse,
-  UpdateOrganizationCommand,
+import {
+  OrganizationRegion,
+  type CreateOrganizationCommand,
+  type OrganizationResponse,
+  type UpdateOrganizationCommand,
 } from './organization.types'
 import { useOrganizationResource } from './organizationResourceContext'
 
@@ -96,7 +97,16 @@ const organization = {
             invalidateKey: organizationKeys.tenant(activeTenantId),
             successMessage: 'Organization updated',
             apply: (old, { id, data }) =>
-              old.map((org) => (org.id === id ? { ...org, ...data } : org)),
+              old.map((org) =>
+                org.id === id
+                  ? {
+                      ...org,
+                      ...data,
+                      region: OrganizationRegion[data.region],
+                      regionValue: data.region,
+                    }
+                  : org,
+              ),
           },
         ),
       })
