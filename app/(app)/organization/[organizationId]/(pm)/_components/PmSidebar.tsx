@@ -9,10 +9,10 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@src/components/animate-ui/components/radix/sidebar'
+import HoverLink from '@src/components/HoverLink'
 import { Button } from '@src/components/ui/button'
 import { OrganizationSidebarMenu } from '@src/modules/tenant/organization/organizationSidebarMenu'
 import { Search, SquarePen } from 'lucide-react'
-import Link from 'next/link'
 import PmNavLink from './PmNavLink'
 import PmProfileMenu from './PmProfileMenu'
 
@@ -23,7 +23,11 @@ interface PmSidebarProps {
 
 const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
   return (
-    <Sidebar className="border-hairline" peekTopOffset="2.5rem">
+    <Sidebar
+      className="border-hairline"
+      innerClassName="p-2"
+      peekTopOffset="2.5rem"
+    >
       <SidebarHeader className="flex-row items-center justify-between gap-1 overflow-hidden">
         <PmProfileMenu organizationId={organizationId} />
         <div className="flex items-center gap-1 shrink-0 group-data-[collapsible=icon]:hidden">
@@ -34,20 +38,20 @@ const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
             title="Search"
             className="size-7"
           >
-            <Link href={`/organization/${organizationId}/search`}>
-              <Search className="size-4" />
-            </Link>
+            <HoverLink href={`/organization/${organizationId}/search`}>
+              <Search className="size-3" />
+            </HoverLink>
           </Button>
           <Button
             asChild
-            variant="ghost"
+            variant="outline"
             size="icon"
             title="New project"
             className="size-7"
           >
-            <Link href={`/organization/${organizationId}/projects/create`}>
-              <SquarePen className="size-4" />
-            </Link>
+            <HoverLink href={`/organization/${organizationId}/projects/create`}>
+              <SquarePen className="size-3" />
+            </HoverLink>
           </Button>
         </div>
       </SidebarHeader>

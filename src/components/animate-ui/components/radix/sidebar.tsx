@@ -25,7 +25,7 @@ import { useIsMobile } from '@src/hooks/use-mobile'
 import { getStrictContext } from '@src/lib/get-strict-context'
 import { cn } from '@src/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Menu } from 'lucide-react'
+import { PanelLeftIcon } from 'lucide-react'
 import type { Transition } from 'motion/react'
 import { Slot } from 'radix-ui'
 import * as React from 'react'
@@ -155,6 +155,11 @@ type SidebarProps = React.ComponentProps<'div'> & {
   variant?: 'sidebar' | 'floating' | 'inset'
   collapsible?: 'offcanvas' | 'icon' | 'none'
   containerClassName?: string
+  // Applied to the background/content div itself (sidebar-inner), as
+  // opposed to `className`, which lands on the outer fixed container -
+  // use this to space out the inner components without insetting the
+  // sidebar's own background/border away from its edges.
+  innerClassName?: string
   animateOnHover?: boolean
   transition?: Transition
   // CSS length reserved at the top of the collapsed-state hover-peek
@@ -172,6 +177,7 @@ function Sidebar({
   children,
   animateOnHover = true,
   containerClassName,
+  innerClassName,
   transition = { type: 'spring', stiffness: 350, damping: 35 },
   peekTopOffset,
   ...props
@@ -361,7 +367,10 @@ function Sidebar({
             <div
               data-sidebar="sidebar"
               data-slot="sidebar-inner"
-              className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+              className={cn(
+                'bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm',
+                innerClassName,
+              )}
             >
               {children}
             </div>
@@ -390,7 +399,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps) {
       }}
       {...props}
     >
-      <Menu
+      <PanelLeftIcon
         className={cn(
           'size-3.75 transition-transform',
           state === 'collapsed' && 'rotate-180',

@@ -24,7 +24,7 @@ const buttonVariants = cva(
           'rounded-lg cursor-pointer bg-tertiary text-white hover:opacity-90',
 
         outline:
-          'rounded-lg cursor-pointer border border-border bg-transparent hover:bg-hover text-foreground',
+          'rounded-lg justify-center cursor-pointer border border-border bg-transparent hover:bg-hover text-foreground',
 
         destructive:
           'rounded-lg cursor-pointer bg-destructive text-destructive-foreground hover:opacity-90',

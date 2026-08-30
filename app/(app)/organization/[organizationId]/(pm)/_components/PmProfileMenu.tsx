@@ -21,9 +21,9 @@ import {
   SunMoon,
   UsersRound,
 } from 'lucide-react'
-import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
 
 interface PmProfileMenuProps {
   organizationId: string
@@ -90,7 +90,7 @@ const PmProfileMenu = ({ organizationId }: PmProfileMenuProps) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => signOut({ callbackUrl: '/auth/login' })}
-          className="flex items-center gap-2 text-lava focus:text-lava"
+          className="flex items-center gap-2"
         >
           <LogOut className="w-4 h-4" />
           Log out

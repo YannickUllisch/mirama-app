@@ -1,5 +1,4 @@
 'use client'
-import { TaskStatusType } from '@/prisma/generated/client'
 import apiRequest from '@hooks'
 import HoverLink from '@src/components/HoverLink'
 import PageHeader from '@src/components/PageHeader'
@@ -10,8 +9,13 @@ import { ExternalLink, NotepadText } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { TaskStatusType } from '@/prisma/generated/client'
+import { usePmHeader } from '../_components/PmHeaderContext'
+import PmHeaderCrumb from '../_components/PmHeaderCrumb'
 
 const TasksPage = () => {
+  usePmHeader(<PmHeaderCrumb label="My Tasks" />)
+
   // States
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null)
 

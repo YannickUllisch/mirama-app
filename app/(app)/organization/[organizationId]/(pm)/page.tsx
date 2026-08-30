@@ -19,8 +19,12 @@ import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
+import { usePmHeader } from './_components/PmHeaderContext'
+import PmHeaderCrumb from './_components/PmHeaderCrumb'
 
 const Dashboard = () => {
+  usePmHeader(<PmHeaderCrumb label="Dashboard" />)
+
   const {
     items: projects,
     data: projectsData,
