@@ -6,6 +6,8 @@ import {
   Layers2Icon,
   Sparkles,
   SquareCheckBigIcon,
+  UserRoundIcon,
+  UsersIcon,
 } from 'lucide-react'
 
 export const OrganizationSidebarMenu: AppMenuItem[] = [
@@ -27,17 +29,32 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     href: '/organization/[organizationId]/agent',
     isCollapsible: false,
   },
+
+  {
+    title: 'Dashboard',
+    icon: ChartNoAxesColumnIcon,
+    href: '/organization/[organizationId]',
+    isCollapsible: false,
+  },
+]
+
+export const OrganizationWorkspaceMenu: AppMenuItem[] = [
   {
     title: 'Projects',
     icon: Layers2Icon,
     href: '/organization/[organizationId]/projects',
     isCollapsible: false,
   },
-
   {
-    title: 'Dashboard',
-    icon: ChartNoAxesColumnIcon,
-    href: '/organization/[organizationId]',
+    title: 'Clients',
+    icon: UsersIcon,
+    href: '/organization/[organizationId]/clients',
+    isCollapsible: false,
+  },
+  {
+    title: 'Members',
+    icon: UserRoundIcon,
+    href: '/organization/[organizationId]/members',
     isCollapsible: false,
   },
 ]

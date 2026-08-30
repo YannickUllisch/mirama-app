@@ -68,6 +68,12 @@ export default auth((req) => {
   // Organization guards -----------------
   const { organizationId } = session.user
   const pathname = nextUrl.pathname
+
+  // Setup guard: only for users without an organization yet -----------------
+  if (pathname.startsWith('/setup') && organizationId) {
+    return Response.redirect(new URL('/portal', nextUrl.origin))
+  }
+
   if (pathname.startsWith('/organization')) {
     if (!organizationId) {
       return Response.redirect(new URL(`/portal`, nextUrl.origin))
