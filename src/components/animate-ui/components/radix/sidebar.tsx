@@ -142,7 +142,16 @@ function SidebarProvider({
       peekLocked: peekLockCount > 0,
       lockPeek,
     }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar, peekLockCount, lockPeek],
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      toggleSidebar,
+      peekLockCount,
+      lockPeek,
+    ],
   )
 
   return (

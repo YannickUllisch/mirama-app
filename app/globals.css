@@ -84,12 +84,10 @@
   --color-lava-active: #bd2b26;
   --color-navy: #1b3139;
   --color-navy-deep: #0b2026;
-  --color-link: #2272b4;
-  --color-link-active: #0e538b;
   --color-info: #2272b4;
   --color-info-border: #4299e0;
-  --color-mirama: #0075de;
-  --color-mirama-active: #005bab;
+  --color-mirama: #5d61ef;
+  --color-mirama-active: #4547c4;
   --color-warning: #ffab00;
   --color-success: #00a972;
   --color-success-border: #42ba91;
@@ -188,7 +186,7 @@
     --secondary: 0 0% 100%;
     --secondary-foreground: 196 36% 16%;
 
-    --tertiary: 207 68% 42%;
+    --tertiary: 238 82% 65%;
 
     --muted: 36 30% 97%;
     --muted-foreground: 197 14% 41%;
@@ -251,7 +249,7 @@
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 97%;
 
-    --tertiary: 207 72% 57%;
+    --tertiary: 238 86% 72%;
 
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 63%;

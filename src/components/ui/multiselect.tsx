@@ -174,7 +174,7 @@ const MultiSelectorTrigger = forwardRef<
       ref={ref}
       className={cn(
         'flex flex-wrap gap-1.5 min-h-11 px-3 py-1.5 rounded-sm border border-border bg-background transition-colors',
-        'focus-within:ring-[0.125rem] focus-within:ring-ring focus-within:border-[var(--color-info-border)]',
+        'focus-within:ring-[0.125rem] focus-within:ring-ring focus-within:border-mirama',
         className,
       )}
       {...props}

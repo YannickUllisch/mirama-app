@@ -43,9 +43,6 @@ const buttonVariants = cva(
         warning:
           'rounded-lg cursor-pointer bg-warning text-ink hover:opacity-90 active:opacity-80',
 
-        coral:
-          'rounded-lg cursor-pointer bg-lava text-white hover:bg-lava-hover active:bg-lava-active',
-
         // Marketing surface variants
         'mkt-primary':
           'rounded-lg cursor-pointer bg-[var(--color-ink)] text-white hover:opacity-90 active:opacity-80',
