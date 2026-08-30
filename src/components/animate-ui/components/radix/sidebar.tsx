@@ -45,6 +45,13 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  // Held while a popup (dropdown/popover/etc.) anchored inside a collapsed,
+  // hover-peeking sidebar is open, so its own mouseleave - fired the moment
+  // the pointer moves onto the portaled popup content - doesn't close the
+  // sidebar out from under it. Callers increment/decrement via lockPeek so
+  // multiple popups nesting or overlapping still resolve correctly.
+  peekLocked: boolean
+  lockPeek: () => () => void
 }
 
 const [LocalSidebarProvider, useSidebar] =
@@ -112,6 +119,17 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed'
 
+  const [peekLockCount, setPeekLockCount] = React.useState(0)
+  const lockPeek = React.useCallback(() => {
+    setPeekLockCount((count) => count + 1)
+    let released = false
+    return () => {
+      if (released) return
+      released = true
+      setPeekLockCount((count) => Math.max(0, count - 1))
+    }
+  }, [])
+
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
       state,
@@ -121,8 +139,10 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      peekLocked: peekLockCount > 0,
+      lockPeek,
     }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar],
+    [state, open, setOpen, isMobile, openMobile, toggleSidebar, peekLockCount, lockPeek],
   )
 
   return (
@@ -187,7 +207,7 @@ function Sidebar({
   peekOverlay = false,
   ...props
 }: SidebarProps) {
-  const { state, openMobile, setOpenMobile } = useSidebar()
+  const { state, openMobile, setOpenMobile, peekLocked } = useSidebar()
 
   // Lets a fully-collapsed (offcanvas) sidebar peek open as a floating
   // overlay on hover, without touching the persisted open/collapsed state.
@@ -201,6 +221,12 @@ function Sidebar({
   // open immediately and, since the cursor never re-enters, never closes.
   const suppressPeekUntilRef = React.useRef(0)
   const canPeek = collapsible === 'offcanvas' && state === 'collapsed'
+  // Mirrors peekLocked for the close timeout below, which fires later and
+  // needs the value at close-time, not the one captured when it was scheduled.
+  const peekLockedRef = React.useRef(peekLocked)
+  React.useEffect(() => {
+    peekLockedRef.current = peekLocked
+  }, [peekLocked])
 
   const clearPeekCloseTimeout = React.useCallback(() => {
     if (peekCloseTimeoutRef.current) {
@@ -218,8 +244,19 @@ function Sidebar({
 
   const scheduleClosePeek = React.useCallback(() => {
     clearPeekCloseTimeout()
-    peekCloseTimeoutRef.current = setTimeout(() => setPeek(false), 150)
+    peekCloseTimeoutRef.current = setTimeout(() => {
+      if (peekLockedRef.current) return
+      setPeek(false)
+    }, 150)
   }, [clearPeekCloseTimeout])
+
+  // A locked-open popup can outlive the mouseleave that tried to close the
+  // sidebar underneath it - once it releases the lock, retry the close so
+  // the sidebar doesn't get stuck peeking open with the pointer long gone.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only peekLocked should retrigger this, not canPeek/scheduleClosePeek
+  React.useEffect(() => {
+    if (!peekLocked && canPeek) scheduleClosePeek()
+  }, [peekLocked])
 
   React.useEffect(() => {
     if (!canPeek) {

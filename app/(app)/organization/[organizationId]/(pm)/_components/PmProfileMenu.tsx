@@ -12,6 +12,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@src/components/animate-ui/components/radix/dropdown-menu'
+import { useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
 import {
   Check,
   ChevronDown,
@@ -24,6 +25,7 @@ import {
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
+import { useRef } from 'react'
 
 interface PmProfileMenuProps {
   organizationId: string
@@ -32,10 +34,21 @@ interface PmProfileMenuProps {
 const PmProfileMenu = ({ organizationId }: PmProfileMenuProps) => {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const { lockPeek } = useSidebar()
+  const unlockPeekRef = useRef<(() => void) | null>(null)
   const name = session?.user?.name ?? session?.user?.email ?? 'Workspace'
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) {
+          unlockPeekRef.current = lockPeek()
+        } else {
+          unlockPeekRef.current?.()
+          unlockPeekRef.current = null
+        }
+      }}
+    >
       <DropdownMenuTrigger className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-1.5 py-1 hover:bg-sidebar-accent transition-colors group-data-[collapsible=icon]:px-0">
         <UserAvatar avatarSize={22} username={name} fontSize={9} />
         <span className="min-w-0 max-w-36 truncate text-left text-[13px] font-medium text-ink group-data-[collapsible=icon]:hidden">
