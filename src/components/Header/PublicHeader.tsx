@@ -1,7 +1,7 @@
 import { Button } from '@ui/button'
 import { ArrowUpRight, BoxIcon, Fingerprint, HomeIcon } from 'lucide-react'
-import type { Session } from 'next-auth'
 import Link from 'next/link'
+import type { Session } from 'next-auth'
 import MiramaIcon from '../MiramaIcon'
 
 const PublicHeader = async ({ session }: { session: Session | null }) => {
@@ -42,7 +42,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
 
           <div className="flex items-center gap-4">
             {session ? (
-              <Link href={`/tenant/${session.user.tenantId}}`}>
+              <Link href="/portal">
                 <Button variant={'mkt-primary'}>
                   <span className="relative z-10 flex items-center gap-2 uppercase">
                     Dashboard <HomeIcon className="w-4 h-4" />

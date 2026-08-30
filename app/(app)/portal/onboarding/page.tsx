@@ -1,8 +1,8 @@
 'use client'
 
 import { Button } from '@ui/button'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 const OnboardingPage = () => {
   const { update } = useSession()

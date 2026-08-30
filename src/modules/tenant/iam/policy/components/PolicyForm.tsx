@@ -17,7 +17,7 @@ import type {
 } from '@src/modules/tenant/iam/policy/policy.types'
 import { CreatePolicySchema } from '@src/modules/tenant/iam/policy/policy.types'
 import { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
-import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Form,
@@ -125,7 +125,7 @@ export const PolicyForm = ({
 }) => {
   const isEdit = !!defaultPolicy
   const router = useRouter()
-  const { activeTenantId } = useTenantResource()
+  const { activeOrganizationId } = useOrganizationResource()
   const [isPending, startTransition] = useTransition()
 
   const { mutate: createPolicy } = policyHooks.create.useMutation()
@@ -133,7 +133,7 @@ export const PolicyForm = ({
   const { data: availablePermissions, isLoading: permissionsLoading } =
     iamHooks.availablePermissions.useQuery()
 
-  const policiesHref = `/tenant/${activeTenantId}/policies`
+  const policiesHref = `/organization/${activeOrganizationId}/settings/policies`
 
   const form = useForm<CreatePolicyCommand>({
     resolver: zodResolver(CreatePolicySchema),

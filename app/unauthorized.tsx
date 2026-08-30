@@ -65,10 +65,7 @@ const UnauthorizedPage = async () => {
             <div className="space-y-3">
               {isAuthenticated ? (
                 <div className="flex flex-col gap-2">
-                  <HoverLink
-                    href={`/tenant/${session.user.tenantId}`}
-                    className="w-full"
-                  >
+                  <HoverLink href="/portal" className="w-full">
                     <Button className="w-full" size="lg">
                       <Shield className="h-4 w-4 mr-2" />
                       Back to App

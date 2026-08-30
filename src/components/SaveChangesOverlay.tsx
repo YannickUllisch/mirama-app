@@ -2,7 +2,6 @@
 'use client'
 
 import { Button } from '@ui/button'
-import { useSidebar } from '@ui/sidebar'
 import { CheckCircle2, Loader2, Save, X } from 'lucide-react'
 
 interface SaveChangesOverlayProps {
@@ -20,19 +19,8 @@ const SaveChangesOverlay = ({
   onCancel,
   submitLabel = 'Save changes',
 }: SaveChangesOverlayProps) => {
-  const { state, isMobile } = useSidebar()
-
-  const leftOffset = isMobile
-    ? '0px'
-    : state === 'collapsed'
-      ? 'var(--sidebar-width-icon)'
-      : 'var(--sidebar-width)'
-
   return (
-    <div
-      className="fixed bottom-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border px-4 md:px-10 py-3 flex items-center justify-between gap-3 transition-[left] duration-200 ease-linear"
-      style={{ left: leftOffset }}
-    >
+    <div className="sticky bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border px-4 md:px-10 py-3 flex items-center justify-between gap-3">
       <div
         className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs md:text-sm transition-all duration-300 ${
           isDirty ? 'bg-lava/15 text-text' : 'bg-white/8 text-text/70'

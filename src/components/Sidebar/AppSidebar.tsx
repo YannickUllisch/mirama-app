@@ -17,7 +17,13 @@ import {
   SidebarRail,
   useSidebar,
 } from '@ui/sidebar'
-import { ChevronsUpDown, LayoutGrid, LogOut, PanelLeft } from 'lucide-react'
+import {
+  ChevronsUpDown,
+  LayoutGrid,
+  LogOut,
+  PanelLeft,
+  Settings,
+} from 'lucide-react'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 
@@ -88,6 +94,17 @@ const AppSidebar = ({
                 Switch workspace
               </Link>
             </DropdownMenuItem>
+            {organizationId && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/organization/${organizationId}/settings/general`}
+                  className="flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: '/auth/login' })}

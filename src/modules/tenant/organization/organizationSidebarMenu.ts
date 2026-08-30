@@ -1,7 +1,6 @@
 'use client'
 import type { AppMenuItem } from '@src/types/types'
 import {
-  BookAIcon,
   ChartNoAxesColumnIcon,
   Home,
   Layers2Icon,
@@ -32,21 +31,5 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     icon: SquareCheckBigIcon,
     href: '/organization/[organizationId]/tasks',
     isCollapsible: false,
-  },
-  {
-    title: 'Management',
-    icon: BookAIcon,
-    isCollapsible: true,
-    isActive: true,
-    items: [
-      {
-        title: 'Members',
-        href: '/organization/[organizationId]/members',
-      },
-      {
-        title: 'Teams',
-        href: '/organization/[organizationId]/teams',
-      },
-    ],
   },
 ]

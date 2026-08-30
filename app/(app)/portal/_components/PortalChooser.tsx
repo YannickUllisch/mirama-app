@@ -5,12 +5,12 @@ import type { OrganizationResponse } from '@src/modules/tenant/organization/orga
 import { TenantResourceProvider } from '@src/modules/tenant/tenant/tenantResourceContext'
 import { Button } from '@ui/button'
 import { Skeleton } from '@ui/skeleton'
-import { Building2, LogOut, Plus, Settings2 } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
+import { Building2, LogOut, Plus } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { signOut, useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import OrgPortalCard from './OrgPortalCard'
-import SecondaryPortalCard from './SecondaryPortalCard'
 
 const getGreeting = () => {
   const hour = new Date().getHours()
@@ -20,14 +20,10 @@ const getGreeting = () => {
 }
 
 interface PortalChooserInnerProps {
-  tenantId: string
   userName: string
 }
 
-const PortalChooserInner = ({
-  tenantId,
-  userName,
-}: PortalChooserInnerProps) => {
+const PortalChooserInner = ({ userName }: PortalChooserInnerProps) => {
   const router = useRouter()
   const { update: updateSession } = useSession()
   const { items: organizations, isLoading } =
@@ -40,11 +36,6 @@ const PortalChooserInner = ({
     } else {
       toast.error('You are not a member of this organization')
     }
-  }
-
-  const handleEnterTenant = async () => {
-    await updateSession({ organizationId: null })
-    router.push(`/tenant/${tenantId}`)
   }
 
   const firstName = userName.split(' ')[0]
@@ -110,11 +101,13 @@ const PortalChooserInner = ({
                 No organizations yet
               </p>
               <p className="text-xs text-body-text mt-1 mb-4">
-                Create your first organization in the tenant portal.
+                Create your first organization to get started.
               </p>
-              <Button variant="outline" size="sm" onClick={handleEnterTenant}>
-                <Plus className="w-3.5 h-3.5" />
-                Go to tenant portal
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/portal/organization/create">
+                  <Plus className="w-3.5 h-3.5" />
+                  Create organization
+                </Link>
               </Button>
             </div>
           ) : (
@@ -128,21 +121,6 @@ const PortalChooserInner = ({
               ))}
             </div>
           )}
-        </section>
-
-        {/* Workspace settings */}
-        <section>
-          <p className="text-[11px] font-medium tracking-[0.6px] uppercase text-body-text mb-4">
-            Workspace settings
-          </p>
-          <div className="max-w-xs">
-            <SecondaryPortalCard
-              icon={Settings2}
-              label="Tenant portal"
-              description="Manage billing, members, roles, and workspace settings."
-              onClick={handleEnterTenant}
-            />
-          </div>
         </section>
       </main>
 
@@ -164,7 +142,7 @@ interface PortalChooserProps {
 
 const PortalChooser = ({ tenantId, userName }: PortalChooserProps) => (
   <TenantResourceProvider value={{ activeTenantId: tenantId }}>
-    <PortalChooserInner tenantId={tenantId} userName={userName} />
+    <PortalChooserInner userName={userName} />
   </TenantResourceProvider>
 )
 

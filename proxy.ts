@@ -65,17 +65,9 @@ export default auth((req) => {
     return
   }
 
-  // Tenant Guards -----------------
-  const { tenantId, organizationId } = session.user
-  const pathname = nextUrl.pathname
-  if (pathname.startsWith('/tenant/')) {
-    const urlTenantId = pathname.split('/')[2]
-    if (urlTenantId && urlTenantId !== tenantId) {
-      return Response.redirect(new URL(`/tenant/${tenantId}`, nextUrl.origin))
-    }
-  }
-
   // Organization guards -----------------
+  const { organizationId } = session.user
+  const pathname = nextUrl.pathname
   if (pathname.startsWith('/organization')) {
     if (!organizationId) {
       return Response.redirect(new URL(`/portal`, nextUrl.origin))

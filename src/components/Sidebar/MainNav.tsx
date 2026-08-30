@@ -44,7 +44,9 @@ const NavItem = ({ item }: NavItemProps) => {
         <div
           className={cn(
             'ml-[26px] space-y-0.5 overflow-hidden transition-[max-height,opacity,margin] duration-200 group-data-[state=collapsed]:max-h-0 group-data-[state=collapsed]:opacity-0 group-data-[state=collapsed]:mt-0',
-            open ? 'max-h-96 mt-0.5 opacity-100' : 'max-h-0 mt-0 opacity-0 pointer-events-none',
+            open
+              ? 'max-h-96 mt-0.5 opacity-100'
+              : 'max-h-0 mt-0 opacity-0 pointer-events-none',
           )}
         >
           {item.items.map((sub) => (
@@ -77,7 +79,9 @@ const NavItem = ({ item }: NavItemProps) => {
       )}
     >
       <item.icon className="w-4 h-4 shrink-0 text-body-text" />
-      <span className="whitespace-nowrap group-data-[state=collapsed]:hidden">{item.title}</span>
+      <span className="whitespace-nowrap group-data-[state=collapsed]:hidden">
+        {item.title}
+      </span>
     </Link>
   )
 }

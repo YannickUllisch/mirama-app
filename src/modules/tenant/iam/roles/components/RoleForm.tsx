@@ -16,7 +16,7 @@ import {
   type RoleResponse,
 } from '@src/modules/tenant/iam/roles/role.types'
 import { SCOPE_VISUALS } from '@src/modules/tenant/iam/scopeConfig'
-import { useTenantResource } from '@src/modules/tenant/tenant/tenantResourceContext'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
@@ -87,13 +87,13 @@ export const RoleForm = ({
 }) => {
   const isEdit = !!defaultRole
   const router = useRouter()
-  const { activeTenantId } = useTenantResource()
+  const { activeOrganizationId } = useOrganizationResource()
   const [isPending, startTransition] = useTransition()
 
   const { mutate: createRole } = roleHooks.create.useMutation()
   const { mutate: updateRole } = roleHooks.update.useMutation()
 
-  const rolesHref = `/tenant/${activeTenantId}/roles`
+  const rolesHref = `/organization/${activeOrganizationId}/settings/roles`
 
   const form = useForm<CreateRoleCommand>({
     resolver: zodResolver(CreateRoleSchema),

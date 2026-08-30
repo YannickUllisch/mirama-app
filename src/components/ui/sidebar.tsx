@@ -74,6 +74,14 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
 
+    // Closes the mobile sheet before the layout swaps to desktop, so
+    // resizing across the breakpoint doesn't yank it away mid-open.
+    React.useEffect(() => {
+      if (!isMobile) {
+        setOpenMobile(false)
+      }
+    }, [isMobile])
+
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
     const [_open, _setOpen] = React.useState(defaultOpen)
