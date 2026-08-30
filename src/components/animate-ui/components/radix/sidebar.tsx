@@ -308,10 +308,8 @@ function Sidebar({
             setPeek(false)
           }}
           className={cn(
-            'fixed inset-0 z-20 hidden bg-black/40 transition-opacity ease-out lg:block',
-            peek
-              ? 'opacity-100 duration-300'
-              : 'opacity-0 pointer-events-none duration-150',
+            'fixed inset-0 z-20 hidden bg-black/40 transition-opacity duration-400 ease-[cubic-bezier(0.75,0,0.25,1)] lg:block',
+            peek ? 'opacity-100' : 'opacity-0 pointer-events-none',
           )}
         />
       )}
