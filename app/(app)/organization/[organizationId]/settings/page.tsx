@@ -7,7 +7,7 @@ const SettingsIndexPage = async ({
   params: Promise<{ organizationId: string }>
 }) => {
   const { organizationId } = await params
-  redirect(`/organization/${organizationId}/settings/general`)
+  redirect(`/organization/${organizationId}/settings/account/preferences`)
 }
 
 export default SettingsIndexPage

@@ -2,9 +2,9 @@
 import type { AppMenuItem } from '@src/types/types'
 import {
   ChartNoAxesColumnIcon,
-  Home,
   Inbox,
   Layers2Icon,
+  Sparkles,
   SquareCheckBigIcon,
 } from 'lucide-react'
 
@@ -16,15 +16,15 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     isCollapsible: false,
   },
   {
-    title: 'Home',
-    icon: Home,
-    href: '/organization/[organizationId]',
+    title: 'My Work',
+    icon: SquareCheckBigIcon,
+    href: '/organization/[organizationId]/tasks',
     isCollapsible: false,
   },
   {
-    title: 'Dashboard',
-    icon: ChartNoAxesColumnIcon,
-    href: '/organization/[organizationId]/dashboard',
+    title: 'Agent',
+    icon: Sparkles,
+    href: '/organization/[organizationId]/agent',
     isCollapsible: false,
   },
   {
@@ -33,10 +33,11 @@ export const OrganizationSidebarMenu: AppMenuItem[] = [
     href: '/organization/[organizationId]/projects',
     isCollapsible: false,
   },
+
   {
-    title: 'My Tasks',
-    icon: SquareCheckBigIcon,
-    href: '/organization/[organizationId]/tasks',
+    title: 'Dashboard',
+    icon: ChartNoAxesColumnIcon,
+    href: '/organization/[organizationId]',
     isCollapsible: false,
   },
 ]
