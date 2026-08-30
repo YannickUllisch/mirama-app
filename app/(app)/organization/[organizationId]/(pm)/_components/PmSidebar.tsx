@@ -27,6 +27,7 @@ const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
       className="border-transparent"
       innerClassName="p-2"
       peekTopOffset="2.5rem"
+      peekOverlay
     >
       <SidebarHeader className="flex-row items-center justify-between gap-1 overflow-hidden">
         <PmProfileMenu organizationId={organizationId} />

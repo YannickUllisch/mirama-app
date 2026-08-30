@@ -167,6 +167,10 @@ type SidebarProps = React.ComponentProps<'div'> & {
   // sidebar - e.g. a reopen trigger - stays visible and clickable
   // instead of being covered by the floating panel.
   peekTopOffset?: string
+  // Dims the rest of the app behind the collapsed-state hover-peek panel,
+  // and gives the panel a top/right border with a rounded top-right corner
+  // since it's floating clear of the layout instead of docked to an edge.
+  peekOverlay?: boolean
 }
 
 function Sidebar({
@@ -180,6 +184,7 @@ function Sidebar({
   innerClassName,
   transition = { type: 'spring', stiffness: 350, damping: 35 },
   peekTopOffset,
+  peekOverlay = false,
   ...props
 }: SidebarProps) {
   const { state, openMobile, setOpenMobile } = useSidebar()
@@ -295,6 +300,22 @@ function Sidebar({
         />
       )}
 
+      {peekOverlay && (
+        <div
+          aria-hidden
+          onClick={() => {
+            clearPeekCloseTimeout()
+            setPeek(false)
+          }}
+          className={cn(
+            'fixed inset-0 z-20 hidden bg-black/40 transition-opacity ease-out lg:block',
+            peek
+              ? 'opacity-100 duration-300'
+              : 'opacity-0 pointer-events-none duration-150',
+          )}
+        />
+      )}
+
       <div
         className="group peer text-sidebar-foreground block"
         data-state={state}
@@ -369,6 +390,9 @@ function Sidebar({
               data-slot="sidebar-inner"
               className={cn(
                 'bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm',
+                peek &&
+                  peekOverlay &&
+                  'overflow-hidden rounded-tr-2xl border-t border-r border-hairline',
                 innerClassName,
               )}
             >
