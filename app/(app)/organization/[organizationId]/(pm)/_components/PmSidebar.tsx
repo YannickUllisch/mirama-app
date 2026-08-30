@@ -7,7 +7,6 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarSeparator,
 } from '@src/components/animate-ui/components/radix/sidebar'
 import HoverLink from '@src/components/HoverLink'
 import { Button } from '@src/components/ui/button'
@@ -15,6 +14,7 @@ import { OrganizationSidebarMenu } from '@src/modules/tenant/organization/organi
 import { Search, SquarePen } from 'lucide-react'
 import PmNavLink from './PmNavLink'
 import PmProfileMenu from './PmProfileMenu'
+import PmWorkspaceMenu from './PmWorkspaceMenu'
 
 interface PmSidebarProps {
   organizationId: string
@@ -57,7 +57,7 @@ const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="gap-4">
         <SidebarMenu className="px-2 py-1">
           {OrganizationSidebarMenu.map((item) => (
             <SidebarMenuItem key={item.title}>
@@ -72,7 +72,7 @@ const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        <SidebarSeparator />
+        <PmWorkspaceMenu organizationId={organizationId} />
         {clientsSlot}
       </SidebarContent>
     </Sidebar>
