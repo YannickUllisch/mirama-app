@@ -1,22 +1,21 @@
-// app/(app)/organization/[organizationId]/settings/_components/ResizableSettingsSidebar.tsx
+// app/(app)/organization/[organizationId]/settings/_components/SettingsSidebarProvider.tsx
 'use client'
 
+import { SidebarProvider } from '@src/components/animate-ui/components/radix/sidebar'
 import { cn } from '@src/lib/utils'
-import { useIsMobile } from '@src/modules/shared/hooks/utils/use-mobile'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MIN_WIDTH = 220
 const MAX_WIDTH = 420
 const DEFAULT_WIDTH = 256
 
-interface ResizableSettingsSidebarProps {
+interface SettingsSidebarProviderProps {
   children: React.ReactNode
 }
 
-const ResizableSettingsSidebar = ({
+const SettingsSidebarProvider = ({
   children,
-}: ResizableSettingsSidebarProps) => {
-  const isMobile = useIsMobile()
+}: SettingsSidebarProviderProps) => {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [isResizing, setIsResizing] = useState(false)
   const isResizingRef = useRef(false)
@@ -59,29 +58,27 @@ const ResizableSettingsSidebar = ({
   }, [stopResizing])
 
   return (
-    <div
-      style={{ width: isMobile ? 0 : width }}
-      className={cn(
-        'relative shrink-0 h-full overflow-hidden transition-[width] duration-200 ease-linear',
-        isResizing && 'transition-none',
-      )}
+    <SidebarProvider
+      className="flex h-screen overflow-hidden"
+      style={{ '--sidebar-width': `${width}px` } as React.CSSProperties}
     >
       {children}
       <button
         type="button"
         aria-label="Resize settings navigation"
         onMouseDown={startResizing}
-        className="group absolute inset-y-0 -right-1.5 z-10 w-3 cursor-col-resize touch-none"
+        style={{ left: 'var(--sidebar-width)' }}
+        className="fixed inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none md:block"
       >
         <span
           className={cn(
-            'block h-full w-px mx-auto bg-transparent transition-colors duration-150 group-hover:bg-lava/40',
+            'mx-auto block h-full w-px bg-transparent transition-colors duration-150 hover:bg-lava/40',
             isResizing && 'bg-lava/60',
           )}
         />
       </button>
-    </div>
+    </SidebarProvider>
   )
 }
 
-export default ResizableSettingsSidebar
+export default SettingsSidebarProvider

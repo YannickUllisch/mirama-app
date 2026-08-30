@@ -16,6 +16,7 @@
     "utils": "@src/lib/utils"
   },
   "registries": {
-    "@diceui": "https://diceui.com/r/{style}/{name}.json"
+    "@diceui": "https://diceui.com/r/{style}/{name}.json",
+    "@animate-ui": "https://animate-ui.com/r/{name}.json"
   }
 }
