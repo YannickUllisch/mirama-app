@@ -24,7 +24,7 @@ interface PmSidebarProps {
 const PmSidebar = ({ organizationId, clientsSlot }: PmSidebarProps) => {
   return (
     <Sidebar
-      className="border-hairline"
+      className="border-transparent"
       innerClassName="p-2"
       peekTopOffset="2.5rem"
     >

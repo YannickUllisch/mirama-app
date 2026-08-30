@@ -33,7 +33,7 @@ const SettingsSidebar = ({ organizationId }: SettingsSidebarProps) => {
   }, [pathname])
 
   return (
-    <Sidebar className="border-hairline">
+    <Sidebar className="border-transparent">
       <SidebarHeader className="gap-3">
         <SettingsBackLink organizationId={organizationId} />
         <SettingsSearchInput />

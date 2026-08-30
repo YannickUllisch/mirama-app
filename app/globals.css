@@ -209,7 +209,7 @@
     --text-secondary: 201 17% 23%;
     --hover: 45 10% 92%;
 
-    --sidebar-background: 36 30% 97%;
+    --sidebar-background: 0 0% 97%;
     --sidebar-foreground: 196 36% 16%;
     --sidebar-primary: 6 100% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -236,9 +236,9 @@
   }
 
   .dark {
-    --background: 0 0% 7%;
+    --background: 0 0% 9%;
     --foreground: 0 0% 97%;
-    --card: 0 0% 10%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 97%;
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 97%;
@@ -271,7 +271,7 @@
     --text-secondary: 0 0% 63%;
     --hover: 0 0% 16%;
 
-    --sidebar-background: 0 0% 9%;
+    --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 0 0% 97%;
     --sidebar-primary: 6 100% 56%;
     --sidebar-primary-foreground: 0 0% 100%;

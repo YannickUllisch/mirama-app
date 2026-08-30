@@ -8,14 +8,13 @@ import {
 import { cn } from '@src/lib/utils'
 import { usePmHeaderContent } from './PmHeaderContext'
 
-// Always-mounted header; the reopen trigger fades in/out with sidebar state, per-page content comes from usePmHeader.
 const PmHeader = () => {
   const { state, isMobile } = useSidebar()
   const content = usePmHeaderContent()
   const showTrigger = isMobile || state === 'collapsed'
 
   return (
-    <header className="flex h-10 shrink-0 items-center gap-2 border-b border-hairline bg-canvas px-3">
+    <header className="flex h-10 shrink-0 items-center gap-2 border-b border-hairline/40 bg-background px-3">
       <div
         aria-hidden={!showTrigger}
         className={cn(

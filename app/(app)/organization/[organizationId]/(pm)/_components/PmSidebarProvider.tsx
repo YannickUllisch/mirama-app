@@ -24,7 +24,7 @@ const PmSidebarProvider = ({ children }: PmSidebarProviderProps) => {
 
   return (
     <SidebarProvider
-      className="h-screen overflow-hidden"
+      className="h-screen overflow-hidden bg-sidebar"
       style={{ '--sidebar-width': `${width}px` } as React.CSSProperties}
     >
       {children}
@@ -95,11 +95,11 @@ const PmSidebarResizeHandle = ({
       aria-label="Resize sidebar navigation"
       onMouseDown={startResizing}
       style={{ left: 'var(--sidebar-width)' }}
-      className="fixed inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none lg:block"
+      className="group fixed inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none lg:block"
     >
       <span
         className={cn(
-          'mx-auto block h-full w-px bg-transparent transition-colors duration-150 hover:bg-lava/40',
+          'mx-auto block h-full w-0.5 bg-transparent transition-colors duration-150 [mask-image:linear-gradient(to_bottom,transparent,black_20px,black_calc(100%-20px),transparent)] group-hover:bg-lava/40',
           isResizing && 'bg-lava/60',
         )}
       />
