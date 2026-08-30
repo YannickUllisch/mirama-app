@@ -42,7 +42,7 @@ const PublicHeader = async ({ session }: { session: Session | null }) => {
 
           <div className="flex items-center gap-4">
             {session ? (
-              <Link href="/portal">
+              <Link href="/organization">
                 <Button variant={'mkt-primary'}>
                   <span className="relative z-10 flex items-center gap-2 uppercase">
                     Dashboard <HomeIcon className="w-4 h-4" />

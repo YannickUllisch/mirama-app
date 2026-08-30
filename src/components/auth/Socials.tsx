@@ -13,7 +13,7 @@ export const AuthSocial = () => {
     try {
       const result = await signIn('cognito', {
         redirect: false,
-        callbackUrl: '/portal',
+        callbackUrl: '/organization',
       })
 
       if (result?.error) {

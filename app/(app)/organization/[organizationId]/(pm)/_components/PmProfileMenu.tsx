@@ -16,7 +16,6 @@ import { useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
 import {
   Check,
   ChevronDown,
-  LayoutGrid,
   LogOut,
   Settings,
   SunMoon,
@@ -93,13 +92,6 @@ const PmProfileMenu = ({ organizationId }: PmProfileMenuProps) => {
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <Link href="/portal">
-          <DropdownMenuItem className="flex items-center gap-2">
-            <LayoutGrid className="w-4 h-4" />
-            Switch workspace
-          </DropdownMenuItem>
-        </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => signOut({ callbackUrl: '/auth/login' })}

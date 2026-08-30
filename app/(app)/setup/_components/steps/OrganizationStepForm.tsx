@@ -158,7 +158,7 @@ const OrganizationStepForm = () => {
         }
 
         await update({ organizationId: org.id })
-        router.push('/portal')
+        router.push(`/organization/${org.id}`)
       },
       onError: () => setIsSubmitting(false),
     })

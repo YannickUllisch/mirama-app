@@ -3,7 +3,6 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
-  onboardingRoutes,
   publicRoutes,
 } from '@src/routes'
 import NextAuth from 'next-auth'
@@ -17,7 +16,6 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname)
   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
-  const isOnboardingPage = onboardingRoutes.includes(nextUrl.pathname)
 
   if (isApiAuthRoute) {
     return
@@ -47,42 +45,29 @@ export default auth((req) => {
   const session = req.auth
   if (!session?.user) return
 
-  // Onboarding Guards -----------------
-  const isNotOnboarded = session.user.isOnboarded === false
-
-  if (isNotOnboarded && !isOnboardingPage) {
-    // Kick user to onboarding if they try accessing protected areas
-    return Response.redirect(new URL('/portal/onboarding', nextUrl.origin))
-  }
-
-  if (!isNotOnboarded && isOnboardingPage) {
-    // Prevent onboarded users from lingering on the onboarding view
-    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
-  }
-
-  // If they are not onboarded, stop them from hitting deeper tenant/org guards
-  if (isNotOnboarded && isOnboardingPage) {
-    return
-  }
-
   // Organization guards -----------------
   const { organizationId } = session.user
   const pathname = nextUrl.pathname
 
   // Setup guard: only for users without an organization yet -----------------
   if (pathname.startsWith('/setup') && organizationId) {
-    return Response.redirect(new URL('/portal', nextUrl.origin))
+    return Response.redirect(
+      new URL(`/organization/${organizationId}`, nextUrl.origin),
+    )
   }
 
   if (pathname.startsWith('/organization')) {
     if (!organizationId) {
-      return Response.redirect(new URL(`/portal`, nextUrl.origin))
+      return Response.redirect(new URL('/setup', nextUrl.origin))
     }
 
-    // Org route with a specific ID, verify it matches the session
+    // Org route with a specific ID, verify it matches the session -
+    // also covers the bare '/organization' entry point (no urlOrgId yet)
     const urlOrgId = pathname.split('/')[2]
-    if (urlOrgId && urlOrgId !== organizationId) {
-      return Response.redirect(new URL(`/portal`, nextUrl.origin))
+    if (urlOrgId !== organizationId) {
+      return Response.redirect(
+        new URL(`/organization/${organizationId}`, nextUrl.origin),
+      )
     }
   }
 

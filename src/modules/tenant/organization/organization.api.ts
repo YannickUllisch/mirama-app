@@ -34,7 +34,7 @@ export const createOrganizationFn = async (
   payload: CreateOrganizationCommand,
 ): Promise<OrganizationResponse> => {
   const { data } = await api.post(`tenant/${tenantId}/organizations`, payload)
-  return data.data
+  return data
 }
 
 export const updateOrganizationFn = async (

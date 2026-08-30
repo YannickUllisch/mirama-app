@@ -6,7 +6,6 @@ export type AuthMeResponse = {
   tenantRole: TenantRole
   name: string
   email: string
-  isOnboarded: boolean
   organizationInfo?: AuthOrgMembershipResponse | null
   image?: string | null
 }

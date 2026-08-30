@@ -50,16 +50,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       token.iss = process.env.NEXT_AUTH_ISS
       token.aud = process.env.NEXT_AUTH_AUD
 
-      if (!me.isOnboarded) {
-        token.isOnboarded = false
-      } else {
-        delete token.isOnboarded
-      }
-
-      if (trigger === 'update' && session?.isOnboarded === true) {
-        delete token.isOnboarded
-      }
-
       if (me.organizationInfo) {
         token.organizationId = me.organizationInfo.organizationId
         token.memberId = me.organizationInfo.memberId
@@ -98,12 +88,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.organizationId = token.organizationId as string | undefined
         session.user.roleId = token.roleId as string | undefined
         session.user.memberId = token.memberId as string | undefined
-
-        if (token.isOnboarded !== undefined) {
-          session.user.isOnboarded = token.isOnboarded as boolean
-        } else {
-          delete session.user.isOnboarded
-        }
       }
       return session
     },
