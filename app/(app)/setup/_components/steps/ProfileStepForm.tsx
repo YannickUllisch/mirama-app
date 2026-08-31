@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import apiRequest from '@hooks'
-import { type ProfileSetupCommand, ProfileSetupSchema } from '../setup.types'
 import {
   Form,
   FormControl,
@@ -18,6 +17,7 @@ import { useForm } from 'react-hook-form'
 import AvatarPicker from '../AvatarPicker'
 import { useSetup } from '../SetupProvider'
 import SetupShell from '../SetupShell'
+import { type ProfileSetupCommand, ProfileSetupSchema } from '../setup.types'
 
 const ProfileStepForm = () => {
   const { avatars, draft, setProfile, nextStep } = useSetup()

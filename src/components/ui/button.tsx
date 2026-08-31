@@ -17,6 +17,9 @@ const buttonVariants = cva(
         secondary:
           'rounded-lg cursor-pointer bg-secondary text-secondary-foreground border border-border hover:bg-hover',
 
+        'secondary-dark':
+          'rounded-lg cursor-pointer bg-canvas text-navy hover:bg-canvas/90',
+
         mirama:
           'rounded-lg cursor-pointer bg-mirama text-white hover:opacity-90 active:bg-mirama-active',
 
