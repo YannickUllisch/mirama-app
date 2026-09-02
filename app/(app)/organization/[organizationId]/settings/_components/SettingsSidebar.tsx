@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/_components/SettingsSidebar.tsx
 'use client'
 
 import {

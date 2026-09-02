@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmHeaderContext.tsx
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'

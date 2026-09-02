@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/account/security/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ShieldCheck } from 'lucide-react'

@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/_components/SettingsSidebarProvider.tsx
 'use client'
 
 import { SidebarProvider } from '@src/components/animate-ui/components/radix/sidebar'
@@ -72,7 +71,7 @@ const SettingsSidebarProvider = ({
       >
         <span
           className={cn(
-            'mx-auto block h-full w-0.5 bg-transparent transition-colors duration-150 [mask-image:linear-gradient(to_bottom,transparent,black_20px,black_calc(100%-20px),transparent)] group-hover:bg-lava/40',
+            'mx-auto block h-full w-0.5 bg-transparent transition-colors duration-150 mask-[linear-gradient(to_bottom,transparent,black_20px,black_calc(100%-20px),transparent)] group-hover:bg-lava/40',
             isResizing && 'bg-lava/60',
           )}
         />

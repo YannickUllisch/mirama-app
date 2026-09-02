@@ -149,7 +149,7 @@ const TimelineCard = ({ projects, loading }: TimelineCardProps) => {
 
                 return (
                   <div
-                    key={project.projectId}
+                    key={project.id}
                     className="grid grid-cols-[240px_1fr] items-center group/row"
                   >
                     <div className="pr-6">

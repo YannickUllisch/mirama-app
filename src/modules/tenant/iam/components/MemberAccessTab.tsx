@@ -1,8 +1,5 @@
-// app/(app)/tenant/[tenantId]/roles/components/MemberAccessTab.tsx
 'use client'
 
-import type { MemberResponse } from '@/server/modules/account/members/features/response'
-import type { RoleResponse } from '@/server/modules/account/roles/features/response'
 import apiRequest from '@hooks'
 
 import { Badge } from '@ui/badge'
@@ -21,6 +18,8 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-react'
+import type { MemberResponse } from '../../organization/members/members.types'
+import type { RoleResponse } from '../roles/role.types'
 
 type Props = {
   roles: RoleResponse[]

@@ -1,4 +1,3 @@
-// src/components/PageHeader.tsx
 import { cn } from '@src/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 import type React from 'react'
@@ -23,7 +22,7 @@ const PageHeader = ({
       <div className="flex items-start justify-between gap-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <Icon className="w-[18px] h-[18px] text-body-text shrink-0" />
+            <Icon className="w-4.5 h-4.5 text-body-text shrink-0" />
             <h1 className="text-[22px] font-semibold text-ink leading-tight">
               {title}
             </h1>

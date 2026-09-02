@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/account/profile/page.tsx
 import { auth } from '@auth'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import { Input } from '@ui/input'
@@ -42,7 +41,7 @@ const ProfilePage = async () => {
           <span className="text-sm font-medium text-ink">Full name</span>
           <Input
             defaultValue={session?.user.name ?? ''}
-            className="w-full max-w-[220px]"
+            className="w-full max-w-55"
           />
         </div>
 
@@ -51,10 +50,7 @@ const ProfilePage = async () => {
             <p className="text-sm font-medium text-ink">Title</p>
             <p className="text-xs text-body-text">Your job title or role</p>
           </div>
-          <Input
-            placeholder="Software Engineer"
-            className="w-full max-w-[220px]"
-          />
+          <Input placeholder="Software Engineer" className="w-full max-w-55" />
         </div>
 
         <div className="flex items-center justify-between gap-6 px-5 py-4">
@@ -64,7 +60,7 @@ const ProfilePage = async () => {
               One word, like a nickname or first name
             </p>
           </div>
-          <Input placeholder="username" className="w-full max-w-[220px]" />
+          <Input placeholder="username" className="w-full max-w-55" />
         </div>
       </div>
 

@@ -1,5 +1,4 @@
 import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
-import type { TaskResponse } from '@server/modules/task/features/response'
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'
 import HoverLink from '@src/components/HoverLink'
 import {
@@ -39,7 +38,7 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
-const columnHelper = createColumnHelper<TaskResponse>()
+const columnHelper = createColumnHelper<any>()
 
 export const useTaskColumns = ({
   users,
@@ -47,7 +46,7 @@ export const useTaskColumns = ({
   deleteMutation,
 }: {
   users: MemberResponse[]
-  handleFieldUpdate: HandleFieldUpdate<TaskResponse>
+  handleFieldUpdate: HandleFieldUpdate<any>
   deleteMutation: UseMutateFunction<
     any,
     Error,
@@ -292,8 +291,7 @@ export const useTaskColumns = ({
               className="flex items-center cursor-default justify-left flex-wrap gap-1"
               key={`tag-${row.index}`}
             >
-              {/* Render up to 2 task badges */}
-              {tags.slice(0, 2).map((tag) => (
+              {/* {tags.slice(0, 2).map((tag) => (
                 <Badge
                   variant="outline"
                   className="flex-nowrap whitespace-nowrap text-ellipsis"
@@ -301,7 +299,7 @@ export const useTaskColumns = ({
                 >
                   {tag.title}
                 </Badge>
-              ))}
+              ))} */}
 
               {/* Render the "X tasks left" badge if there are more than 2 tasks */}
               {remainingTasks.length > 0 && (
@@ -316,14 +314,14 @@ export const useTaskColumns = ({
                   </HoverCardTrigger>
                   <HoverCardContent>
                     {/* Display the remaining tasks in the HoverCard */}
-                    {remainingTasks.map((task) => (
+                    {/* {remainingTasks.map((task) => (
                       <div
                         key={`remaining-task-${task.id}`}
                         className="text-xs"
                       >
                         {task.title}
                       </div>
-                    ))}
+                    ))} */}
                   </HoverCardContent>
                 </HoverCard>
               )}

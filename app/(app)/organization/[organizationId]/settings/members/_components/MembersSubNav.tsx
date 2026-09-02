@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/members/_components/MembersSubNav.tsx
 'use client'
 
 import { cn } from '@src/lib/utils'

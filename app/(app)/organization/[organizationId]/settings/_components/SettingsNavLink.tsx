@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/_components/SettingsNavLink.tsx
 'use client'
 
 import { SidebarMenuButton } from '@src/components/animate-ui/components/radix/sidebar'

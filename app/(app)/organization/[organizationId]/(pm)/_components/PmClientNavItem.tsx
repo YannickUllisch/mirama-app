@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmClientNavItem.tsx
 'use client'
 
 import {

@@ -1,6 +1,11 @@
 // src/hooks/use-data-table.ts
 'use client'
 
+import {
+  inDateRangeFilterFn,
+  inEnumSetFilterFn,
+  inNumberRangeFilterFn,
+} from '@src/components/Tables/Filters/filter-fns'
 import { useDebouncedCallback } from '@src/hooks/use-debounced-callback'
 import { getFiltersStateParser, getSortingStateParser } from '@src/lib/parsers'
 import type {
@@ -321,6 +326,11 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     columns,
     initialState,
     pageCount,
+    filterFns: {
+      inEnumSet: inEnumSetFilterFn,
+      inDateRange: inDateRangeFilterFn,
+      inNumberRange: inNumberRangeFilterFn,
+    },
     state: {
       pagination,
       sorting,

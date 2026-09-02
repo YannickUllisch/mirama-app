@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/_components/PlanCard.tsx
 import type { PlanResponse } from '@src/modules/tenant/tenant/tenant.types'
 import { Button } from '@ui/button'
 import { ArrowUpRight, Check } from 'lucide-react'

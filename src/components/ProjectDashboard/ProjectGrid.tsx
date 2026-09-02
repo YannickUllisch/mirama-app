@@ -41,7 +41,7 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
 
         return (
           <div
-            key={project.projectId}
+            key={project.id}
             className="group relative flex flex-col justify-between p-5 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-tertiary/40 transition-all duration-300 shadow-xs"
           >
             {/* Top Row: Context & Action */}
@@ -173,7 +173,7 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                 <div className="flex -space-x-1.5">
                   {project.members.slice(0, 3).map((member) => (
                     <div
-                      key={member.projectMemberId}
+                      key={member.memberId}
                       className="w-5 h-5 rounded-full border-[1.5px] border-white dark:border-[#0a0a0a] bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[7px] font-black text-neutral-500"
                     >
                       {member.memberId.slice(0, 1).toUpperCase()}

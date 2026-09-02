@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmClientsServer.tsx
 import { auth } from '@auth'
 import PmClientsList from './PmClientsList'
 

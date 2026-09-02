@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/plans/_components/PlansGridSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const PlansGridSkeleton = () => (

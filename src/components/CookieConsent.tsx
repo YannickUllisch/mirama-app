@@ -16,6 +16,7 @@ export default function CookieConsent({
 
   const accept = () => {
     setIsOpen(false)
+    // biome-ignore lint/suspicious/noDocumentCookie: <->
     document.cookie =
       'cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT'
     setTimeout(() => setHide(true), 700)

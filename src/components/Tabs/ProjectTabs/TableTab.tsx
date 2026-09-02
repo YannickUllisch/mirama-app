@@ -1,13 +1,4 @@
 'use client'
-import apiRequest from '@hooks'
-import type { MemberResponse } from '@server/modules/account/members/features/response'
-import type { ProjectResponse } from '@server/modules/project/features/response'
-import type { TaskResponse } from '@server/modules/task/features/response'
-import {
-  type UpdateTaskRequest,
-  UpdateTaskSchema,
-} from '@server/modules/task/features/update-task/schema'
-import { DataTable } from '@src/components/Tables/DataTable'
 import { Button } from '@src/components/ui/button'
 import { Checkbox } from '@src/components/ui/checkbox'
 import {
@@ -19,12 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { createMemoizedTree } from '@src/lib/createTree'
-import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
+import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
+import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { Settings2 } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
-import { useTaskColumns } from './helper/ListTabColumns'
 
 const TableTab = ({
   project,
@@ -32,54 +22,53 @@ const TableTab = ({
   users,
 }: {
   project: ProjectResponse | null
-  tasks: TaskResponse[]
+  tasks: any[]
   users: MemberResponse[]
 }) => {
   // Personalizations
   const [viewFlattened, setViewFlattened] = useState(false)
   const [ignoreCompleted, setIgnoreCompleted] = useState(false)
 
-  const taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
+  const _taskTree = createMemoizedTree(tasks ?? [], 'subtasks')
 
   // Table states
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [sortingState, setSortingState] = useState<SortingState>([
+  const [_rowSelection, _setRowSelection] = useState<RowSelectionState>({})
+  const [_sortingState, _setSortingState] = useState<SortingState>([
     { id: 'taskCode', desc: true },
   ])
 
   // Hooks
-  const { mutate: mutateTask } = apiRequest.task.update.useMutation()
-  const { mutate: deleteTask } = apiRequest.task.delete.useMutation()
+  // const { mutate: mutateTask } = apiRequest.task.update.useMutation()
 
-  // Update
-  const { handleFieldUpdate } = useEditableColumns<
-    TaskResponse,
-    UpdateTaskRequest,
-    { id: string; projectId: string; data: UpdateTaskRequest }
-  >({
-    mutate: mutateTask,
-    updateSchema: UpdateTaskSchema,
-    mapToUpdateInput: (data) => ({
-      ...data,
-      tags: data.tags.map((t) => t.id),
-      newTags: [],
-      subtasks: data.subtasks.map((s) => s.id),
-      type: data.type as any,
-      status: data.status as any,
-      priority: data.priority as any,
-    }),
-    prepareMutation: (id, data) => ({
-      id,
-      data,
-      projectId: project?.id ?? '',
-    }),
-    onValidationError: (err) => {
-      const firstMessage = err.issues?.[0]?.message || 'Input Error'
-      toast.error(`Input Error: ${firstMessage}`)
-    },
-  })
+  // // Update
+  // const { handleFieldUpdate } = useEditableColumns<
+  //   any,
+  //   any,
+  //   { id: string; projectId: string; data: any }
+  // >({
+  //   mutate: mutateTask,
+  //   updateSchema: ,
+  //   mapToUpdateInput: (data) => ({
+  //     ...data,
+  //     tags: data.tags.map((t) => t.id),
+  //     newTags: [],
+  //     subtasks: data.subtasks.map((s) => s.id),
+  //     type: data.type as any,
+  //     status: data.status as any,
+  //     priority: data.priority as any,
+  //   }),
+  //   prepareMutation: (id, data) => ({
+  //     id,
+  //     data,
+  //     projectId: project?.id ?? '',
+  //   }),
+  //   onValidationError: (err) => {
+  //     const firstMessage = err.issues?.[0]?.message || 'Input Error'
+  //     toast.error(`Input Error: ${firstMessage}`)
+  //   },
+  // })
 
-  const ToolbarRight = () => {
+  const _ToolbarRight = () => {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -113,31 +102,30 @@ const TableTab = ({
     )
   }
 
-  return (
-    <div className="rounded-sm outline-hidden">
-      <DataTable
-        tableIdentifier="task_tab_table"
-        columns={useTaskColumns({
-          users: users ?? [],
-          deleteMutation: deleteTask,
-          handleFieldUpdate: handleFieldUpdate,
-        })}
-        data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
-        ignoreSubrows={viewFlattened}
-        enableRowSelection
-        dataLoading={!project}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-        sortingState={sortingState}
-        setSortingState={setSortingState}
-        toolbarOptions={{
-          showFilterOption: true,
-          addToolbarright: <ToolbarRight />,
-        }}
-        footerOptions={{ showPagination: true }}
-      />
-    </div>
-  )
+  return null
+  // <div className="rounded-sm outline-hidden">
+  //   <DataTable
+  //     tableIdentifier="task_tab_table"
+  //     columns={useTaskColumns({
+  //       users: users ?? [],
+  //       deleteMutation: deleteTask,
+  //       handleFieldUpdate: deleteTask as any,
+  //     })}
+  //     data={viewFlattened ? (tasks ?? []) : ((taskTree as any[]) ?? [])}
+  //     ignoreSubrows={viewFlattened}
+  //     enableRowSelection
+  //     dataLoading={!project}
+  //     rowSelection={rowSelection}
+  //     onRowSelectionChange={setRowSelection}
+  //     sortingState={sortingState}
+  //     setSortingState={setSortingState}
+  //     toolbarOptions={{
+  //       showFilterOption: true,
+  //       addToolbarright: <ToolbarRight />,
+  //     }}
+  //     footerOptions={{ showPagination: true }}
+  //   />
+  // </div>
 }
 
 export default TableTab

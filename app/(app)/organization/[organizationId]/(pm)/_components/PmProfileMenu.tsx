@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmProfileMenu.tsx
 'use client'
 
 import UserAvatar from '@src/components/(application)/core/Avatar/UserAvatar'

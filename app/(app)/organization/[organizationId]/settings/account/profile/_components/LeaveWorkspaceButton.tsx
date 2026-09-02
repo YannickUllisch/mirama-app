@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/account/profile/_components/LeaveWorkspaceButton.tsx
 'use client'
 
 import { ConfirmationDialog } from '@src/components/Dialogs/ConfirmationDialog'

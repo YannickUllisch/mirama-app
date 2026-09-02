@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/members/_components/OrgMembersColumns.tsx
 'use client'
 
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'

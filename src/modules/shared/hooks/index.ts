@@ -1,10 +1,8 @@
 import projectMembers from '@src/modules/pm/projects/members/members.hooks'
-import projectWorkflow from '@src/modules/pm/projects/workflow/workflow.hooks'
 import projectMilestones from '@src/modules/pm/projects/milestones/milestones.hooks'
 import project from '@src/modules/pm/projects/projects.hooks'
 import projectTeams from '@src/modules/pm/projects/teams/teams.hooks'
-import comment from '@src/modules/pm/tasks/comments/taskComment.hooks'
-import task from '@src/modules/pm/tasks/tasks.hooks'
+import projectWorkflow from '@src/modules/pm/projects/workflow/workflow.hooks'
 import policy from '@src/modules/tenant/iam/policy/policy.hooks'
 import role from '@src/modules/tenant/iam/roles/role.hooks'
 import invitation from '@src/modules/tenant/organization/invitations/invitations.hooks'
@@ -25,8 +23,6 @@ const apiRequest = {
   team,
   tags,
   invitation,
-  task,
-  comment,
   tenant,
   organization,
   billing,

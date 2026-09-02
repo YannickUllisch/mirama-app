@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/_components/SubscriptionSection.tsx
 'use client'
 
 import apiRequest from '@hooks'

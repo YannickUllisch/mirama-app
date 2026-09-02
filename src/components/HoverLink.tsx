@@ -2,8 +2,8 @@
 import Link, { type LinkProps } from 'next/link'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { useRef } from 'react'
 import type { HTMLProps } from 'react'
+import { useRef } from 'react'
 
 type Props = LinkProps & HTMLProps<HTMLAnchorElement>
 

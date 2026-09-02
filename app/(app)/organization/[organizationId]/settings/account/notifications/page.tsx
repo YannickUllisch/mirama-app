@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/account/notifications/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Bell } from 'lucide-react'

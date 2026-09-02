@@ -1,5 +1,3 @@
-import type React from 'react'
-import type { FC, PropsWithChildren } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -7,6 +5,8 @@ import {
   AccordionTrigger,
 } from '@src/components/ui/accordion'
 import { cn } from '@src/lib/utils'
+import type React from 'react'
+import type { FC, PropsWithChildren } from 'react'
 
 interface GeneralAccordion {
   trigger: string | React.ReactNode

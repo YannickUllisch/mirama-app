@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmSidebarCollapsibleGroup.tsx
 'use client'
 
 import {

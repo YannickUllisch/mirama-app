@@ -1,5 +1,4 @@
 import contactImage from '@public/test2.png'
-import ContactForm from '@src/components/auth/ContactForm'
 import { Badge } from '@src/components/ui/badge'
 import GridDecoration from '@src/modules/shared/components/Background/GridDecoration'
 import Image from 'next/image'
@@ -37,9 +36,7 @@ const ContactPage = () => {
                 custom deployments.
               </p>
             </div>
-            <div className="relative">
-              <ContactForm />
-            </div>
+            <div className="relative">{/* <ContactForm /> */}</div>
           </div>
 
           <div className="relative order-1 lg:order-2 group max-w-xl mx-auto lg:ml-auto w-full">

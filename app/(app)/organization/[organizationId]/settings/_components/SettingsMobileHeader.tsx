@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/_components/SettingsMobileHeader.tsx
 'use client'
 
 import { SidebarTrigger } from '@src/components/animate-ui/components/radix/sidebar'

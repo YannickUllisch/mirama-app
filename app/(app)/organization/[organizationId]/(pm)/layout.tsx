@@ -1,9 +1,6 @@
-// app/(app)/organization/[organizationId]/(pm)/layout.tsx
 import { auth } from '@auth'
 import { SidebarInset } from '@src/components/animate-ui/components/radix/sidebar'
-import SidebarProjectsSkeleton from '@src/components/Skeletons/SidebarProjectsSkeleton'
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
 import PmClientsServer from './_components/PmClientsServer'
 import PmHeader from './_components/PmHeader'
 import { PmHeaderProvider } from './_components/PmHeaderContext'
@@ -29,11 +26,7 @@ const ShellLayout = async ({
       <PmHeaderProvider>
         <PmSidebar
           organizationId={organizationId}
-          clientsSlot={
-            <Suspense fallback={<SidebarProjectsSkeleton />}>
-              <PmClientsServer organizationId={organizationId} />
-            </Suspense>
-          }
+          clientsSlot={<PmClientsServer organizationId={organizationId} />}
         />
         <SidebarInset className="overflow-hidden transition-[margin,border-radius] duration-400 ease-[cubic-bezier(0.7,-0.15,0.25,1.15)] lg:my-2 lg:mr-2 lg:rounded-xl lg:peer-data-[state=collapsed]:ml-2">
           <PmHeader />

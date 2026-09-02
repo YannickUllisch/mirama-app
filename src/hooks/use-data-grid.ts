@@ -1,3 +1,31 @@
+import { useDirection } from '@src/components/ui/direction'
+import { useAsRef } from '@src/hooks/use-as-ref'
+import { useIsomorphicLayoutEffect } from '@src/hooks/use-isomorphic-layout-effect'
+import { useLazyRef } from '@src/hooks/use-lazy-ref'
+import {
+  getCellKey,
+  getEmptyCellValue,
+  getIsFileCellData,
+  getIsInPopover,
+  getRowHeightValue,
+  getScrollDirection,
+  matchSelectOption,
+  parseCellKey,
+  parseTsv,
+  scrollCellIntoView,
+} from '@src/lib/data-grid'
+import type {
+  CellPosition,
+  CellUpdate,
+  ContextMenuState,
+  Direction,
+  FileCellData,
+  NavigationDirection,
+  PasteDialogState,
+  RowHeightValue,
+  SearchState,
+  SelectionState,
+} from '@src/types/data-grid'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -16,35 +44,6 @@ import {
 import { useVirtualizer, type Virtualizer } from '@tanstack/react-virtual'
 import * as React from 'react'
 import { toast } from 'sonner'
-import { useDirection } from '@src/components/ui/direction'
-
-import { useAsRef } from '@src/hooks/use-as-ref'
-import { useIsomorphicLayoutEffect } from '@src/hooks/use-isomorphic-layout-effect'
-import { useLazyRef } from '@src/hooks/use-lazy-ref'
-import {
-  getCellKey,
-  getEmptyCellValue,
-  getIsFileCellData,
-  getIsInPopover,
-  getRowHeightValue,
-  getScrollDirection,
-  matchSelectOption,
-  parseCellKey,
-  parseTsv,
-  scrollCellIntoView,
-} from '@src/components/data-grid/data-grid'
-import type {
-  CellPosition,
-  CellUpdate,
-  ContextMenuState,
-  Direction,
-  FileCellData,
-  NavigationDirection,
-  PasteDialogState,
-  RowHeightValue,
-  SearchState,
-  SelectionState,
-} from '@src/components/data-grid/data-grid'
 
 const DEFAULT_ROW_HEIGHT = 'short'
 const OVERSCAN = 6
@@ -3622,4 +3621,4 @@ function useDataGrid<TData>({
   )
 }
 
-export { type UseDataGridProps, useDataGrid }
+export { useDataGrid, type UseDataGridProps }

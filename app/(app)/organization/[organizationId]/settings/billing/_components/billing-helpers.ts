@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/_components/billing-helpers.ts
 import { DateTime } from 'luxon'
 
 export const statusStyles: Record<

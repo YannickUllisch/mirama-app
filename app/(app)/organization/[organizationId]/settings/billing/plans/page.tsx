@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/plans/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { LayoutGrid } from 'lucide-react'
 import { Suspense } from 'react'

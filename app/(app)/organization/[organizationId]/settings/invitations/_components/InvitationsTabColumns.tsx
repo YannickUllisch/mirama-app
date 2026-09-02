@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/invitations/_components/InvitationsTabColumns.tsx
 'use client'
 import {
   EditableCell,
@@ -19,8 +18,8 @@ import {
 } from '@ui/dropdown-menu'
 import { Ellipsis, RefreshCcw, Trash } from 'lucide-react'
 import { DateTime } from 'luxon'
-import Link from 'next/link'
 import type { Session } from 'next-auth'
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
 const columnHelper = createColumnHelper<InvitationResponse & { id: string }>()

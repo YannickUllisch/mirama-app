@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Button } from '@ui/button'
 import { ArrowRight, CreditCard, LayoutGrid } from 'lucide-react'

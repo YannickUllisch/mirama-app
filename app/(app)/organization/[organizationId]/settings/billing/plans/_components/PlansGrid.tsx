@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/plans/_components/PlansGrid.tsx
 'use client'
 
 import apiRequest from '@hooks'

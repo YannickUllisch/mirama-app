@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/account/preferences/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Input } from '@ui/input'

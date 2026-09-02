@@ -1,52 +1,41 @@
 // app/(app)/organization/[organizationId]/settings/invitations/_components/InvitationsTab.tsx
 'use client'
 
-import apiRequest from '@hooks'
-import AddMemberDialog from '@src/components/Dialogs/AddMemberDialog'
 import PageHeader from '@src/components/PageHeader'
-import { DataTable } from '@src/components/Tables/DataTable'
-import { useEditableColumns } from '@src/modules/shared/hooks/utils/useEditableColumns'
-import { Plus, UserPlus } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import type { Session } from 'next-auth'
-import { toast } from 'sonner'
-import type { InvitationResponse } from '@/server/modules/account/invitations/features/response'
-import {
-  type UpdateInvitationRequest,
-  UpdateInvitationSchema,
-} from '@/server/modules/account/invitations/features/update-invitation/schema'
-import { useInvitationColumns } from './InvitationsTabColumns'
 
 const InvitationsTab = ({ session }: { session: Session | null }) => {
-  // Hooks
-  const { data: invitations, isLoading } =
-    apiRequest.invitation.fetchAll.useQuery()
-  const { mutate: updateInvitationMutation } =
-    apiRequest.invitation.update.useMutation()
-  const { mutate: useDeleteInvitation } =
-    apiRequest.invitation.delete.useMutation()
+  // // Hooks
+  // const { data: invitations, isLoading } =
+  //   apiRequest.invitation.fetchAll.useQuery()
+  // const { mutate: updateInvitationMutation } =
+  //   apiRequest.invitation.update.useMutation()
+  // const { mutate: useDeleteInvitation } =
+  //   apiRequest.invitation.delete.useMutation()
 
   // Update State
-  const { handleFieldUpdate } = useEditableColumns<
-    InvitationResponse,
-    UpdateInvitationRequest
-  >({
-    mutate: updateInvitationMutation,
-    getKey: (data) => data.email,
-    updateSchema: UpdateInvitationSchema,
-    mapToUpdateInput: (data) => ({
-      extendInvitation: true,
-      name: data.name,
-      iamRoleId: '',
-    }),
-    prepareMutation: (email, data) => ({
-      email,
-      data,
-    }),
-    onValidationError: (err) => {
-      const firstMessage = err.issues?.[0]?.message || 'Input Error'
-      toast.error(`Input Error: ${firstMessage}`)
-    },
-  })
+  // const { handleFieldUpdate } = useEditableColumns<
+  //   InvitationResponse,
+  //   UpdateInvitationRequest
+  // >({
+  //   mutate: updateInvitationMutation,
+  //   getKey: (data) => data.email,
+  //   updateSchema: UpdateInvitationSchema,
+  //   mapToUpdateInput: (data) => ({
+  //     extendInvitation: true,
+  //     name: data.name,
+  //     iamRoleId: '',
+  //   }),
+  //   prepareMutation: (email, data) => ({
+  //     email,
+  //     data,
+  //   }),
+  //   onValidationError: (err) => {
+  //     const firstMessage = err.issues?.[0]?.message || 'Input Error'
+  //     toast.error(`Input Error: ${firstMessage}`)
+  //   },
+  // })
 
   return (
     <>
@@ -55,14 +44,14 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
         title="Team Invitations"
         description="View and manage Team Invitations"
       />
-      <DataTable
+      {/* <DataTable
         tableIdentifier="invitationsTable"
         columns={useInvitationColumns({
-          deleteMutation: useDeleteInvitation,
+          deleteMutation: null! useDeleteInvitation,
           session: session,
           handleFieldUpdate: handleFieldUpdate,
         })}
-        data={invitations ?? []}
+        data={[]}
         dataLoading={isLoading}
         toolbarOptions={{
           showFilterOption: true,
@@ -75,7 +64,7 @@ const InvitationsTab = ({ session }: { session: Session | null }) => {
             </AddMemberDialog>
           ),
         }}
-      />
+      /> */}
     </>
   )
 }

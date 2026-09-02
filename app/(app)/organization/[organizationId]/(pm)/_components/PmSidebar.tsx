@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmSidebar.tsx
 'use client'
 
 import {

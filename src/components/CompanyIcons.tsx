@@ -6,8 +6,6 @@ interface IconProps {
   color?: string
 }
 
-// Icons found at: https://icons8.com/icons
-
 export const GoogleColoredIcon: FC<IconProps> = ({ width, height }) => {
   return (
     <svg

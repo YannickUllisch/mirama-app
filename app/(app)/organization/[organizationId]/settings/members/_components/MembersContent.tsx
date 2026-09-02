@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/members/_components/MembersContent.tsx
 'use client'
 
 import apiRequest from '@hooks'

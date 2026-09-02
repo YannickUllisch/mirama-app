@@ -1,7 +1,6 @@
-import type { FC } from 'react'
-
-import { RefreshCcw } from 'lucide-react'
 import { Button } from '@src/components/ui/button'
+import { RefreshCcw } from 'lucide-react'
+import type { FC } from 'react'
 
 interface ToolbaRefreshProps {
   mutate?: () => any

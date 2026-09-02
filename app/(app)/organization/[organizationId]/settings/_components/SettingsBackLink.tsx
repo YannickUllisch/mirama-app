@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/_components/SettingsBackLink.tsx
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 

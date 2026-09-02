@@ -108,7 +108,7 @@ const project = {
         },
         onSuccess: (updated) => {
           queryClient.setQueryData(
-            projectKeys.detail(activeOrganizationId, updated.projectId),
+            projectKeys.detail(activeOrganizationId, updated.id),
             updated,
           )
           toast.success('Project updated')

@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/organizations/create/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import OrganizationForm from '@src/modules/tenant/organization/components/OrganizationForm'
 import OrganizationFormSkeleton from '@src/modules/tenant/organization/components/OrganizationFormSkeleton'

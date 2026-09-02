@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/(pm)/_components/PmNavLink.tsx
 'use client'
 
 import { SidebarMenuButton } from '@src/components/animate-ui/components/radix/sidebar'

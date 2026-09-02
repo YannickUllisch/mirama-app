@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/_components/UsageSectionSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const UsageSectionSkeleton = () => (

@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/billing/_components/UsageSection.tsx
 'use client'
 
 import apiRequest from '@hooks'
