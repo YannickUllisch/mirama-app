@@ -13,6 +13,7 @@ import team from '@src/modules/tenant/organization/teams/teams.hooks'
 import billing from '@src/modules/tenant/tenant/billing/billing.hooks'
 import tenant from '@src/modules/tenant/tenant/tenant.hooks'
 import user from '@src/modules/tenant/user/user.hooks'
+import viewState from '@src/modules/workspace/viewstate.hooks'
 
 const apiRequest = {
   project,
@@ -30,6 +31,7 @@ const apiRequest = {
   policy,
   members,
   user,
+  viewState,
 }
 
 export default apiRequest
