@@ -31,7 +31,7 @@ export function useDebouncedMutation<
 
   return {
     ...mutation,
-    mutate: debouncedMutate as UseMutationResult<
+    mutate: debouncedMutate as unknown as UseMutationResult<
       TData,
       TError,
       TVariables,
