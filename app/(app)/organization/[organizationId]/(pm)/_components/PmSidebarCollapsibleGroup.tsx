@@ -15,6 +15,7 @@ import {
 import { Button } from '@src/components/ui/button'
 import { ChevronRightIcon, Plus } from 'lucide-react'
 import Link from 'next/link'
+import PmSidebarContextMenu from './PmSidebarContextMenu'
 
 interface PmSidebarCollapsibleGroupProps {
   label: string
@@ -23,26 +24,48 @@ interface PmSidebarCollapsibleGroupProps {
     href: string
     label: string
   }
+  // Right-click support for the header itself (e.g. hide the whole "Workspace" group).
+  // Omit for a group with nothing meaningful to toggle at the header level.
+  contextMenu?: {
+    visible: boolean
+    onVisibilityChange: (visible: boolean) => void
+    onCustomize: () => void
+  }
 }
 
 const PmSidebarCollapsibleGroup = ({
   label,
   children,
   action,
+  contextMenu,
 }: PmSidebarCollapsibleGroupProps) => {
+  const header = (
+    <AccordionHeader>
+      <AccordionTrigger asChild>
+        <SidebarGroupLabel className="w-fit cursor-pointer gap-1">
+          <ChevronRightIcon className="size-3 shrink-0 transition-transform group-data-[state=open]/section:rotate-90" />
+          {label}
+        </SidebarGroupLabel>
+      </AccordionTrigger>
+    </AccordionHeader>
+  )
+
   return (
     <Accordion type="single" collapsible defaultValue="group">
       <AccordionItem value="group" className="group/section">
         <SidebarGroup className="p-0 px-2">
           <div className="flex items-center justify-between">
-            <AccordionHeader>
-              <AccordionTrigger asChild>
-                <SidebarGroupLabel className="w-fit cursor-pointer gap-1">
-                  <ChevronRightIcon className="size-3 shrink-0 transition-transform group-data-[state=open]/section:rotate-90" />
-                  {label}
-                </SidebarGroupLabel>
-              </AccordionTrigger>
-            </AccordionHeader>
+            {contextMenu ? (
+              <PmSidebarContextMenu
+                visible={contextMenu.visible}
+                onVisibilityChange={contextMenu.onVisibilityChange}
+                onCustomize={contextMenu.onCustomize}
+              >
+                {header}
+              </PmSidebarContextMenu>
+            ) : (
+              header
+            )}
             {action && (
               <Button
                 asChild

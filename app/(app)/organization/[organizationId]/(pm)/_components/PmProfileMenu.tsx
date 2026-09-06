@@ -20,9 +20,9 @@ import {
   SunMoon,
   UsersRound,
 } from 'lucide-react'
+import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
-import Link from 'next/link'
 import { useRef } from 'react'
 
 interface PmProfileMenuProps {

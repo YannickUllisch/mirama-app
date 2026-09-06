@@ -44,9 +44,9 @@ const MemberRoleRow = ({
     </div>
     <div className="flex items-center gap-2 shrink-0">
       <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5">
-        {member.iamRoleId}
+        {roles.find((r) => r.id === member.iamRoleIds[0])?.name ?? 'No role'}
       </Badge>
-      <Select value={member.iamRoleId ?? ''} onValueChange={onRoleChange}>
+      <Select value={member.iamRoleIds[0] ?? ''} onValueChange={onRoleChange}>
         <SelectTrigger className="h-7 text-xs w-40">
           <SelectValue placeholder="No IAM role" />
         </SelectTrigger>
@@ -65,15 +65,8 @@ const MemberRoleRow = ({
   </div>
 )
 
-const OrgMembersSection = ({
-  organizationId,
-  roles,
-}: {
-  organizationId: string
-  roles: RoleResponse[]
-}) => {
-  const { data: members = [], isLoading } =
-    apiRequest.members.fetchAll.useQuery()
+const OrgMembersSection = ({ roles }: { roles: RoleResponse[] }) => {
+  const { items: members, isLoading } = apiRequest.members.fetchAll.useQuery()
   const { mutate: updateMember } = apiRequest.members.update.useMutation()
 
   return (
@@ -125,8 +118,8 @@ const OrgMembersSection = ({
 export const MemberAccessTab = ({
   roles,
   selectedOrgId,
-  selectedProjectId,
-  onProjectChange,
+  selectedProjectId: _selectedProjectId,
+  onProjectChange: _onProjectChange,
 }: Props) => {
   const isFixed = true
 
@@ -162,7 +155,7 @@ export const MemberAccessTab = ({
           </div>
 
           {/* Organization-level members ─ */}
-          <OrgMembersSection organizationId={selectedOrgId} roles={roles} />
+          <OrgMembersSection roles={roles} />
 
           {/* Available roles reference  */}
           <section>
@@ -177,7 +170,7 @@ export const MemberAccessTab = ({
                 >
                   <ShieldCheck className="w-3 h-3 text-primary" />
                   <span className="font-mono font-medium">{r.name}</span>
-                  {!r.tenantId && (
+                  {r.isSystemRole && (
                     <Badge
                       variant="secondary"
                       className="text-[9px] px-1 py-0 h-3.5"
@@ -186,8 +179,8 @@ export const MemberAccessTab = ({
                     </Badge>
                   )}
                   <span className="text-neutral-400">
-                    {r.policies.length}{' '}
-                    {r.policies.length === 1 ? 'policy' : 'policies'}
+                    {r.policyIds.length}{' '}
+                    {r.policyIds.length === 1 ? 'policy' : 'policies'}
                   </span>
                 </div>
               ))}

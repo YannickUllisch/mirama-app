@@ -1,8 +1,4 @@
-import type { UniqueIdentifier } from '@dnd-kit/core'
-import type { TaskResponse } from '@server/modules/task/features/response'
-import type { MemberResponse } from '@src/modules/tenant/organization/members/members.types'
 import type { LucideIcon } from 'lucide-react'
-import type { TaskType } from '@/prisma/generated/client'
 
 // Sidebar Interfaces
 export interface AppMenuItem {
@@ -18,31 +14,4 @@ export interface AppMenuItem {
     roles?: string[]
   }[]
   roles?: string[]
-}
-
-// Kanban Board
-
-export type Board = {
-  id: string
-  title: string
-  containerTaskType: TaskType | null
-  columns: BoardColumn[]
-}
-
-export interface BoardColumn {
-  id: UniqueIdentifier
-  title: string
-  items: {
-    id: UniqueIdentifier
-    task: TaskResponse
-    loading: boolean
-  }[]
-}
-
-export type KanbanItemType = {
-  id: UniqueIdentifier
-  task?: TaskResponse
-  loading?: boolean
-  onDelete?: (id: string) => void
-  users?: MemberResponse[]
 }

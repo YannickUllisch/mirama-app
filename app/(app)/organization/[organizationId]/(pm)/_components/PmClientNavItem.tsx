@@ -8,6 +8,7 @@ import {
   SidebarMenuSubItem,
 } from '@src/components/animate-ui/components/radix/sidebar'
 import { cn } from '@src/lib/utils'
+import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import {
   Building2,
   ChevronRight,
@@ -18,17 +19,17 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import type { PmClient } from './PmClientsServer'
 
 const PmClientNavItem = ({
   client,
   organizationId,
 }: {
-  client: PmClient
+  client: ClientSummary
   organizationId: string
 }) => {
   const pathname = usePathname()
-  const base = `/organization/${organizationId}/clients/${client.slug}`
+  // No dedicated slug exists on the backend yet - routing by client id until one does.
+  const base = `/organization/${organizationId}/clients/${client.clientId}`
   const isChildActive = pathname.startsWith(base)
   const [open, setOpen] = useState(isChildActive)
 

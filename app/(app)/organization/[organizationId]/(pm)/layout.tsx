@@ -1,11 +1,10 @@
 import { auth } from '@auth'
 import { SidebarInset } from '@src/components/animate-ui/components/radix/sidebar'
 import { redirect } from 'next/navigation'
-import PmClientsServer from './_components/PmClientsServer'
 import PmHeader from './_components/PmHeader'
 import { PmHeaderProvider } from './_components/PmHeaderContext'
-import PmSidebar from './_components/PmSidebar'
 import PmSidebarProvider from './_components/PmSidebarProvider'
+import PmSidebarServer from './_components/PmSidebarServer'
 
 const ShellLayout = async ({
   children,
@@ -24,10 +23,7 @@ const ShellLayout = async ({
   return (
     <PmSidebarProvider>
       <PmHeaderProvider>
-        <PmSidebar
-          organizationId={organizationId}
-          clientsSlot={<PmClientsServer organizationId={organizationId} />}
-        />
+        <PmSidebarServer organizationId={organizationId} />
         <SidebarInset className="overflow-hidden transition-[margin,border-radius] duration-400 ease-[cubic-bezier(0.7,-0.15,0.25,1.15)] lg:my-2 lg:mr-2 lg:rounded-xl lg:peer-data-[state=collapsed]:ml-2">
           <PmHeader />
           <main className="flex-1 overflow-y-auto bg-background">

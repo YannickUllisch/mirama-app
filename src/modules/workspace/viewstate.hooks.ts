@@ -1,8 +1,9 @@
-// src/modules/workspace/viewstate.hooks.ts
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import type { SidebarBootstrapResponse } from './sidebar'
 import {
+  fetchSidebarBootstrapFn,
   fetchViewStateFn,
   fetchViewStatesFn,
   saveViewStateFn,
@@ -19,6 +20,8 @@ export const viewStateKeys = {
       'batch',
       [...surfaceKeys].sort().join(','),
     ] as const,
+  sidebarBootstrap: (orgId: string) =>
+    [...viewStateKeys.root(orgId), 'sidebar-bootstrap'] as const,
 }
 
 type SaveViewStateVars = { viewType: ViewType; stateJson: string }
@@ -49,6 +52,23 @@ const viewState = {
     },
   },
 
+  // Sidebar-specific composed bootstrap: personalization state + the live client list,
+  // in one round trip. Prefer this over fetchViewState('sidebar') when rendering the
+  // sidebar itself - see viewstate.server.ts for the SSR equivalent.
+  fetchSidebarBootstrap: {
+    useQuery: () => {
+      const { activeOrganizationId } = useOrganizationResource()
+      return useQuery<SidebarBootstrapResponse>({
+        queryKey: viewStateKeys.sidebarBootstrap(activeOrganizationId),
+        queryFn: () => fetchSidebarBootstrapFn(activeOrganizationId),
+        enabled: !!activeOrganizationId,
+        // Personalization data we already hydrate from the server and update
+        // optimistically on save - no need to treat it as short-lived/pollable.
+        staleTime: 5 * 60 * 1000,
+      })
+    },
+  },
+
   // Optimistic by design: sidebar drags, column reorders and filter tweaks need to feel
   // instant. We apply the new state to the cache immediately and roll back only if the
   // server rejects it - no waiting on a round trip for the UI to reflect the change.
@@ -73,8 +93,9 @@ const viewState = {
 
         onMutate: async (vars) => {
           await queryClient.cancelQueries({ queryKey: detailKey })
-          const previous =
-            queryClient.getQueryData<ViewStateResponse | null>(detailKey)
+          const previous = queryClient.getQueryData<ViewStateResponse | null>(
+            detailKey,
+          )
 
           queryClient.setQueryData<ViewStateResponse | null>(
             detailKey,
@@ -107,7 +128,9 @@ const viewState = {
           queryClient.invalidateQueries({
             queryKey: viewStateKeys.root(activeOrganizationId),
             predicate: (query) =>
-              Array.isArray(query.queryKey) && query.queryKey[2] === 'batch',
+              Array.isArray(query.queryKey) &&
+              (query.queryKey[2] === 'batch' ||
+                query.queryKey[2] === 'sidebar-bootstrap'),
           })
         },
       })

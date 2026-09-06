@@ -1,19 +1,27 @@
 'use client'
 
 import { SidebarMenu } from '@src/components/animate-ui/components/radix/sidebar'
-import { Plus } from 'lucide-react'
+import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
+import { Building2, Plus } from 'lucide-react'
 import Link from 'next/link'
 import PmClientNavItem from './PmClientNavItem'
-import type { PmClient } from './PmClientsServer'
 import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'
+import PmSidebarMore from './PmSidebarMore'
 
+const VISIBLE_LIMIT = 3
+
+// "Your clients" is always the org's live client list (never stored, never
+// personalizable) - it just renders whatever IClientService returns, in that order.
 const PmClientsList = ({
   clients,
   organizationId,
 }: {
-  clients: PmClient[]
+  clients: ClientSummary[]
   organizationId: string
 }) => {
+  const shown = clients.slice(0, VISIBLE_LIMIT)
+  const overflow = clients.slice(VISIBLE_LIMIT)
+
   return (
     <PmSidebarCollapsibleGroup
       label="Your clients"
@@ -24,13 +32,21 @@ const PmClientsList = ({
     >
       {clients.length > 0 ? (
         <SidebarMenu>
-          {clients.map((client) => (
+          {shown.map((client) => (
             <PmClientNavItem
-              key={client.id}
+              key={client.clientId}
               client={client}
               organizationId={organizationId}
             />
           ))}
+          <PmSidebarMore
+            items={overflow.map((client) => ({
+              key: client.clientId,
+              icon: <Building2 className="size-3.5 shrink-0" />,
+              label: client.name,
+              href: `/organization/${organizationId}/clients/${client.clientId}`,
+            }))}
+          />
         </SidebarMenu>
       ) : (
         <Link

@@ -18,7 +18,6 @@ const PmNavLink = ({ href, label, icon }: PmNavLinkProps) => {
     <SidebarMenuButton
       asChild
       isActive={isActive}
-      tooltip={label}
       size="sm"
       className="text-body-text"
     >

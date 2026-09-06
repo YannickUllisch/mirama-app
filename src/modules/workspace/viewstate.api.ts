@@ -1,5 +1,8 @@
-// src/modules/workspace/viewstate.api.ts
 import { api } from '@src/modules/shared/api'
+import {
+  type SidebarBootstrapResponse,
+  SidebarBootstrapResponseSchema,
+} from './sidebar'
 import {
   type SaveViewStateCommand,
   type ViewStateResponse,
@@ -9,9 +12,6 @@ import {
 const base = (organizationId: string) =>
   `organization/${organizationId}/view-state`
 
-// Nullable-by-design: "no saved state yet" is the normal state for a brand new user or a
-// surface nobody has personalized yet - callers fall back to defaults rather than
-// branching on a 404.
 export const fetchViewStateFn = async (
   organizationId: string,
   surfaceKey: string,
@@ -20,9 +20,6 @@ export const fetchViewStateFn = async (
   return data === null ? null : ViewStateResponseSchema.parse(data)
 }
 
-// Bootstrap/batch lookup - fetch every view-state the shell needs for first paint
-// (sidebar + whichever tables/boards are about to render) in one round trip. Keys with
-// no saved state are simply absent from the result.
 export const fetchViewStatesFn = async (
   organizationId: string,
   surfaceKeys: string[],
@@ -43,4 +40,13 @@ export const saveViewStateFn = async (
     payload,
   )
   return ViewStateResponseSchema.parse(data)
+}
+
+export const fetchSidebarBootstrapFn = async (
+  organizationId: string,
+): Promise<SidebarBootstrapResponse> => {
+  const { data } = await api.get(
+    `organization/${organizationId}/sidebar-bootstrap`,
+  )
+  return SidebarBootstrapResponseSchema.parse(data)
 }
