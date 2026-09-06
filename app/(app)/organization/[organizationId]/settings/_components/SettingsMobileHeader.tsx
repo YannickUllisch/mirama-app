@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarTrigger } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarTrigger } from '@src/components/ui/sidebar'
 
 const SettingsMobileHeader = () => {
   return (

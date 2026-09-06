@@ -17,7 +17,7 @@ import {
   type FolderItemProps as FolderItemPrimitiveProps,
   Folder as FolderPrimitive,
   FolderTrigger as FolderTriggerPrimitive,
-} from '@src/components/animate-ui/primitives/radix/files'
+} from '@src/components/ui/primitives/radix/files'
 import { cn } from '@src/lib/utils'
 import { FileIcon, FolderIcon, FolderOpenIcon } from 'lucide-react'
 import type * as React from 'react'

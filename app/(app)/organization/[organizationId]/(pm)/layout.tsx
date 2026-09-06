@@ -1,5 +1,5 @@
 import { auth } from '@auth'
-import { SidebarInset } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarInset } from '@src/components/ui/sidebar'
 import { redirect } from 'next/navigation'
 import PmHeader from './_components/PmHeader'
 import { PmHeaderProvider } from './_components/PmHeaderContext'

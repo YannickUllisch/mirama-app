@@ -3,13 +3,13 @@
 import {
   AutoHeight,
   type AutoHeightProps,
-} from '@src/components/animate-ui/primitives/effects/auto-height'
+} from '@src/components/ui/primitives/effects/auto-height'
 import {
   Highlight,
   HighlightItem,
   type HighlightItemProps,
   type HighlightProps,
-} from '@src/components/animate-ui/primitives/effects/highlight'
+} from '@src/components/ui/primitives/effects/highlight'
 import { useControlledState } from '@src/hooks/use-controlled-state'
 import { getStrictContext } from '@src/lib/get-strict-context'
 import {

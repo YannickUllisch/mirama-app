@@ -5,18 +5,18 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@src/components/animate-ui/components/animate/tooltip'
+} from '@src/components/ui/tooltip'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@src/components/animate-ui/components/radix/sheet'
+} from '@src/components/ui/sheet'
 import {
   Highlight,
   HighlightItem,
-} from '@src/components/animate-ui/primitives/effects/highlight'
+} from '@src/components/ui/primitives/effects/highlight'
 import { Button } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'
 import { Separator } from '@src/components/ui/separator'

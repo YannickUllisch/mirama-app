@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarMenu } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarMenu } from '@src/components/ui/sidebar'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import { Building2, Plus } from 'lucide-react'
 import Link from 'next/link'

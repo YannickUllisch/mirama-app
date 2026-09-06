@@ -14,7 +14,7 @@ import {
 import {
   Slot,
   type WithAsChild,
-} from '@src/components/animate-ui/primitives/animate/slot'
+} from '@src/components/ui/primitives/animate/slot'
 import { getStrictContext } from '@src/lib/get-strict-context'
 import {
   AnimatePresence,

@@ -1,5 +1,5 @@
 // app/(app)/organization/[organizationId]/settings/layout.tsx
-import { SidebarInset } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarInset } from '@src/components/ui/sidebar'
 import TenantResourceBridge from '@src/modules/tenant/tenant/TenantResourceBridge'
 import type { Metadata } from 'next'
 import SettingsMobileHeader from './_components/SettingsMobileHeader'

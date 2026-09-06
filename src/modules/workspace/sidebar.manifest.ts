@@ -1,5 +1,7 @@
 import {
+  HomeIcon,
   Inbox,
+  KanbanIcon,
   Layers2Icon,
   type LucideIcon,
   Sparkles,
@@ -36,10 +38,10 @@ export const SIDEBAR_ITEMS: SidebarManifestItem[] = [
     route: 'agent',
   },
   {
-    title: 'Agent',
-    icon: Sparkles,
-    href: '/organization/[organizationId]',
-    route: '',
+    title: 'Dashboard',
+    icon: HomeIcon,
+    href: '/organization/[organizationId]/',
+    route: 'dashboard',
   },
 ]
 
@@ -52,7 +54,7 @@ export const SIDEBAR_WORKSPACE_GROUP_ITEMS: SidebarManifestItem[] = [
   },
   {
     title: 'Boards',
-    icon: Layers2Icon,
+    icon: KanbanIcon,
     href: '/organization/[organizationId]/boards/all',
     route: 'boards',
   },

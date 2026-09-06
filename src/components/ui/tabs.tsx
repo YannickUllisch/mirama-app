@@ -1,55 +1,88 @@
-import * as TabsPrimitive from '@radix-ui/react-tabs'
+import {
+  TabsContent as TabsContentPrimitive,
+  type TabsContentProps as TabsContentPrimitiveProps,
+  TabsContents as TabsContentsPrimitive,
+  type TabsContentsProps as TabsContentsPrimitiveProps,
+  TabsHighlightItem as TabsHighlightItemPrimitive,
+  TabsHighlight as TabsHighlightPrimitive,
+  TabsList as TabsListPrimitive,
+  type TabsListProps as TabsListPrimitiveProps,
+  Tabs as TabsPrimitive,
+  type TabsProps as TabsPrimitiveProps,
+  TabsTrigger as TabsTriggerPrimitive,
+  type TabsTriggerProps as TabsTriggerPrimitiveProps,
+} from '@src/components/ui/primitives/animate/tabs'
 import { cn } from '@src/lib/utils'
-import * as React from 'react'
 
-const Tabs = TabsPrimitive.Root
+type TabsProps = TabsPrimitiveProps
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      'inline-flex items-center gap-1 rounded-lg border border-border bg-surface-soft p-1',
-      className,
-    )}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+function Tabs({ className, ...props }: TabsProps) {
+  return (
+    <TabsPrimitive
+      className={cn('flex flex-col gap-2', className)}
+      {...props}
+    />
+  )
+}
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors outline-none',
-      'focus-visible:ring-[0.125rem] focus-visible:ring-ring',
-      'disabled:pointer-events-none disabled:opacity-50',
-      'data-[state=active]:bg-canvas data-[state=active]:text-mirama data-[state=active]:border data-[state=active]:border-hairline',
-      className,
-    )}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+type TabsListProps = TabsListPrimitiveProps
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      'mt-2 outline-none focus-visible:ring-[0.125rem] focus-visible:ring-ring',
-      className,
-    )}
-    {...props}
-  />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+function TabsList({ className, ...props }: TabsListProps) {
+  return (
+    <TabsHighlightPrimitive className="absolute z-0 inset-0 border border-transparent rounded-md bg-background dark:border-input dark:bg-input/30 shadow-sm">
+      <TabsListPrimitive
+        className={cn(
+          'bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]',
+          className,
+        )}
+        {...props}
+      />
+    </TabsHighlightPrimitive>
+  )
+}
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+type TabsTriggerProps = TabsTriggerPrimitiveProps
+
+function TabsTrigger({ className, ...props }: TabsTriggerProps) {
+  return (
+    <TabsHighlightItemPrimitive value={props.value} className="flex-1">
+      <TabsTriggerPrimitive
+        className={cn(
+          "data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md w-full px-2 py-1 text-sm font-medium whitespace-nowrap transition-colors duration-500 ease-in-out focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          className,
+        )}
+        {...props}
+      />
+    </TabsHighlightItemPrimitive>
+  )
+}
+
+type TabsContentsProps = TabsContentsPrimitiveProps
+
+function TabsContents(props: TabsContentsProps) {
+  return <TabsContentsPrimitive {...props} />
+}
+
+type TabsContentProps = TabsContentPrimitiveProps
+
+function TabsContent({ className, ...props }: TabsContentProps) {
+  return (
+    <TabsContentPrimitive
+      className={cn('outline-none', className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Tabs,
+  TabsContent,
+  TabsContents,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsContentsProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+}

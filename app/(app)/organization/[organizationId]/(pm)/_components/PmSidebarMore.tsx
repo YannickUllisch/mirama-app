@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarMenuItem, useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarMenuItem, useSidebar } from '@src/components/ui/sidebar'
 import { Popover, PopoverContent, PopoverTrigger } from '@src/components/ui/popover'
 import { Separator } from '@src/components/ui/separator'
 import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'

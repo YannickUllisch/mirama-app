@@ -6,7 +6,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import {

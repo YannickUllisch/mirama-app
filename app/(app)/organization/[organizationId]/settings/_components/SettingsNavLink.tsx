@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarMenuButton } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarMenuButton } from '@src/components/ui/sidebar'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 

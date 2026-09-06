@@ -6,10 +6,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@ui/dropdown-menu'
@@ -99,19 +97,6 @@ const ProjectGrid = ({ projects, loading }: ProjectGridProps) => {
                       <Flag className="w-3.5 h-3.5 text-neutral-400" /> Set
                       Priority
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent className="rounded-xl font-bold">
-                        <DropdownMenuItem className="text-xs text-red-500">
-                          High
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs text-tertiary">
-                          Medium
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs text-neutral-400">
-                          Low
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
                   </DropdownMenuSub>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="gap-2 text-xs text-red-500 cursor-pointer focus:text-red-500 focus:bg-red-500/10">

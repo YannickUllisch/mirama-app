@@ -10,8 +10,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@src/components/animate-ui/components/radix/dropdown-menu'
-import { useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/dropdown-menu'
+import { useSidebar } from '@src/components/ui/sidebar'
 import {
   Check,
   ChevronDown,

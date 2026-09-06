@@ -1,5 +1,6 @@
+import { useDebouncedMutation } from '@src/hooks/use-debounced-mutation'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { SidebarBootstrapResponse } from './sidebar'
 import {
@@ -73,17 +74,18 @@ const viewState = {
   // instant. We apply the new state to the cache immediately and roll back only if the
   // server rejects it - no waiting on a round trip for the UI to reflect the change.
   saveViewState: {
-    useMutation: (surfaceKey: string) => {
+    useMutation: (surfaceKey: string, options?: { debounceMs?: number }) => {
       const { activeOrganizationId } = useOrganizationResource()
       const queryClient = useQueryClient()
       const detailKey = viewStateKeys.detail(activeOrganizationId, surfaceKey)
 
-      return useMutation<
+      return useDebouncedMutation<
         ViewStateResponse,
         Error,
         SaveViewStateVars,
         SaveViewStateContext
       >({
+        debounceMs: options?.debounceMs,
         mutationFn: ({ viewType, stateJson }) =>
           saveViewStateFn(activeOrganizationId, surfaceKey, {
             surfaceKey,

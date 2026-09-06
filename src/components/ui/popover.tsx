@@ -1,33 +1,64 @@
-import * as PopoverPrimitive from '@radix-ui/react-popover'
+import {
+  PopoverClose as PopoverClosePrimitive,
+  type PopoverCloseProps as PopoverClosePrimitiveProps,
+  PopoverContent as PopoverContentPrimitive,
+  type PopoverContentProps as PopoverContentPrimitiveProps,
+  PopoverPortal as PopoverPortalPrimitive,
+  Popover as PopoverPrimitive,
+  type PopoverProps as PopoverPrimitiveProps,
+  PopoverTrigger as PopoverTriggerPrimitive,
+  type PopoverTriggerProps as PopoverTriggerPrimitiveProps,
+} from '@src/components/ui/primitives/radix/popover'
 import { cn } from '@src/lib/utils'
-import * as React from 'react'
 
-const Popover = PopoverPrimitive.Root
-const PopoverTrigger = PopoverPrimitive.Trigger
-const PopoverAnchor = PopoverPrimitive.Anchor
+type PopoverProps = PopoverPrimitiveProps
 
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = 'center', sideOffset = 8, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        'z-50 w-72 rounded-lg border border-border bg-card text-card-foreground outline-none p-4 shadow-md',
-        'data-[state=open]:animate-in data-[state=closed]:animate-out',
-        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-        'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-        'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-        'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        className,
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-))
-PopoverContent.displayName = PopoverPrimitive.Content.displayName
+function Popover(props: PopoverProps) {
+  return <PopoverPrimitive {...props} />
+}
 
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger }
+type PopoverTriggerProps = PopoverTriggerPrimitiveProps
+
+function PopoverTrigger(props: PopoverTriggerProps) {
+  return <PopoverTriggerPrimitive {...props} />
+}
+
+type PopoverContentProps = PopoverContentPrimitiveProps
+
+function PopoverContent({
+  className,
+  align = 'center',
+  sideOffset = 4,
+  ...props
+}: PopoverContentProps) {
+  return (
+    <PopoverPortalPrimitive>
+      <PopoverContentPrimitive
+        align={align}
+        sideOffset={sideOffset}
+        className={cn(
+          'bg-popover text-popover-foreground z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden',
+          className,
+        )}
+        {...props}
+      />
+    </PopoverPortalPrimitive>
+  )
+}
+
+type PopoverCloseProps = PopoverClosePrimitiveProps
+
+function PopoverClose(props: PopoverCloseProps) {
+  return <PopoverClosePrimitive {...props} />
+}
+
+export {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+  type PopoverCloseProps,
+  type PopoverContentProps,
+  type PopoverProps,
+  type PopoverTriggerProps,
+}

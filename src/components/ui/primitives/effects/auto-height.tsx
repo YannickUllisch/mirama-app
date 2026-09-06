@@ -13,7 +13,7 @@ import { useAutoHeight } from '@src/hooks/use-auto-height'
 import {
   Slot,
   type WithAsChild,
-} from '@src/components/animate-ui/primitives/animate/slot'
+} from '@src/components/ui/primitives/animate/slot'
 
 type AutoHeightProps = WithAsChild<
   {

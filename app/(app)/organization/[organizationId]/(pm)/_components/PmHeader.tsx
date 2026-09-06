@@ -3,7 +3,7 @@
 import {
   SidebarTrigger,
   useSidebar,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
 import { usePmHeaderContent } from './PmHeaderContext'
 

@@ -1,4 +1,3 @@
-// src/hooks/use-callback-ref.ts
 import * as React from 'react'
 
 function useCallbackRef<T extends (...args: never[]) => unknown>(

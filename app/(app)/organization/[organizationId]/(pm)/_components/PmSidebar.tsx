@@ -7,14 +7,14 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import HoverLink from '@src/components/HoverLink'
 import { Button } from '@src/components/ui/button'
 import {
   mergeSidebarItems,
-  type SidebarState,
   serializeSidebarState,
   setItemVisibility,
+  type SidebarState,
 } from '@src/modules/workspace/sidebar'
 import { SIDEBAR_ITEMS } from '@src/modules/workspace/sidebar.manifest'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
@@ -48,7 +48,9 @@ const PmSidebar = ({
   const [sidebarState, setSidebarState] = useState(initial)
   const [customizeOpen, setCustomizeOpen] = useState(false)
   const { mutate: saveSidebar } =
-    apiRequest.viewState.saveViewState.useMutation('sidebar')
+    apiRequest.viewState.saveViewState.useMutation('sidebar', {
+      debounceMs: 1000,
+    })
 
   const commit = (next: SidebarState) => {
     setSidebarState(next)

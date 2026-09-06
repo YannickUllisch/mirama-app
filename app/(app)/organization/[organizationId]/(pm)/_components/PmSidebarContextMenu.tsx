@@ -1,6 +1,6 @@
 'use client'
 
-import { useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
+import { useSidebar } from '@src/components/ui/sidebar'
 import {
   ContextMenu,
   ContextMenuCheckboxItem,

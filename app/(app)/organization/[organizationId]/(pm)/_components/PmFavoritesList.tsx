@@ -3,7 +3,7 @@
 import {
   SidebarMenu,
   SidebarMenuItem,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import type { FavoriteEntityState } from '@src/modules/workspace/sidebar'
 import { Building2 } from 'lucide-react'
 import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'

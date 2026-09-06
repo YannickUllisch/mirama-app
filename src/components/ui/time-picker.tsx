@@ -6,12 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@src/components/ui/popover'
-import { VisuallyHiddenInput } from '@src/components/visually-hidden-input'
 import { useAsRef } from '@src/hooks/use-as-ref'
 import { useIsomorphicLayoutEffect } from '@src/hooks/use-isomorphic-layout-effect'
 import { useLazyRef } from '@src/hooks/use-lazy-ref'
 import { useComposedRefs } from '@src/lib/compose-refs'
 import { cn } from '@src/lib/utils'
+import { VisuallyHiddenInput } from '@ui/visually-hidden-input'
 import { Clock } from 'lucide-react'
 import { Slot as SlotPrimitive } from 'radix-ui'
 import * as React from 'react'

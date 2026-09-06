@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   useSidebar,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import { SettingsSidebarMenu } from '@src/modules/tenant/settings/settingsSidebarMenu'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'

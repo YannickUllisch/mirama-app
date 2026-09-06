@@ -5,8 +5,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@src/components/animate-ui/components/radix/dialog'
-import { Switch } from '@src/components/animate-ui/components/radix/switch'
+} from '@src/components/ui/dialog'
+import { Switch } from '@src/components/ui/switch'
 import { Button } from '@src/components/ui/button'
 import { Separator } from '@src/components/ui/separator'
 import {

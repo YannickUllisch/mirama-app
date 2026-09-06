@@ -4,14 +4,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import {
   Accordion,
   AccordionContent,
   AccordionHeader,
   AccordionItem,
   AccordionTrigger,
-} from '@src/components/animate-ui/primitives/radix/accordion'
+} from '@src/components/ui/accordion'
 import { Button } from '@src/components/ui/button'
 import { ChevronRightIcon, Plus } from 'lucide-react'
 import Link from 'next/link'

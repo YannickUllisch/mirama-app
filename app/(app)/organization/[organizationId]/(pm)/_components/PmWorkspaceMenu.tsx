@@ -3,7 +3,7 @@
 import {
   SidebarMenu,
   SidebarMenuItem,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import {
   mergeAllSidebarItems,
   type SidebarGroupState,

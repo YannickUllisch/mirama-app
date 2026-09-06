@@ -14,12 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@src/components/ui/select'
-import { VisuallyHiddenInput } from '@src/components/visually-hidden-input'
 import { useAsRef } from '@src/hooks/use-as-ref'
 import { useIsomorphicLayoutEffect } from '@src/hooks/use-isomorphic-layout-effect'
 import { useLazyRef } from '@src/hooks/use-lazy-ref'
 import { useComposedRefs } from '@src/lib/compose-refs'
 import { cn } from '@src/lib/utils'
+import { VisuallyHiddenInput } from '@ui/visually-hidden-input'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PipetteIcon } from 'lucide-react'
 import {

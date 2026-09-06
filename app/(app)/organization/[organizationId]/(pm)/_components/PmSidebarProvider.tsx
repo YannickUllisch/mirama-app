@@ -3,7 +3,7 @@
 import {
   SidebarProvider,
   useSidebar,
-} from '@src/components/animate-ui/components/radix/sidebar'
+} from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
 import { useCallback, useEffect, useRef, useState } from 'react'
 

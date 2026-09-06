@@ -1,33 +1,66 @@
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { CheckIcon } from '@radix-ui/react-icons'
+import {
+  CheckboxIndicator as CheckboxIndicatorPrimitive,
+  Checkbox as CheckboxPrimitive,
+  type CheckboxProps as CheckboxPrimitiveProps,
+} from '@src/components/ui/primitives/radix/checkbox'
 import { cn } from '@src/lib/utils'
-import * as React from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
 
-const Checkbox = React.forwardRef<
-  React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <CheckboxPrimitive.Root
-    ref={ref}
-    className={cn(
-      'peer h-4 w-4 shrink-0 rounded border border-border bg-background transition-colors outline-none',
-      'hover:border-primary/50',
-      'focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary/60',
-      'data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-primary-foreground',
-      'disabled:cursor-not-allowed disabled:opacity-50',
-      className,
-    )}
-    {...props}
-  >
-    <CheckboxPrimitive.Indicator
-      className={cn(
-        'flex items-center justify-center text-current animate-in fade-in zoom-in-75 duration-150',
-      )}
+const checkboxVariants = cva(
+  'peer shrink-0 flex items-center justify-center outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-500 focus-visible:ring-offset-2 [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground',
+  {
+    variants: {
+      variant: {
+        default: 'bg-background border',
+        accent: 'bg-input',
+      },
+      size: {
+        default: 'size-5 rounded-sm',
+        sm: 'size-4.5 rounded-[5px]',
+        lg: 'size-6 rounded-[7px]',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  },
+)
+
+const checkboxIndicatorVariants = cva('', {
+  variants: {
+    size: {
+      default: 'size-3.5',
+      sm: 'size-3',
+      lg: 'size-4',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
+type CheckboxProps = CheckboxPrimitiveProps &
+  VariantProps<typeof checkboxVariants>
+
+function Checkbox({
+  className,
+  children,
+  variant,
+  size,
+  ...props
+}: CheckboxProps) {
+  return (
+    <CheckboxPrimitive
+      className={cn(checkboxVariants({ variant, size, className }))}
+      {...props}
     >
-      <CheckIcon className="h-3 w-3" />
-    </CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
-))
-Checkbox.displayName = CheckboxPrimitive.Root.displayName
+      {children}
+      <CheckboxIndicatorPrimitive
+        className={cn(checkboxIndicatorVariants({ size }))}
+      />
+    </CheckboxPrimitive>
+  )
+}
 
-export { Checkbox }
+export { Checkbox, type CheckboxProps }

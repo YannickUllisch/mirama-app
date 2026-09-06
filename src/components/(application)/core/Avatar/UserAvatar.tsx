@@ -1,8 +1,7 @@
 import { Avatar, AvatarFallback } from '@src/components/ui/avatar'
-import type { FC } from 'react'
 import { extractFirstLetters, getColorByName } from '@src/lib/utils'
 import { CircleUserRound } from 'lucide-react'
-import GeneralTooltip from '@src/components/GeneralTooltip'
+import type { FC } from 'react'
 
 interface UserAvatarProps {
   username: string | null
@@ -22,20 +21,18 @@ const UserAvatar: FC<UserAvatarProps> = ({
   return (
     <>
       {toolTip ? (
-        <GeneralTooltip tipText={username ?? 'Unassigned'}>
-          <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
-            <AvatarFallback
-              className={`${username ? userColor : ''} text-white`}
-              style={fontSize ? { fontSize: fontSize } : {}}
-            >
-              {username ? (
-                extractFirstLetters(username)
-              ) : (
-                <CircleUserRound strokeWidth={0.8} />
-              )}
-            </AvatarFallback>
-          </Avatar>
-        </GeneralTooltip>
+        <Avatar className={`h-${avatarSize} w-${avatarSize} flex`}>
+          <AvatarFallback
+            className={`${username ? userColor : ''} text-white`}
+            style={fontSize ? { fontSize: fontSize } : {}}
+          >
+            {username ? (
+              extractFirstLetters(username)
+            ) : (
+              <CircleUserRound strokeWidth={0.8} />
+            )}
+          </AvatarFallback>
+        </Avatar>
       ) : (
         <Avatar
           style={{
