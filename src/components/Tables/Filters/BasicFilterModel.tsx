@@ -1,12 +1,8 @@
 'use client'
-import {
-  PriorityType,
-  StatusType,
-  TaskStatusType,
-} from '@/prisma/generated/client'
 import { Button } from '@src/components/ui/button'
 import { Input } from '@src/components/ui/input'
 import { capitalize } from '@src/lib/utils'
+import { PriorityType, StatusType, TaskStatusType } from '@src/types/domain'
 import type { Table } from '@tanstack/react-table'
 import { DataTableFacetedFilter } from './FacetedFilter'
 

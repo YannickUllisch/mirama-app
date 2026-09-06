@@ -18,8 +18,6 @@
 .DS_Store
 *.pem
 
-# zod generator
-/prisma/zod
 
 # debug
 npm-debug.log*
@@ -58,5 +56,3 @@ next-env.d.ts
 !.yarn/sdks
 !.yarn/versions
 .husky/
-
-prisma/generated

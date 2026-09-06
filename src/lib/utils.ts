@@ -1,4 +1,4 @@
-import { PriorityType, TaskStatusType } from '@/prisma/generated/client'
+import { PriorityType, TaskStatusType } from '@src/types/domain'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 

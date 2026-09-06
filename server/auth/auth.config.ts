@@ -84,7 +84,6 @@ export default {
           const uuid = attributes?.find((attr) => attr.Name === 'sub')?.Value
           const name = attributes?.find((attr) => attr.Name === 'name')?.Value
 
-          // Attributes are properly added in prisma-adapter
           return {
             id: uuid,
             email,

@@ -1,8 +1,4 @@
-import {
-  type Project,
-  type Task,
-  TaskStatusType,
-} from '@/prisma/generated/client'
+import { TaskStatusType } from '@src/types/domain'
 import { differenceInDays } from 'date-fns'
 
 export const getDaysRemaining = (endDate: Date) => {
@@ -10,9 +6,11 @@ export const getDaysRemaining = (endDate: Date) => {
   return differenceInDays(endDate, today)
 }
 
-export const calculateProjectProgress = (
-  project: Project & { tasks: Task[] },
-) => {
+interface ProjectWithTasks {
+  tasks: { status: TaskStatusType }[]
+}
+
+export const calculateProjectProgress = (project: ProjectWithTasks) => {
   if (!project.tasks || project.tasks.length === 0) return 0
   const completed = project.tasks.filter(
     (task) => task.status === TaskStatusType.DONE,
