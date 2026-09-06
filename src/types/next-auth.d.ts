@@ -5,6 +5,7 @@ export type ExtendedUser = DefaultSession['user'] & {
   tenantId: string
   tenantRole?: TenantRole
   organizationId?: string
+  organizationSlug?: string
   roleId?: string
   memberId?: string
   isOnboarded?: boolean

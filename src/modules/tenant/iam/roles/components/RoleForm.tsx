@@ -87,13 +87,13 @@ export const RoleForm = ({
 }) => {
   const isEdit = !!defaultRole
   const router = useRouter()
-  const { activeOrganizationId } = useOrganizationResource()
+  const { activeOrganizationSlug } = useOrganizationResource()
   const [isPending, startTransition] = useTransition()
 
   const { mutate: createRole } = roleHooks.create.useMutation()
   const { mutate: updateRole } = roleHooks.update.useMutation()
 
-  const rolesHref = `/organization/${activeOrganizationId}/settings/roles`
+  const rolesHref = `/organization/${activeOrganizationSlug}/settings/roles`
 
   const form = useForm<CreateRoleCommand>({
     resolver: zodResolver(CreateRoleSchema),

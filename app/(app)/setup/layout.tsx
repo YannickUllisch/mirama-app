@@ -23,8 +23,8 @@ const readAvatars = () => {
 const SetupLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
   if (!session?.user) redirect('/auth/login')
-  if (session.user.organizationId)
-    redirect(`/organization/${session.user.organizationId}`)
+  if (session.user.organizationSlug)
+    redirect(`/organization/${session.user.organizationSlug}`)
 
   return (
     <SessionWrapper>

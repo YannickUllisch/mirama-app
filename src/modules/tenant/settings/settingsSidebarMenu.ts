@@ -36,32 +36,32 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Preferences',
-        href: '/organization/[organizationId]/settings/account/preferences',
+        href: '/organization/[organizationSlug]/settings/account/preferences',
         icon: Settings2,
       },
       {
         label: 'Profile',
-        href: '/organization/[organizationId]/settings/account/profile',
+        href: '/organization/[organizationSlug]/settings/account/profile',
         icon: User,
       },
       {
         label: 'Notifications',
-        href: '/organization/[organizationId]/settings/account/notifications',
+        href: '/organization/[organizationSlug]/settings/account/notifications',
         icon: Bell,
       },
       {
         label: 'Security & access',
-        href: '/organization/[organizationId]/settings/account/security',
+        href: '/organization/[organizationSlug]/settings/account/security',
         icon: ShieldCheck,
       },
       {
         label: 'Connected accounts',
-        href: '/organization/[organizationId]/settings/account/connected-accounts',
+        href: '/organization/[organizationSlug]/settings/account/connected-accounts',
         icon: Link2,
       },
       {
         label: 'Agent personalization',
-        href: '/organization/[organizationId]/settings/account/agent',
+        href: '/organization/[organizationSlug]/settings/account/agent',
         icon: Bot,
       },
     ],
@@ -71,37 +71,37 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'General',
-        href: '/organization/[organizationId]/settings/general',
+        href: '/organization/[organizationSlug]/settings/general',
         icon: Settings2,
       },
       {
         label: 'Branding',
-        href: '/organization/[organizationId]/settings/branding',
+        href: '/organization/[organizationSlug]/settings/branding',
         icon: Palette,
       },
       {
         label: 'Notifications',
-        href: '/organization/[organizationId]/settings/notifications',
+        href: '/organization/[organizationSlug]/settings/notifications',
         icon: Bell,
       },
       {
         label: 'Billing',
-        href: '/organization/[organizationId]/settings/billing',
+        href: '/organization/[organizationSlug]/settings/billing',
         icon: CreditCardIcon,
       },
       {
         label: 'Policies',
-        href: '/organization/[organizationId]/settings/policies',
+        href: '/organization/[organizationSlug]/settings/policies',
         icon: BookAIcon,
       },
       {
         label: 'Roles',
-        href: '/organization/[organizationId]/settings/roles',
+        href: '/organization/[organizationSlug]/settings/roles',
         icon: KeyRound,
       },
       {
         label: 'Organizations',
-        href: '/organization/[organizationId]/settings/organizations',
+        href: '/organization/[organizationSlug]/settings/organizations',
         icon: Building2,
       },
     ],
@@ -111,17 +111,17 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Members',
-        href: '/organization/[organizationId]/settings/members',
+        href: '/organization/[organizationSlug]/settings/members',
         icon: Users,
       },
       {
         label: 'Teams',
-        href: '/organization/[organizationId]/settings/teams',
+        href: '/organization/[organizationSlug]/settings/teams',
         icon: UsersRound,
       },
       {
         label: 'Invitations',
-        href: '/organization/[organizationId]/settings/invitations',
+        href: '/organization/[organizationSlug]/settings/invitations',
         icon: Mail,
       },
     ],
@@ -131,7 +131,7 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Tags',
-        href: '/organization/[organizationId]/settings/projects',
+        href: '/organization/[organizationSlug]/settings/projects',
         icon: Tag,
       },
     ],

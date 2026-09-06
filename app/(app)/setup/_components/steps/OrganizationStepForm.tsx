@@ -8,6 +8,7 @@ import {
   type CreateOrganizationCommand,
   OrganizationRegion,
 } from '@src/modules/tenant/organization/organization.types'
+import { slugify } from '@src/modules/tenant/organization/slug'
 import {
   type OrganizationSetupCommand,
   OrganizationSetupSchema,
@@ -39,10 +40,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/select'
+import axios from 'axios'
 import { ImageIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { type Control, useForm } from 'react-hook-form'
 import { useSetup } from '../SetupProvider'
 import SetupShell from '../SetupShell'
@@ -51,6 +53,17 @@ const REGION_LABELS: Record<OrganizationRegion, string> = {
   [OrganizationRegion.EuropeanUnion]: 'European Union',
   [OrganizationRegion.UnitedStates]: 'United States',
   [OrganizationRegion.RestOfWorld]: 'Rest of world',
+}
+
+// Generic-enough that "Request failed with status code 409" would otherwise be all the
+// user sees - the backend's actual reason (e.g. "This URL is already taken") lives in the
+// ProblemDetails body's `title` (see ApiControllerBase.Problem on the backend).
+const extractErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    const title = error.response?.data?.title
+    if (typeof title === 'string' && title.length > 0) return title
+  }
+  return 'Something went wrong creating your organization. Please try again.'
 }
 
 const ColorSwatchField = ({
@@ -100,6 +113,9 @@ const OrganizationStepForm = () => {
   const { update } = useSession()
   const { draft, setOrganization } = useSetup()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // Once the user has typed into the slug field directly, stop overwriting it from the
+  // name field - it's their URL to choose, the name-derived value is just a head start.
+  const slugTouched = useRef(false)
 
   const { mutate: createOrganization } =
     apiRequest.organization.create.useMutation()
@@ -131,6 +147,7 @@ const OrganizationStepForm = () => {
 
     const orgPayload: CreateOrganizationCommand = {
       name: data.name,
+      slug: data.slug,
       street: '-',
       city: '-',
       country: '-',
@@ -159,10 +176,15 @@ const OrganizationStepForm = () => {
           )
         }
 
-        await update({ organizationId: org.id })
-        router.push(`/organization/${org.id}`)
+        // Re-mints the session's org claims by slug (see GetOrgMembership on the backend) -
+        // the Guid it returns is still what actually scopes every backend request from here on.
+        await update({ organizationSlug: org.slug })
+        router.push(`/organization/${org.slug}`)
       },
-      onError: () => setIsSubmitting(false),
+      onError: (error) => {
+        setIsSubmitting(false)
+        form.setError('slug', { message: extractErrorMessage(error) })
+      },
     })
   })
 
@@ -182,7 +204,45 @@ const OrganizationStepForm = () => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Acme Inc." {...field} />
+                <Input
+                  placeholder="Acme Inc."
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e)
+                    if (!slugTouched.current) {
+                      form.setValue('slug', slugify(e.target.value), {
+                        shouldValidate: form.formState.isSubmitted,
+                      })
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="slug"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Workspace URL</FormLabel>
+              <FormControl>
+                <div className="flex items-center rounded-md border border-input focus-within:ring-1 focus-within:ring-ring">
+                  <span className="pl-3 pr-1 text-sm text-body-text/60 select-none">
+                    /organization/
+                  </span>
+                  <Input
+                    placeholder="acme-inc"
+                    className="border-0 focus-visible:ring-0 px-0"
+                    {...field}
+                    onChange={(e) => {
+                      slugTouched.current = true
+                      field.onChange(slugify(e.target.value))
+                    }}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

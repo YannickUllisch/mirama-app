@@ -51,13 +51,14 @@ export const setupUser = async (payload: {
   }
 }
 
+// Looked up by slug, not the organization's Guid - see GetOrgMembership on the backend.
 export const getOrganizationMembership = async (
   externalId: string,
-  organizationId: string,
+  organizationSlug: string,
 ): Promise<AuthOrgMembershipResponse | null> => {
   try {
     const { data } = await api.get(
-      `auth/user/${externalId}/organization/${organizationId}`,
+      `auth/user/${externalId}/organization/${organizationSlug}`,
     )
     return data
   } catch {

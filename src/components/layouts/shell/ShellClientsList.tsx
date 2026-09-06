@@ -14,10 +14,10 @@ const VISIBLE_LIMIT = 3
 // personalizable) - it just renders whatever IClientService returns, in that order.
 const ShellClientsList = ({
   clients,
-  organizationId,
+  organizationSlug,
 }: {
   clients: ClientSummary[]
-  organizationId: string
+  organizationSlug: string
 }) => {
   const shown = clients.slice(0, VISIBLE_LIMIT)
   const overflow = clients.slice(VISIBLE_LIMIT)
@@ -26,7 +26,7 @@ const ShellClientsList = ({
     <ShellSidebarCollapsibleGroup
       label="Your clients"
       action={{
-        href: `/organization/${organizationId}/clients/create`,
+        href: `/organization/${organizationSlug}/clients/create`,
         label: 'New client',
       }}
     >
@@ -36,7 +36,7 @@ const ShellClientsList = ({
             <ShellClientNavItem
               key={client.clientId}
               client={client}
-              organizationId={organizationId}
+              organizationSlug={organizationSlug}
             />
           ))}
           <ShellSidebarMore
@@ -44,13 +44,13 @@ const ShellClientsList = ({
               key: client.clientId,
               icon: <Building2 className="size-3.5 shrink-0" />,
               label: client.name,
-              href: `/organization/${organizationId}/clients/${client.clientId}`,
+              href: `/organization/${organizationSlug}/clients/${client.clientId}`,
             }))}
           />
         </SidebarMenu>
       ) : (
         <Link
-          href={`/organization/${organizationId}/clients/create`}
+          href={`/organization/${organizationSlug}/clients/create`}
           className="flex items-center gap-2 rounded-lg px-2.5 py-1 text-xs text-body-text/60 transition-colors hover:bg-sidebar-accent hover:text-ink group-data-[collapsible=icon]:hidden"
         >
           <Plus className="size-3 shrink-0" />

@@ -1,13 +1,12 @@
-// app/(app)/setup/_components/SetupProvider.tsx
 'use client'
 
 import { OrganizationRegion } from '@src/modules/tenant/organization/organization.types'
+import { createContext, useContext, useEffect, useState } from 'react'
 import type {
   InviteSetupCommand,
   OrganizationSetupCommand,
   ProfileSetupCommand,
 } from './setup.types'
-import { createContext, useContext, useEffect, useState } from 'react'
 import { SETUP_STEPS } from './steps'
 
 type SetupDraft = {
@@ -53,6 +52,7 @@ const SetupProvider = ({
     invites: { emails: [] },
     organization: {
       name: '',
+      slug: '',
       logo: null,
       region: OrganizationRegion.EuropeanUnion,
       primaryColor: '#000000',

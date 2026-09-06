@@ -36,6 +36,17 @@ export type OrganizationResponse = z.infer<typeof OrganizationResponseSchema>
 
 export const CreateOrganizationSchema = z.object({
   name: z.string().min(2).max(100),
+  // Chosen once, at creation - it's the organization's URL segment
+  // (/organization/{slug}/...) and is frozen server-side after that (see Organization.Update
+  // on the backend). Format/uniqueness are both re-checked by the backend regardless.
+  slug: z
+    .string()
+    .min(3, 'Must be at least 3 characters')
+    .max(63, 'Must be 63 characters or fewer')
+    .regex(
+      /^[a-z0-9]+(-[a-z0-9]+)*$/,
+      "Can only contain lowercase letters, numbers and hyphens, and can't start or end with a hyphen.",
+    ),
   street: z.string().min(1).max(200),
   city: z.string().min(1).max(100),
   country: z.string().min(1).max(100),

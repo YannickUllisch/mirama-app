@@ -15,6 +15,16 @@ export type InviteSetupCommand = z.infer<typeof InviteSetupSchema>
 
 export const OrganizationSetupSchema = z.object({
   name: z.string().min(2).max(100),
+  // Chosen here, in this step - it's the organization's URL and is frozen after creation
+  // (see the backend's Organization.Update, which no longer touches Slug).
+  slug: z
+    .string()
+    .min(3, 'Must be at least 3 characters')
+    .max(63, 'Must be 63 characters or fewer')
+    .regex(
+      /^[a-z0-9]+(-[a-z0-9]+)*$/,
+      "Can only contain lowercase letters, numbers and hyphens, and can't start or end with a hyphen.",
+    ),
   logo: z.string().max(500).nullable().optional(),
   region: z.enum(OrganizationRegion),
   primaryColor: z.string().optional(),

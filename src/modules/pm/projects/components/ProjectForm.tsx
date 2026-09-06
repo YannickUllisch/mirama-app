@@ -104,7 +104,7 @@ const ProjectForm = (props: ProjectFormProps) => {
 
   const router = useRouter()
   const { data: session } = useSession()
-  const { activeOrganizationId } = useOrganizationResource()
+  const { activeOrganizationSlug } = useOrganizationResource()
   const { can } = usePermissions()
 
   const canCreateProject = can('project', 'create')
@@ -286,7 +286,7 @@ const ProjectForm = (props: ProjectFormProps) => {
         {
           onSuccess: (data) => {
             router.push(
-              `/organization/${activeOrganizationId}/projects/edit/${data.id}`,
+              `/organization/${activeOrganizationSlug}/projects/edit/${data.id}`,
             )
           },
         },

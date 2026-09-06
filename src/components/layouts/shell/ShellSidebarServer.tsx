@@ -16,10 +16,15 @@ const EMPTY_SIDEBAR_STATE: SidebarState = {
   favorites: { items: [] },
 }
 
+// organizationId (the real Guid) is only needed here, for the backend data fetch below -
+// everything rendered from this point down only ever builds hrefs, so it's handed
+// organizationSlug instead (the URL segment).
 const ShellSidebarServer = async ({
   organizationId,
+  organizationSlug,
 }: {
   organizationId: string
+  organizationSlug: string
 }) => {
   const session = await auth()
   if (!session?.user?.memberId) return null
@@ -42,7 +47,7 @@ const ShellSidebarServer = async ({
 
   return (
     <ShellSidebar
-      organizationId={organizationId}
+      organizationSlug={organizationSlug}
       sidebarState={sidebarState}
       clients={clients}
     />

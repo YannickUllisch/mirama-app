@@ -29,7 +29,7 @@ import ShellSidebarCustomizeDialog from './ShellSidebarCustomizeDialog'
 import ShellWorkspaceMenu from './ShellWorkspaceMenu'
 
 interface ShellSidebarProps {
-  organizationId: string
+  organizationSlug: string
   sidebarState: SidebarState
   clients: ClientSummary[]
 }
@@ -41,7 +41,7 @@ interface ShellSidebarProps {
 // `commit` - none of them know how or where it's saved. Favourites and Your clients are
 // not customizable, so they take plain data props instead.
 const ShellSidebar = ({
-  organizationId,
+  organizationSlug,
   sidebarState: initial,
   clients,
 }: ShellSidebarProps) => {
@@ -58,7 +58,7 @@ const ShellSidebar = ({
   }
 
   const resolveHref = (href: string) =>
-    href.replace('[organizationId]', organizationId)
+    href.replace('[organizationSlug]', organizationSlug)
   const ungroupedItems = mergeSidebarItems(SIDEBAR_ITEMS, sidebarState.items)
   const workspaceGroup = sidebarState.groups.find(
     (g) => g.group === 'workspace',
@@ -72,7 +72,7 @@ const ShellSidebar = ({
       peekOverlay
     >
       <SidebarHeader className="flex-row items-center justify-between gap-1 overflow-hidden">
-        <ShellProfileMenu organizationId={organizationId} />
+        <ShellProfileMenu organizationSlug={organizationSlug} />
         <div className="flex items-center gap-1 shrink-0 group-data-[collapsible=icon]:hidden">
           <Button
             asChild
@@ -81,7 +81,7 @@ const ShellSidebar = ({
             title="Search"
             className="size-7"
           >
-            <HoverLink href={`/organization/${organizationId}/search`}>
+            <HoverLink href={`/organization/${organizationSlug}/search`}>
               <Search className="size-3" />
             </HoverLink>
           </Button>
@@ -92,7 +92,7 @@ const ShellSidebar = ({
             title="New project"
             className="size-7"
           >
-            <HoverLink href={`/organization/${organizationId}/projects/create`}>
+            <HoverLink href={`/organization/${organizationSlug}/projects/create`}>
               <SquarePen className="size-3" />
             </HoverLink>
           </Button>
@@ -122,14 +122,14 @@ const ShellSidebar = ({
           ))}
         </SidebarMenu>
         <ShellWorkspaceMenu
-          organizationId={organizationId}
+          organizationSlug={organizationSlug}
           groupState={workspaceGroup}
           sidebarState={sidebarState}
           onChange={commit}
           onCustomize={() => setCustomizeOpen(true)}
         />
         <ShellFavoritesList favorites={sidebarState.favorites.items} />
-        <ShellClientsList organizationId={organizationId} clients={clients} />
+        <ShellClientsList organizationSlug={organizationSlug} clients={clients} />
       </SidebarContent>
 
       <ShellSidebarCustomizeDialog

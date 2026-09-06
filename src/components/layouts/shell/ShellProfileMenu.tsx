@@ -26,10 +26,10 @@ import { useTheme } from 'next-themes'
 import { useRef } from 'react'
 
 interface ShellProfileMenuProps {
-  organizationId: string
+  organizationSlug: string
 }
 
-const ShellProfileMenu = ({ organizationId }: ShellProfileMenuProps) => {
+const ShellProfileMenu = ({ organizationSlug }: ShellProfileMenuProps) => {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const { lockPeek } = useSidebar()
@@ -61,13 +61,13 @@ const ShellProfileMenu = ({ organizationId }: ShellProfileMenuProps) => {
         sideOffset={6}
         className="min-w-60"
       >
-        <Link href={`/organization/${organizationId}/settings`}>
+        <Link href={`/organization/${organizationSlug}/settings`}>
           <DropdownMenuItem className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             Settings
           </DropdownMenuItem>
         </Link>
-        <Link href={`/organization/${organizationId}/settings/members`}>
+        <Link href={`/organization/${organizationSlug}/settings/members`}>
           <DropdownMenuItem className="flex items-center gap-2">
             <UsersRound className="w-4 h-4" />
             Invite and manage members

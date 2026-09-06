@@ -12,6 +12,7 @@ export type AuthMeResponse = {
 
 export type AuthOrgMembershipResponse = {
   organizationId: string
+  organizationSlug: string
   userId: string
   tenantRole: TenantRole
   tenantId: string

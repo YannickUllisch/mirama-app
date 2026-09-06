@@ -22,25 +22,25 @@ export const SIDEBAR_ITEMS: SidebarManifestItem[] = [
   {
     title: 'Inbox',
     icon: Inbox,
-    href: '/organization/[organizationId]/inbox',
+    href: '/organization/[organizationSlug]/inbox',
     route: 'inbox',
   },
   {
     title: 'My Work',
     icon: SquareCheckBigIcon,
-    href: '/organization/[organizationId]/tasks',
+    href: '/organization/[organizationSlug]/tasks',
     route: 'my-work',
   },
   {
     title: 'Agent',
     icon: Sparkles,
-    href: '/organization/[organizationId]/agent',
+    href: '/organization/[organizationSlug]/agent',
     route: 'agent',
   },
   {
     title: 'Dashboard',
     icon: HomeIcon,
-    href: '/organization/[organizationId]/',
+    href: '/organization/[organizationSlug]/',
     route: 'dashboard',
   },
 ]
@@ -49,25 +49,25 @@ export const SIDEBAR_WORKSPACE_GROUP_ITEMS: SidebarManifestItem[] = [
   {
     title: 'All Projects',
     icon: Layers2Icon,
-    href: '/organization/[organizationId]/projects',
+    href: '/organization/[organizationSlug]/projects',
     route: 'projects',
   },
   {
     title: 'Boards',
     icon: KanbanIcon,
-    href: '/organization/[organizationId]/boards/all',
+    href: '/organization/[organizationSlug]/boards/all',
     route: 'boards',
   },
   {
     title: 'Members',
     icon: UserRoundIcon,
-    href: '/organization/[organizationId]/members',
+    href: '/organization/[organizationSlug]/members',
     route: 'members',
   },
   {
     title: 'Teams',
     icon: UsersRoundIcon,
-    href: '/organization/[organizationId]/settings/teams',
+    href: '/organization/[organizationSlug]/settings/teams',
     route: 'teams',
   },
 ]

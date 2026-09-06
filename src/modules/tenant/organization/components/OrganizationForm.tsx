@@ -11,6 +11,7 @@ import {
   type OrganizationResponse,
   OrganizationRegion,
 } from '@src/modules/tenant/organization/organization.types'
+import { slugify } from '@src/modules/tenant/organization/slug'
 import {
   Form,
   FormControl,
@@ -27,9 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/select'
+import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useTransition } from 'react'
+import { useEffect, useRef, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 type OrganizationFormProps = {
@@ -37,10 +39,22 @@ type OrganizationFormProps = {
   orgId?: string
 }
 
+// Generic-enough that "Request failed with status code 409" would otherwise be all the
+// user sees - the backend's actual reason (e.g. "This URL is already taken") lives in the
+// ProblemDetails body's `title` (see ApiControllerBase.Problem on the backend).
+const extractErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    const title = error.response?.data?.title
+    if (typeof title === 'string' && title.length > 0) return title
+  }
+  return 'Something went wrong. Please try again.'
+}
+
 const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!orgId
+  const slugTouched = useRef(false)
 
   const { items: organizations, isLoading } =
     apiRequest.organization.fetchAll.useQuery()
@@ -57,6 +71,7 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
     resolver: zodResolver(CreateOrganizationSchema),
     defaultValues: {
       name: '',
+      slug: '',
       street: '',
       city: '',
       country: '',
@@ -67,8 +82,10 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
 
   useEffect(() => {
     if (org) {
+      slugTouched.current = true
       form.reset({
         name: org.name,
+        slug: org.slug,
         street: org.street,
         city: org.city,
         country: org.country,
@@ -88,9 +105,22 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
   const handleSubmit = form.handleSubmit((data) => {
     startTransition(() => {
       if (isEditing && orgId) {
-        updateOrganization({ id: orgId, data }, { onSuccess: goBack })
+        // Slug is frozen after creation (see Organization.Update on the backend) - sent
+        // along here only because the form shares its shape with create, it's ignored.
+        updateOrganization(
+          { id: orgId, data },
+          {
+            onSuccess: goBack,
+            onError: (error) =>
+              form.setError('slug', { message: extractErrorMessage(error) }),
+          },
+        )
       } else {
-        createOrganization(data, { onSuccess: goBack })
+        createOrganization(data, {
+          onSuccess: goBack,
+          onError: (error) =>
+            form.setError('slug', { message: extractErrorMessage(error) }),
+        })
       }
     })
   })
@@ -127,8 +157,52 @@ const OrganizationForm = ({ orgId, returnHref }: OrganizationFormProps) => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Acme Inc." {...field} />
+                  <Input
+                    placeholder="Acme Inc."
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      if (!slugTouched.current) {
+                        form.setValue('slug', slugify(e.target.value), {
+                          shouldValidate: form.formState.isSubmitted,
+                        })
+                      }
+                    }}
+                  />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Workspace URL</FormLabel>
+                <FormControl>
+                  <div className="flex items-center rounded-md border border-input focus-within:ring-1 focus-within:ring-ring has-[:disabled]:opacity-60">
+                    <span className="pl-3 pr-1 text-sm text-body-text/60 select-none">
+                      /organization/
+                    </span>
+                    <Input
+                      placeholder="acme-inc"
+                      className="border-0 focus-visible:ring-0 px-0"
+                      disabled={isEditing}
+                      {...field}
+                      onChange={(e) => {
+                        slugTouched.current = true
+                        field.onChange(slugify(e.target.value))
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                {isEditing && (
+                  <p className="text-xs text-body-text/60">
+                    The workspace URL can't be changed after creation.
+                  </p>
+                )}
                 <FormMessage />
               </FormItem>
             )}

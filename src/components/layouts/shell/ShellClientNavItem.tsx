@@ -22,14 +22,14 @@ import { useState } from 'react'
 
 const ShellClientNavItem = ({
   client,
-  organizationId,
+  organizationSlug,
 }: {
   client: ClientSummary
-  organizationId: string
+  organizationSlug: string
 }) => {
   const pathname = usePathname()
   // No dedicated slug exists on the backend yet - routing by client id until one does.
-  const base = `/organization/${organizationId}/clients/${client.clientId}`
+  const base = `/organization/${organizationSlug}/clients/${client.clientId}`
   const isChildActive = pathname.startsWith(base)
   const [open, setOpen] = useState(isChildActive)
 

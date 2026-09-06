@@ -125,7 +125,7 @@ export const PolicyForm = ({
 }) => {
   const isEdit = !!defaultPolicy
   const router = useRouter()
-  const { activeOrganizationId } = useOrganizationResource()
+  const { activeOrganizationSlug } = useOrganizationResource()
   const [isPending, startTransition] = useTransition()
 
   const { mutate: createPolicy } = policyHooks.create.useMutation()
@@ -133,7 +133,7 @@ export const PolicyForm = ({
   const { data: availablePermissions, isLoading: permissionsLoading } =
     iamHooks.availablePermissions.useQuery()
 
-  const policiesHref = `/organization/${activeOrganizationId}/settings/policies`
+  const policiesHref = `/organization/${activeOrganizationSlug}/settings/policies`
 
   const form = useForm<CreatePolicyCommand>({
     resolver: zodResolver(CreatePolicySchema),

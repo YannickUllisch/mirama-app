@@ -53,24 +53,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (me.organizationInfo) {
         token.organizationId = me.organizationInfo.organizationId
+        token.organizationSlug = me.organizationInfo.organizationSlug
         token.memberId = me.organizationInfo.memberId
         token.tenantId = me.organizationInfo.tenantId
         token.roleId = me.organizationInfo.iamRoleIds[0]
       }
 
-      if (trigger === 'update' && session?.organizationId === null) {
+      if (trigger === 'update' && session?.organizationSlug === null) {
         token.organizationId = undefined
+        token.organizationSlug = undefined
         token.roleId = undefined
         token.memberId = undefined
         token.userId = undefined
         token.tenantRole = undefined
-      } else if (trigger === 'update' && session?.organizationId) {
+      } else if (trigger === 'update' && session?.organizationSlug) {
         const membership = await getOrganizationMembership(
           token.sub,
-          session.organizationId,
+          session.organizationSlug,
         )
         if (membership) {
           token.organizationId = membership.organizationId
+          token.organizationSlug = membership.organizationSlug
           token.roleId = membership.iamRoleIds[0]
           token.memberId = membership.memberId
           token.tenantId = membership.tenantId
@@ -88,6 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.tenantId = token.tenantId as string
         session.user.tenantRole = token.tenantRole as TenantRole | undefined
         session.user.organizationId = token.organizationId as string | undefined
+        session.user.organizationSlug = token.organizationSlug as string | undefined
         session.user.roleId = token.roleId as string | undefined
         session.user.memberId = token.memberId as string | undefined
       }

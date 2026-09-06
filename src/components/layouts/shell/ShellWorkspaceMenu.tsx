@@ -17,13 +17,13 @@ import ShellSidebarMore from './ShellSidebarMore'
 const GROUP_KEY = 'workspace'
 
 const ShellWorkspaceMenu = ({
-  organizationId,
+  organizationSlug,
   groupState,
   sidebarState,
   onChange,
   onCustomize,
 }: {
-  organizationId: string
+  organizationSlug: string
   groupState?: SidebarGroupState
   sidebarState: SidebarState
   onChange: (next: SidebarState) => void
@@ -31,7 +31,7 @@ const ShellWorkspaceMenu = ({
 }) => {
   const visible = groupState?.visible ?? true
   const resolveHref = (href: string) =>
-    href.replace('[organizationId]', organizationId)
+    href.replace('[organizationSlug]', organizationSlug)
   const allItems = mergeAllSidebarItems(
     SIDEBAR_WORKSPACE_GROUP_ITEMS,
     groupState?.items ?? [],
