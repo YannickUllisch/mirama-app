@@ -13,13 +13,18 @@ const COLLAPSE_THRESHOLD = MIN_WIDTH - 60
 
 interface PmSidebarProviderProps {
   children: React.ReactNode
+  defaultOpen?: boolean
 }
 
-const PmSidebarProvider = ({ children }: PmSidebarProviderProps) => {
+const PmSidebarProvider = ({
+  children,
+  defaultOpen,
+}: PmSidebarProviderProps) => {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
 
   return (
     <SidebarProvider
+      defaultOpen={defaultOpen}
       className="h-screen overflow-hidden bg-sidebar"
       style={{ '--sidebar-width': `${width}px` } as React.CSSProperties}
     >

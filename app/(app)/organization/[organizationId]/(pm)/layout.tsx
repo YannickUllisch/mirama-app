@@ -1,5 +1,6 @@
 import { auth } from '@auth'
-import { SidebarInset } from '@src/components/ui/sidebar'
+import { SIDEBAR_COOKIE_NAME, SidebarInset } from '@src/components/ui/sidebar'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import PmHeader from './_components/PmHeader'
 import { PmHeaderProvider } from './_components/PmHeaderContext'
@@ -20,8 +21,12 @@ const ShellLayout = async ({
     redirect('/auth/login')
   }
 
+  const cookieStore = await cookies()
+  const sidebarCookie = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value
+  const defaultOpen = sidebarCookie === undefined ? true : sidebarCookie === 'true'
+
   return (
-    <PmSidebarProvider>
+    <PmSidebarProvider defaultOpen={defaultOpen}>
       <PmHeaderProvider>
         <PmSidebarServer organizationId={organizationId} />
         <SidebarInset className="overflow-hidden transition-[margin,border-radius] duration-400 ease-[cubic-bezier(0.7,-0.15,0.25,1.15)] lg:my-2 lg:mr-2 lg:rounded-xl lg:peer-data-[state=collapsed]:ml-2">
