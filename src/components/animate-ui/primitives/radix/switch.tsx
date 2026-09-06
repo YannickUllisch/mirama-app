@@ -29,12 +29,12 @@ type SwitchProps = Omit<
 > &
   HTMLMotionProps<'button'>
 
-function Switch(props: SwitchProps) {
+function Switch({ onCheckedChange, ...props }: SwitchProps) {
   const [isPressed, setIsPressed] = React.useState(false)
   const [isChecked, setIsChecked] = useControlledState({
     value: props.checked,
     defaultValue: props.defaultChecked,
-    onChange: props.onCheckedChange,
+    onChange: onCheckedChange,
   })
 
   return (

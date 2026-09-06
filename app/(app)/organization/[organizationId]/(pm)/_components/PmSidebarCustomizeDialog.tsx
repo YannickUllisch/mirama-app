@@ -1,14 +1,14 @@
 'use client'
 
-import { Button } from '@src/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@src/components/ui/dialog'
+} from '@src/components/animate-ui/components/radix/dialog'
+import { Switch } from '@src/components/animate-ui/components/radix/switch'
+import { Button } from '@src/components/ui/button'
 import { Separator } from '@src/components/ui/separator'
-import { Switch } from '@src/components/ui/switch'
 import {
   mergeAllSidebarItems,
   moveOrderedItem,
@@ -126,7 +126,13 @@ const PmSidebarCustomizeDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent
+        className="max-w-md"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
+      >
         <DialogHeader>
           <DialogTitle>Customize sidebar</DialogTitle>
         </DialogHeader>

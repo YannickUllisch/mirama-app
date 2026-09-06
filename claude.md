@@ -54,6 +54,10 @@ src/              # Client-side code
 
 Do NOT add the route of the component at the top or first line of a files, if you see this remove them for me.
 
+**Comments:**
+- Keep comments minimal. Don't comment obvious code.
+- Do NOT add file paths at top of files (no `// path/to/file.ts` headers).
+
 ## Partial Prerendering (PPR)
 - Wrap dynamic components in `<Suspense>` with a meaningful fallback.
 - Push dynamic data fetching (`auth()`, Prisma calls) as deep into the component tree as possible - never `await` at page level if it can be scoped to a child component.

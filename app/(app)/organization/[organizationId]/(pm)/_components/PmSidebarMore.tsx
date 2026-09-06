@@ -1,11 +1,11 @@
 'use client'
 
-import { SidebarMenuItem } from '@src/components/animate-ui/components/radix/sidebar'
+import { SidebarMenuItem, useSidebar } from '@src/components/animate-ui/components/radix/sidebar'
 import { Popover, PopoverContent, PopoverTrigger } from '@src/components/ui/popover'
 import { Separator } from '@src/components/ui/separator'
 import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 export interface PmSidebarMoreItem {
   key: string
@@ -48,13 +48,29 @@ const PmSidebarMoreRow = ({
 // One "... More" affordance, reused wherever a sidebar section has items it can't show
 // inline: the workspace group's hidden routes (with a "Customize sidebar" shortcut below
 // a separator) and the overflow beyond 3 favourites/clients. A plain, non-modal Popover
-// in both cases - callers just hand over the items to list.
+// in both cases - callers just hand over the items to list. The sidebar's hover-peek is
+// locked open while the popover is open (see PmProfileMenu for the same pattern), so
+// opening it while the collapsed sidebar is only peeking doesn't close it out from under
+// the popover.
 const PmSidebarMore = ({ items, onCustomize }: PmSidebarMoreProps) => {
   const [open, setOpen] = useState(false)
+  const { lockPeek } = useSidebar()
+  const unlockPeekRef = useRef<(() => void) | null>(null)
+
   if (items.length === 0) return null
 
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next)
+    if (next) {
+      unlockPeekRef.current = lockPeek()
+    } else {
+      unlockPeekRef.current?.()
+      unlockPeekRef.current = null
+    }
+  }
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <SidebarMenuItem>
           <button
