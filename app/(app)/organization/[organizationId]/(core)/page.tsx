@@ -16,11 +16,11 @@ import {
 } from 'lucide-react'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
-import { usePmHeader } from './_components/PmHeaderContext'
-import PmHeaderCrumb from './_components/PmHeaderCrumb'
+import { useShellHeader } from '@src/components/layouts/shell/ShellHeaderContext'
+import ShellHeaderCrumb from '@src/components/layouts/shell/ShellHeaderCrumb'
 
 const Dashboard = () => {
-  usePmHeader(<PmHeaderCrumb label="Dashboard" />)
+  useShellHeader(<ShellHeaderCrumb label="Dashboard" />)
 
   const {
     items: projects,

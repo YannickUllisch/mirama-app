@@ -15,9 +15,9 @@ import {
 import { Button } from '@src/components/ui/button'
 import { ChevronRightIcon, Plus } from 'lucide-react'
 import Link from 'next/link'
-import PmSidebarContextMenu from './PmSidebarContextMenu'
+import ShellSidebarContextMenu from './ShellSidebarContextMenu'
 
-interface PmSidebarCollapsibleGroupProps {
+interface ShellSidebarCollapsibleGroupProps {
   label: string
   children: React.ReactNode
   action?: {
@@ -33,12 +33,12 @@ interface PmSidebarCollapsibleGroupProps {
   }
 }
 
-const PmSidebarCollapsibleGroup = ({
+const ShellSidebarCollapsibleGroup = ({
   label,
   children,
   action,
   contextMenu,
-}: PmSidebarCollapsibleGroupProps) => {
+}: ShellSidebarCollapsibleGroupProps) => {
   const header = (
     <AccordionHeader>
       <AccordionTrigger asChild>
@@ -56,13 +56,13 @@ const PmSidebarCollapsibleGroup = ({
         <SidebarGroup className="p-0 px-2">
           <div className="flex items-center justify-between">
             {contextMenu ? (
-              <PmSidebarContextMenu
+              <ShellSidebarContextMenu
                 visible={contextMenu.visible}
                 onVisibilityChange={contextMenu.onVisibilityChange}
                 onCustomize={contextMenu.onCustomize}
               >
                 {header}
-              </PmSidebarContextMenu>
+              </ShellSidebarContextMenu>
             ) : (
               header
             )}
@@ -89,4 +89,4 @@ const PmSidebarCollapsibleGroup = ({
   )
 }
 
-export default PmSidebarCollapsibleGroup
+export default ShellSidebarCollapsibleGroup

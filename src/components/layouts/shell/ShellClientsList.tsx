@@ -4,15 +4,15 @@ import { SidebarMenu } from '@src/components/ui/sidebar'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import { Building2, Plus } from 'lucide-react'
 import Link from 'next/link'
-import PmClientNavItem from './PmClientNavItem'
-import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'
-import PmSidebarMore from './PmSidebarMore'
+import ShellClientNavItem from './ShellClientNavItem'
+import ShellSidebarCollapsibleGroup from './ShellSidebarCollapsibleGroup'
+import ShellSidebarMore from './ShellSidebarMore'
 
 const VISIBLE_LIMIT = 3
 
 // "Your clients" is always the org's live client list (never stored, never
 // personalizable) - it just renders whatever IClientService returns, in that order.
-const PmClientsList = ({
+const ShellClientsList = ({
   clients,
   organizationId,
 }: {
@@ -23,7 +23,7 @@ const PmClientsList = ({
   const overflow = clients.slice(VISIBLE_LIMIT)
 
   return (
-    <PmSidebarCollapsibleGroup
+    <ShellSidebarCollapsibleGroup
       label="Your clients"
       action={{
         href: `/organization/${organizationId}/clients/create`,
@@ -33,13 +33,13 @@ const PmClientsList = ({
       {clients.length > 0 ? (
         <SidebarMenu>
           {shown.map((client) => (
-            <PmClientNavItem
+            <ShellClientNavItem
               key={client.clientId}
               client={client}
               organizationId={organizationId}
             />
           ))}
-          <PmSidebarMore
+          <ShellSidebarMore
             items={overflow.map((client) => ({
               key: client.clientId,
               icon: <Building2 className="size-3.5 shrink-0" />,
@@ -57,8 +57,8 @@ const PmClientsList = ({
           New client
         </Link>
       )}
-    </PmSidebarCollapsibleGroup>
+    </ShellSidebarCollapsibleGroup>
   )
 }
 
-export default PmClientsList
+export default ShellClientsList

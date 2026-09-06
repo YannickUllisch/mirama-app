@@ -6,17 +6,17 @@ import { Folders, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Suspense } from 'react'
-import { usePmHeader } from '../_components/PmHeaderContext'
-import PmHeaderCrumb from '../_components/PmHeaderCrumb'
+import { useShellHeader } from '@src/components/layouts/shell/ShellHeaderContext'
+import ShellHeaderCrumb from '@src/components/layouts/shell/ShellHeaderCrumb'
 import ProjectsContent from './_components/ProjectsContent'
 import ProjectsTableSkeleton from './_components/ProjectsTableSkeleton'
 
 const ProjectsPage = () => {
   const { organizationId } = useParams<{ organizationId: string }>()
 
-  usePmHeader(
+  useShellHeader(
     <div className="flex w-full items-center justify-between">
-      <PmHeaderCrumb label="Projects" />
+      <ShellHeaderCrumb label="Projects" />
       <Button asChild variant="tertiary" size="sm">
         <Link href={`/organization/${organizationId}/projects/create`}>
           <Plus className="size-3.5" />

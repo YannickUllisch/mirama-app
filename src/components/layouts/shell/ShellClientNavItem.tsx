@@ -20,7 +20,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-const PmClientNavItem = ({
+const ShellClientNavItem = ({
   client,
   organizationId,
 }: {
@@ -78,4 +78,4 @@ const PmClientNavItem = ({
   )
 }
 
-export default PmClientNavItem
+export default ShellClientNavItem

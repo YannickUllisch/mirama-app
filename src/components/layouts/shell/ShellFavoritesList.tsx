@@ -3,8 +3,8 @@
 import { SidebarMenu, SidebarMenuItem } from '@src/components/ui/sidebar'
 import type { FavoriteEntityState } from '@src/modules/workspace/sidebar'
 import { Building2 } from 'lucide-react'
-import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'
-import PmSidebarMore from './PmSidebarMore'
+import ShellSidebarCollapsibleGroup from './ShellSidebarCollapsibleGroup'
+import ShellSidebarMore from './ShellSidebarMore'
 
 const VISIBLE_LIMIT = 3
 
@@ -13,7 +13,7 @@ const VISIBLE_LIMIT = 3
 // The section is still fully supported end-to-end in the sidebar's StateJson (see
 // workspace/sidebar/sidebar.types.ts), so wiring up a "pin" action anywhere in the app later needs no
 // further schema or API changes - it'll just start appearing here.
-const PmFavoritesList = ({
+const ShellFavoritesList = ({
   favorites,
 }: {
   favorites: FavoriteEntityState[]
@@ -25,7 +25,7 @@ const PmFavoritesList = ({
   const overflow = sorted.slice(VISIBLE_LIMIT)
 
   return (
-    <PmSidebarCollapsibleGroup label="Favourites">
+    <ShellSidebarCollapsibleGroup label="Favourites">
       <SidebarMenu>
         {shown.map((favorite) => (
           <SidebarMenuItem
@@ -41,7 +41,7 @@ const PmFavoritesList = ({
             </span>
           </SidebarMenuItem>
         ))}
-        <PmSidebarMore
+        <ShellSidebarMore
           items={overflow.map((favorite) => ({
             key: `${favorite.type}-${favorite.entityId}`,
             icon: (
@@ -54,8 +54,8 @@ const PmFavoritesList = ({
           }))}
         />
       </SidebarMenu>
-    </PmSidebarCollapsibleGroup>
+    </ShellSidebarCollapsibleGroup>
   )
 }
 
-export default PmFavoritesList
+export default ShellFavoritesList

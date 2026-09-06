@@ -2,11 +2,11 @@
 
 import { SidebarTrigger, useSidebar } from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
-import { usePmHeaderContent } from './PmHeaderContext'
+import { useShellHeaderContent } from './ShellHeaderContext'
 
-const PmHeader = () => {
+const ShellHeader = () => {
   const { state, isMobile } = useSidebar()
-  const content = usePmHeaderContent()
+  const content = useShellHeaderContent()
   const showTrigger = isMobile || state === 'collapsed'
 
   return (
@@ -25,4 +25,4 @@ const PmHeader = () => {
   )
 }
 
-export default PmHeader
+export default ShellHeader

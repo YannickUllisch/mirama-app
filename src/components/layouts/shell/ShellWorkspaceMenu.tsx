@@ -9,14 +9,14 @@ import {
   setGroupVisibility,
 } from '@src/modules/workspace/sidebar'
 import { SIDEBAR_WORKSPACE_GROUP_ITEMS } from '@src/modules/workspace/sidebar.manifest'
-import PmNavLink from './PmNavLink'
-import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'
-import PmSidebarContextMenu from './PmSidebarContextMenu'
-import PmSidebarMore from './PmSidebarMore'
+import ShellNavLink from './ShellNavLink'
+import ShellSidebarCollapsibleGroup from './ShellSidebarCollapsibleGroup'
+import ShellSidebarContextMenu from './ShellSidebarContextMenu'
+import ShellSidebarMore from './ShellSidebarMore'
 
 const GROUP_KEY = 'workspace'
 
-const PmWorkspaceMenu = ({
+const ShellWorkspaceMenu = ({
   organizationId,
   groupState,
   sidebarState,
@@ -42,7 +42,7 @@ const PmWorkspaceMenu = ({
   if (!visible) return null
 
   return (
-    <PmSidebarCollapsibleGroup
+    <ShellSidebarCollapsibleGroup
       label="Workspace"
       contextMenu={{
         visible,
@@ -53,7 +53,7 @@ const PmWorkspaceMenu = ({
     >
       <SidebarMenu>
         {items.map((item) => (
-          <PmSidebarContextMenu
+          <ShellSidebarContextMenu
             key={item.route}
             visible={item.visible}
             onVisibilityChange={(v) =>
@@ -65,15 +65,15 @@ const PmWorkspaceMenu = ({
             href={resolveHref(item.href)}
           >
             <SidebarMenuItem>
-              <PmNavLink
+              <ShellNavLink
                 href={resolveHref(item.href)}
                 label={item.title}
                 icon={<item.icon className="w-3.5 h-3.5 shrink-0" />}
               />
             </SidebarMenuItem>
-          </PmSidebarContextMenu>
+          </ShellSidebarContextMenu>
         ))}
-        <PmSidebarMore
+        <ShellSidebarMore
           onCustomize={onCustomize}
           items={hiddenItems.map((item) => ({
             key: item.route,
@@ -83,8 +83,8 @@ const PmWorkspaceMenu = ({
           }))}
         />
       </SidebarMenu>
-    </PmSidebarCollapsibleGroup>
+    </ShellSidebarCollapsibleGroup>
   )
 }
 
-export default PmWorkspaceMenu
+export default ShellWorkspaceMenu

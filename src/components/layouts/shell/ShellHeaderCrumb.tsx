@@ -5,11 +5,11 @@ import {
   BreadcrumbPage,
 } from '@src/components/ui/breadcrumb'
 
-interface PmHeaderCrumbProps {
+interface ShellHeaderCrumbProps {
   label: string
 }
 
-const PmHeaderCrumb = ({ label }: PmHeaderCrumbProps) => (
+const ShellHeaderCrumb = ({ label }: ShellHeaderCrumbProps) => (
   <Breadcrumb>
     <BreadcrumbList className="flex-nowrap">
       <BreadcrumbItem>
@@ -21,4 +21,4 @@ const PmHeaderCrumb = ({ label }: PmHeaderCrumbProps) => (
   </Breadcrumb>
 )
 
-export default PmHeaderCrumb
+export default ShellHeaderCrumb

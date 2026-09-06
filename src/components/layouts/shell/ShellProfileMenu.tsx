@@ -25,11 +25,11 @@ import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { useRef } from 'react'
 
-interface PmProfileMenuProps {
+interface ShellProfileMenuProps {
   organizationId: string
 }
 
-const PmProfileMenu = ({ organizationId }: PmProfileMenuProps) => {
+const ShellProfileMenu = ({ organizationId }: ShellProfileMenuProps) => {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const { lockPeek } = useSidebar()
@@ -104,4 +104,4 @@ const PmProfileMenu = ({ organizationId }: PmProfileMenuProps) => {
   )
 }
 
-export default PmProfileMenu
+export default ShellProfileMenu

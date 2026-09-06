@@ -20,31 +20,31 @@ import { SIDEBAR_ITEMS } from '@src/modules/workspace/sidebar.manifest'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import { Search, SquarePen } from 'lucide-react'
 import { useState } from 'react'
-import PmClientsList from './PmClientsList'
-import PmFavoritesList from './PmFavoritesList'
-import PmNavLink from './PmNavLink'
-import PmProfileMenu from './PmProfileMenu'
-import PmSidebarContextMenu from './PmSidebarContextMenu'
-import PmSidebarCustomizeDialog from './PmSidebarCustomizeDialog'
-import PmWorkspaceMenu from './PmWorkspaceMenu'
+import ShellClientsList from './ShellClientsList'
+import ShellFavoritesList from './ShellFavoritesList'
+import ShellNavLink from './ShellNavLink'
+import ShellProfileMenu from './ShellProfileMenu'
+import ShellSidebarContextMenu from './ShellSidebarContextMenu'
+import ShellSidebarCustomizeDialog from './ShellSidebarCustomizeDialog'
+import ShellWorkspaceMenu from './ShellWorkspaceMenu'
 
-interface PmSidebarProps {
+interface ShellSidebarProps {
   organizationId: string
   sidebarState: SidebarState
   clients: ClientSummary[]
 }
 
 // Owns the sidebar's personalization state client-side (seeded from the server-fetched
-// bootstrap - see PmSidebarServer) and is the single place that persists it, via the
+// bootstrap - see ShellSidebarServer) and is the single place that persists it, via the
 // existing optimistic saveViewState mutation. Every customizable child (ungrouped items,
 // the workspace group) only ever reports "here's the new state" up through `onChange` /
 // `commit` - none of them know how or where it's saved. Favourites and Your clients are
 // not customizable, so they take plain data props instead.
-const PmSidebar = ({
+const ShellSidebar = ({
   organizationId,
   sidebarState: initial,
   clients,
-}: PmSidebarProps) => {
+}: ShellSidebarProps) => {
   const [sidebarState, setSidebarState] = useState(initial)
   const [customizeOpen, setCustomizeOpen] = useState(false)
   const { mutate: saveSidebar } =
@@ -72,7 +72,7 @@ const PmSidebar = ({
       peekOverlay
     >
       <SidebarHeader className="flex-row items-center justify-between gap-1 overflow-hidden">
-        <PmProfileMenu organizationId={organizationId} />
+        <ShellProfileMenu organizationId={organizationId} />
         <div className="flex items-center gap-1 shrink-0 group-data-[collapsible=icon]:hidden">
           <Button
             asChild
@@ -102,7 +102,7 @@ const PmSidebar = ({
       <SidebarContent className="gap-4">
         <SidebarMenu className="px-2 py-1">
           {ungroupedItems.map((item) => (
-            <PmSidebarContextMenu
+            <ShellSidebarContextMenu
               key={item.route}
               visible={item.visible}
               onVisibilityChange={(v) =>
@@ -112,27 +112,27 @@ const PmSidebar = ({
               href={resolveHref(item.href)}
             >
               <SidebarMenuItem>
-                <PmNavLink
+                <ShellNavLink
                   href={resolveHref(item.href)}
                   label={item.title}
                   icon={<item.icon className="w-3.5 h-3.5 shrink-0" />}
                 />
               </SidebarMenuItem>
-            </PmSidebarContextMenu>
+            </ShellSidebarContextMenu>
           ))}
         </SidebarMenu>
-        <PmWorkspaceMenu
+        <ShellWorkspaceMenu
           organizationId={organizationId}
           groupState={workspaceGroup}
           sidebarState={sidebarState}
           onChange={commit}
           onCustomize={() => setCustomizeOpen(true)}
         />
-        <PmFavoritesList favorites={sidebarState.favorites.items} />
-        <PmClientsList organizationId={organizationId} clients={clients} />
+        <ShellFavoritesList favorites={sidebarState.favorites.items} />
+        <ShellClientsList organizationId={organizationId} clients={clients} />
       </SidebarContent>
 
-      <PmSidebarCustomizeDialog
+      <ShellSidebarCustomizeDialog
         open={customizeOpen}
         onOpenChange={setCustomizeOpen}
         sidebarState={sidebarState}
@@ -142,4 +142,4 @@ const PmSidebar = ({
   )
 }
 
-export default PmSidebar
+export default ShellSidebar

@@ -4,7 +4,7 @@ import {
   type SidebarState,
 } from '@src/modules/workspace/sidebar'
 import { fetchSidebarBootstrapServer } from '@src/modules/workspace/viewstate.server'
-import PmSidebar from './PmSidebar'
+import ShellSidebar from './ShellSidebar'
 
 // The one server-side data fetch behind the whole sidebar: personalization state (saved,
 // or the backend's computed default) plus the org's live client list, in a single request.
@@ -16,7 +16,7 @@ const EMPTY_SIDEBAR_STATE: SidebarState = {
   favorites: { items: [] },
 }
 
-const PmSidebarServer = async ({
+const ShellSidebarServer = async ({
   organizationId,
 }: {
   organizationId: string
@@ -41,7 +41,7 @@ const PmSidebarServer = async ({
   }
 
   return (
-    <PmSidebar
+    <ShellSidebar
       organizationId={organizationId}
       sidebarState={sidebarState}
       clients={clients}
@@ -49,4 +49,4 @@ const PmSidebarServer = async ({
   )
 }
 
-export default PmSidebarServer
+export default ShellSidebarServer

@@ -17,7 +17,7 @@ import { Eye, Link2, SlidersHorizontal } from 'lucide-react'
 import { cloneElement, isValidElement, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-interface PmSidebarContextMenuProps {
+interface ShellSidebarContextMenuProps {
   children: React.ReactNode
   visible: boolean
   onVisibilityChange: (visible: boolean) => void
@@ -25,13 +25,13 @@ interface PmSidebarContextMenuProps {
   href?: string
 }
 
-const PmSidebarContextMenu = ({
+const ShellSidebarContextMenu = ({
   children,
   visible,
   onVisibilityChange,
   onCustomize,
   href,
-}: PmSidebarContextMenuProps) => {
+}: ShellSidebarContextMenuProps) => {
   const [open, setOpen] = useState(false)
   const { lockPeek } = useSidebar()
   const unlockPeekRef = useRef<(() => void) | null>(null)
@@ -103,4 +103,4 @@ const PmSidebarContextMenu = ({
   )
 }
 
-export default PmSidebarContextMenu
+export default ShellSidebarContextMenu

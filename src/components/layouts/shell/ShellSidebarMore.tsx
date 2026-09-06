@@ -11,7 +11,7 @@ import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 
-export interface PmSidebarMoreItem {
+export interface ShellSidebarMoreItem {
   key: string
   icon: React.ReactNode
   label: string
@@ -20,18 +20,18 @@ export interface PmSidebarMoreItem {
   href?: string
 }
 
-interface PmSidebarMoreProps {
-  items: PmSidebarMoreItem[]
+interface ShellSidebarMoreProps {
+  items: ShellSidebarMoreItem[]
   // Only the workspace group's hidden-routes popover uses this: appends a "Customize
   // sidebar" row below a separator.
   onCustomize?: () => void
 }
 
-const PmSidebarMoreRow = ({
+const ShellSidebarMoreRow = ({
   item,
   onNavigate,
 }: {
-  item: PmSidebarMoreItem
+  item: ShellSidebarMoreItem
   onNavigate: () => void
 }) => {
   const className =
@@ -53,10 +53,10 @@ const PmSidebarMoreRow = ({
 // inline: the workspace group's hidden routes (with a "Customize sidebar" shortcut below
 // a separator) and the overflow beyond 3 favourites/clients. A plain, non-modal Popover
 // in both cases - callers just hand over the items to list. The sidebar's hover-peek is
-// locked open while the popover is open (see PmProfileMenu for the same pattern), so
+// locked open while the popover is open (see ShellProfileMenu for the same pattern), so
 // opening it while the collapsed sidebar is only peeking doesn't close it out from under
 // the popover.
-const PmSidebarMore = ({ items, onCustomize }: PmSidebarMoreProps) => {
+const ShellSidebarMore = ({ items, onCustomize }: ShellSidebarMoreProps) => {
   const [open, setOpen] = useState(false)
   const { lockPeek } = useSidebar()
   const unlockPeekRef = useRef<(() => void) | null>(null)
@@ -89,7 +89,7 @@ const PmSidebarMore = ({ items, onCustomize }: PmSidebarMoreProps) => {
       <PopoverContent className="w-56 p-1" align="start">
         <div className="max-h-64 space-y-0.5 overflow-y-auto">
           {items.map((item) => (
-            <PmSidebarMoreRow
+            <ShellSidebarMoreRow
               key={item.key}
               item={item}
               onNavigate={() => setOpen(false)}
@@ -117,4 +117,4 @@ const PmSidebarMore = ({ items, onCustomize }: PmSidebarMoreProps) => {
   )
 }
 
-export default PmSidebarMore
+export default ShellSidebarMore

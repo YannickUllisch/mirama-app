@@ -26,7 +26,7 @@ import {
 } from '@src/modules/workspace/sidebar.manifest'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
-interface PmSidebarCustomizeDialogProps {
+interface ShellSidebarCustomizeDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   sidebarState: SidebarState
@@ -79,13 +79,13 @@ const Row = ({
 // like the sidebar itself. Favourites and Your clients are intentionally not here: they
 // aren't user-customizable sections. No drag-and-drop (up/down buttons instead) to keep
 // this small; every action produces a full SidebarState via the pure helpers in
-// workspace/sidebar/sidebar.helpers.ts and hands it straight to onChange (PmSidebar owns persisting it).
-const PmSidebarCustomizeDialog = ({
+// workspace/sidebar/sidebar.helpers.ts and hands it straight to onChange (ShellSidebar owns persisting it).
+const ShellSidebarCustomizeDialog = ({
   open,
   onOpenChange,
   sidebarState,
   onChange,
-}: PmSidebarCustomizeDialogProps) => {
+}: ShellSidebarCustomizeDialogProps) => {
   const ungroupedItems = mergeAllSidebarItems(SIDEBAR_ITEMS, sidebarState.items)
 
   const workspaceGroup = sidebarState.groups.find(
@@ -205,4 +205,4 @@ const PmSidebarCustomizeDialog = ({
   )
 }
 
-export default PmSidebarCustomizeDialog
+export default ShellSidebarCustomizeDialog

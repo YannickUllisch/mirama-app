@@ -11,15 +11,15 @@ const DEFAULT_WIDTH = 224
 // instead of just clamping the width at MIN_WIDTH.
 const COLLAPSE_THRESHOLD = MIN_WIDTH - 60
 
-interface PmSidebarProviderProps {
+interface ShellSidebarProviderProps {
   children: React.ReactNode
   defaultOpen?: boolean
 }
 
-const PmSidebarProvider = ({
+const ShellSidebarProvider = ({
   children,
   defaultOpen,
-}: PmSidebarProviderProps) => {
+}: ShellSidebarProviderProps) => {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
 
   return (
@@ -29,18 +29,18 @@ const PmSidebarProvider = ({
       style={{ '--sidebar-width': `${width}px` } as React.CSSProperties}
     >
       {children}
-      <PmSidebarResizeHandle onWidthChange={setWidth} />
+      <ShellSidebarResizeHandle onWidthChange={setWidth} />
     </SidebarProvider>
   )
 }
 
-interface PmSidebarResizeHandleProps {
+interface ShellSidebarResizeHandleProps {
   onWidthChange: (width: number) => void
 }
 
-const PmSidebarResizeHandle = ({
+const ShellSidebarResizeHandle = ({
   onWidthChange,
-}: PmSidebarResizeHandleProps) => {
+}: ShellSidebarResizeHandleProps) => {
   const { state, setOpen } = useSidebar()
   const [isResizing, setIsResizing] = useState(false)
   const isResizingRef = useRef(false)
@@ -108,4 +108,4 @@ const PmSidebarResizeHandle = ({
   )
 }
 
-export default PmSidebarProvider
+export default ShellSidebarProvider
