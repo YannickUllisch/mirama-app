@@ -17,7 +17,6 @@ export const AuthSocial = () => {
       })
 
       if (result?.error) {
-        // Show the error returned from NextAuth (from PrismaAdapter)
         setFormError(result.error)
       } else if (!result?.ok) {
         setFormError('An unknown error occurred during social login.')

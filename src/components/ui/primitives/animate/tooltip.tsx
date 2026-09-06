@@ -419,6 +419,7 @@ function TooltipContent({ asChild = false, ...props }: TooltipContentProps) {
       lastPropsRef.current = props
       setProps(props)
     }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <x>
   }, [props, setProps])
 
   React.useEffect(() => {

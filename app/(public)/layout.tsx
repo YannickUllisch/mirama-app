@@ -2,7 +2,7 @@
 import { auth } from '@auth'
 import { Footer } from '@src/modules/shared/components/Footer/Footer'
 
-import PublicHeader from '@src/components/Header/PublicHeader'
+import PublicHeader from '@src/components/layouts/PublicHeader'
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()

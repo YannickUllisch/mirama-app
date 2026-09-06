@@ -1,8 +1,9 @@
 'use client'
 
-import * as React from 'react'
-import { motion, type Transition, type HTMLMotionProps } from 'motion/react'
-
+import {
+  Slot,
+  type WithAsChild,
+} from '@src/components/ui/primitives/animate/slot'
 import {
   Highlight,
   HighlightItem,
@@ -10,10 +11,8 @@ import {
   type HighlightProps,
 } from '@src/components/ui/primitives/effects/highlight'
 import { getStrictContext } from '@src/lib/get-strict-context'
-import {
-  Slot,
-  type WithAsChild,
-} from '@src/components/ui/primitives/animate/slot'
+import { type HTMLMotionProps, motion, type Transition } from 'motion/react'
+import * as React from 'react'
 
 type TabsContextType = {
   activeValue: string
@@ -239,6 +238,7 @@ function TabsContents({
     return total
   }, [])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <x>
   React.useEffect(() => {
     if (roRef.current) {
       roRef.current.disconnect()
@@ -284,7 +284,7 @@ function TabsContents({
     >
       <motion.div
         className="flex -mx-2"
-        animate={{ x: activeIndex * -100 + '%' }}
+        animate={{ x: `${activeIndex * -100}%` }}
         transition={transition}
       >
         {childrenArray.map((child, index) => (
@@ -338,19 +338,19 @@ function TabsContent({
 
 export {
   Tabs,
-  TabsList,
+  TabsContent,
+  TabsContents,
   TabsHighlight,
   TabsHighlightItem,
+  TabsList,
   TabsTrigger,
-  TabsContents,
-  TabsContent,
   useTabs,
-  type TabsProps,
-  type TabsListProps,
-  type TabsHighlightProps,
-  type TabsHighlightItemProps,
-  type TabsTriggerProps,
-  type TabsContentsProps,
   type TabsContentProps,
+  type TabsContentsProps,
   type TabsContextType,
+  type TabsHighlightItemProps,
+  type TabsHighlightProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
 }
