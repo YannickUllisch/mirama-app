@@ -13,6 +13,7 @@ import {
 import { getStrictContext } from '@src/lib/get-strict-context'
 import { useControlledState } from '@src/hooks/use-controlled-state'
 import { useDataState } from '@src/hooks/use-data-state'
+import { Slot } from '@src/components/ui/primitives/animate/slot'
 
 type DropdownMenuContextType = {
   isOpen: boolean
@@ -343,12 +344,13 @@ type DropdownMenuItemProps = Omit<
   React.ComponentProps<typeof DropdownMenuPrimitive.Item>,
   'asChild'
 > &
-  HTMLMotionProps<'div'>
+  HTMLMotionProps<'div'> & { asChild?: boolean }
 
 function DropdownMenuItem({
   disabled,
   onSelect,
   textValue,
+  asChild = false,
   ...props
 }: DropdownMenuItemProps) {
   const { setHighlightedValue } = useDropdownMenu()
@@ -364,6 +366,8 @@ function DropdownMenuItem({
     },
   )
 
+  const Component = asChild ? Slot : motion.div
+
   return (
     <DropdownMenuPrimitive.Item
       ref={highlightedRef}
@@ -372,7 +376,7 @@ function DropdownMenuItem({
       textValue={textValue}
       asChild
     >
-      <motion.div
+      <Component
         data-slot="dropdown-menu-item"
         data-disabled={disabled}
         {...props}

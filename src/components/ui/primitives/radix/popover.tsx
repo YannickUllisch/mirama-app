@@ -6,6 +6,7 @@ import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react'
 
 import { getStrictContext } from '@src/lib/get-strict-context'
 import { useControlledState } from '@src/hooks/use-controlled-state'
+import { Slot } from '@src/components/ui/primitives/animate/slot'
 
 type PopoverContextType = {
   isOpen: boolean
@@ -66,7 +67,7 @@ type PopoverContentProps = Omit<
   React.ComponentProps<typeof PopoverPrimitive.Content>,
   'forceMount' | 'asChild'
 > &
-  HTMLMotionProps<'div'>
+  HTMLMotionProps<'div'> & { asChild?: boolean }
 
 function PopoverContent({
   onOpenAutoFocus,
@@ -86,8 +87,10 @@ function PopoverContent({
   sticky,
   hideWhenDetached,
   transition = { type: 'spring', stiffness: 300, damping: 25 },
+  asChild = false,
   ...props
 }: PopoverContentProps) {
+  const Component = asChild ? Slot : motion.div
   return (
     <PopoverPrimitive.Content
       asChild
@@ -109,7 +112,7 @@ function PopoverContent({
       onInteractOutside={onInteractOutside}
       onFocusOutside={onFocusOutside}
     >
-      <motion.div
+      <Component
         key="popover-content"
         data-slot="popover-content"
         initial={{ opacity: 0, scale: 0.5 }}

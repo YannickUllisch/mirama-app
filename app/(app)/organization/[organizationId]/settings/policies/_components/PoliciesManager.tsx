@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationId]/settings/policies/_components/PoliciesManager.tsx
 'use client'
 
 import { cn } from '@src/lib/utils'

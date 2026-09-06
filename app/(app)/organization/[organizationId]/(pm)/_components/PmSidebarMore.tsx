@@ -1,7 +1,11 @@
 'use client'
 
 import { SidebarMenuItem, useSidebar } from '@src/components/ui/sidebar'
-import { Popover, PopoverContent, PopoverTrigger } from '@src/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@src/components/ui/popover'
 import { Separator } from '@src/components/ui/separator'
 import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
 import Link from 'next/link'
@@ -85,7 +89,11 @@ const PmSidebarMore = ({ items, onCustomize }: PmSidebarMoreProps) => {
       <PopoverContent className="w-56 p-1" align="start">
         <div className="max-h-64 space-y-0.5 overflow-y-auto">
           {items.map((item) => (
-            <PmSidebarMoreRow key={item.key} item={item} onNavigate={() => setOpen(false)} />
+            <PmSidebarMoreRow
+              key={item.key}
+              item={item}
+              onNavigate={() => setOpen(false)}
+            />
           ))}
         </div>
         {onCustomize && (

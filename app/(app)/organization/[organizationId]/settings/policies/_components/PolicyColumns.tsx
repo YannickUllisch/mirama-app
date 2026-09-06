@@ -1,12 +1,11 @@
-// app/(app)/organization/[organizationId]/settings/policies/_components/PolicyColumns.tsx
 'use client'
 
-import { DataTableColumnHeader } from '@src/components/data-table/data-table-column-header'
 import { EffectBadge } from '@src/modules/tenant/iam/components/EffectBadge'
 import type { PolicyResponse } from '@src/modules/tenant/iam/policy/policy.types'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
+import { DataTableColumnHeader } from '@ui/data-table/data-table-column-header'
 import { Pencil, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
 

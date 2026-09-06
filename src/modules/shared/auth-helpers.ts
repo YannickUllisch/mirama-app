@@ -5,7 +5,9 @@ export const getAccessToken = async (): Promise<string | null> => {
   const cookieStore = await cookies()
 
   const isProd = process.env.NODE_ENV === 'production'
-  const cookieName = isProd ? '__Secure-authjs.session-token' : 'authjs.session-token'
+  const cookieName = isProd
+    ? '__Secure-authjs.session-token'
+    : 'authjs.session-token'
 
   // Cookie may be chunked (size limit); reassemble all matching parts
   let token = ''

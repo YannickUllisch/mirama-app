@@ -763,12 +763,9 @@ function ColorPickerContent(
   return (
     <PopoverContent
       data-slot="color-picker-content"
-      asChild={asChild}
-      {...popoverContentProps}
+      {...props}
       className={cn('flex w-85 flex-col gap-4 p-4', className)}
-    >
-      {children}
-    </PopoverContent>
+    />
   )
 }
 

@@ -1,4 +1,3 @@
-import { DataTablePagination } from '@src/components/data-table/data-table-pagination'
 import {
   Table,
   TableBody,
@@ -11,6 +10,7 @@ import { getColumnPinningStyle } from '@src/lib/data-table'
 import { cn } from '@src/lib/utils'
 import { flexRender, type Table as TanstackTable } from '@tanstack/react-table'
 import type * as React from 'react'
+import { DataTablePagination } from './data-table-pagination'
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>

@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  SidebarProvider,
-  useSidebar,
-} from '@src/components/ui/sidebar'
+import { SidebarProvider, useSidebar } from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
 import { useCallback, useEffect, useRef, useState } from 'react'
 

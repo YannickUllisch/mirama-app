@@ -1483,7 +1483,7 @@ function useTimePickerGroupContext(consumerName: string) {
 }
 
 interface TimePickerContentProps
-  extends DivProps,
+  extends Omit<DivProps, keyof React.ComponentProps<typeof PopoverContent>>,
     React.ComponentProps<typeof PopoverContent> {}
 
 function TimePickerContent(props: TimePickerContentProps) {

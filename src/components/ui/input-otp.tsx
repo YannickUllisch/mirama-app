@@ -1,9 +1,8 @@
 'use client'
 
+import { cn } from '@src/lib/utils'
 import { OTPInput, OTPInputContext } from 'input-otp'
 import * as React from 'react'
-
-import { cn } from '@src/lib/utils'
 
 function InputOTP({
   className,
@@ -69,4 +68,4 @@ function InputOTPSeparator({ ...props }: React.ComponentProps<'hr'>) {
   return <hr data-slot="input-otp-separator" {...props} />
 }
 
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator }
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot }

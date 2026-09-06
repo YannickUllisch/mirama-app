@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-} from '@src/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuItem } from '@src/components/ui/sidebar'
 import {
   mergeAllSidebarItems,
   type SidebarGroupState,

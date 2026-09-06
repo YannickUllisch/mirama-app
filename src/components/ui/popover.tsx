@@ -1,4 +1,6 @@
 import {
+  PopoverAnchor as PopoverAnchorPrimitive,
+  type PopoverAnchorProps as PopoverAnchorPrimitiveProps,
   PopoverClose as PopoverClosePrimitive,
   type PopoverCloseProps as PopoverClosePrimitiveProps,
   PopoverContent as PopoverContentPrimitive,
@@ -52,11 +54,19 @@ function PopoverClose(props: PopoverCloseProps) {
   return <PopoverClosePrimitive {...props} />
 }
 
+type PopoverAnchorProps = PopoverAnchorPrimitiveProps
+
+function PopoverAnchor(props: PopoverAnchorProps) {
+  return <PopoverAnchorPrimitive {...props} />
+}
+
 export {
   Popover,
+  PopoverAnchor,
   PopoverClose,
   PopoverContent,
   PopoverTrigger,
+  type PopoverAnchorProps,
   type PopoverCloseProps,
   type PopoverContentProps,
   type PopoverProps,

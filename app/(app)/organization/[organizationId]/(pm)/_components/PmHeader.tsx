@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  SidebarTrigger,
-  useSidebar,
-} from '@src/components/ui/sidebar'
+import { SidebarTrigger, useSidebar } from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
 import { usePmHeaderContent } from './PmHeaderContext'
 

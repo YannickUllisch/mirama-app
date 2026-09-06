@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-} from '@src/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuItem } from '@src/components/ui/sidebar'
 import type { FavoriteEntityState } from '@src/modules/workspace/sidebar'
 import { Building2 } from 'lucide-react'
 import PmSidebarCollapsibleGroup from './PmSidebarCollapsibleGroup'
