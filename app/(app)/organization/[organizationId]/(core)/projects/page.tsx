@@ -15,15 +15,17 @@ const ProjectsPage = () => {
   const { organizationId } = useParams<{ organizationId: string }>()
 
   useShellHeader(
-    <div className="flex w-full items-center justify-between">
-      <ShellHeaderCrumb label="Projects" />
-      <Button asChild variant="tertiary" size="sm">
-        <Link href={`/organization/${organizationId}/projects/create`}>
-          <Plus className="size-3.5" />
-          New project
-        </Link>
-      </Button>
-    </div>,
+    <ShellHeaderCrumb
+      items={[{ label: 'Projects' }]}
+      actions={
+        <Button asChild variant="tertiary" size="sm">
+          <Link href={`/organization/${organizationId}/projects/create`}>
+            <Plus className="size-3.5" />
+            New project
+          </Link>
+        </Button>
+      }
+    />,
   )
 
   return (
