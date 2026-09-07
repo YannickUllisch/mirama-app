@@ -179,7 +179,7 @@ const OrganizationStepForm = () => {
         // Re-mints the session's org claims by slug (see GetOrgMembership on the backend) -
         // the Guid it returns is still what actually scopes every backend request from here on.
         await update({ organizationSlug: org.slug })
-        router.push(`/organization/${org.slug}`)
+        router.push(`/${org.slug}`)
       },
       onError: (error) => {
         setIsSubmitting(false)
@@ -231,7 +231,7 @@ const OrganizationStepForm = () => {
               <FormControl>
                 <div className="flex items-center rounded-md border border-input focus-within:ring-1 focus-within:ring-ring">
                   <span className="pl-3 pr-1 text-sm text-body-text/60 select-none">
-                    /organization/
+                    /
                   </span>
                   <Input
                     placeholder="acme-inc"

@@ -19,7 +19,7 @@ const CreateOrganizationPage = async ({
       />
       <Suspense fallback={<OrganizationFormSkeleton />}>
         <OrganizationForm
-          returnHref={`/organization/${organizationSlug}/settings/organizations`}
+          returnHref={`/${organizationSlug}/settings/organizations`}
         />
       </Suspense>
     </div>

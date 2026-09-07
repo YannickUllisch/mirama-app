@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/[orgId]/edit/page.tsx
 import PageHeader from '@src/components/PageHeader'
 import OrganizationForm from '@src/modules/tenant/organization/components/OrganizationForm'
 import OrganizationFormSkeleton from '@src/modules/tenant/organization/components/OrganizationFormSkeleton'
@@ -21,7 +20,7 @@ const EditOrganizationPage = async ({
       <Suspense fallback={<OrganizationFormSkeleton />}>
         <OrganizationForm
           orgId={orgId}
-          returnHref={`/organization/${organizationSlug}/settings/organizations`}
+          returnHref={`/${organizationSlug}/settings/organizations`}
         />
       </Suspense>
     </div>

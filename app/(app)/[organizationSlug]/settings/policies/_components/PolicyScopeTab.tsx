@@ -22,7 +22,7 @@ export const PolicyScopeTab = ({ scope }: { scope: AccessScope }) => {
 
   const { mutate: deletePolicy } = policyHooks.delete.useMutation()
 
-  const policiesBase = `/organization/${activeOrganizationSlug}/settings/policies`
+  const policiesBase = `/${activeOrganizationSlug}/settings/policies`
 
   const columns = usePolicyColumns({
     onEditPolicy: (policy) => router.push(`${policiesBase}/${policy.id}/edit`),

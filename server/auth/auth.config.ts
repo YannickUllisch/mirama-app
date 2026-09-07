@@ -103,7 +103,9 @@ export default {
         session.user.name = token.name
         session.user.tenantId = token.tenantId as string
         session.user.organizationId = token.organizationId as string | undefined
-        session.user.organizationSlug = token.organizationSlug as string | undefined
+        session.user.organizationSlug = token.organizationSlug as
+          | string
+          | undefined
         session.user.roleId = token.roleId as string | undefined
         session.user.memberId = token.memberId as string | undefined
 

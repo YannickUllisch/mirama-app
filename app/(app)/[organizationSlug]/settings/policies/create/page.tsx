@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/policies/create/page.tsx
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'
 import type { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 

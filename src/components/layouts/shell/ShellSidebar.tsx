@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@src/components/ui/sidebar'
-import HoverLink from '@src/components/HoverLink'
+import OrgLink from '@src/components/OrgLink'
 import { Button } from '@src/components/ui/button'
 import {
   mergeSidebarItems,
@@ -72,7 +72,7 @@ const ShellSidebar = ({
       peekOverlay
     >
       <SidebarHeader className="flex-row items-center justify-between gap-1 overflow-hidden">
-        <ShellProfileMenu organizationSlug={organizationSlug} />
+        <ShellProfileMenu />
         <div className="flex items-center gap-1 shrink-0 group-data-[collapsible=icon]:hidden">
           <Button
             asChild
@@ -81,9 +81,9 @@ const ShellSidebar = ({
             title="Search"
             className="size-7"
           >
-            <HoverLink href={`/organization/${organizationSlug}/search`}>
+            <OrgLink href="/search">
               <Search className="size-3" />
-            </HoverLink>
+            </OrgLink>
           </Button>
           <Button
             asChild
@@ -92,9 +92,9 @@ const ShellSidebar = ({
             title="New project"
             className="size-7"
           >
-            <HoverLink href={`/organization/${organizationSlug}/projects/create`}>
+            <OrgLink href="/projects/create">
               <SquarePen className="size-3" />
-            </HoverLink>
+            </OrgLink>
           </Button>
         </div>
       </SidebarHeader>
@@ -129,7 +129,7 @@ const ShellSidebar = ({
           onCustomize={() => setCustomizeOpen(true)}
         />
         <ShellFavoritesList favorites={sidebarState.favorites.items} />
-        <ShellClientsList organizationSlug={organizationSlug} clients={clients} />
+        <ShellClientsList clients={clients} />
       </SidebarContent>
 
       <ShellSidebarCustomizeDialog

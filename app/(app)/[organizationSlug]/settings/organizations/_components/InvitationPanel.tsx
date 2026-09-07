@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/_components/InvitationPanel.tsx
 'use client'
 
 import apiRequest from '@hooks'

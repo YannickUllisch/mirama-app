@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/policies/[policyId]/edit/page.tsx
 import { Suspense } from 'react'
 import { EditPolicyView } from './_components/EditPolicyView'
 

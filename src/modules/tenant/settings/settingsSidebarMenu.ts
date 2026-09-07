@@ -1,5 +1,3 @@
-// src/modules/tenant/settings/settingsSidebarMenu.ts
-
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
@@ -36,32 +34,32 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Preferences',
-        href: '/organization/[organizationSlug]/settings/account/preferences',
+        href: '/[organizationSlug]/settings/account/preferences',
         icon: Settings2,
       },
       {
         label: 'Profile',
-        href: '/organization/[organizationSlug]/settings/account/profile',
+        href: '/[organizationSlug]/settings/account/profile',
         icon: User,
       },
       {
         label: 'Notifications',
-        href: '/organization/[organizationSlug]/settings/account/notifications',
+        href: '/[organizationSlug]/settings/account/notifications',
         icon: Bell,
       },
       {
         label: 'Security & access',
-        href: '/organization/[organizationSlug]/settings/account/security',
+        href: '/[organizationSlug]/settings/account/security',
         icon: ShieldCheck,
       },
       {
         label: 'Connected accounts',
-        href: '/organization/[organizationSlug]/settings/account/connected-accounts',
+        href: '/[organizationSlug]/settings/account/connected-accounts',
         icon: Link2,
       },
       {
         label: 'Agent personalization',
-        href: '/organization/[organizationSlug]/settings/account/agent',
+        href: '/[organizationSlug]/settings/account/agent',
         icon: Bot,
       },
     ],
@@ -71,37 +69,37 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'General',
-        href: '/organization/[organizationSlug]/settings/general',
+        href: '/[organizationSlug]/settings/general',
         icon: Settings2,
       },
       {
         label: 'Branding',
-        href: '/organization/[organizationSlug]/settings/branding',
+        href: '/[organizationSlug]/settings/branding',
         icon: Palette,
       },
       {
         label: 'Notifications',
-        href: '/organization/[organizationSlug]/settings/notifications',
+        href: '/[organizationSlug]/settings/notifications',
         icon: Bell,
       },
       {
         label: 'Billing',
-        href: '/organization/[organizationSlug]/settings/billing',
+        href: '/[organizationSlug]/settings/billing',
         icon: CreditCardIcon,
       },
       {
         label: 'Policies',
-        href: '/organization/[organizationSlug]/settings/policies',
+        href: '/[organizationSlug]/settings/policies',
         icon: BookAIcon,
       },
       {
         label: 'Roles',
-        href: '/organization/[organizationSlug]/settings/roles',
+        href: '/[organizationSlug]/settings/roles',
         icon: KeyRound,
       },
       {
         label: 'Organizations',
-        href: '/organization/[organizationSlug]/settings/organizations',
+        href: '/[organizationSlug]/settings/organizations',
         icon: Building2,
       },
     ],
@@ -111,17 +109,17 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Members',
-        href: '/organization/[organizationSlug]/settings/members',
+        href: '/[organizationSlug]/settings/members',
         icon: Users,
       },
       {
         label: 'Teams',
-        href: '/organization/[organizationSlug]/settings/teams',
+        href: '/[organizationSlug]/settings/teams',
         icon: UsersRound,
       },
       {
         label: 'Invitations',
-        href: '/organization/[organizationSlug]/settings/invitations',
+        href: '/[organizationSlug]/settings/invitations',
         icon: Mail,
       },
     ],
@@ -131,7 +129,7 @@ export const SettingsSidebarMenu: SettingsMenuGroup[] = [
     items: [
       {
         label: 'Tags',
-        href: '/organization/[organizationSlug]/settings/projects',
+        href: '/[organizationSlug]/settings/projects',
         icon: Tag,
       },
     ],

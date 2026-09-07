@@ -3,26 +3,23 @@
 import PageHeader from '@src/components/PageHeader'
 import { Button } from '@ui/button'
 import { Folders, Plus } from 'lucide-react'
-import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { Suspense } from 'react'
+import OrgLink from '@src/components/OrgLink'
 import { useShellHeader } from '@src/components/layouts/shell/ShellHeaderContext'
 import ShellHeaderCrumb from '@src/components/layouts/shell/ShellHeaderCrumb'
 import ProjectsContent from './_components/ProjectsContent'
 import ProjectsTableSkeleton from './_components/ProjectsTableSkeleton'
 
 const ProjectsPage = () => {
-  const { organizationSlug } = useParams<{ organizationSlug: string }>()
-
   useShellHeader(
     <ShellHeaderCrumb
       items={[{ label: 'Projects' }]}
       actions={
         <Button asChild variant="tertiary" size="sm">
-          <Link href={`/organization/${organizationSlug}/projects/create`}>
+          <OrgLink href="/projects/create">
             <Plus className="size-3.5" />
             New project
-          </Link>
+          </OrgLink>
         </Button>
       }
     />,

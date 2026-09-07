@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/_components/OrganizationCard.tsx
 'use client'
 import { cn } from '@src/lib/utils'
 import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'

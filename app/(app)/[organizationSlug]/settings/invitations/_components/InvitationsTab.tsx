@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/invitations/_components/InvitationsTab.tsx
 'use client'
 
 import PageHeader from '@src/components/PageHeader'

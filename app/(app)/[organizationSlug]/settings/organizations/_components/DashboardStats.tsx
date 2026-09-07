@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/_components/DashboardStats.tsx
 'use client'
 
 import apiRequest from '@hooks'

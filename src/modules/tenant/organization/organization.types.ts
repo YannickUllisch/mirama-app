@@ -1,4 +1,4 @@
-// src/modules/tenant/organization/organization.types.ts
+import { RESERVED_ORG_SLUGS } from '@src/routes'
 import { z } from 'zod'
 
 export enum OrganizationRegion {
@@ -37,7 +37,7 @@ export type OrganizationResponse = z.infer<typeof OrganizationResponseSchema>
 export const CreateOrganizationSchema = z.object({
   name: z.string().min(2).max(100),
   // Chosen once, at creation - it's the organization's URL segment
-  // (/organization/{slug}/...) and is frozen server-side after that (see Organization.Update
+  // (/{slug}/...) and is frozen server-side after that (see Organization.Update
   // on the backend). Format/uniqueness are both re-checked by the backend regardless.
   slug: z
     .string()
@@ -46,6 +46,10 @@ export const CreateOrganizationSchema = z.object({
     .regex(
       /^[a-z0-9]+(-[a-z0-9]+)*$/,
       "Can only contain lowercase letters, numbers and hyphens, and can't start or end with a hyphen.",
+    )
+    .refine(
+      (slug) => !RESERVED_ORG_SLUGS.has(slug),
+      'This name is reserved, please choose another',
     ),
   street: z.string().min(1).max(200),
   city: z.string().min(1).max(100),

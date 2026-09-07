@@ -1,4 +1,3 @@
-// src/modules/tenant/iam/roles/components/RoleForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -93,7 +92,7 @@ export const RoleForm = ({
   const { mutate: createRole } = roleHooks.create.useMutation()
   const { mutate: updateRole } = roleHooks.update.useMutation()
 
-  const rolesHref = `/organization/${activeOrganizationSlug}/settings/roles`
+  const rolesHref = `/${activeOrganizationSlug}/settings/roles`
 
   const form = useForm<CreateRoleCommand>({
     resolver: zodResolver(CreateRoleSchema),

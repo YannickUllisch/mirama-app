@@ -1,11 +1,10 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/_components/OrganizationGrid.tsx
 'use client'
 import apiRequest from '@hooks'
+import OrgLink from '@src/components/OrgLink'
 import type { OrganizationResponse } from '@src/modules/tenant/organization/organization.types'
 import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Button } from '@ui/button'
 import { Building2, Plus } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
@@ -25,7 +24,7 @@ const OrganizationGrid = () => {
     // the Guid in the JWT is still what actually scopes every backend request.
     const updated = await updateSession({ organizationSlug: org.slug })
     if (updated?.user?.organizationSlug === org.slug) {
-      router.push(`/organization/${org.slug}`)
+      router.push(`/${org.slug}`)
     } else {
       toast.error('You are not a member of this organization')
     }
@@ -33,7 +32,7 @@ const OrganizationGrid = () => {
 
   const handleEditOrg = (org: OrganizationResponse) => {
     router.push(
-      `/organization/${activeOrganizationSlug}/settings/organizations/${org.id}/edit`,
+      `/${activeOrganizationSlug}/settings/organizations/${org.id}/edit`,
     )
   }
 
@@ -49,12 +48,10 @@ const OrganizationGrid = () => {
           )}
         </div>
         <Button variant="primary" size="sm" asChild>
-          <Link
-            href={`/organization/${activeOrganizationSlug}/settings/organizations/create`}
-          >
+          <OrgLink href="/settings/organizations/create">
             <Plus className="w-3.5 h-3.5" />
             New organization
-          </Link>
+          </OrgLink>
         </Button>
       </div>
 
@@ -71,12 +68,10 @@ const OrganizationGrid = () => {
             members.
           </p>
           <Button variant="primary" size="sm" asChild>
-            <Link
-              href={`/organization/${activeOrganizationSlug}/settings/organizations/create`}
-            >
+            <OrgLink href="/settings/organizations/create">
               <Plus className="w-3.5 h-3.5" />
               New organization
-            </Link>
+            </OrgLink>
           </Button>
         </div>
       ) : (

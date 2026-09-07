@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/organizations/_components/OrganizationGridSkeleton.tsx
 import { Skeleton } from '@ui/skeleton'
 
 const OrganizationGridSkeleton = () => (

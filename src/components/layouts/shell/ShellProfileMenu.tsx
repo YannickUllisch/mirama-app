@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@src/components/ui/dropdown-menu'
 import { useSidebar } from '@src/components/ui/sidebar'
+import OrgLink from '@src/components/OrgLink'
 import {
   Check,
   ChevronDown,
@@ -20,16 +21,11 @@ import {
   SunMoon,
   UsersRound,
 } from 'lucide-react'
-import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { useRef } from 'react'
 
-interface ShellProfileMenuProps {
-  organizationSlug: string
-}
-
-const ShellProfileMenu = ({ organizationSlug }: ShellProfileMenuProps) => {
+const ShellProfileMenu = () => {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
   const { lockPeek } = useSidebar()
@@ -61,18 +57,18 @@ const ShellProfileMenu = ({ organizationSlug }: ShellProfileMenuProps) => {
         sideOffset={6}
         className="min-w-60"
       >
-        <Link href={`/organization/${organizationSlug}/settings`}>
+        <OrgLink href="/settings">
           <DropdownMenuItem className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             Settings
           </DropdownMenuItem>
-        </Link>
-        <Link href={`/organization/${organizationSlug}/settings/members`}>
+        </OrgLink>
+        <OrgLink href="/settings/members">
           <DropdownMenuItem className="flex items-center gap-2">
             <UsersRound className="w-4 h-4" />
             Invite and manage members
           </DropdownMenuItem>
-        </Link>
+        </OrgLink>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <div className="flex items-center gap-2">

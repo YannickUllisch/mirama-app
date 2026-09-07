@@ -38,4 +38,17 @@ export const apiAuthPrefix: string = '/api/auth'
  * DEFAULT redirect path after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT: string = '/organization'
+export const DEFAULT_LOGIN_REDIRECT: string = '/home'
+
+// Top-level path segments that can never be claimed as an organization slug -
+// every static route below, plus '/home' and '/setup'. Organizations live at
+// the root (/{slug}/...), so this is what keeps a slug like "about" or "setup"
+// from shadowing the real route of the same name. Best-effort mirror of the
+// backend's own reserved-slug check, which is the actual source of truth.
+export const RESERVED_ORG_SLUGS: ReadonlySet<string> = new Set([
+  ...publicRoutes.map((route) => route.replace(/^\//, '')).filter(Boolean),
+  'auth',
+  'api',
+  'setup',
+  'home',
+])

@@ -1,4 +1,5 @@
 import { OrganizationRegion } from '@src/modules/tenant/organization/organization.types'
+import { RESERVED_ORG_SLUGS } from '@src/routes'
 import { z } from 'zod'
 
 export const ProfileSetupSchema = z.object({
@@ -24,6 +25,10 @@ export const OrganizationSetupSchema = z.object({
     .regex(
       /^[a-z0-9]+(-[a-z0-9]+)*$/,
       "Can only contain lowercase letters, numbers and hyphens, and can't start or end with a hyphen.",
+    )
+    .refine(
+      (slug) => !RESERVED_ORG_SLUGS.has(slug),
+      'This name is reserved, please choose another',
     ),
   logo: z.string().max(500).nullable().optional(),
   region: z.enum(OrganizationRegion),

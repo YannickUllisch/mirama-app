@@ -1,4 +1,3 @@
-// src/modules/pm/projects/components/CreateProjectForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -167,9 +166,7 @@ const CreateProjectForm = () => {
   const onSubmit = (values: CreateProjectCommand) => {
     createProject(values, {
       onSuccess: (data) => {
-        router.push(
-          `/organization/${activeOrganizationSlug}/projects/edit/${data.id}`,
-        )
+        router.push(`/${activeOrganizationSlug}/projects/edit/${data.id}`)
       },
     })
   }

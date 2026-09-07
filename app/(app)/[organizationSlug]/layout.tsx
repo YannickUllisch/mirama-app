@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/layout.tsx
 import { auth } from '@auth'
 import QueryClientWrapper from '@src/components/Wrappers/QueryClientWrapper'
 import SessionWrapper from '@src/components/Wrappers/SessionWrapper'

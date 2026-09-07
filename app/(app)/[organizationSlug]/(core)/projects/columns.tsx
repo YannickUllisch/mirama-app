@@ -1,6 +1,6 @@
 'use client'
 
-import HoverLink from '@src/components/HoverLink'
+import OrgLink from '@src/components/OrgLink'
 import {
   EditableCell,
   EditableCellType,
@@ -10,7 +10,6 @@ import '@src/components/Tables/Filters/column-filter-meta'
 import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
 import type { HandleFieldUpdate } from '@src/modules/shared/hooks/utils/useEditableColumns'
 import { usePermissions } from '@src/modules/tenant/iam/PermissionContext'
-import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -27,13 +26,11 @@ const ActionsCell = ({
   row,
   canUpdate,
   canDelete,
-  organizationSlug,
   archiveMutation,
 }: {
   row: ProjectResponse
   canUpdate: boolean
   canDelete: boolean
-  organizationSlug: string
   archiveMutation: (id: string) => void
 }) => {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -45,14 +42,12 @@ const ActionsCell = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {canUpdate && (
-          <HoverLink
-            href={`/organization/${organizationSlug}/projects/edit/${row.id}`}
-          >
+          <OrgLink href={`/projects/edit/${row.id}`}>
             <DropdownMenuItem className="gap-2">
               <PenSquareIcon className="w-3.5 h-3.5" />
               Edit
             </DropdownMenuItem>
-          </HoverLink>
+          </OrgLink>
         )}
         {canDelete && !row.isArchived && (
           <DropdownMenuItem
@@ -78,7 +73,6 @@ export const useProjectColumns = ({
   archiveMutation: UseMutateFunction<void, Error, string, unknown>
 }) => {
   const { can } = usePermissions()
-  const { activeOrganizationSlug } = useOrganizationResource()
 
   const canUpdate = can('project', 'update')
   const canDelete = can('project', 'delete')
@@ -92,17 +86,17 @@ export const useProjectColumns = ({
           <DataTableColumnHeader column={column} title="Name" />
         ),
         cell: ({ row, getValue }) => {
-          const link = `/organization/${activeOrganizationSlug}/projects/${row.original.name}`
+          const link = `/projects/${row.original.name}`
           if (canUpdate) {
             return (
               <EditableCell
                 displayValue={
-                  <HoverLink
+                  <OrgLink
                     href={link}
                     className="hover:underline underline-offset-4"
                   >
                     {getValue()}
-                  </HoverLink>
+                  </OrgLink>
                 }
                 value={getValue()}
                 onSave={(value) =>
@@ -113,9 +107,9 @@ export const useProjectColumns = ({
             )
           }
           return (
-            <HoverLink href={link} className="hover:underline">
+            <OrgLink href={link} className="hover:underline">
               {getValue() as string}
-            </HoverLink>
+            </OrgLink>
           )
         },
       }),
@@ -252,7 +246,6 @@ export const useProjectColumns = ({
                   row={row.original}
                   canUpdate={canUpdate}
                   canDelete={canDelete}
-                  organizationSlug={activeOrganizationSlug}
                   archiveMutation={archiveMutation}
                 />
               ),
@@ -260,6 +253,6 @@ export const useProjectColumns = ({
           ]
         : []),
     ],
-    [canUpdate, canDelete, activeOrganizationSlug],
+    [canUpdate, canDelete],
   )
 }

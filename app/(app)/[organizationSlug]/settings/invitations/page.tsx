@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/invitations/page.tsx
 import { auth } from '@auth'
 import InvitationsTab from './_components/InvitationsTab'
 

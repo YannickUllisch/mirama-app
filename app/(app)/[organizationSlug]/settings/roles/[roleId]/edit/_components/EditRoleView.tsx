@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/[roleId]/edit/_components/EditRoleView.tsx
 'use client'
 
 import { RoleForm } from '@src/modules/tenant/iam/roles/components/RoleForm'

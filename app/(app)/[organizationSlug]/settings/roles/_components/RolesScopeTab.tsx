@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/_components/RolesScopeTab.tsx
 'use client'
 
 import { DataTable } from '@src/components/Tables/DataTable'
@@ -21,7 +20,7 @@ export const RolesScopeTab = ({ scope }: { scope: AccessScope }) => {
     roleHooks.fetchByScopeWithPolicies.useQuery(scope)
   const { mutate: deleteRole } = roleHooks.delete.useMutation()
 
-  const rolesBase = `/organization/${activeOrganizationSlug}/settings/roles`
+  const rolesBase = `/${activeOrganizationSlug}/settings/roles`
 
   const columns = useRoleColumns({
     onDelete: (id) => deleteRole(id),

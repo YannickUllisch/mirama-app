@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/create/page.tsx
 import { RoleForm } from '@src/modules/tenant/iam/roles/components/RoleForm'
 import type { AccessScope } from '@src/modules/tenant/iam/roles/role.types'
 import { Suspense } from 'react'

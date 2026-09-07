@@ -1,5 +1,3 @@
-// app/(app)/setup/layout.tsx
-
 import fs from 'node:fs'
 import path from 'node:path'
 import { auth } from '@auth'
@@ -24,7 +22,7 @@ const SetupLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
   if (!session?.user) redirect('/auth/login')
   if (session.user.organizationSlug)
-    redirect(`/organization/${session.user.organizationSlug}`)
+    redirect(`/${session.user.organizationSlug}`)
 
   return (
     <SessionWrapper>

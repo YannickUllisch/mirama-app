@@ -4,6 +4,7 @@ import {
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
+  RESERVED_ORG_SLUGS,
 } from '@src/routes'
 import NextAuth from 'next-auth'
 
@@ -47,26 +48,34 @@ export default auth((req) => {
 
   const { organizationSlug } = session.user
   const pathname = nextUrl.pathname
+  const firstSegment = pathname.split('/')[1]
 
-  if (pathname.startsWith('/setup') && organizationSlug) {
-    return Response.redirect(
-      new URL(`/organization/${organizationSlug}`, nextUrl.origin),
-    )
-  }
-
-  if (pathname.startsWith('/organization')) {
+  // Organizations live at the root (/{slug}/...) - anything whose first
+  // segment isn't one of the reserved static routes is an org-scoped route.
+  if (!RESERVED_ORG_SLUGS.has(firstSegment)) {
     if (!organizationSlug) {
       return Response.redirect(new URL('/setup', nextUrl.origin))
     }
 
-    // Org route with a specific slug, verify it matches the session -
-    // also covers the bare '/organization' entry point (no urlOrgSlug yet)
-    const urlOrgSlug = pathname.split('/')[2]
-    if (urlOrgSlug !== organizationSlug) {
-      return Response.redirect(
-        new URL(`/organization/${organizationSlug}`, nextUrl.origin),
-      )
+    // Org route with a specific slug, verify it matches the session
+    if (firstSegment !== organizationSlug) {
+      return Response.redirect(new URL(`/${organizationSlug}`, nextUrl.origin))
     }
+    return
+  }
+
+  if (firstSegment === 'setup' && organizationSlug) {
+    return Response.redirect(new URL(`/${organizationSlug}`, nextUrl.origin))
+  }
+
+  // Stable post-login landing spot that doesn't need to know the slug upfront
+  if (firstSegment === 'home') {
+    return Response.redirect(
+      new URL(
+        organizationSlug ? `/${organizationSlug}` : '/setup',
+        nextUrl.origin,
+      ),
+    )
   }
 
   return

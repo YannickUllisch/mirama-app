@@ -1,4 +1,3 @@
-// src/modules/tenant/iam/policy/components/PolicyForm.tsx
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -133,7 +132,7 @@ export const PolicyForm = ({
   const { data: availablePermissions, isLoading: permissionsLoading } =
     iamHooks.availablePermissions.useQuery()
 
-  const policiesHref = `/organization/${activeOrganizationSlug}/settings/policies`
+  const policiesHref = `/${activeOrganizationSlug}/settings/policies`
 
   const form = useForm<CreatePolicyCommand>({
     resolver: zodResolver(CreatePolicySchema),

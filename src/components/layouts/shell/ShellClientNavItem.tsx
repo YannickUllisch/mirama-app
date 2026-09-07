@@ -8,6 +8,7 @@ import {
   SidebarMenuSubItem,
 } from '@src/components/ui/sidebar'
 import { cn } from '@src/lib/utils'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { ClientSummary } from '@src/modules/workspace/viewstate.types'
 import {
   Building2,
@@ -20,16 +21,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-const ShellClientNavItem = ({
-  client,
-  organizationSlug,
-}: {
-  client: ClientSummary
-  organizationSlug: string
-}) => {
+const ShellClientNavItem = ({ client }: { client: ClientSummary }) => {
   const pathname = usePathname()
+  const { activeOrganizationSlug } = useOrganizationResource()
   // No dedicated slug exists on the backend yet - routing by client id until one does.
-  const base = `/organization/${organizationSlug}/clients/${client.clientId}`
+  const base = `/${activeOrganizationSlug}/clients/${client.clientId}`
   const isChildActive = pathname.startsWith(base)
   const [open, setOpen] = useState(isChildActive)
 

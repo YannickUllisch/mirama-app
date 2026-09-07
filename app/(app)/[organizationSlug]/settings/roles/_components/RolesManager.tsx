@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/_components/RolesManager.tsx
 'use client'
 
 import { cn } from '@src/lib/utils'

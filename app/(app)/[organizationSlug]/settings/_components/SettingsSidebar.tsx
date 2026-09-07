@@ -34,7 +34,7 @@ const SettingsSidebar = ({ organizationSlug }: SettingsSidebarProps) => {
   return (
     <Sidebar className="border-transparent" innerClassName="p-2">
       <SidebarHeader className="gap-3">
-        <SettingsBackLink organizationSlug={organizationSlug} />
+        <SettingsBackLink />
         <SettingsSearchInput />
       </SidebarHeader>
       <SidebarContent>

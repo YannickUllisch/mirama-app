@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/[roleId]/edit/page.tsx
 import { Suspense } from 'react'
 import { EditRoleView } from './_components/EditRoleView'
 

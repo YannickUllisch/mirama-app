@@ -1,10 +1,8 @@
-// app/(app)/organization/[organizationSlug]/projects/_components/ArchivedProjectsColumns.tsx
 'use client'
 
-import HoverLink from '@src/components/HoverLink'
+import OrgLink from '@src/components/OrgLink'
 import { DataTableColumnHeader } from '@src/components/Tables/ColumnHeader'
 import type { ProjectResponse } from '@src/modules/pm/projects/projects.types'
-import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import type { UseMutateFunction } from '@tanstack/react-query'
 import { createColumnHelper } from '@tanstack/react-table'
 import {
@@ -19,13 +17,7 @@ import { useMemo, useState } from 'react'
 
 const columnHelper = createColumnHelper<ProjectResponse>()
 
-const ArchivedActionsCell = ({
-  row,
-  organizationSlug,
-}: {
-  row: ProjectResponse
-  organizationSlug: string
-}) => {
+const ArchivedActionsCell = ({ row }: { row: ProjectResponse }) => {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -34,14 +26,12 @@ const ArchivedActionsCell = ({
         <Ellipsis className="cursor-pointer h-5 w-5 p-1" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <HoverLink
-          href={`/organization/${organizationSlug}/projects/edit/${row.id}`}
-        >
+        <OrgLink href={`/projects/edit/${row.id}`}>
           <DropdownMenuItem className="gap-2">
             <PenSquareIcon className="w-3.5 h-3.5" />
             Edit
           </DropdownMenuItem>
-        </HoverLink>
+        </OrgLink>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -50,8 +40,6 @@ const ArchivedActionsCell = ({
 export const useArchivedProjectsColumns = (_props: {
   archiveMutation: UseMutateFunction<void, Error, string, unknown>
 }) => {
-  const { activeOrganizationSlug } = useOrganizationResource()
-
   return useMemo(
     () => [
       columnHelper.accessor((row) => row.name, {
@@ -60,12 +48,12 @@ export const useArchivedProjectsColumns = (_props: {
           <DataTableColumnHeader column={column} title="Name" />
         ),
         cell: ({ row, getValue }) => (
-          <HoverLink
-            href={`/organization/${activeOrganizationSlug}/projects/${row.original.name}`}
+          <OrgLink
+            href={`/projects/${row.original.name}`}
             className="hover:underline underline-offset-4"
           >
             {getValue() as string}
-          </HoverLink>
+          </OrgLink>
         ),
       }),
       columnHelper.accessor((row) => row.startDate, {
@@ -98,14 +86,9 @@ export const useArchivedProjectsColumns = (_props: {
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Actions" />
         ),
-        cell: ({ row }) => (
-          <ArchivedActionsCell
-            row={row.original}
-            organizationSlug={activeOrganizationSlug}
-          />
-        ),
+        cell: ({ row }) => <ArchivedActionsCell row={row.original} />,
       }),
     ],
-    [activeOrganizationSlug],
+    [],
   )
 }

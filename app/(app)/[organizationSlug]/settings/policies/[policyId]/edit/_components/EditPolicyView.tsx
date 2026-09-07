@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/policies/[policyId]/edit/_components/EditPolicyView.tsx
 'use client'
 
 import { PolicyForm } from '@src/modules/tenant/iam/policy/components/PolicyForm'

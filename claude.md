@@ -62,3 +62,13 @@ Do NOT add the route of the component at the top or first line of a files, if yo
 - Wrap dynamic components in `<Suspense>` with a meaningful fallback.
 - Push dynamic data fetching (`auth()`, Prisma calls) as deep into the component tree as possible - never `await` at page level if it can be scoped to a child component.
 - Isolate slow-moving assets or heavy computations in their own `<Suspense>` boundaries.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

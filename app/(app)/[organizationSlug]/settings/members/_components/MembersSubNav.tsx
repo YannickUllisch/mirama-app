@@ -1,26 +1,37 @@
 'use client'
 
+import OrgLink from '@src/components/OrgLink'
 import { cn } from '@src/lib/utils'
+import { useOrganizationResource } from '@src/modules/tenant/organization/organizationResourceContext'
 import { Building2, FolderKanban } from 'lucide-react'
-import Link from 'next/link'
-import { useParams, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 const MembersSubNav = () => {
   const pathname = usePathname()
-  const { organizationSlug } = useParams<{ organizationSlug: string }>()
-  const base = `/organization/${organizationSlug}/settings/members`
+  const { activeOrganizationSlug } = useOrganizationResource()
+  const base = `/${activeOrganizationSlug}/settings/members`
 
   const tabs = [
-    { label: 'Organization', href: base, icon: Building2 },
-    { label: 'Projects', href: `${base}/projects`, icon: FolderKanban },
+    {
+      label: 'Organization',
+      href: '/settings/members',
+      fullHref: base,
+      icon: Building2,
+    },
+    {
+      label: 'Projects',
+      href: '/settings/members/projects',
+      fullHref: `${base}/projects`,
+      icon: FolderKanban,
+    },
   ]
 
   return (
     <div className="inline-flex items-center gap-1 rounded-lg bg-surface-soft p-1 mb-5">
       {tabs.map((tab) => {
-        const isActive = pathname === tab.href
+        const isActive = pathname === tab.fullHref
         return (
-          <Link
+          <OrgLink
             key={tab.href}
             href={tab.href}
             className={cn(
@@ -32,7 +43,7 @@ const MembersSubNav = () => {
           >
             <tab.icon className="w-3.5 h-3.5" />
             {tab.label}
-          </Link>
+          </OrgLink>
         )
       })}
     </div>

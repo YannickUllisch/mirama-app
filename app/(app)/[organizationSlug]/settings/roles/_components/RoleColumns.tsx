@@ -1,4 +1,3 @@
-// app/(app)/organization/[organizationSlug]/settings/roles/_components/RoleColumns.tsx
 'use client'
 
 import type { RoleWithPoliciesResponse } from '@src/modules/tenant/iam/roles/role.types'
