@@ -45,28 +45,26 @@ export default auth((req) => {
   const session = req.auth
   if (!session?.user) return
 
-  // Organization guards -----------------
-  const { organizationId } = session.user
+  const { organizationSlug } = session.user
   const pathname = nextUrl.pathname
 
-  // Setup guard: only for users without an organization yet -----------------
-  if (pathname.startsWith('/setup') && organizationId) {
+  if (pathname.startsWith('/setup') && organizationSlug) {
     return Response.redirect(
-      new URL(`/organization/${organizationId}`, nextUrl.origin),
+      new URL(`/organization/${organizationSlug}`, nextUrl.origin),
     )
   }
 
   if (pathname.startsWith('/organization')) {
-    if (!organizationId) {
+    if (!organizationSlug) {
       return Response.redirect(new URL('/setup', nextUrl.origin))
     }
 
-    // Org route with a specific ID, verify it matches the session -
-    // also covers the bare '/organization' entry point (no urlOrgId yet)
-    const urlOrgId = pathname.split('/')[2]
-    if (urlOrgId !== organizationId) {
+    // Org route with a specific slug, verify it matches the session -
+    // also covers the bare '/organization' entry point (no urlOrgSlug yet)
+    const urlOrgSlug = pathname.split('/')[2]
+    if (urlOrgSlug !== organizationSlug) {
       return Response.redirect(
-        new URL(`/organization/${organizationId}`, nextUrl.origin),
+        new URL(`/organization/${organizationSlug}`, nextUrl.origin),
       )
     }
   }
