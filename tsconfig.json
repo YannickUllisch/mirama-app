@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "es2022"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2022"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -9,7 +13,7 @@
     "module": "ESNext",
     "target": "ES2022",
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -20,18 +24,45 @@
       }
     ],
     "paths": {
-      "@auth": ["./server/auth/auth.ts"],
-      "@db": ["./server/utils/db.ts"],
-      "@api": ["./src/lib/api.ts"],
-      "@logger": ["./server/utils/logger.ts"],
-      "@withAuth": ["./server/auth/withAuth.ts"],
-      "@server/*": ["./server/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@services/*": ["./src/services/*"],
-      "@ui/*": ["./src/components/ui/*"],
-      "@public/*": ["./public/*"],
-      "@src/*": ["./src/*"],
-      "@/*": ["./*"]
+      "@auth": [
+        "./server/auth/auth.ts"
+      ],
+      "@db": [
+        "./server/utils/db.ts"
+      ],
+      "@api": [
+        "./src/lib/api.ts"
+      ],
+      "@logger": [
+        "./server/utils/logger.ts"
+      ],
+      "@withAuth": [
+        "./server/auth/withAuth.ts"
+      ],
+      "@prisma/client": [
+        "./prisma/generated/client"
+      ],
+      "@server/*": [
+        "./server/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@ui/*": [
+        "./src/components/ui/*"
+      ],
+      "@public/*": [
+        "./public/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -42,5 +73,7 @@
     "src/types/**/*",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
